@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.sos</groupId>
+		    <artifactId>sos-products</artifactId>
+        <version>1.6.4064</version>
+    </parent>
+
+    <groupId>com.sos-berlin.products</groupId>
+    <artifactId>jade</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
+
+    <scm>
+        <connection>scm:svn:http://subversion.sos/svn/sos/java.sources/tags/sos-products/jade</connection>
+        <developerConnection>scm:svn:http://subversion.sos/svn/sos/java.sources/trunk/sos-products/jade</developerConnection>
+        <url>http://subversion.sos/svn/sos/java.sources/trunk/sos-products/jade</url>
+    </scm>
+
+    <modules>
+        <module>jade-cockpit</module>
+        <!--
+        <module>...</module>
+        -->
+    </modules>
+
+</project>
