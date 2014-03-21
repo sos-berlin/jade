@@ -14,9 +14,9 @@
     <name>${project.artifactId}</name>
 
     <scm>
-        <connection>scm:svn:http://subversion.sos/svn/sos/java.sources/tags/sos-products/jade</connection>
-        <developerConnection>scm:svn:http://subversion.sos/svn/sos/java.sources/trunk/sos-products/jade</developerConnection>
-        <url>http://subversion.sos/svn/sos/java.sources/trunk/sos-products/jade</url>
+        <connection>scm:svn:http://subversion.sos/svn/sos/java.sources/tags/products/jade</connection>
+        <developerConnection>scm:svn:http://subversion.sos/svn/sos/java.sources/trunk/products/jade</developerConnection>
+        <url>http://subversion.sos/svn/sos/java.sources/trunk/products/jade</url>
     </scm>
 
     <modules>
