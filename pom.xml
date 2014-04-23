@@ -19,7 +19,10 @@
     </scm>
 
     <modules>
-        <module>jade-cockpit</module>
+    		<!-- zunächst deaktiviert
+    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafür gibt es keine öffentliches maven repo, da diese jars eclipse plugin sind
+    		<module>jade-cockpit</module>
+    		-->
         <!--
         <module>...</module>
         -->
