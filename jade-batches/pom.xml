@@ -16,13 +16,19 @@
 
         <dependency>
             <groupId>com.sos-berlin.products.jobscheduler</groupId>
-            <artifactId>data-exchange</artifactId>
+            <artifactId>jobscheduler-helper</artifactId>
             <version>${project.version}</version>
         </dependency>
 
+<!--         <dependency>
+            <groupId>com.sos-berlin.products.jobscheduler</groupId>
+            <artifactId>sos-scheduler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+ -->
         <dependency>
             <groupId>com.sos-berlin.products.jobscheduler</groupId>
-            <artifactId>jobscheduler-helper</artifactId>
+            <artifactId>data-exchange</artifactId>
             <version>${project.version}</version>
         </dependency>
 
