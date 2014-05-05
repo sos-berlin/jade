@@ -21,11 +21,9 @@
     <modules>
     		<!-- zunächst deaktiviert
     		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafür gibt es keine öffentliches maven repo, da diese jars eclipse plugins sind
-    		<module>jade-cockpit</module>
     		-->
-        <!--
-        <module>...</module>
-        -->
+    		<module>jade-cockpit</module>
+    		<module>jade-batches</module>
     </modules>
 
 </project>
