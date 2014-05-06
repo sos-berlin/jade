@@ -20,12 +20,6 @@
             <version>${project.version}</version>
         </dependency>
 
-<!--         <dependency>
-            <groupId>com.sos-berlin.products.jobscheduler</groupId>
-            <artifactId>sos-scheduler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
- -->
         <dependency>
             <groupId>com.sos-berlin.products.jobscheduler</groupId>
             <artifactId>data-exchange</artifactId>
