@@ -2,10 +2,6 @@
 
 package com.sos.jade.job;
 
-import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-
 import com.sos.JSHelper.Annotations.JSOptionClass;
 import com.sos.JSHelper.Annotations.JSOptionDefinition;
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
@@ -13,6 +9,9 @@ import com.sos.JSHelper.Listener.JSListener;
 import com.sos.JSHelper.Options.JSOptionsClass;
 import com.sos.JSHelper.Options.SOSOptionInteger;
 import com.sos.JSHelper.Options.SOSOptionString;
+import org.apache.log4j.Logger;
+
+import java.util.HashMap;
 
 /**
  * \class 		JadeDeleteHistoryOptionsSuperClass - Delete entries in Jade history table
@@ -102,7 +101,7 @@ public class JadeDeleteHistoryOptionsSuperClass extends JSOptionsClass {
  * \details
  * All Entries which are older than the specified number of days will be deleted.
  *
- * @param age_exceeding_days : 
+ * @param p_age_exceeding_days
  */
     public void setage_exceeding_days (final SOSOptionInteger p_age_exceeding_days) { 
         age_exceeding_days = p_age_exceeding_days;
@@ -147,7 +146,7 @@ public class JadeDeleteHistoryOptionsSuperClass extends JSOptionsClass {
  * \details
  * The file with settings for database. Sample <?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"> <hibernate-configuration> <session-factory> <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property> <property name="hibernate.connection.password">dbpwd</property> <property name="hibernate.connection.url">jdbc:oracle:thin:@8of9:1521:dbserver</property> <property name="hibernate.connection.username">dbuser</property> <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property> <property name="hibernate.show_sql">true</property> <property name="hibernate.connection.autocommit">false</property> <property name="hibernate.format_sql">true</property> <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property> <mapping class="com.sos.jade.db.JadeTransferDBItem"/> <mapping class="com.sos.jade.db.JadeTransferDetailDBItem"/> <mapping class="com.sos.dailyschedule.db.DailyScheduleDBItem"/> <mapping class="com.sos.scheduler.history.db.SchedulerHistoryDBItem"/> <mapping class="com.sos.scheduler.history.db.SchedulerOrderHistoryDBItem"/> </session-factory> </hibernate-configuration>
  *
- * @param configuration_file : 
+ * @param p_configuration_file
  */
     public void setconfiguration_file (final SOSOptionString p_configuration_file) { 
         configuration_file = p_configuration_file;

@@ -48,6 +48,29 @@
   					</lifecycleMappingMetadata>
   				</configuration>
   			</plugin>
+
+            <!-- Classes in package com.sos.jade works with a new structure of currently not provided database tables,
+             therefore they will be excluded from jar.
+            -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>com/sos/jade/**/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
   		</plugins>
   	</pluginManagement>
   </build>
