@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,11 +20,12 @@
     </scm>
 
     <modules>
-    		<!-- zunächst deaktiviert
-    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafür gibt es keine öffentliches maven repo, da diese jars eclipse plugins sind
+    		<!-- zun�chst deaktiviert
+    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - daf�r gibt es keine �ffentliches maven repo, da diese jars eclipse plugins sind
     		-->
-    		<module>jade-cockpit</module>
-    		<module>jade-batches</module>
+	  <module>jade-cockpit</module>
+	  <module>jade-batches</module>
+	  <!-- module>jade-background-service-frontend</module -->
     </modules>
 
 </project>
