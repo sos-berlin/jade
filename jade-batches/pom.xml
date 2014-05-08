@@ -138,12 +138,6 @@
             <artifactId>javassist</artifactId>
         </dependency>
       
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
 		<dependency>
 			<groupId>org.eclipse.swt</groupId>
 			<artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
