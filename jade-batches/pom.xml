@@ -78,6 +78,12 @@
   <dependencies>
 
         <dependency>
+            <groupId>com.sos.scheduler.engine</groupId>
+            <artifactId>engine-job-api</artifactId>
+            <version>${sos.engine.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.sos-berlin.products.jobscheduler</groupId>
             <artifactId>jobscheduler-helper</artifactId>
             <version>${project.version}</version>
