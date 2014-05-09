@@ -20,12 +20,13 @@
     </scm>
 
     <modules>
-    		<!-- zunï¿½chst deaktiviert
-    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafï¿½r gibt es keine ï¿½ffentliches maven repo, da diese jars eclipse plugins sind
+    		<!-- zunächst deaktiviert
+    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafür gibt es keine öffentliches maven repo, da diese jars eclipse plugins sind
     		-->
 	  <module>jade-cockpit</module>
 	  <module>jade-batches</module>
 	  <!-- module>jade-background-service-frontend</module -->
-    </modules>
+	  <module>jade-all</module>
+  </modules>
 
 </project>
