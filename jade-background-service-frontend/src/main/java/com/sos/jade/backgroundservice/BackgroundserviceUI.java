@@ -4,17 +4,19 @@ import java.io.File;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.vaadin.ui.Image;
+import com.sos.jade.backgroundservice.view.MainUI;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.shared.ui.AbstractEmbeddedState;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -32,24 +34,20 @@ public class BackgroundserviceUI extends UI
 
     @Override
     protected void init(VaadinRequest request) {
-        final VerticalLayout vLayout = new VerticalLayout();
-        vLayout.setMargin(true);
-        setContent(vLayout);
-        final HorizontalLayout hLayout = new HorizontalLayout();
-        final Image imgRabbit = new Image();
-		FileResource rabbitResource = new FileResource(new File(absolutePath + "/images/job_scheduler_logo.jpg"));
-        imgRabbit.setSource(rabbitResource);
-        final Image imgTitle = new Image();
-		FileResource titleResource = new FileResource(new File(absolutePath + "/images/job_scheduler_rabbit_circle_60x60.gif "));
-        imgRabbit.setSource(titleResource);
-        
-        Button button = new Button("Click Me");
-        button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                vLayout.addComponent(new Label("Thank you for clicking"));
-            }
-        });
-        vLayout.addComponent(button);
+		try {
+			VaadinSession.getCurrent().getLockInstance().lock();
+			if (VaadinSession.getCurrent().getAttribute(SessionAttributes.SESSION_ID.name()) == null) {
+				VaadinSession.getCurrent().setAttribute(SessionAttributes.SESSION_ID.name(), SessionAttributes.SESSION_ID);
+			}
+		} finally {
+			VaadinSession.getCurrent().getLockInstance().unlock();
+		}
+
+    	MainUI ui = new MainUI();
+        setContent(ui);
+		ui.setSizeFull();
+		
+		Page.getCurrent().setTitle("JADE Background Service");
     }
 
 }
