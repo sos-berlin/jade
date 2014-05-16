@@ -13,15 +13,9 @@
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
-    <scm>
-        <connection>scm:svn:http://subversion.sos/svn/sos/java.sources/tags/products/jade</connection>
-        <developerConnection>scm:svn:http://subversion.sos/svn/sos/java.sources/trunk/products/jade</developerConnection>
-        <url>http://subversion.sos/svn/sos/java.sources/trunk/products/jade</url>
-    </scm>
-
     <modules>
-    		<!-- zunächst deaktiviert
-    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafür gibt es keine öffentliches maven repo, da diese jars eclipse plugins sind
+    		<!-- zunã¢¨st deaktiviert
+    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - dafï¿½t es keine ï¿½ntliches maven repo, da diese jars eclipse plugins sind
     		-->
 	  <module>jade-cockpit</module>
 	  <module>jade-batches</module>
