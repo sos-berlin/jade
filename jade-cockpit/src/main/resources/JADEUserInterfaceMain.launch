@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/JADEUserInterface/src/main/java/com/sos/jade/userinterface/JADEUserInterfaceMain.java"/>
+<listEntry value="/jade-cockpit/src/main/java/com/sos/jade/userinterface/JADEUserInterfaceMain.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -20,6 +20,6 @@
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/CDC-1.0%Foundation-1.0"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.sos.jade.userinterface.JADEUserInterfaceMain"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JADEUserInterface"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jade-cockpit"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
 </launchConfiguration>

@@ -51,6 +51,8 @@ import com.sos.dialog.classes.WindowsSaver;
 import com.sos.dialog.interfaces.ISOSTabItem;
 import com.sos.dialog.layouts.Gridlayout;
 import com.sos.dialog.swtdesigner.SWTResourceManager;
+import com.sos.jade.userinterface.TreeContentProvider;
+import com.sos.jade.userinterface.TreeLabelProvider;
 import com.sos.jade.userinterface.adapters.SOSDataExchangeAdapter;
 import com.sos.jade.userinterface.composite.CompositeBaseClass;
 import com.sos.jade.userinterface.composite.LogFileComposite;
