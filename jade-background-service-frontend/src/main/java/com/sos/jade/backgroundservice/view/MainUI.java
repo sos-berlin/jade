@@ -2,6 +2,8 @@ package com.sos.jade.backgroundservice.view;
 
 import java.io.File;
 
+import sos.ftphistory.job.SOSFTPHistory;
+
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
@@ -16,7 +18,8 @@ public class MainUI extends CustomComponent {
 	
 	private static final long serialVersionUID = 6368275374953898482L;
 	private String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-
+	private SOSFTPHistory ftpHistory = SOSFTPHistory.getConnection(spooler, conn, parameters, log);
+	
 	public MainUI() {
         final VerticalLayout vLayout = new VerticalLayout();
         vLayout.setMargin(true);
