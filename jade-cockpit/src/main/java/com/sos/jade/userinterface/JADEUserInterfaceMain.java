@@ -335,6 +335,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				treeViewer.setContentProvider(new TreeContentProvider());
 				treeViewer.setSorter(new Sorter());
 				treeViewer.setInput(initializeSession());
+				treeViewer.expandAll();
 				tabFolder = new SOSCTabFolder(sashForm, SWT.BORDER);
 				sashForm.setWeights(new int[] { 225, 683 });
 				sashForm.setVisible(true);
