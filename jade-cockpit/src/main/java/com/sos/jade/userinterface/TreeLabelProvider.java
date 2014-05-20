@@ -21,9 +21,9 @@ public class TreeLabelProvider extends LabelProvider implements ILabelProvider, 
 	public Image getImage(final Object element) {
 		if (element instanceof JadeTreeViewEntry) {
 			JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
-			return SWTResourceManager.getImage("./src/main/resources/Profil.gif");
+			return SWTResourceManager.getImage("Profil.gif");
 		}
-		return SWTResourceManager.getImage("./src/main/resources/BlueCircle.gif");
+		return SWTResourceManager.getImage("BlueCircle.gif");
 	}
 
 	@Override
