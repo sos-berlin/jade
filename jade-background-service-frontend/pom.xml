@@ -199,6 +199,13 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.sos-berlin.products.jobscheduler</groupId>
+			<artifactId>ftp-history</artifactId>
+            <version>${project.version}</version>
+		</dependency>
+		
 	</dependencies>
 
 </project>
