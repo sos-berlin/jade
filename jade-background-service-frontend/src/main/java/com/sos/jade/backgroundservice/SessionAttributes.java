@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * 
  * @author JS
- *  
+ * copied from JadeVaadinCockpit [SP] 
  */
 public enum SessionAttributes {
 	SESSION_ID(UUID.class, UUID.randomUUID());
