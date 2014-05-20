@@ -22,7 +22,7 @@
 	  <!-- Projekt im bau, z.Zt. nicht für die Auslieferung -->
 	  <!-- module>jade-background-service-frontend</module -->
 	  <!-- z.Zt. nicht in der Auslieferung -->
-	  <!-- module>jade-file-watcher</module -->
+	  <module>jade-file-watcher</module>
 	  <module>jade-all</module>
   </modules>
 
