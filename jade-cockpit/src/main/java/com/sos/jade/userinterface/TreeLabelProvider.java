@@ -1,4 +1,6 @@
 package com.sos.jade.userinterface;
+import java.net.URL;
+
 import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -21,9 +23,14 @@ public class TreeLabelProvider extends LabelProvider implements ILabelProvider, 
 	public Image getImage(final Object element) {
 		if (element instanceof JadeTreeViewEntry) {
 			JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
-			return SWTResourceManager.getImage("Profil.gif");
+			// [SP] changed to get image resources dynamically at runtime
+			URL url = Thread.currentThread().getContextClassLoader().getResource("Profil.gif");
+			return SWTResourceManager.getImage(url.getPath());
+//			return SWTResourceManager.getImage("Profil.gif");
 		}
-		return SWTResourceManager.getImage("BlueCircle.gif");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("BlueCircle.gif");
+		return SWTResourceManager.getImage(url.getPath());
+//		return SWTResourceManager.getImage("BlueCircle.gif");
 	}
 
 	@Override

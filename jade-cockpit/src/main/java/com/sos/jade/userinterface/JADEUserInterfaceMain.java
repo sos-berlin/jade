@@ -1,6 +1,8 @@
 package com.sos.jade.userinterface;
 import static com.sos.dialog.Globals.MsgHandler;
 
+import java.net.URL;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -368,7 +370,10 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 //
 //	}
 	private ImageDescriptor getImage(final String pstrFileName) {
-		return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
+		// [SP] changed to get image resources dynamically at runtime
+		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
+		return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
+//		return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
 	}
 	private Session	session;
 
