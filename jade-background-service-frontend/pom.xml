@@ -82,15 +82,18 @@
 					<!-- <runTarget>mobilemail</runTarget> -->
 					<!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This 
 						way compatible with Vaadin eclipse plugin. -->
+<!--  				Not needed, we don´t want any widgetset compile, using the DefaultWidgetSet from
+					vaadin.client.compiled -> com.vaadin.DefaultWidgetSet [SP]
 					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
 					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
-					<noServer>true</noServer>
+-->
+					<noServer>false</noServer>
 					<!-- Remove draftCompile when project is ready -->
 					<draftCompile>false</draftCompile>
 					<compileReport>true</compileReport>
+<!-- 
 					<style>OBF</style>
 					<strict>true</strict>
-<!-- 
 					<runTarget>http://localhost:8080/</runTarget>
 					<runTarget>http://localhost:8282/</runTarget>
 					<runTarget>http://localhost:8484/</runTarget>
@@ -103,9 +106,6 @@
 						<goals>
 							<goal>clean</goal>
 							<goal>resources</goal>
-							<goal>update-theme</goal>
-							<goal>update-widgetset</goal>
-							<goal>compile-theme</goal>
 							<goal>compile</goal>
 						</goals>
 					</execution>
@@ -133,10 +133,7 @@
 										<versionRange>[7.1.5,)</versionRange>
 										<goals>
 											<goal>resources</goal>
-											<goal>update-widgetset</goal>
-											<goal>compile</goal>
-											<goal>update-theme</goal>
-											<goal>compile-theme</goal>
+ 											<goal>compile</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
