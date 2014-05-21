@@ -14,16 +14,13 @@
     <name>${project.artifactId}</name>
 
     <modules>
-    		<!-- zun㢨st deaktiviert
-    		verwendet derzeit Klassen aus org.eclipse.e4.ui.css - daf�t es keine �ntliches maven repo, da diese jars eclipse plugins sind
-    		-->
-	  <module>jade-cockpit</module>
+	  <module>jade-all</module>
 	  <module>jade-batches</module>
 	  <!-- Projekt im bau, z.Zt. nicht für die Auslieferung -->
 	  <!-- module>jade-background-service-frontend</module -->
 	  <!-- z.Zt. nicht in der Auslieferung -->
 	  <module>jade-file-watcher</module>
-	  <module>jade-all</module>
+	  <module>jade-cockpit</module>
   </modules>
 
 </project>
