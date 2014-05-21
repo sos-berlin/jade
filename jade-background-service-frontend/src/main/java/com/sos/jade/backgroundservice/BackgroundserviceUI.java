@@ -28,7 +28,7 @@ public class BackgroundserviceUI extends UI
 	private String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 
     @WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class, widgetset = "com.sos-berlin.products.jade.AppWidgetSet")
+    @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class)
     public static class Servlet extends VaadinServlet {
     }
 
