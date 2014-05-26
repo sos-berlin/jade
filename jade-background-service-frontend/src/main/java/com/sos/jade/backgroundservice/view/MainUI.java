@@ -3,28 +3,23 @@ package com.sos.jade.backgroundservice.view;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import sos.ftphistory.db.JadeFilesDBLayer;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
-import sos.ftphistory.job.SOSFTPHistory;
 
-import com.sos.jade.backgroundservice.enums.ColumnNames;
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
+import com.sos.jade.backgroundservice.enums.Columns;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
 
 public class MainUI extends CustomComponent {
 	
@@ -55,37 +50,41 @@ public class MainUI extends CustomComponent {
         hLayout.addComponent(imgTitle);
         Label lblTitle = new Label("JADE background service");
         hLayout.addComponent(lblTitle);
+
         HorizontalLayout hlTableLayout = new HorizontalLayout();
+        hlTableLayout.setWidth("100%");
+        hlTableLayout.setHeight("90%");
         vLayout.addComponent(hlTableLayout);
-        Table tblHistory = new Table("FTP History");
-//        tblHistory.setColumnHeaders(getColumnHeadersFromEnum());
-        hlTableLayout.addComponent(tblHistory);
+        
         jadeFilesDBLayer.initSession();
         try {
-			historyItems = jadeFilesDBLayer.getFilesHistoryFromTo(new Date(1, 1, 2013), new Date());
+			historyItems = jadeFilesDBLayer.getFilesHistory/*FromTo(new Date(1, 1, 2000), new Date())*/();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        //TODO
-        tblHistory.setContainerDataSource(null);
-        Button button = new Button("Click Me");
-        button.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = -6834643991222900396L;
-
-			public void buttonClick(ClickEvent event) {
-                vLayout.addComponent(new Label("Thank you for clicking"));
-            }
-        });
-        vLayout.addComponent(button);
+        Panel pScrollable = new Panel();
+        pScrollable.setSizeFull();
+        hlTableLayout.addComponent(pScrollable);
+        JadeHistoryTable tblHistory = new JadeHistoryTable(historyItems);
+        pScrollable.setContent(tblHistory);
+//        Button button = new Button("Click Me");
+//        button.addClickListener(new Button.ClickListener() {
+//			private static final long serialVersionUID = -6834643991222900396L;
+//
+//			public void buttonClick(ClickEvent event) {
+//                vLayout.addComponent(new Label("Thank you for clicking"));
+//            }
+//        });
+//        vLayout.addComponent(button);
 	}
 	
 	private String[] getColumnHeadersFromEnum(){
         List<String> headers = new ArrayList<String>();
-        for (ColumnNames name : ColumnNames.values()){
-        	headers.add(name.getValue());
+        for (Columns name : Columns.values()){
+        	headers.add(name.name());
         }
-        String[] a = new String[ColumnNames.getSize()];
+        String[] a = new String[Columns.values().length];
 		return headers.toArray(a);
 	}
 }

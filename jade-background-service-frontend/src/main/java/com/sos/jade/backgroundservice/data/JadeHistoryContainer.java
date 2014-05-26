@@ -1,97 +1,26 @@
 package com.sos.jade.backgroundservice.data;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
+import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
-public class JadeHistoryContainer implements Container{
+import com.sos.jade.backgroundservice.enums.Columns;
+import com.vaadin.data.util.IndexedContainer;
+
+public class JadeHistoryContainer extends IndexedContainer{
 	private static final long serialVersionUID = 7685755428975400129L;
+	private Map<String, Object> itemIds = new HashMap<String, Object>();
 
-	public JadeHistoryContainer(){
-		
+	public JadeHistoryContainer(List<JadeFilesHistoryDBItem> items){
+		for(Columns col: Columns.values()){
+			this.addContainerProperty(col.getName(), col.getType(), col.getDefaultValue());
+		}
+		for (JadeFilesHistoryDBItem item : items){
+			addItem(item);
+		}
 	}
 	
-	@Override
-	public Item getItem(Object itemId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<?> getContainerPropertyIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<?> getItemIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Property getContainerProperty(Object itemId, Object propertyId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<?> getType(Object propertyId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean containsId(Object itemId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Item addItem(Object itemId) throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object addItem() throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean removeItem(Object itemId)
-			throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addContainerProperty(Object propertyId, Class<?> type,
-			Object defaultValue) throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeContainerProperty(Object propertyId)
-			throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeAllItems() throws UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 }
