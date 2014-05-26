@@ -4,8 +4,9 @@
 	<parent>
 	    <groupId>com.sos-berlin.products</groupId>
 	    <artifactId>jade</artifactId>
-    <version>1.7-SNAPSHOT</version>
-  </parent>
+    	<version>1.7-SNAPSHOT</version>
+  	</parent>
+  	
 	<groupId>com.sos-berlin.products.jade</groupId>
 	<artifactId>jade-background-service-frontend</artifactId>
 	<packaging>war</packaging>
@@ -48,10 +49,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+<!-- 
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
+-->
 			</plugin>
 			<!-- As we are doing "inplace" GWT compilation, ensure the widgetset -->
 			<!-- directory is cleaned properly -->
@@ -204,5 +207,4 @@
 		</dependency>
 		
 	</dependencies>
-
 </project>
