@@ -6,7 +6,7 @@ import java.util.Map;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
-import com.sos.jade.backgroundservice.enums.Columns;
+import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.util.IndexedContainer;
 
 public class JadeHistoryContainer extends IndexedContainer{
@@ -14,9 +14,9 @@ public class JadeHistoryContainer extends IndexedContainer{
 	private Map<String, Object> itemIds = new HashMap<String, Object>();
 
 	public JadeHistoryContainer(List<JadeFilesHistoryDBItem> items){
-		for(Columns col: Columns.values()){
-			this.addContainerProperty(col.getName(), col.getType(), col.getDefaultValue());
-		}
+//		for(JadeHistoryFileColumns col: JadeHistoryFileColumns.values()){
+//			this.addContainerProperty(col.getName(), col.getType(), col.getDefaultValue());
+//		}
 		for (JadeFilesHistoryDBItem item : items){
 			addItem(item);
 		}
