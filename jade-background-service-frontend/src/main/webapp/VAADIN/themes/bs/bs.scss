@@ -4,9 +4,20 @@
 
 /* This contains all of your theme. */
 /* If somebody wants to extend the theme she will include this mixin. */
-@mixin mytheme {
+@mixin bs {
   /* Include all the styles from the reindeer theme */
   @include reindeer;
 
   /* Insert your theme rules here */
+  /**********variable definitions here !**********/  
+  $border: 1px solid #8B919F;
+  
+  $round-corners-radius: 8px;
+
+  /**********style definitions here !**********/  
+  .titleLabel{
+  	font-size: 30pt;
+  	vertical-align: bottom;
+  	height: 70px;
+  }
 }
