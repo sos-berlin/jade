@@ -5,15 +5,14 @@ import java.util.Date;
 import sos.ftphistory.db.JadeFilesDBItem;
 
 public enum JadeHistoryFileColumns {
-//    private JadeFilesDBItem jadeFilesDBItem;
 	GUID("guid", String.class, ""), SOSFTP_ID("sosftpId", Integer.class, 0), OPERATION("operation", String.class, ""), 
 	TRANSFER_TIMESTAMP("transferTimestamp", Date.class, null), PID("pid", Integer.class, 0), PPID("pPid", Integer.class, 0), 
-	TARGET_HOST("targetHost", String.class, ""), TARGET_HOST_IP("targetHostIP", String.class, ""), 
+	TARGET_HOST("targetHost", String.class, ""), TARGET_HOST_IP("targetHostIp", String.class, ""), 
 	TARGET_USER("targetUser", String.class, ""), TARGET_DIR("targetDir", String.class, ""), 
 	TARGET_FILENAME("targetFilename", String.class, ""), PROTOCOL("protocol", String.class, ""), 
 	PORT("port", Integer.class, 0), STATUS("status", String.class, ""), 
 	LAST_ERROR_MESSAGE("lastErrorMessage", String.class, ""), LOG_FILENAME("logFilename", String.class, ""), 
-	JUMP_HOST("jumpHostWilli", String.class, ""), JUMP_HOST_IP("jumpHostIp", String.class, "0.0.0.0"),
+	JUMP_HOST("jumpHost", String.class, ""), JUMP_HOST_IP("jumpHostIp", String.class, "0.0.0.0"),
 	JUMP_USER("jumpUser", String.class, ""), JUMP_PROTOCOL("jumpProtocol", String.class, ""),
 	JUMP_PORT("jumpPort", Integer.class, 0), CREATED("created", Date.class, null), 
 	CREATED_BY("createdBy", String.class, ""), MODIFIED("modified", Date.class, null), 
