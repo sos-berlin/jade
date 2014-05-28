@@ -10,6 +10,8 @@ import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.TableType;
+import com.sos.jade.backgroundservice.view.components.JadeFilesHistoryTable;
+import com.sos.jade.backgroundservice.view.components.JadeFilesTable;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.data.Item;
@@ -26,9 +28,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
-@Theme("bs")
-@Title("Jade Background Service")
-public class MainUI extends CustomComponent {
+public class MainView extends CustomComponent {
 	
 	private static final long serialVersionUID = 6368275374953898482L;
 	private String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
@@ -44,7 +44,7 @@ public class MainUI extends CustomComponent {
 	private JadeFilesTable tblFiles;
 	private Item markedRow;
 
-	public MainUI() {
+	public MainView() {
 		initJadeFileData();
 		initComponents();
 		
@@ -99,7 +99,7 @@ public class MainUI extends CustomComponent {
         tblHistory = (JadeFilesHistoryTable)initTable(TableType.HISTORY, null);
         scrollableFilePanel.setContent(tblFiles);
         scrollableHistoryPanel.setContent(tblHistory);
-        scrollableHistoryPanel.setVisible(false);
+        tblHistory.setVisible(false);
 	}
 	
 	private void initComponents(){
@@ -112,6 +112,13 @@ public class MainUI extends CustomComponent {
         vTitle.setHeight("70px");
         vLayout.addComponent(vTitle);
 
+        final VerticalLayout vRest = new VerticalLayout();
+        vRest.setSizeFull();
+
+        vLayout.addComponent(vRest);
+        vLayout.setExpandRatio(vTitle, 1);
+        vLayout.setExpandRatio(vRest, 9);
+
         final HorizontalLayout hLayout = new HorizontalLayout();
         vTitle.addComponent(hLayout);
 
@@ -121,14 +128,14 @@ public class MainUI extends CustomComponent {
         hLayout.addComponent(imgTitle);
 
         final Label lblTitle = new Label("JADE background service");
-        lblTitle.addStyleName("title");
+        lblTitle.addStyleName("titleLabel");
         hLayout.addComponent(lblTitle);
 
         cssFileTableLayout = initTableCssLayout(null, null);
-        vLayout.addComponent(cssFileTableLayout);
+        vRest.addComponent(cssFileTableLayout);
 
         cssHistoryTableLayout = initTableCssLayout(null, null);
-        vLayout.addComponent(cssHistoryTableLayout);
+        vRest.addComponent(cssHistoryTableLayout);
         
         scrollableFilePanel = initScrollablePanel();
         cssFileTableLayout.addComponent(scrollableFilePanel);
@@ -136,8 +143,8 @@ public class MainUI extends CustomComponent {
         scrollableHistoryPanel = initScrollablePanel(); 
         cssHistoryTableLayout.addComponent(scrollableHistoryPanel);
         
-		vLayout.setExpandRatio(cssFileTableLayout, 4);
-        vLayout.setExpandRatio(cssHistoryTableLayout, 5);
+		vRest.setExpandRatio(cssFileTableLayout, 2);
+        vRest.setExpandRatio(cssHistoryTableLayout, 1);
 
         initTables();
 	}
@@ -173,10 +180,10 @@ public class MainUI extends CustomComponent {
 	private void toggleTableVisiblity(Item item){
 		if(markedRow != null && markedRow.equals(item)){
 			markedRow = null;
-			scrollableHistoryPanel.setVisible(false);
+			tblHistory.setVisible(false);
 		}else{
 			markedRow = item;
-			scrollableHistoryPanel.setVisible(true);
+			tblHistory.setVisible(true);
 		}
 	}
 }

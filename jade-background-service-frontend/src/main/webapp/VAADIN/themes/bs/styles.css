@@ -7006,6 +7006,9 @@ body .bs.v-app .v-app-loading {
 
 .bs .titleLabel {
 	font-size: 30pt;
+	font-weight: bold;
+	padding-top: 20px;
+	padding-left: 10px;
 	vertical-align: bottom;
 	height: 70px;
 }
