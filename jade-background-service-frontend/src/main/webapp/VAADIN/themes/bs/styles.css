@@ -7004,11 +7004,24 @@ body .bs.v-app .v-app-loading {
 	background-image: url(../reindeer/window/img/black/content-bg.png);/** sprite-ref: black-verticals; sprite-alignment: repeat */
 }
 
-.bs .titleLabel {
+.bs .jadeTitleLabel {
 	font-size: 30pt;
 	font-weight: bold;
 	padding-top: 20px;
+	padding-bottom: 10px;
 	padding-left: 10px;
 	vertical-align: bottom;
 	height: 70px;
+}
+
+.bs .jadePanel {
+	background: none #F5F5F5 scroll scrollbar !important;
+}
+
+.bs .v-panel-content {
+	background-color: #F5F5F5 !important;
+}
+
+.bs .v-layout {
+	padding-bottom: 3px;
 }

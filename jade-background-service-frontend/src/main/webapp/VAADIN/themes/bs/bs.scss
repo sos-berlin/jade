@@ -15,12 +15,30 @@
   $round-corners-radius: 8px;
 
   /**********style definitions here !**********/  
-  .titleLabel{
+  
+  /***valid for the complete page !***
+	background-color: #F5F5F5 !important;
+  */
+  
+  .jadeTitleLabel{
   	font-size: 30pt;
   	font-weight: bold;
   	padding-top: 20px;
+  	padding-bottom: 10px;
   	padding-left: 10px;
   	vertical-align: bottom;
   	height: 70px;
+  }
+  
+  .jadePanel{
+  	background: none #F5F5F5 scroll scrollbar !important;
+  }
+  
+  .v-panel-content{
+  	background-color: #F5F5F5 !important;
+  }
+  
+  .v-layout{
+  	padding-bottom: 3px;
   }
 }

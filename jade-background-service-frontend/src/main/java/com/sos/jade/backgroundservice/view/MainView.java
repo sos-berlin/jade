@@ -12,8 +12,7 @@ import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.TableType;
 import com.sos.jade.backgroundservice.view.components.JadeFilesHistoryTable;
 import com.sos.jade.backgroundservice.view.components.JadeFilesTable;
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
+import com.sos.jade.backgroundservice.view.components.JadeFilterLayout;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -43,6 +42,7 @@ public class MainView extends CustomComponent {
 	private JadeFilesHistoryTable tblHistory;
 	private JadeFilesTable tblFiles;
 	private Item markedRow;
+	private JadeFilterLayout filterLayout;
 
 	public MainView() {
 		initJadeFileData();
@@ -77,12 +77,13 @@ public class MainView extends CustomComponent {
 		// first query for the jadeFilesItems
         jadeFilesDBLayer.initSession();
         try {
-//			fileItems = jadeFilesDBLayer.getFilesFromTo(new Date(1, 1, 2000), new Date());
-			fileItems = jadeFilesDBLayer.getFiles();
+ 			fileItems = jadeFilesDBLayer.getFiles();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
 	private Table initTable(TableType tableType, Object data){
 		switch(tableType){
 		case FILE:
@@ -99,6 +100,7 @@ public class MainView extends CustomComponent {
         tblHistory = (JadeFilesHistoryTable)initTable(TableType.HISTORY, null);
         scrollableFilePanel.setContent(tblFiles);
         scrollableHistoryPanel.setContent(tblHistory);
+//        tblFiles.setVisible(false);
         tblHistory.setVisible(false);
 	}
 	
@@ -128,52 +130,46 @@ public class MainView extends CustomComponent {
         hLayout.addComponent(imgTitle);
 
         final Label lblTitle = new Label("JADE background service");
-        lblTitle.addStyleName("titleLabel");
+        lblTitle.setStyleName("jadeTitleLabel");
         hLayout.addComponent(lblTitle);
 
-        cssFileTableLayout = initTableCssLayout(null, null);
+        filterLayout = new JadeFilterLayout(jadeFilesDBLayer);
+        vRest.addComponent(filterLayout);
+        
+        cssFileTableLayout = initTableCssLayout();
         vRest.addComponent(cssFileTableLayout);
 
-        cssHistoryTableLayout = initTableCssLayout(null, null);
+        cssHistoryTableLayout = initTableCssLayout();
         vRest.addComponent(cssHistoryTableLayout);
         
-        scrollableFilePanel = initScrollablePanel();
+        scrollableFilePanel = initScrollablePanel("100%", "100%");
         cssFileTableLayout.addComponent(scrollableFilePanel);
 
-        scrollableHistoryPanel = initScrollablePanel(); 
+        scrollableHistoryPanel = initScrollablePanel("100%", "100%"); 
         cssHistoryTableLayout.addComponent(scrollableHistoryPanel);
-        
-		vRest.setExpandRatio(cssFileTableLayout, 2);
+
+        vRest.setExpandRatio(filterLayout, 1);
+		vRest.setExpandRatio(cssFileTableLayout, 1);
         vRest.setExpandRatio(cssHistoryTableLayout, 1);
 
         initTables();
 	}
 	
-	private HorizontalLayout initTableLayout(String width, String height){
-		HorizontalLayout hLayout = new HorizontalLayout();
-		if (width != null && height != null){
-	        hLayout.setWidth(width);
-	        hLayout.setHeight(height);
-		}else{
-			hLayout.setSizeUndefined();
-		}
-		return hLayout;
-	}
-	
-	private CssLayout initTableCssLayout(String width, String height){
+	private CssLayout initTableCssLayout(){
 		CssLayout cssLayout = new CssLayout();
-		if (width != null && height != null){
-			cssLayout.setWidth(width);
-			cssLayout.setHeight(height);
-		}else{
-			cssLayout.setSizeUndefined();
-		}
+		cssLayout.setSizeFull();
 		return cssLayout;
 	}
 	
-	private Panel initScrollablePanel(){
+	private Panel initScrollablePanel(String width, String height){
         Panel panel = new Panel();
-        panel.setSizeFull();
+		if (width != null && height != null){
+			panel.setWidth(width);
+			panel.setHeight(height);
+		}else{
+	        panel.setSizeFull();
+		}
+		panel.setStyleName("jadePanel");
 		return panel;
 	}
 	
@@ -186,4 +182,5 @@ public class MainView extends CustomComponent {
 			tblHistory.setVisible(true);
 		}
 	}
+	
 }
