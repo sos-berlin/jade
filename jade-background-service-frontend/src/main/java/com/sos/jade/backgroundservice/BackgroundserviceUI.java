@@ -1,32 +1,21 @@
 package com.sos.jade.backgroundservice;
 
-import java.io.File;
-
 import javax.servlet.annotation.WebServlet;
 
-import com.sos.jade.backgroundservice.view.MainUI;
+import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
-@Theme("mytheme")
+@Theme("bs")
+@Title("Jade Background Service")
 @SuppressWarnings("serial")
 public class BackgroundserviceUI extends UI
 {
-	private String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class)
     public static class Servlet extends VaadinServlet {
@@ -43,11 +32,10 @@ public class BackgroundserviceUI extends UI
 			VaadinSession.getCurrent().getLockInstance().unlock();
 		}
 
-    	MainUI ui = new MainUI();
+    	MainView ui = new MainView();
         setContent(ui);
 		ui.setSizeFull();
 		
-		Page.getCurrent().setTitle("JADE Background Service");
     }
 
 }
