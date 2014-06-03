@@ -7016,12 +7016,45 @@ body .bs.v-app .v-app-loading {
 
 .bs .jadePanel {
 	background: none #F5F5F5 scroll scrollbar !important;
+	overflow: hidden;
 }
 
 .bs .v-panel-content {
 	background-color: #F5F5F5 !important;
+	overflow: hidden;
 }
 
 .bs .v-layout {
 	padding-bottom: 3px;
+}
+
+.bs .v-select-select {
+	border-radius: 3px;
+	border: 1px solid #D2D3D4;
+	display: inline-block;
+	-webkit-display: inline-block;
+	-moz-display: inline-block;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.bs .v-table {
+	border-radius: 3px;
+}
+
+.bs .v-table-table {
+	overflow: visible !important;
+}
+
+.bs .v-table-body {
+	background-color: #F5F5F5;
+}
+
+.bs .v-table-row {
+	background-color: #FFFFFF;
+}
+
+.bs .v-table-row-odd {
+	background-color: #EFF0F1;
 }

@@ -14,6 +14,8 @@
   
   $round-corners-radius: 8px;
 
+  $round-corners-component-radius: 3px;
+
   /**********style definitions here !**********/  
   
   /***valid for the complete page !***
@@ -32,13 +34,48 @@
   
   .jadePanel{
   	background: none #F5F5F5 scroll scrollbar !important;
+  	overflow: hidden;
   }
   
   .v-panel-content{
   	background-color: #F5F5F5 !important;
+  	overflow: hidden;
   }
   
   .v-layout{
   	padding-bottom: 3px;
   }
+ 
+  .v-select-select{
+    border-radius: $round-corners-component-radius;
+    border: 1px solid #D2D3D4;
+    display: inline-block;
+    -webkit-display: inline-block;
+    -moz-display: inline-block;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+  }
+  
+  .v-table{
+  	border-radius: $round-corners-component-radius;
+  }
+  
+  .v-table-table{
+  	overflow: visible !important;
+  }
+  
+  .v-table-body{
+/*  	overflow: visible; */
+  	background-color: #F5F5F5;
+  }
+  
+  .v-table-row{
+  	background-color: #FFFFFF;
+  }
+  
+  .v-table-row-odd{
+  	background-color: #EFF0F1;
+  }
+  
 }

@@ -1,23 +1,34 @@
 package com.sos.jade.backgroundservice.view.components;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import sos.ftphistory.JadeFilesFilter;
-import sos.ftphistory.db.JadeFilesDBLayer;
 
+import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
+import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
+import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
+import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerImpl;
+import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
+import com.sos.jade.backgroundservice.view.MainView;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 
 public class JadeFilterLayout extends VerticalLayout implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private HorizontalLayout hlMain;
+	private VerticalLayout vlMain;
 	private Date createdFrom;
 	private Date createdTo;
 	private Date modifiedFrom;
@@ -40,28 +51,35 @@ public class JadeFilterLayout extends VerticalLayout implements Serializable{
 	private TextField tfSourceFile;
 	private TextField tfSourceHost;
 	private TextField tfSourceUser;
+	private NativeSelect nsStatus;
+	private NativeSelect nsOperation;
+
+	@SuppressWarnings("unused")
 	private static final long oneDay = 24 * 60 * 60 * 1000;
-	private JadeFilesDBLayer jadeFilesDBLayer;
+	private MainView ui;
 	
-	public JadeFilterLayout(JadeFilesDBLayer jadeFilesDBLayer){
+	public JadeFilterLayout(MainView ui){
 		super();
-		this.jadeFilesDBLayer = jadeFilesDBLayer;
+		this.ui = ui;
 		this.setSizeFull();
+		this.setMargin(true);
 		initJadeFilterComponents();
 	}
 	
 	private void initJadeFilterComponents(){
-		hlMain = new HorizontalLayout();
-		hlMain.setSizeFull();
-		addComponent(hlMain);
+		vlMain = new VerticalLayout();
+		vlMain.setHeight(200.0f, Unit.PIXELS);
+		addComponent(vlMain);
 
-		VerticalLayout vlFilterLeft = initVLayout();
-		hlMain.addComponent(vlFilterLeft);
-		VerticalLayout vlFilterMiddle = initVLayout();
-		hlMain.addComponent(vlFilterMiddle);
-		VerticalLayout vlFilterRight = initVLayout();
-		hlMain.addComponent(vlFilterRight);
-
+		HorizontalLayout hlFirst = initHLayout();
+		vlMain.addComponent(hlFirst);
+		HorizontalLayout hlSecond = initHLayout();
+		vlMain.addComponent(hlSecond);
+		HorizontalLayout hlThird = initHLayout();
+		vlMain.addComponent(hlThird);
+		HorizontalLayout hlForth = initHLayout();
+		vlMain.addComponent(hlForth);
+		
 		dfCreatedFrom = initDateField("createdFrom", createdFrom);
 		dfCreatedTo = initDateField("createdTo", createdTo);
 		dfModifiedFrom = initDateField("modifiedFrom", modifiedFrom);
@@ -77,44 +95,78 @@ public class JadeFilterLayout extends VerticalLayout implements Serializable{
 		tfSourceUser = initTextField("sourceUser", sourceUser);
 		Label lblDummy = initDummyLabel();
 		Label lblDummy2 = initDummyLabel();
-		Label lblDummy3 = initDummyLabel();
-		Label lblDummy4 = initDummyLabel();
+//		Label lblDummy3 = initDummyLabel();
+
+		List<String> statusList = new ArrayList<String>();
+		statusList.add("success");
+		statusList.add("error");
+		nsStatus = new NativeSelect("Status", statusList);
+		List<String> processList = new ArrayList<String>();
+		processList.add("send");
+		processList.add("receive");
+		nsOperation = new NativeSelect("Process", processList);
 		Button btnCommit = new Button("OK");
-		
-		vlFilterLeft.addComponents(dfCreatedFrom, dfModifiedFrom, tfMandator, tfSourceHost, btnCommit);
-		vlFilterMiddle.addComponents(dfCreatedTo, dfModifiedTo, tfSourceDir, tfSourceUser, lblDummy);
-		vlFilterRight.addComponents(tfCreatedBy, tfModifiedBy, tfSourceFile, lblDummy2, lblDummy3);
-		hlMain.setExpandRatio(vlFilterLeft, 1);
-		hlMain.setExpandRatio(vlFilterMiddle, 1);
-		hlMain.setExpandRatio(vlFilterRight, 1);
+
+		hlFirst.addComponents(tfMandator, dfCreatedFrom, dfCreatedTo, tfCreatedBy);
+		hlFirst.setExpandRatio(tfMandator, 1);
+		hlFirst.setExpandRatio(dfCreatedFrom, 1);
+		hlFirst.setExpandRatio(dfCreatedTo, 1);
+		hlFirst.setExpandRatio(tfCreatedBy, 1);
+		hlSecond.addComponents(nsStatus, dfModifiedFrom, dfModifiedTo, tfModifiedBy);
+		hlSecond.setExpandRatio(nsStatus, 1);
+		hlSecond.setExpandRatio(dfModifiedFrom, 1);
+		hlSecond.setExpandRatio(dfModifiedTo, 1);
+		hlSecond.setExpandRatio(tfModifiedBy, 1);
+		hlThird.addComponents(tfSourceDir, tfSourceFile, tfSourceHost, tfSourceUser);
+		hlThird.setExpandRatio(tfSourceDir, 1);
+		hlThird.setExpandRatio(tfSourceFile, 1);
+		hlThird.setExpandRatio(tfSourceHost, 1);
+		hlThird.setExpandRatio(tfSourceUser, 1);
+		hlForth.addComponents(nsOperation, lblDummy, lblDummy2, btnCommit);
+		hlForth.setExpandRatio(nsOperation, 1);
+		hlForth.setExpandRatio(lblDummy, 1);
+		hlForth.setExpandRatio(lblDummy2, 1);
+		hlForth.setExpandRatio(btnCommit, 1);
+		hlForth.setComponentAlignment(btnCommit, Alignment.MIDDLE_LEFT);
 		
 		btnCommit.addClickListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void buttonClick(ClickEvent event) {
+				ui.setMarkedRow(null);
+				ui.setHistoryTableNotVisible();
 				JadeFilesFilter filter = new JadeFilesFilter();
 				checkTextFieldValues();
-				filter.setCreatedFrom(createdFrom);
-				filter.setCreatedTo(createdTo);
-				filter.setCreatedBy(createdBy);
-				filter.setModifiedTo(modifiedTo);
-				filter.setModifiedFrom(modifiedFrom);
-				filter.setModifiedBy(modifiedBy);
-				filter.setMandator(mandator);
-				filter.setSourceDir(sourceDir);
-				filter.setSourceFilename(sourceFile);
-				filter.setSourceHost(sourceHost);
-				filter.setSourceUser(sourceUser);
-				jadeFilesDBLayer.setFilter(filter);
-				// TODO Callback impl
+				filter.setCreatedFrom(dfCreatedFrom.getValue());
+				filter.setCreatedTo(dfCreatedTo.getValue());
+				filter.setCreatedBy(tfCreatedBy.getValue());
+				filter.setModifiedTo(dfModifiedTo.getValue());
+				filter.setModifiedFrom(dfModifiedFrom.getValue());
+				filter.setModifiedBy(tfModifiedBy.getValue());
+				filter.setMandator(tfMandator.getValue());
+				filter.setSourceDir(tfSourceDir.getValue());
+				filter.setSourceFilename(tfSourceFile.getValue());
+				filter.setSourceHost(tfSourceHost.getValue());
+				filter.setSourceUser(tfSourceUser.getValue());
+				// TODO fileSize impl
+				getFilteredData(new JadeFileListenerProxy(ui), filter);
+				((FilterLayoutWindow)JadeFilterLayout.this.getParent()).close();
 			}
 		});
-//		addComponent(btnCommit);
 	}
 	
-	private VerticalLayout initVLayout(){
-		VerticalLayout vl = new VerticalLayout();
-		vl.setWidth(200.0f, Unit.PIXELS);
-		return vl;
+//	private VerticalLayout initVLayout(){
+//		VerticalLayout vl = new VerticalLayout();
+//		vl.setWidth(150.0f, Unit.PIXELS);
+//		return vl;
+//	}
+	
+	private HorizontalLayout initHLayout(){
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setHeight(50.0f, Unit.PIXELS);
+		hl.setWidth(600.0f, Unit.PIXELS);
+		return hl;
 	}
 	
 	private Label initDummyLabel(){
@@ -131,9 +183,10 @@ public class JadeFilterLayout extends VerticalLayout implements Serializable{
 	
 	private TextField initTextField(String caption, String text){
 		TextField tf = new TextField(caption, text);
+		tf.setHeight(23.0f, Unit.PIXELS);
+		tf.setWidth("100%");
 		tf.setInputPrompt(caption);
 		tf.setValue("");
-		tf.setSizeFull();
 		return tf;
 	}
 
@@ -160,5 +213,55 @@ public class JadeFilterLayout extends VerticalLayout implements Serializable{
 			sourceUser = null;
 		}
 	}
+
+
+	private void getFilteredData(final IJadeFileListener listener, final JadeFilesFilter filesFilter) {
+		
+		SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(1);
+			objTPE.runTask(        new Thread() {
+	            @Override
+	            public void run() {
+	                try {
+	                	listener.filterJadeFiles(filesFilter);
+	                } catch (final Exception e) {
+	                    listener.getException(e);
+	                }
+					UI.getCurrent().access(new Runnable() {
+						@Override
+						public void run() {
+					        ui.getTblFiles().populateDatasource(ui.getFileItems());
+					        ui.getTblFiles().markAsDirty();
+					        ui.getTblFiles().setVisible(true);
+						}
+					});
+	            };
+	        });
+		try {
+			objTPE.shutDown();
+			objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                	listener.filterJadeFiles(filesFilter);
+//                } catch (final Exception e) {
+//                    listener.getException(e);
+//                }
+//				UI.getCurrent().access(new Runnable() {
+//					@Override
+//					public void run() {
+//				        ui.getTblFiles().populateDatasource(ui.getFileItems());
+//				        ui.getTblFiles().markAsDirty();
+//				        ui.getTblFiles().setVisible(true);
+//					}
+//				});
+//            };
+//        }.start();
+    }
+	
 }
 

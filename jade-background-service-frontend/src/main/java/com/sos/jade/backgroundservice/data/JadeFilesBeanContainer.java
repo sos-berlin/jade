@@ -35,11 +35,10 @@ public class JadeFilesBeanContainer {
     }
 
     private static class JadeFilesBeanCreator extends BeanCreator<JadeFilesDBItem> {
-    	private List<JadeFilesDBItem> items;
-        
-    	public JadeFilesBeanCreator() {
-        	this.items = items;
-        }
+//    	private List<JadeFilesDBItem> items;
+//        
+////    	public JadeFilesBeanCreator() {
+////        }
 
         @Override
         public JadeFilesDBItem createItem() {

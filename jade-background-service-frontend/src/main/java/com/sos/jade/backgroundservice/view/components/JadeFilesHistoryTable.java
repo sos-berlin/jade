@@ -15,6 +15,8 @@ public class JadeFilesHistoryTable extends Table{
 	private static final long serialVersionUID = 2134585331362934124L;
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private BeanItemContainer<JadeFilesHistoryDBItem> container;
+	private static final int PAGE_LENGTH = 10;
+	
 	private static final Object[] visibleColumns = new String[] {
 		JadeHistoryFileColumns.CREATED.getName(), JadeHistoryFileColumns.CREATED_BY.getName(),
 		JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName(), 
@@ -36,15 +38,19 @@ public class JadeFilesHistoryTable extends Table{
 		init();
 	}
 	
+	/**
+	 * initializes the table component with its dimension and visible columns
+	 */
 	private void init(){
 		if (historyItems != null && historyItems.size() > 0){
 			this.setContainerDataSource(this.container = (new JadeHistoryBeanContainer()).createJadeFilesHistoryContainer(historyItems));
 		}
-		setSizeUndefined();
+		setSizeFull();
 		setSelectable(true);
 		setImmediate(true);
 		setEditable(false);
 		setColumnReorderingAllowed(true);
+		setPageLength(PAGE_LENGTH);
 		if (container != null){
 			this.setVisibleColumns(visibleColumns);
 		}

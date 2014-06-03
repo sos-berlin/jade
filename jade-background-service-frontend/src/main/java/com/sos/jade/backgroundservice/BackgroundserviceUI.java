@@ -3,6 +3,8 @@ package com.sos.jade.backgroundservice;
 import javax.servlet.annotation.WebServlet;
 
 import com.sos.jade.backgroundservice.view.MainView;
+import com.sos.jade.backgroundservice.view.components.FilterLayoutWindow;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -13,12 +15,16 @@ import com.vaadin.ui.UI;
 
 @Theme("bs")
 @Title("Jade Background Service")
-@SuppressWarnings("serial")
-public class BackgroundserviceUI extends UI
-{
-    @WebServlet(value = "/*", asyncSupported = true)
+@Push
+public class BackgroundserviceUI extends UI {
+	private static final long serialVersionUID = 1L;
+	private MainView ui;
+	private FilterLayoutWindow modalWindow;
+
+	@WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class)
     public static class Servlet extends VaadinServlet {
+		private static final long serialVersionUID = 1L;
     }
 
     @Override
@@ -31,11 +37,14 @@ public class BackgroundserviceUI extends UI
 		} finally {
 			VaadinSession.getCurrent().getLockInstance().unlock();
 		}
-
-    	MainView ui = new MainView();
+    	ui = new MainView();
         setContent(ui);
 		ui.setSizeFull();
-		
+		modalWindow = new FilterLayoutWindow(ui);
     }
+
+	public FilterLayoutWindow getModalWindow() {
+		return modalWindow;
+	}
 
 }
