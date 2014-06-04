@@ -641,7 +641,8 @@ public abstract class JadeTestBase extends JSToolBox {
 	 * @throws java.lang.Exception
 	 */
 	@Before public void setUp() throws Exception {
-		String strLog4JFileName = "./log4j.properties";
+//		String strLog4JFileName = "./log4j.properties";
+		String strLog4JFileName = "./src/test/resources/log4j.properties";
 		String strT = new File(strLog4JFileName).getAbsolutePath();
 		objLogger = new Log4JHelper(strLog4JFileName);
 		//		objLogger.setLevel(Level.DEBUG);
@@ -1733,8 +1734,8 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);
 		objOptions.Target().replacing.Value(".*");
 		objOptions.Target().replacement.Value("[filename:uppercase]_[date:yyyMMddHHmmss]");
-		objOptions.PreTransferCommands.Value("echo PreTransferCommands; pwd; ls");
-		objOptions.PostTransferCommands.Value("echo PostTransferCommands; pwd; ls");
+		objOptions.PreTransferCommands.Value("echo PreTransferCommands; pwd");
+		objOptions.PostTransferCommands.Value("echo PostTransferCommands; pwd");
 		objOptions.Source().Pre_Command.Value("echo SourcePreCommand $SourceTransferFileName + $SourceFileName");
 		objOptions.Source().Post_Command.Value("echo SourcePostCommand $SourceTransferFileName + $SourceFileName");
 		objOptions.Source().TFN_Post_Command.Value("echo SourceTFNPostCommand $SourceTransferFileName + $SourceFileName");
