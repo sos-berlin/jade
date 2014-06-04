@@ -5,11 +5,11 @@
 
     <parent>
         <groupId>com.sos-berlin.products</groupId>
-        <artifactId>jobscheduler</artifactId>
+        <artifactId>jade</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.sos-berlin.products.jobscheduler</groupId>
+    <groupId>com.sos-berlin.products.jade</groupId>
     <artifactId>data-exchange</artifactId>
     <name>${project.artifactId}</name>
 

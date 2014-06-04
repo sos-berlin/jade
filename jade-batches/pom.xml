@@ -34,7 +34,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sos-berlin.products.jobscheduler</groupId>
+            <groupId>com.sos-berlin.products.jade</groupId>
             <artifactId>data-exchange</artifactId>
             <version>${project.version}</version>
         </dependency>
