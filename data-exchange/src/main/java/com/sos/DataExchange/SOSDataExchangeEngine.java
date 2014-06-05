@@ -31,6 +31,7 @@ import com.sos.JSHelper.Basics.JSVersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.JSOptionsClass;
 import com.sos.JSHelper.Options.SOSOptionBoolean;
+import com.sos.JSHelper.Options.SOSOptionCommandString;
 import com.sos.JSHelper.Options.SOSOptionFolderName;
 import com.sos.JSHelper.Options.SOSOptionRegExp;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
@@ -941,13 +942,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
 								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
 								objSourceFileList.renameAtomicTransferFiles();
-								if (objOptions.PostTransferCommands.IsNotEmpty()) {
-									// TODO Command separator as global option
-									for (String strCmd : objOptions.PostTransferCommands.split()) {
-										strCmd = objOptions.replaceVars(strCmd);
-										objDataTargetClient.getHandler().ExecuteCommand(strCmd);
-									}
-								}
+								
+								executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
+								executePostTransferCommands(objDataTargetClient, objOptions.Target().PostTransferCommands);
+								executePostTransferCommands(objDataSourceClient, objOptions.Source().PostTransferCommands);
+								
 								objSourceFileList.DeleteSourceFiles();
 								if (objOptions.TransactionMode.isTrue()) {
 									objSourceFileList.EndTransaction();
@@ -1007,6 +1006,18 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			throw e;
 		}
 	}
+	
+	
+	private void executePostTransferCommands(final ISOSVfsFileTransfer objVfsFileTransfer, final SOSOptionCommandString postTransferCommands) throws Exception {
+		if (postTransferCommands.IsNotEmpty()) {
+			// TODO Command separator as global option
+			for (String strCmd : postTransferCommands.split()) {
+				strCmd = objOptions.replaceVars(strCmd);
+				objVfsFileTransfer.getHandler().ExecuteCommand(strCmd);
+			}
+		}
+	}
+	
 
 	private void selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
 			final SOSOptionBoolean poptRecurseFolders) throws Exception {
