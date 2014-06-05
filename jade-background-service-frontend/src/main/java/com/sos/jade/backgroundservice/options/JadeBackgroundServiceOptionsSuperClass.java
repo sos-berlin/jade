@@ -72,12 +72,12 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	 *
 	 */
 	@JSOptionDefinition(
-						name = "click_for_Details",
+						name = "clickForDetails",
 						description = "",
-						key = "click_for_Details",
+						key = "clickForDetails",
 						type = "SOSOptionString",
 						mandatory = false)
-	public SOSOptionBoolean		click_for_Details	= new SOSOptionBoolean(this, conClassName + ".click_for_Details", // HashMap-Key
+	public SOSOptionBoolean		clickForDetails	= new SOSOptionBoolean(this, conClassName + ".clickForDetails", // HashMap-Key
 															"", // Titel
 															"false", // InitValue
 															"false", // DefaultValue
@@ -85,7 +85,7 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 													);
 	
 	/**
-	 * \brief getClick_for_Details : 
+	 * \brief getClickForDetails : 
 	 * 
 	 * \details
 	 * 
@@ -93,41 +93,43 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	 * \return 
 	 *
 	 */
-	public SOSOptionBoolean getClick_for_Details() {
-		return click_for_Details;
+	public SOSOptionBoolean getClickForDetails() {
+		return clickForDetails;
 	}
 
 	/**
-	 * \brief setClick_for_Details : 
+	 * \brief setClickForDetails : 
 	 * 
 	 * \details
 	 * 
 	 *
-	 * @param Click_for_Details : 
+	 * @param ClickForDetails : 
 	 */
-	public void setClick_for_Details(final SOSOptionBoolean p_click_for_Details) {
-		click_for_Details = p_click_for_Details;
+	public void setClickForDetails(final SOSOptionBoolean pClickForDetails) {
+		clickForDetails = pClickForDetails;
 	}
+	
 	/**
-	 * \var Hibernate_Configuration_File_Name : 
+	 * \var hibernateConfigurationFileName : 
 	 * 
 	 *
 	 */
 	@JSOptionDefinition(
-						name = "hibernate_Configuration_File_Name",
+						name = "hibernateConfigurationFileName",
 						description = "",
-						key = "hibernate_Configuration_File_Name",
+						key = "hibernateConfigurationFileName",
 						type = "SOSOptionString",
 						mandatory = true)
-	public SOSOptionInFileName	hibernate_Configuration_File_Name	= new SOSOptionInFileName(this, conClassName + ".hibernate_Configuration_File_Name", // HashMap-Key
+	public SOSOptionInFileName	hibernateConfigurationFileName	= new SOSOptionInFileName(this, conClassName + ".hibernateConfigurationFileName", // HashMap-Key
 																			"", // Titel
 																			"env:JADE_BS_HIBERNATE_CONFIG", // InitValue
 																			"hibernate.cfg.xml", // DefaultValue
 																			true // isMandatory
 																	);
-	public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernate_Configuration_File_Name.SetAlias("HibernateConf", "H");
+	public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.SetAlias("HibernateConf", "H");
+
 	/**
-	 * \brief getHibernate_Configuration_File_Name : 
+	 * \brief getHibernateConfigurationFileName : 
 	 * 
 	 * \details
 	 * 
@@ -135,20 +137,20 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	 * \return 
 	 *
 	 */
-	public SOSOptionInFileName getHibernate_Configuration_File_Name() {
-		return hibernate_Configuration_File_Name;
+	public SOSOptionInFileName getHibernateConfigurationFileName() {
+		return hibernateConfigurationFileName;
 	}
 
 	/**
-	 * \brief setHibernate_Configuration_File_Name : 
+	 * \brief setHibernateConfigurationFileName : 
 	 * 
 	 * \details
 	 * 
 	 *
-	 * @param hibernate_Configuration_File_Name : 
+	 * @param hibernateConfigurationFileName : 
 	 */
-	public void setHibernate_Configuration_File_Name(final SOSOptionInFileName p_hibernate_Configuration_File_Name) {
-		hibernate_Configuration_File_Name = p_hibernate_Configuration_File_Name;
+	public void setHibernateConfigurationFileName(final SOSOptionInFileName pHibernateConfigurationFileName) {
+		hibernateConfigurationFileName = pHibernateConfigurationFileName;
 	}
 
 	public JadeBackgroundServiceOptionsSuperClass() {
