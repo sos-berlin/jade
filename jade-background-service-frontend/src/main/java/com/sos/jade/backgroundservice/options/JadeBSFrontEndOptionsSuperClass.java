@@ -121,7 +121,7 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 															"false", // DefaultValue
 															false // isMandatory
 													);
-
+	
 	/**
 	 * \brief getClick_for_Details : 
 	 * 
@@ -163,7 +163,7 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 																			"hibernate.cfg.xml", // DefaultValue
 																			true // isMandatory
 																	);
-
+	public SOSOptionInFileName HibernateConf = (SOSOptionInFileName) Hibernate_Configuration_File_Name.SetAlias("HibernateConf", "H");
 	/**
 	 * \brief getHibernate_Configuration_File_Name : 
 	 * 
