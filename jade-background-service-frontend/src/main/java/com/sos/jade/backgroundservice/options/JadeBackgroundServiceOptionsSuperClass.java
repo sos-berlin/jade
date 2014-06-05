@@ -12,10 +12,10 @@ import com.sos.JSHelper.Options.SOSOptionBoolean;
 import com.sos.JSHelper.Options.SOSOptionInFileName;
 
 /**
- * \class 		JadeBSFrontEndOptionsSuperClass - JadeBSFrontEnd
+ * \class 		JadeBackgroundServiceOptionsSuperClass - JadeBackgroundService
  *
  * \brief 
- * An Options-Super-Class with all Options. This Class will be extended by the "real" Options-class (\see JadeBSFrontEndOptions.
+ * An Options-Super-Class with all Options. This Class will be extended by the "real" Options-class (\see JadeBackgroundServiceOptions.
  * The "real" Option class will hold all the things, which are normaly overwritten at a new generation
  * of the super-class.
  *
@@ -44,65 +44,27 @@ import com.sos.JSHelper.Options.SOSOptionInFileName;
  *
  * \section TestData Eine Hilfe zum Erzeugen einer HashMap mit Testdaten
  *
- * Die folgenden Methode kann verwendet werden, um f�r einen Test eine HashMap
- * mit sinnvollen Werten f�r die einzelnen Optionen zu erzeugen.
+ * Die folgenden Methode kann verwendet werden, um für einen Test eine HashMap
+ * mit sinnvollen Werten für die einzelnen Optionen zu erzeugen.
  *
  * \verbatim
  private HashMap <String, String> SetJobSchedulerSSHJobOptions (HashMap <String, String> pobjHM) {
-	pobjHM.put ("		JadeBSFrontEndOptionsSuperClass.auth_file", "test");  // This parameter specifies the path and name of a user's pr
+	pobjHM.put ("		JadeBackgroundServiceOptionsSuperClass.auth_file", "test");  // This parameter specifies the path and name of a user's pr
 		return pobjHM;
   }  //  private void SetJobSchedulerSSHJobOptions (HashMap <String, String> pobjHM)
  * \endverbatim
  */
 @JSOptionClass(
-				name = "JadeBSFrontEndOptionsSuperClass",
-				description = "JadeBSFrontEndOptionsSuperClass")
-public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
+				name = "JadeBackgroundServiceOptionsSuperClass",
+				description = "JadeBackgroundServiceOptionsSuperClass")
+public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	/**
 	 * 
 	 */
 	private static final long	serialVersionUID	= 338878527661019237L;
-	private final String		conClassName		= "JadeBSFrontEndOptionsSuperClass";
+	private final String		conClassName		= "JadeBackgroundServiceOptionsSuperClass";
 	@SuppressWarnings("unused")
-	private static Logger		logger				= Logger.getLogger(JadeBSFrontEndOptionsSuperClass.class);
-	/**
-	 * \option TestOption
-	 * \type SOSOptionBoolean
-	 * \brief TestOption - Eine Test-Option für Herrn Petzold
-	 *
-	 * \details
-	 * Eine Test-Option für Herrn Petzold
-	 *
-	 * \mandatory: true
-	 *
-	 * \created 05.06.2014 13:30:51 by KB
-	 */
-	@JSOptionDefinition(
-						name = "TestOption",
-						description = "Eine Test-Option für Herrn Petzold",
-						key = "TestOption",
-						type = "SOSOptionBoolean",
-						mandatory = true)
-	public SOSOptionBoolean	TestOption	= new SOSOptionBoolean( // ...
-														this, // ....
-														conClassName + ".TestOption", // ...
-														"Eine Test-Option für Herrn Petzold", // ...
-														"false", // ...
-														"false", // ...
-														true);
-
-																
-																
-																public SOSOptionBoolean getTestOption() {
-																	@SuppressWarnings("unused") final String conMethodName = conClassName + "::getTestOption";
-																	return TestOption;
-																} // public String getTestOption
-
-																public JadeBSFrontEndOptionsSuperClass setTestOption(final SOSOptionBoolean pstrValue) {
-																	@SuppressWarnings("unused") final String conMethodName = conClassName + "::setTestOption";
-																	TestOption = pstrValue;
-																	return this;
-																} // public JadeBSFrontEndOptionsSuperClass setTestOption
+	private static Logger		logger				= Logger.getLogger(JadeBackgroundServiceOptionsSuperClass.class);
 
 	/**
 	 * \var Click_for_Details : 
@@ -110,12 +72,12 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	 *
 	 */
 	@JSOptionDefinition(
-						name = "Click_for_Details",
+						name = "click_for_Details",
 						description = "",
-						key = "Click_for_Details",
+						key = "click_for_Details",
 						type = "SOSOptionString",
 						mandatory = false)
-	public SOSOptionBoolean		Click_for_Details	= new SOSOptionBoolean(this, conClassName + ".Click_for_Details", // HashMap-Key
+	public SOSOptionBoolean		click_for_Details	= new SOSOptionBoolean(this, conClassName + ".click_for_Details", // HashMap-Key
 															"", // Titel
 															"false", // InitValue
 															"false", // DefaultValue
@@ -132,7 +94,7 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	 *
 	 */
 	public SOSOptionBoolean getClick_for_Details() {
-		return Click_for_Details;
+		return click_for_Details;
 	}
 
 	/**
@@ -143,8 +105,8 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	 *
 	 * @param Click_for_Details : 
 	 */
-	public void setClick_for_Details(final SOSOptionBoolean p_Click_for_Details) {
-		Click_for_Details = p_Click_for_Details;
+	public void setClick_for_Details(final SOSOptionBoolean p_click_for_Details) {
+		click_for_Details = p_click_for_Details;
 	}
 	/**
 	 * \var Hibernate_Configuration_File_Name : 
@@ -152,18 +114,18 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	 *
 	 */
 	@JSOptionDefinition(
-						name = "Hibernate_Configuration_File_Name",
+						name = "hibernate_Configuration_File_Name",
 						description = "",
-						key = "Hibernate_Configuration_File_Name",
+						key = "hibernate_Configuration_File_Name",
 						type = "SOSOptionString",
 						mandatory = true)
-	public SOSOptionInFileName	Hibernate_Configuration_File_Name	= new SOSOptionInFileName(this, conClassName + ".Hibernate_Configuration_File_Name", // HashMap-Key
+	public SOSOptionInFileName	hibernate_Configuration_File_Name	= new SOSOptionInFileName(this, conClassName + ".hibernate_Configuration_File_Name", // HashMap-Key
 																			"", // Titel
 																			"env:JADE_BS_HIBERNATE_CONFIG", // InitValue
 																			"hibernate.cfg.xml", // DefaultValue
 																			true // isMandatory
 																	);
-	public SOSOptionInFileName HibernateConf = (SOSOptionInFileName) Hibernate_Configuration_File_Name.SetAlias("HibernateConf", "H");
+	public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernate_Configuration_File_Name.SetAlias("HibernateConf", "H");
 	/**
 	 * \brief getHibernate_Configuration_File_Name : 
 	 * 
@@ -174,7 +136,7 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	 *
 	 */
 	public SOSOptionInFileName getHibernate_Configuration_File_Name() {
-		return Hibernate_Configuration_File_Name;
+		return hibernate_Configuration_File_Name;
 	}
 
 	/**
@@ -183,26 +145,26 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	 * \details
 	 * 
 	 *
-	 * @param Hibernate_Configuration_File_Name : 
+	 * @param hibernate_Configuration_File_Name : 
 	 */
-	public void setHibernate_Configuration_File_Name(final SOSOptionInFileName p_Hibernate_Configuration_File_Name) {
-		Hibernate_Configuration_File_Name = p_Hibernate_Configuration_File_Name;
+	public void setHibernate_Configuration_File_Name(final SOSOptionInFileName p_hibernate_Configuration_File_Name) {
+		hibernate_Configuration_File_Name = p_hibernate_Configuration_File_Name;
 	}
 
-	public JadeBSFrontEndOptionsSuperClass() {
+	public JadeBackgroundServiceOptionsSuperClass() {
 		objParentClass = this.getClass();
-	} // public JadeBSFrontEndOptionsSuperClass
+	} // public JadeBackgroundServiceOptionsSuperClass
 
-	public JadeBSFrontEndOptionsSuperClass(final JSListener pobjListener) {
+	public JadeBackgroundServiceOptionsSuperClass(final JSListener pobjListener) {
 		this();
 		this.registerMessageListener(pobjListener);
-	} // public JadeBSFrontEndOptionsSuperClass
+	} // public JadeBackgroundServiceOptionsSuperClass
 
 	//
-	public JadeBSFrontEndOptionsSuperClass(final HashMap<String, String> JSSettings) throws Exception {
+	public JadeBackgroundServiceOptionsSuperClass(final HashMap<String, String> JSSettings) throws Exception {
 		this();
 		this.setAllOptions(JSSettings);
-	} // public JadeBSFrontEndOptionsSuperClass (HashMap JSSettings)
+	} // public JadeBackgroundServiceOptionsSuperClass (HashMap JSSettings)
 
 	/**
 	 * \brief getAllOptionsAsString - liefert die Werte und Beschreibung aller
@@ -227,16 +189,16 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	} // private String getAllOptionsAsString ()
 
 	/**
-	 * \brief setAllOptions - �bernimmt die OptionenWerte aus der HashMap
+	 * \brief setAllOptions - übernimmt die OptionenWerte aus der HashMap
 	 *
-	 * \details In der als Parameter anzugebenden HashMap sind Schl�ssel (Name)
-	 * und Wert der jeweiligen Option als Paar angegeben. Ein Beispiel f�r den
+	 * \details In der als Parameter anzugebenden HashMap sind Schlüssel (Name)
+	 * und Wert der jeweiligen Option als Paar angegeben. Ein Beispiel für den
 	 * Aufbau einer solchen HashMap findet sich in der Beschreibung dieser
 	 * Klasse (\ref TestData "setJobSchedulerSSHJobOptions"). In dieser Routine
-	 * werden die Schl�ssel analysiert und, falls gefunden, werden die
-	 * dazugeh�rigen Werte den Properties dieser Klasse zugewiesen.
+	 * werden die Schlüssel analysiert und, falls gefunden, werden die
+	 * dazugehörigen Werte den Properties dieser Klasse zugewiesen.
 	 *
-	 * Nicht bekannte Schl�ssel werden ignoriert.
+	 * Nicht bekannte Schlüssel werden ignoriert.
 	 *
 	 * \see JSOptionsClass::getItem
 	 *
@@ -253,13 +215,13 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 	} // public void setAllOptions (HashMap <String, String> JSSettings)
 
 	/**
-	 * \brief CheckMandatory - pr�ft alle Muss-Optionen auf Werte
+	 * \brief CheckMandatory - prüft alle Muss-Optionen auf Werte
 	 *
 	 * \details
 	 * @throws Exception
 	 *
 	 * @throws Exception
-	 * - wird ausgel�st, wenn eine mandatory-Option keinen Wert hat
+	 * - wird ausgelöst, wenn eine mandatory-Option keinen Wert hat
 	 */
 	@Override public void CheckMandatory() throws JSExceptionMandatoryOptionMissing //
 			, Exception {
@@ -273,11 +235,11 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 
 	/**
 	 *
-	 * \brief CommandLineArgs - �bernehmen der Options/Settings aus der
+	 * \brief CommandLineArgs - übernehmen der Options/Settings aus der
 	 * Kommandozeile
 	 *
 	 * \details Die in der Kommandozeile beim Starten der Applikation
-	 * angegebenen Parameter werden hier in die HashMap �bertragen und danach
+	 * angegebenen Parameter werden hier in die HashMap übertragen und danach
 	 * den Optionen als Wert zugewiesen.
 	 *
 	 * \return void
@@ -289,4 +251,4 @@ public class JadeBSFrontEndOptionsSuperClass extends JSOptionsClass {
 		super.CommandLineArgs(pstrArgs);
 		this.setAllOptions(super.objSettings);
 	}
-} // public class JadeBSFrontEndOptionsSuperClass
+} // public class JadeBackgroundServiceOptionsSuperClass

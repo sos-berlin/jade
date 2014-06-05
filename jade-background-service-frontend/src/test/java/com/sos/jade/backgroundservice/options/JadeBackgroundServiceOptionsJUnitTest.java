@@ -39,15 +39,15 @@ import com.sos.JSHelper.Logging.Log4JHelper;
   }  //  private void SetJobSchedulerSSHJobOptions (HashMap <String, String> pobjHM)
  * \endverbatim
  */
-public class JadeBSFrontEndOptionsJUnitTest extends JSToolBox {
+public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
 	private final String			conClassName	= "JadeBSFrontEndOptionsJUnitTest";						//$NON-NLS-1$
 	@SuppressWarnings("unused")
-	private static Logger			logger			= Logger.getLogger(JadeBSFrontEndOptionsJUnitTest.class);
+	private static Logger			logger			= Logger.getLogger(JadeBackgroundServiceOptionsJUnitTest.class);
 	@SuppressWarnings("unused")
 	private static Log4JHelper		objLogger		= null;
-	protected JadeBSFrontEndOptions	objOptions		= null;
+	protected JadeBackgroundServiceOptions	objOptions		= null;
 
-	public JadeBSFrontEndOptionsJUnitTest() {
+	public JadeBackgroundServiceOptionsJUnitTest() {
 		//
 	}
 
@@ -60,7 +60,7 @@ public class JadeBSFrontEndOptionsJUnitTest extends JSToolBox {
 	@Before public void setUp() throws Exception {
 		System.setProperty("JADE_BS_HIBERNATE_CONFIG", "/WEB-INF/classes/hibernate.cfg.xml");
 		objLogger = new Log4JHelper("./log4j.properties"); //$NON-NLS-1$
-		objOptions = new JadeBSFrontEndOptions();
+		objOptions = new JadeBackgroundServiceOptions();
 		JSListenerClass.bolLogDebugInformation = true;
 		JSListenerClass.intMaxDebugLevel = 9;
 	}
@@ -76,18 +76,18 @@ public class JadeBSFrontEndOptionsJUnitTest extends JSToolBox {
 	 *
 	 */
 	@Test public void testClick_for_Details() { // SOSOptionString
-		objOptions.Click_for_Details.Value("++false++");
-		assertEquals("", objOptions.Click_for_Details.Value(), "++false++");
-		objOptions.Click_for_Details.setTrue();
-		assertTrue("Text", objOptions.Click_for_Details.value());
+		objOptions.click_for_Details.Value("++false++");
+		assertEquals("", objOptions.click_for_Details.Value(), "++false++");
+		objOptions.click_for_Details.setTrue();
+		assertTrue("Text", objOptions.click_for_Details.value());
 	}
 
 	@Test public void testHibernate_Configuration_File_Name2() { // SOSOptionString
-		assertEquals("", objOptions.Hibernate_Configuration_File_Name.Value(), "/WEB-INF/classes/hibernate.cfg.xml");
+		assertEquals("", objOptions.hibernate_Configuration_File_Name.Value(), "/WEB-INF/classes/hibernate.cfg.xml");
 	}
 
 	@Test public void testHibernate_Configuration_File_NameAlias() { // SOSOptionString
-		assertEquals("", objOptions.HibernateConf.Value(), "/WEB-INF/classes/hibernate.cfg.xml");
+		assertEquals("", objOptions.hibernateConf.Value(), "/WEB-INF/classes/hibernate.cfg.xml");
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class JadeBSFrontEndOptionsJUnitTest extends JSToolBox {
 	 *
 	 */
 	@Test public void testHibernate_Configuration_File_Name() { // SOSOptionString
-		objOptions.Hibernate_Configuration_File_Name.Value("++hibernate.cfg.xml++");
-		assertEquals("", objOptions.Hibernate_Configuration_File_Name.Value(), "++hibernate.cfg.xml++");
+		objOptions.hibernate_Configuration_File_Name.Value("++hibernate.cfg.xml++");
+		assertEquals("", objOptions.hibernate_Configuration_File_Name.Value(), "++hibernate.cfg.xml++");
 	}
 } // public class JadeBSFrontEndOptionsJUnitTest

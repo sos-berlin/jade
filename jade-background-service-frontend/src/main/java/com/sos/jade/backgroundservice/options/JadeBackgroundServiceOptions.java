@@ -11,7 +11,7 @@ import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
 import com.sos.JSHelper.Listener.JSListener;
 
 /**
- * \class 		JadeBSFrontEndOptions - JadeBSFrontEnd
+ * \class 		JadeBackgroundServiceOptions - JadeBackgroundService
  *
  * \brief
  * An Options as a container for the Options super class.
@@ -27,44 +27,44 @@ import com.sos.JSHelper.Listener.JSListener;
  * mechanicaly created by JobDocu2OptionsClass.xslt from http://www.sos-berlin.com at 20140605131019
  * \endverbatim
  */
-@JSOptionClass(name = "JadeBSFrontEndOptions", description = "JadeBSFrontEnd")
-public class JadeBSFrontEndOptions extends JadeBSFrontEndOptionsSuperClass {
+@JSOptionClass(name = "JadeBackgroundServiceOptions", description = "JadeBackgroundService")
+public class JadeBackgroundServiceOptions extends JadeBackgroundServiceOptionsSuperClass {
 	/**
 	 * 
 	 */
 	private static final long	serialVersionUID	= 8646735260210717840L;
 	@SuppressWarnings("unused")
-	private final String					conClassName						= "JadeBSFrontEndOptions";
+	private final String					conClassName						= "JadeBackgroundServiceOptions";
 	@SuppressWarnings("unused")
-	private static Logger		logger			= Logger.getLogger(JadeBSFrontEndOptions.class);
+	private static Logger		logger			= Logger.getLogger(JadeBackgroundServiceOptions.class);
 
     /**
     * constructors
     */
 
-	public JadeBSFrontEndOptions() {
-	} // public JadeBSFrontEndOptions
+	public JadeBackgroundServiceOptions() {
+	} // public JadeBackgroundServiceOptions
 
-	public JadeBSFrontEndOptions(final JSListener pobjListener) {
+	public JadeBackgroundServiceOptions(final JSListener pobjListener) {
 		this();
 		this.registerMessageListener(pobjListener);
-	} // public JadeBSFrontEndOptions
+	} // public JadeBackgroundServiceOptions
 
 		//
 
-	public JadeBSFrontEndOptions (final HashMap <String, String> JSSettings) throws Exception {
+	public JadeBackgroundServiceOptions (final HashMap <String, String> JSSettings) throws Exception {
 		super(JSSettings);
-	} // public JadeBSFrontEndOptions (HashMap JSSettings)
+	} // public JadeBackgroundServiceOptions (HashMap JSSettings)
 /**
- * \brief CheckMandatory - pr�ft alle Muss-Optionen auf Werte
+ * \brief CheckMandatory - prüft alle Muss-Optionen auf Werte
  *
  * \details
  * @throws Exception
  *
  * @throws Exception
- * - wird ausgel�st, wenn eine mandatory-Option keinen Wert hat
+ * - wird ausgelöst, wenn eine mandatory-Option keinen Wert hat
  */
-		@Override  // JadeBSFrontEndOptionsSuperClass
+		@Override  // JadeBackgroundServiceOptionsSuperClass
 	public void CheckMandatory() {
 		try {
 			super.CheckMandatory();
