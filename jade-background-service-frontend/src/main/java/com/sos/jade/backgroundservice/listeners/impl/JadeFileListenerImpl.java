@@ -2,7 +2,6 @@ package com.sos.jade.backgroundservice.listeners.impl;
 
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.objOptions;
 
-import java.io.File;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.List;
@@ -19,15 +18,15 @@ import com.vaadin.server.VaadinService;
 public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private static final long serialVersionUID = 1L;
 	private final JadeFilesDBLayer jadeFilesDBLayer;
-	private final File configFile;
+//	private final File configFile;
 	private final MainView ui;
 	
 	public JadeFileListenerImpl(final MainView ui){
 		this.ui = ui;
 		String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		String configurationFilename = absolutePath + objOptions.Hibernate_Configuration_File_Name.Value();
-		configFile = new File(configurationFilename);
-		jadeFilesDBLayer = new JadeFilesDBLayer(configFile);
+		objOptions.Hibernate_Configuration_File_Name.Value(absolutePath + objOptions.Hibernate_Configuration_File_Name.Value());
+		objOptions.Hibernate_Configuration_File_Name.CheckMandatory();
+		jadeFilesDBLayer = new JadeFilesDBLayer(objOptions.Hibernate_Configuration_File_Name.JSFile());
 	}
 
 	@Override
