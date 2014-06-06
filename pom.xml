@@ -17,12 +17,12 @@
     <modules>
 	  <module>jade-all</module>
 	  <module>jade-batches</module>
+      <module>jade-engine</module>
 	  <!-- Projekt im bau, z.Zt. nicht für die Auslieferung -->
 	  <module>jade-background-service-frontend</module>
 	  <!-- z.Zt. nicht in der Auslieferung -->
 	  <module>jade-file-watcher</module>
 	  <module>jade-cockpit</module>
-      <module>jade-engine</module>
   </modules>
 
 </project>
