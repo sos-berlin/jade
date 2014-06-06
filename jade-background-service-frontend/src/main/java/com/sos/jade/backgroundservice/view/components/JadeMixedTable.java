@@ -71,46 +71,53 @@ public class JadeMixedTable extends Table{
 	
 	public void populateDatasource(List<JadeFilesHistoryDBItem> historyItems){
 		this.historyItems = historyItems;
+//		this.setConverter(JadeHistoryFileColumns.STATUS.getName(), getStatusConverter());
 		this.setContainerDataSource(this.container = new JadeFilesHistoryContainer(historyItems));
 		this.setVisibleColumns(visibleColumns);
-		Converter converter = new Converter<String, ThemeResource>() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public ThemeResource convertToModel(String value,
-					Class<? extends ThemeResource> targetType, Locale locale)
-					throws com.vaadin.data.util.converter.Converter.ConversionException {
-				if("success".equals(value)){
-					return new ThemeResource("../images/status_green.png");
-				}else if("error".equals(value)){
-					return new ThemeResource("../images/status_red.png");
-				}
-				return null;
-			}
-
-			@Override
-			public String convertToPresentation(ThemeResource value,
-					Class<? extends String> targetType, Locale locale)
-					throws com.vaadin.data.util.converter.Converter.ConversionException {
-				if(value != null && value.getResourceId().equals("../images/status_green.png")){
-					return "success";
-				}else if (value != null && value.getResourceId().equals("../images/status_red.png")){
-					return "error";
-				}
-				return null;
-			}
-
-			@Override
-			public Class<ThemeResource> getModelType() {
-				return ThemeResource.class;
-			}
-
-			@Override
-			public Class<String> getPresentationType() {
-				return String.class;
-			}
-		};
-		this.setConverter(converter);
 	}
+
+//	private Converter getStatusConverter(){
+//		
+//		Converter converter = new Converter<ThemeResource, String>() {
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public String convertToModel(ThemeResource value,
+//					Class<? extends String> targetType, Locale locale)
+//					throws com.vaadin.data.util.converter.Converter.ConversionException {
+//				if(value != null && value.getResourceId().equals("../images/status_green.png")){
+//					return "success";
+//				}else if (value != null && value.getResourceId().equals("../images/status_red.png")){
+//					return "error";
+//				}
+//				return null;
+//			}
+//
+//			@Override
+//			public ThemeResource convertToPresentation(String value,
+//					Class<? extends ThemeResource> targetType, Locale locale)
+//					throws com.vaadin.data.util.converter.Converter.ConversionException {
+//				if("success".equals(value)){
+//					return new ThemeResource("../images/status_green.png");
+//				}else if("error".equals(value)){
+//					return new ThemeResource("../images/status_red.png");
+//				}
+//				return null;
+//			}
+//
+//			@Override
+//			public Class<String> getModelType() {
+//				return String.class;
+//			}
+//
+//			@Override
+//			public Class<ThemeResource> getPresentationType() {
+//				return ThemeResource.class;
+//			}
+//		};
+//		return converter;
+//	}
+
 }
+
+

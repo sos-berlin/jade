@@ -8,10 +8,9 @@ import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.data.Property.ReadOnlyException;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Embedded;
 
 public class JadeFilesHistoryContainer extends IndexedContainer{
 
@@ -24,13 +23,21 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 
 	private void addItems(List<JadeFilesHistoryDBItem> historyItems){
 		// for each JadeFilesHistoryDBItem add one item to the container with the given properties
+		final ThemeResource status_green = new ThemeResource("images/status_green.png");
+		final ThemeResource status_red = new ThemeResource("images/status_red.png");
+		
 		for (JadeFilesHistoryDBItem historyItem : historyItems){
 			try {
 				historyItem.getJadeFilesDBItem().getMandator();
 				addItem(historyItem);
 				Item item = getItem(historyItem);
 				Property status = item.getItemProperty(JadeHistoryFileColumns.STATUS.getName());
-				status.setValue(historyItem.getStatus());
+				if("success".equals(historyItem.getStatus())){
+					status.setValue(new Embedded("", status_green));
+				}else if("error".equals(historyItem.getStatus())){
+					status.setValue(new Embedded("", status_red));
+				}
+//				status.setValue(historyItem.getStatus());
 				Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
 				mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
 				Property transferTimestamp = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName());
@@ -55,8 +62,8 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 	
 	private void addContainerProperties(){
 		addContainerProperty(JadeHistoryFileColumns.STATUS.getName(), 
-				JadeHistoryFileColumns.STATUS.getType(),
-//				Resource.class,
+//				JadeHistoryFileColumns.STATUS.getType(),
+				Embedded.class,
 				null);
 
 		addContainerProperty(JadeFileColumns.MANDATOR.getName(), 
