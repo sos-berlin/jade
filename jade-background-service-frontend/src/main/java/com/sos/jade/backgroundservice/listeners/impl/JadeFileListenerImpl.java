@@ -6,58 +6,75 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.List;
 
-import sos.ftphistory.JadeFilesFilter;
-import sos.ftphistory.db.JadeFilesDBItem;
-import sos.ftphistory.db.JadeFilesDBLayer;
-import sos.ftphistory.db.JadeFilesHistoryDBItem;
-
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.server.VaadinService;
 
+import sos.ftphistory.JadeFilesFilter;
+import sos.ftphistory.JadeFilesHistoryFilter;
+import sos.ftphistory.db.JadeFilesDBItem;
+import sos.ftphistory.db.JadeFilesDBLayer;
+import sos.ftphistory.db.JadeFilesHistoryDBItem;
+import sos.ftphistory.db.JadeFilesHistoryDBLayer;
+
 public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private static final long serialVersionUID = 1L;
-	private final JadeFilesDBLayer jadeFilesDBLayer;
-//	private final File configFile;
-	private final MainView ui;
+	private JadeFilesDBLayer jadeFilesDBLayer;
+	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
+	private MainView ui;
 	
-	public JadeFileListenerImpl(final MainView ui){
+	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
 		String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		objOptions.Hibernate_Configuration_File_Name.Value(absolutePath + objOptions.Hibernate_Configuration_File_Name.Value());
-		objOptions.Hibernate_Configuration_File_Name.CheckMandatory();
-		jadeFilesDBLayer = new JadeFilesDBLayer(objOptions.Hibernate_Configuration_File_Name.JSFile());
+		objOptions.hibernateConfigurationFileName.Value(absolutePath + objOptions.hibernateConfigurationFileName.Value());
+		objOptions.hibernateConfigurationFileName.CheckMandatory();
+		this.jadeFilesDBLayer = new JadeFilesDBLayer(objOptions.hibernateConfigurationFileName.JSFile());
+		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(objOptions.hibernateConfigurationFileName.JSFile());
 	}
 
 	@Override
-	public void getException(final Exception e) {
+	public void getException(Exception e) {
 		e.printStackTrace();
 	}
 
 	@Override
-	public void filterJadeFiles(final JadeFilesFilter filter) {
+	public void filterJadeFiles(JadeFilesFilter filter) {
 		if(filter != null){
-			jadeFilesDBLayer.setFilter(filter);
+			this.jadeFilesDBLayer.setFilter(filter);
 		}
 		getFilteredFiles();
 	}
 
 	@Override
-	public void getFileHistoryByIdFromLayer(final Long id) {
-		initDbSession();
+	public void getFileHistoryByIdFromLayer(Long id) {
+		initJadeFilesDbSession();
 		getFileHistoryFromDb(id);
-		closeDbSession();
+		closeJadeFilesDbSession();
+	}
+	
+	@Override
+	public void filterJadeFilesHistory(JadeFilesHistoryFilter filter) {
+		if(filter != null){
+			this.jadeFilesHistoryDBLayer.setFilter(filter);
+		}
+		getFilteredFilesHistory();
 	}
 	
 	private void getFilteredFiles(){
-		initDbSession();
+		initJadeFilesDbSession();
 		getFilesFromDb();
-		closeDbSession();
+		closeJadeFilesDbSession();
 	}
 	
-	private void getFileHistoryFromDb(final Long id){
+	private void getFilteredFilesHistory(){
+		initJadeFilesHistoryDbSession();
+		getFilesHistoryFromDb();
+//		closeJadeFilesHistoryDbSession();
+	}
+	
+	private void getFileHistoryFromDb(Long id){
 		try {
-			List<JadeFilesHistoryDBItem> received = jadeFilesDBLayer.getFilesHistoryById(id);
+			List<JadeFilesHistoryDBItem> received = this.jadeFilesDBLayer.getFilesHistoryById(id);
 			ui.setHistoryItems(received);
 		} catch (ParseException e) {
 			getException(e);
@@ -73,11 +90,29 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 		}
 	}
 
-	private void initDbSession(){
+	private void getFilesHistoryFromDb(){
+        try {
+        	List<JadeFilesHistoryDBItem> received = jadeFilesHistoryDBLayer.getHistoryFiles();
+ 			ui.setHistoryItems(received);
+		} catch (ParseException e) {
+			getException(e);
+		}
+	}
+
+	private void initJadeFilesDbSession(){
         jadeFilesDBLayer.initSession();
 	}
 
-	private void closeDbSession(){
+	private void closeJadeFilesDbSession(){
         jadeFilesDBLayer.closeSession();
 	}
+
+	private void initJadeFilesHistoryDbSession(){
+        jadeFilesHistoryDBLayer.initSession();
+	}
+
+	private void closeJadeFilesHistoryDbSession(){
+        jadeFilesHistoryDBLayer.closeSession();
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.sos.jade.backgroundservice.listeners;
 
 import sos.ftphistory.JadeFilesFilter;
+import sos.ftphistory.JadeFilesHistoryFilter;
 
 public interface IJadeFileListener {
 
@@ -15,6 +16,12 @@ public interface IJadeFileListener {
 	 * @param id the JadeFileDBItem id
 	 */
 	void getFileHistoryByIdFromLayer(Long id);
+	
+	/**
+	 * filters the JadeFilesHistoryDBItems with the given JadeFilesHistoryFilter 
+	 * @param filter the JadeFilesHistoryFilter
+	 */
+	void filterJadeFilesHistory(JadeFilesHistoryFilter filter);
 
 	void getException(Exception e);
 }

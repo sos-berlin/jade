@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import sos.ftphistory.db.JadeFilesDBItem;
 import sos.ftphistory.db.JadeFilesDBLayer;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
+import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
@@ -14,8 +15,8 @@ import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.view.components.JadeFilesHistoryTable;
 import com.sos.jade.backgroundservice.view.components.JadeFilesTable;
-import com.sos.jade.backgroundservice.view.components.JadeFilterLayout;
 import com.sos.jade.backgroundservice.view.components.JadeMenuBar;
+import com.sos.jade.backgroundservice.view.components.JadeMixedTable;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -35,18 +36,20 @@ public class MainView extends CustomComponent{
 	private static final long serialVersionUID = 6368275374953898482L;
 	private String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 	private JadeFilesDBLayer jadeFilesDBLayer;
+	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private List<JadeFilesDBItem> fileItems;
 	private VerticalSplitPanel vSplitPanel;
 	private JadeFilesHistoryTable tblHistory;
 	private JadeFilesTable tblFiles;
+	private JadeMixedTable tblMixed;
 	private Item markedRow;
-//	private JadeFilterLayout filterLayout;
 	private IJadeFileListener fileListener;
 
 	public MainView() {
 		this.fileListener = new JadeFileListenerProxy(this);
-		initJadeFileDbLayer();
+//		initJadeFileDbLayer();
+		initJadeFilesHistoryDbLayer();
 		initComponents();
 		
         tblFiles.addItemClickListener(new ItemClickListener() {
@@ -156,10 +159,13 @@ public class MainView extends CustomComponent{
 	private void initTables(){
         tblFiles = (JadeFilesTable)initTable(TableType.FILE, fileItems);
         tblHistory = (JadeFilesHistoryTable)initTable(TableType.HISTORY, null);
-        vSplitPanel.addComponent(tblFiles);
-        vSplitPanel.addComponent(tblHistory);
-        tblFiles.setVisible(false);
-        tblHistory.setVisible(false);
+        tblMixed = (JadeMixedTable)initTable(TableType.MIXED, historyItems);
+        vSplitPanel.addComponent(tblMixed);
+        tblMixed.setVisible(true);
+//        vSplitPanel.addComponent(tblFiles);
+//        vSplitPanel.addComponent(tblHistory);
+//        tblFiles.setVisible(false);
+//        tblHistory.setVisible(false);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -169,6 +175,8 @@ public class MainView extends CustomComponent{
 			return new JadeFilesTable((List<JadeFilesDBItem>)data);
 		case HISTORY:
 			return new JadeFilesHistoryTable((List<JadeFilesHistoryDBItem>)data);
+		case MIXED:
+			return new JadeMixedTable((List<JadeFilesHistoryDBItem>)data);
 		}
 		return null;
 		
@@ -225,6 +233,36 @@ public class MainView extends CustomComponent{
 		}
 	}
 
+	private void initJadeFilesHistoryDbLayer(){
+		SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(1);
+		objTPE.runTask(
+			new Thread() {
+	            @Override
+	            public void run() {
+	                try {
+	                	fileListener.filterJadeFilesHistory(null);
+	                } catch (final Exception e) {
+	                	fileListener.getException(e);
+	                }
+					UI.getCurrent().access(new Runnable() {
+						@Override
+						public void run() {
+					        tblMixed.populateDatasource(historyItems);
+					        tblMixed.markAsDirty();
+					        tblMixed.setVisible(true);
+						}
+					});
+	            };
+	        });
+		try {
+			objTPE.shutDown();
+			objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public Item getMarkedRow() {
 		return markedRow;
 	}
@@ -251,7 +289,6 @@ public class MainView extends CustomComponent{
 
 	public void setHistoryItems(List<JadeFilesHistoryDBItem> historyItems) {
 		this.historyItems = historyItems;
-//		tblHistory.populateDatasource(historyItems);
 	}
 
 	public JadeFilesHistoryTable getTblHistory() {
@@ -261,4 +298,9 @@ public class MainView extends CustomComponent{
 	public JadeFilesTable getTblFiles() {
 		return tblFiles;
 	}
+
+	public JadeMixedTable getTblMixed() {
+		return tblMixed;
+	}
+
 }

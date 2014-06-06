@@ -6,6 +6,7 @@ import java.util.List;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.data.JadeHistoryBeanContainer;
+import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Table;

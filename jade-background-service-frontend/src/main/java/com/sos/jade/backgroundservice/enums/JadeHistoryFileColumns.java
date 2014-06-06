@@ -5,7 +5,7 @@ import java.util.Date;
 import sos.ftphistory.db.JadeFilesDBItem;
 
 public enum JadeHistoryFileColumns {
-	GUID("guid", String.class, ""), SOSFTP_ID("sosftpId", Integer.class, 0), OPERATION("operation", String.class, ""), 
+	GUID("guid", String.class, ""), SOSFTP_ID("sosftpId", Long.class, 0), OPERATION("operation", String.class, ""), 
 	TRANSFER_TIMESTAMP("transferTimestamp", Date.class, null), PID("pid", Integer.class, 0), PPID("pPid", Integer.class, 0), 
 	TARGET_HOST("targetHost", String.class, ""), TARGET_HOST_IP("targetHostIp", String.class, ""), 
 	TARGET_USER("targetUser", String.class, ""), TARGET_DIR("targetDir", String.class, ""), 

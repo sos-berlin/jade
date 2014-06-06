@@ -34,11 +34,6 @@ public class JadeHistoryBeanContainer {
     }
 
     private static class JadeFilesHistoryBeanCreator extends BeanCreator<JadeFilesHistoryDBItem> {
-//    	private List<JadeFilesHistoryDBItem> items;
-//        
-//    	public JadeFilesHistoryBeanCreator() {
-//        	this.items = items;
-//        }
 
         @Override
         public JadeFilesHistoryDBItem createItem() {

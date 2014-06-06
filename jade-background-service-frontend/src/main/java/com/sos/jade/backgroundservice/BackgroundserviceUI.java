@@ -2,7 +2,7 @@ package com.sos.jade.backgroundservice;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.sos.jade.backgroundservice.options.JadeBSFrontEndOptions;
+import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.sos.jade.backgroundservice.view.components.FilterLayoutWindow;
 import com.vaadin.annotations.Push;
@@ -22,7 +22,7 @@ public class BackgroundserviceUI extends UI {
 	private MainView ui;
 	private FilterLayoutWindow modalWindow;
 
-	public final static JadeBSFrontEndOptions objOptions = new JadeBSFrontEndOptions();
+	public final static JadeBackgroundServiceOptions objOptions = new JadeBackgroundServiceOptions();
 	@WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class)
     public static class Servlet extends VaadinServlet {

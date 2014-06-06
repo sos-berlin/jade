@@ -4,6 +4,7 @@
 package com.sos.jade.backgroundservice.listeners.impl;
 
 import sos.ftphistory.JadeFilesFilter;
+import sos.ftphistory.JadeFilesHistoryFilter;
 
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
@@ -54,5 +55,11 @@ public class JadeFileListenerProxy extends JadeFileListenerImpl implements IJade
 		logger.debug("getFileHistoryByIdFromLayer exit");
 	}
 	
+	@Override
+	public void filterJadeFilesHistory(JadeFilesHistoryFilter filter) {
+		logger.debug("filterJadeFilesHistory entered");
+		super.filterJadeFilesHistory(filter);
+		logger.debug("filterJadeFilesHistory exit");
+	}
 
 }

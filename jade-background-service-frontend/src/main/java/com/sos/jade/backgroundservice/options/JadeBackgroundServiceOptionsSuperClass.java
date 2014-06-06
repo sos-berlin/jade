@@ -123,7 +123,7 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	public SOSOptionInFileName	hibernateConfigurationFileName	= new SOSOptionInFileName(this, conClassName + ".hibernateConfigurationFileName", // HashMap-Key
 																			"", // Titel
 																			"env:JADE_BS_HIBERNATE_CONFIG", // InitValue
-																			"hibernate.cfg.xml", // DefaultValue
+																			"/WEB-INF/classes/hibernate.cfg.xml", // DefaultValue
 																			true // isMandatory
 																	);
 	public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.SetAlias("HibernateConf", "H");
