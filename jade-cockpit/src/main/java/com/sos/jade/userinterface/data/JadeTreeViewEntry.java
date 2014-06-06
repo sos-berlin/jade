@@ -94,6 +94,7 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 			objOptions.profile.Value(getName());
 			objOptions.ReadSettingsFile();
 			flgIsFragment = objOptions.isFragment.isTrue();
+			logger.trace("is Fragment = " + flgIsFragment);
 			flgIsProfile = objOptions.isFragment.isFalse();
 		}
 		return objOptions;
@@ -120,5 +121,13 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 	TreeItem objTreeItem = null;
 	public void setTreeItem (final TreeItem pobjTreeItem) {
 		objTreeItem = pobjTreeItem;
+	}
+	public boolean isExecutable() {
+		boolean flgIsExec = flgIsProfile == true;
+		return flgIsExec;
+	}
+	public boolean isSourceGen() {
+		boolean flgIsExec = flgIsProfile == true;
+		return flgIsExec;
 	}
 }
