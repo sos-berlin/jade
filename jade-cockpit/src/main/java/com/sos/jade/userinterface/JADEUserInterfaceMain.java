@@ -54,8 +54,6 @@ import com.sos.dialog.classes.WindowsSaver;
 import com.sos.dialog.interfaces.ISOSTabItem;
 import com.sos.dialog.layouts.Gridlayout;
 import com.sos.dialog.swtdesigner.SWTResourceManager;
-import com.sos.jade.userinterface.TreeContentProvider;
-import com.sos.jade.userinterface.TreeLabelProvider;
 import com.sos.jade.userinterface.adapters.SOSDataExchangeAdapter;
 import com.sos.jade.userinterface.composite.CompositeBaseClass;
 import com.sos.jade.userinterface.composite.LogFileComposite;
@@ -467,12 +465,13 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	// }
 	private ImageDescriptor getImage(final String pstrFileName) {
 		// [SP] changed to get image resources dynamically at runtime
-		URL url = Thread.currentThread().getContextClassLoader()
-				.getResource(pstrFileName);
-		return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url
-				.getPath()));
-		// return
-		// ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
+		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
+		if (url != null) {
+		return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
+		}
+		else {
+			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));			
+		}
 	}
 
 	private Session session;
