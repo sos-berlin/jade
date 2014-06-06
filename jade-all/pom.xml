@@ -54,7 +54,7 @@
         
         <dependency>
             <groupId>com.sos-berlin.products.jade</groupId>
-            <artifactId>data-exchange</artifactId>
+            <artifactId>jade-engine</artifactId>
             <version>${project.version}</version>
         </dependency>
         
