@@ -1715,41 +1715,39 @@ public abstract class JadeTestBase extends JSToolBox {
 		startTransfer(objOptions);
 	}
 	
-	public void testSendCommandAfterReplacing() throws Exception {
-		final String conMethodName = conClassName + "::testSendComand2";
-		logger.info("******************************************\n***** " + conMethodName + "\n******************");
-		CreateTestFile();
-//		objOptions.scheduler_host.Value("8of9.sos");
-//		objOptions.scheduler_port.value(4210);;
-		objOptions.host.Value(conHostNameWILMA_SOS);
-		objOptions.user.Value("kb");
-		objOptions.password.Value("kb");
-		objOptions.file_path.Value(strTestFileName);
-		objOptions.local_dir.Value(strTestPathName);
-		objOptions.remote_dir.Value(strKBHome);
-		objOptions.operation.Value(enuJadeOperations.send);
-		objOptions.Target().setloadClassName("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
-		objOptions.Target().protocol.Value(enuTargetTransferType);
-		objOptions.Target().port.value(SOSOptionPortNumber.conPort4SFTP);
-		objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);
-		objOptions.Target().replacing.Value(".*");
-		objOptions.Target().replacement.Value("[filename:uppercase]_[date:yyyMMddHHmmss]");
-		objOptions.Source().PreTransferCommands.Value("echo PreTransferCommands on Source; echo %CD%");
-		objOptions.Source().PostTransferCommands.Value("echo PostTransferCommands on Source; echo %CD%");
-		objOptions.Source().Pre_Command.Value("echo SourcePreCommand $SourceTransferFileName + $SourceFileName");
-		objOptions.Source().Post_Command.Value("echo SourcePostCommand $SourceTransferFileName + $SourceFileName");
-		objOptions.Source().TFN_Post_Command.Value("echo SourceTFNPostCommand $SourceTransferFileName + $SourceFileName");
-		objOptions.Target().PreTransferCommands.Value("echo PreTransferCommands on Target; pwd");
-		objOptions.Target().PostTransferCommands.Value("echo PostTransferCommands on Target; pwd");
-		objOptions.Target().Pre_Command.Value("echo TargetPreCommand $TargetTransferFileName + $TargetFileName");
-		objOptions.Target().Post_Command.Value("echo TargetPostCommand $TargetTransferFileName + $TargetFileName; rm $TargetFileName");
-		objOptions.Target().TFN_Post_Command.Value("echo TargetTFNPostCommand $TargetTransferFileName + $TargetFileName");
-		objOptions.Target().ProtocolCommandListener.value(true);
-//		objOptions.Target().TFN_Post_Command.Value("echo $TargetTransferFileName $TargetFileName");
-//		objOptions.TFN_Post_Command.Value("echo $TargetTransferFileName $TargetFileName");
+	public void testSendCommandAfterReplacing() throws Exception {                                                                           
+		final String conMethodName = conClassName + "::testSendComand2";                                                                     
+		logger.info("******************************************\n***** " + conMethodName + "\n******************");                          
+		CreateTestFile();                                                                                                                    
+//		objOptions.scheduler_host.Value("8of9.sos");                                                                                       
+//		objOptions.scheduler_port.value(4210);;                                                                                            
+		objOptions.host.Value(conHostNameWILMA_SOS);                                                                                         
+		objOptions.user.Value("kb");                                                                                                         
+		objOptions.password.Value("kb");                                                                                                     
+		objOptions.file_path.Value(strTestFileName);                                                                                         
+		objOptions.local_dir.Value(strTestPathName);                                                                                         
+		objOptions.remote_dir.Value(strKBHome);                                                                                              
+		objOptions.operation.Value(enuJadeOperations.send);                                                                                  
+		objOptions.Target().setloadClassName("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");                                             
+		objOptions.Target().protocol.Value(enuTargetTransferType);                                                                           
+		objOptions.Target().port.value(SOSOptionPortNumber.conPort4SFTP);                                                                    
+		objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);                                                                 
+		objOptions.Target().replacing.Value(".*");                                                                                           
+		objOptions.Target().replacement.Value("[filename:uppercase]_[date:yyyMMddHHmmss]");                                                  
+		objOptions.Source().PreTransferCommands.Value("echo PreTransferCommands on Source; echo ${source_dir}");                             
+		objOptions.Source().PostTransferCommands.Value("echo PostTransferCommands on Source; echo ${source_dir}");                           
+		objOptions.Source().Pre_Command.Value("echo SourcePreCommand: $SourceTransferFileName + $SourceFileName");                           
+		objOptions.Source().Post_Command.Value("echo SourcePostCommand: $SourceTransferFileName + $SourceFileName");                         
+		objOptions.Source().TFN_Post_Command.Value("echo SourceTFNPostCommand $SourceTransferFileName + $SourceFileName");                   
+		objOptions.Target().PreTransferCommands.Value("echo PreTransferCommands on Target; pwd");                                            
+		objOptions.Target().PostTransferCommands.Value("echo PostTransferCommands on Target; pwd");                                          
+		objOptions.Target().Pre_Command.Value("echo TargetPreCommand $TargetTransferFileName + $TargetFileName");                            
+		objOptions.Target().Post_Command.Value("echo TargetPostCommand $TargetTransferFileName + $TargetFileName; rm $TargetFileName");      
+		objOptions.Target().TFN_Post_Command.Value("echo TargetTFNPostCommand $TargetTransferFileName + $TargetFileName");                   
+		objOptions.Target().ProtocolCommandListener.value(true);                                                                             
 //		objOptions.Target().TFN_Post_Command.Value("gzip $TargetTransferFileName && mv -f $TargetTransferFileName.gz %{remote_dir}/save/");
-		//objOptions.PostTransferCommands.Value("gzip $TargetTransferFileName && mv -f $TargetTransferFileName.gz %{remote_dir}/save/");
-		startTransfer(objOptions);
+		//objOptions.PostTransferCommands.Value("gzip $TargetTransferFileName && mv -f $TargetTransferFileName.gz %{remote_dir}/save/");     
+		startTransfer(objOptions);                                                                                                           
 	}
 
 	//	//  @Test

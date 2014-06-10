@@ -192,6 +192,15 @@ public class JadeTestsFtp extends JadeTestBase {
 		super.testSendCommandAfterReplacing();
 	}
 	
+	@Test
+	public void sftpSendWithCommands() throws Exception {
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::sftpSendWithCommands";
+		objOptions.settings.Value(strSettingsFile);
+		objOptions.profile.Value("sftpSendWithCommands");
+		super.testUseProfileWOCreatingTestFiles();
+	}
+	
 	
 //	@Test
 //	public void CopyWithCreateSecurityHashFile() throws Exception {
