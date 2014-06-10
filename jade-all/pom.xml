@@ -37,7 +37,7 @@
         </plugins>
     </build>
     
-    <!-- Artefakte, deren Jars in einem Jar zusammengefasst werden. -->
+    <!-- A collection of all artifacts in this group which will be deployed -->
     <dependencies>
         
         <dependency>
@@ -46,11 +46,13 @@
             <version>${project.version}</version>
         </dependency>
         
+<!--	project not in release status  
         <dependency>
             <groupId>com.sos-berlin.products.jade</groupId>
             <artifactId>jade-cockpit</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
         
         <dependency>
             <groupId>com.sos-berlin.products.jade</groupId>
