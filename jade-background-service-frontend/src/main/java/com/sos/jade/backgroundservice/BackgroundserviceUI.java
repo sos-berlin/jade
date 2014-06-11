@@ -4,7 +4,7 @@ import javax.servlet.annotation.WebServlet;
 
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
-import com.sos.jade.backgroundservice.view.components.FilterLayoutWindow;
+import com.sos.jade.backgroundservice.view.components.filter.FilterLayoutWindow;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;

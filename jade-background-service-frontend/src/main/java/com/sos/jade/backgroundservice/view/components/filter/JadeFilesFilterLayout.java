@@ -1,4 +1,4 @@
-package com.sos.jade.backgroundservice.view.components;
+package com.sos.jade.backgroundservice.view.components.filter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,9 +9,7 @@ import java.util.concurrent.TimeUnit;
 import sos.ftphistory.JadeFilesFilter;
 
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
-import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerImpl;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.ui.Alignment;
@@ -26,7 +24,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-public class JadeFilterLayout extends VerticalLayout implements Serializable{
+public class JadeFilesFilterLayout extends VerticalLayout implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private VerticalLayout vlMain;
 	private Date createdFrom;
@@ -58,7 +56,7 @@ public class JadeFilterLayout extends VerticalLayout implements Serializable{
 	private static final long oneDay = 24 * 60 * 60 * 1000;
 	private MainView ui;
 	
-	public JadeFilterLayout(MainView ui){
+	public JadeFilesFilterLayout(MainView ui){
 		super();
 		this.ui = ui;
 		this.setSizeFull();
@@ -151,7 +149,7 @@ public class JadeFilterLayout extends VerticalLayout implements Serializable{
 				filter.setSourceUser(tfSourceUser.getValue());
 				// TODO fileSize impl
 				getFilteredData(new JadeFileListenerProxy(ui), filter);
-				((FilterLayoutWindow)JadeFilterLayout.this.getParent()).close();
+				((FilterLayoutWindow)JadeFilesFilterLayout.this.getParent()).close();
 			}
 		});
 	}

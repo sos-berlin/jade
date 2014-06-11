@@ -16,6 +16,7 @@
 
   $round-corners-component-radius: 3px;
 
+  
   /**********style definitions here !**********/  
   
   /***valid for the complete page !***
@@ -76,6 +77,22 @@
   
   .v-table-row-odd{
   	background-color: #EFF0F1;
+  }
+  
+  .jadeStatusSuccessLabel{
+  	width: 16px;
+  	height: 16px;
+  	border: 1px solid black;
+  	border-radius: $round-corners-radius;
+  	background-color: #3FC72C;  
+  }
+  
+  .jadeStatusErrorLabel{
+  	width: 16px;
+  	height: 16px;
+  	border: 1px solid black;
+  	border-radius: $round-corners-radius;
+  	background-color: #FA3816;  
   }
   
 }

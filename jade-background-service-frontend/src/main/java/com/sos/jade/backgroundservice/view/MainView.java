@@ -69,45 +69,6 @@ public class MainView extends CustomComponent{
 				        tblHistory.populateDatasource(historyItems);
 				        tblHistory.markAsDirty();
 
-//						SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(1);
-//						objTPE.runTask(
-//							new Thread() {
-//				            @Override
-//				            public void run() {
-//				                try {
-//									fileListener.getFileHistoryByIdFromLayer(id);
-//				                } catch (final Exception e) {
-//				                	fileListener.getException(e);
-//				                }
-//								UI.getCurrent().access(new Runnable() {
-//									@Override
-//									public void run() {
-//								        tblHistory.populateDatasource(historyItems);
-//								        tblHistory.markAsDirty();
-//									}
-//								});
-//				            };
-//				        });
-//					try {
-//						objTPE.shutDown();
-//						objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
-//					}
-//					catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-//						new Thread(){
-//							public void run(){
-//								fileListener.getFileHistoryByIdFromLayer(id);
-//								
-//								UI.getCurrent().access(new Runnable() {
-//									@Override
-//									public void run() {
-//								        tblHistory.populateDatasource(historyItems);
-//								        tblHistory.markAsDirty();
-//									}
-//								});
-//							}
-//						}.start();
 					}
 				}
 				toggleTableVisiblity(event.getItem());
@@ -247,6 +208,7 @@ public class MainView extends CustomComponent{
 					UI.getCurrent().access(new Runnable() {
 						@Override
 						public void run() {
+							fileListener.closeJadeFilesHistoryDbSession();
 					        tblMixed.populateDatasource(historyItems);
 					        tblMixed.markAsDirty();
 					        tblMixed.setVisible(true);

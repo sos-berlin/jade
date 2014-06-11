@@ -9,10 +9,9 @@ import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Label;
 
-public class JadeFilesHistoryContainer extends IndexedContainer{
+public class JadeFilesHistoryContainer extends IndexedContainer {
 
 	private static final long serialVersionUID = 1L;
 
@@ -23,21 +22,18 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 
 	private void addItems(List<JadeFilesHistoryDBItem> historyItems){
 		// for each JadeFilesHistoryDBItem add one item to the container with the given properties
-		final ThemeResource status_green = new ThemeResource("images/status_green.png");
-		final ThemeResource status_red = new ThemeResource("images/status_red.png");
-		
 		for (JadeFilesHistoryDBItem historyItem : historyItems){
 			try {
 				historyItem.getJadeFilesDBItem().getMandator();
 				addItem(historyItem);
 				Item item = getItem(historyItem);
 				Property status = item.getItemProperty(JadeHistoryFileColumns.STATUS.getName());
+				// currently use is a css-styled Label
 				if("success".equals(historyItem.getStatus())){
-					status.setValue(new Embedded("", status_green));
+					status.setValue(new StatusSuccessLabel());
 				}else if("error".equals(historyItem.getStatus())){
-					status.setValue(new Embedded("", status_red));
+					status.setValue(new StatusErrorLabel());
 				}
-//				status.setValue(historyItem.getStatus());
 				Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
 				mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
 				Property transferTimestamp = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName());
@@ -63,8 +59,9 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 	private void addContainerProperties(){
 		addContainerProperty(JadeHistoryFileColumns.STATUS.getName(), 
 //				JadeHistoryFileColumns.STATUS.getType(),
-				Embedded.class,
-				null);
+//				Embedded.class,
+				Label.class,
+				new Label());
 
 		addContainerProperty(JadeFileColumns.MANDATOR.getName(), 
 				JadeFileColumns.MANDATOR.getType(), 
@@ -98,4 +95,37 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 				JadeHistoryFileColumns.TARGET_HOST.getType(), 
 				JadeHistoryFileColumns.TARGET_HOST.getDefaultValue());
 	}
-}
+	
+	private class StatusSuccessLabel extends Label{
+		private static final long serialVersionUID = 1L;
+		
+		public StatusSuccessLabel() {
+			setWidth(16.0f, Unit.PIXELS);
+			setHeight(16.0f, Unit.PIXELS);
+			setStyleName("jadeStatusSuccessLabel");
+		}
+	}
+	
+	private class StatusErrorLabel extends Label{
+		private static final long serialVersionUID = 1L;
+		
+		public StatusErrorLabel() {
+			setWidth(16.0f, Unit.PIXELS);
+			setHeight(16.0f, Unit.PIXELS);
+			setStyleName("jadeStatusErrorLabel");
+		}
+	}
+	
+	
+    public void updateItem(Object itemId){
+        if (this.containsId(itemId)){
+            Item newItem = (Item)itemId;
+            Item oldItem = this.getItem(itemId);
+            if (oldItem != null){
+                for (Object property: getContainerPropertyIds()){
+                    oldItem.getItemProperty(property)
+                               .setValue(newItem.getItemProperty(property).getValue());
+                }
+            }
+        }
+    }}

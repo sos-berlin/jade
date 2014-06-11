@@ -24,4 +24,6 @@ public interface IJadeFileListener {
 	void filterJadeFilesHistory(JadeFilesHistoryFilter filter);
 
 	void getException(Exception e);
+	
+	void closeJadeFilesHistoryDbSession();
 }

@@ -2,17 +2,14 @@ package com.sos.jade.backgroundservice.view.components;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.data.JadeFilesHistoryContainer;
-import com.sos.jade.backgroundservice.data.JadeHistoryBeanContainer;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.converter.Converter;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.data.Item;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 
 public class JadeMixedTable extends Table{
@@ -64,6 +61,9 @@ public class JadeMixedTable extends Table{
 		setEditable(false);
 		setColumnReorderingAllowed(true);
 		setPageLength(PAGE_LENGTH);
+		setColumnAlignment(JadeHistoryFileColumns.STATUS.getName(), Align.CENTER);
+		setCellStyleGenerator(new StatusCellStyleGenerator());
+		enableContentRefreshing(true);
 		if (container != null){
 			this.setVisibleColumns(visibleColumns);
 		}
@@ -71,53 +71,30 @@ public class JadeMixedTable extends Table{
 	
 	public void populateDatasource(List<JadeFilesHistoryDBItem> historyItems){
 		this.historyItems = historyItems;
-//		this.setConverter(JadeHistoryFileColumns.STATUS.getName(), getStatusConverter());
-		this.setContainerDataSource(this.container = new JadeFilesHistoryContainer(historyItems));
+		this.setContainerDataSource(this.container = new JadeFilesHistoryContainer(this.historyItems));
 		this.setVisibleColumns(visibleColumns);
 	}
 
-//	private Converter getStatusConverter(){
-//		
-//		Converter converter = new Converter<ThemeResource, String>() {
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public String convertToModel(ThemeResource value,
-//					Class<? extends String> targetType, Locale locale)
-//					throws com.vaadin.data.util.converter.Converter.ConversionException {
-//				if(value != null && value.getResourceId().equals("../images/status_green.png")){
-//					return "success";
-//				}else if (value != null && value.getResourceId().equals("../images/status_red.png")){
-//					return "error";
-//				}
-//				return null;
-//			}
-//
-//			@Override
-//			public ThemeResource convertToPresentation(String value,
-//					Class<? extends ThemeResource> targetType, Locale locale)
-//					throws com.vaadin.data.util.converter.Converter.ConversionException {
-//				if("success".equals(value)){
-//					return new ThemeResource("../images/status_green.png");
-//				}else if("error".equals(value)){
-//					return new ThemeResource("../images/status_red.png");
-//				}
-//				return null;
-//			}
-//
-//			@Override
-//			public Class<String> getModelType() {
-//				return String.class;
-//			}
-//
-//			@Override
-//			public Class<ThemeResource> getPresentationType() {
-//				return ThemeResource.class;
-//			}
-//		};
-//		return converter;
-//	}
+	private class StatusCellStyleGenerator implements CellStyleGenerator{
+		private static final long serialVersionUID = 1L;
 
+		@Override
+		public String getStyle(Table source, Object itemId, Object propertyId) {
+			if (itemId != null && propertyId != null) {
+				if (JadeHistoryFileColumns.STATUS.getName().equals(propertyId)) {
+					if ("success".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
+						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusSuccessLabel");
+						return "jadeStatusSuccessLabel";
+					} else if ("error".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
+						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusErrorLabel");
+						return "jadeStatusErrorLabel";
+					}
+				}
+			}
+			return null;
+		}
+	}    
+    
 }
 
 

@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.List;
 
+import com.sos.JSHelper.Options.SOSOptionFolderName;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.server.VaadinService;
@@ -21,7 +22,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private static final long serialVersionUID = 1L;
 	private JadeFilesDBLayer jadeFilesDBLayer;
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
-	private MainView ui;
+	public MainView ui;
 	
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
@@ -69,7 +70,6 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private void getFilteredFilesHistory(){
 		initJadeFilesHistoryDbSession();
 		getFilesHistoryFromDb();
-//		closeJadeFilesHistoryDbSession();
 	}
 	
 	private void getFileHistoryFromDb(Long id){
@@ -111,7 +111,8 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
         jadeFilesHistoryDBLayer.initSession();
 	}
 
-	private void closeJadeFilesHistoryDbSession(){
+	@Override
+	public void closeJadeFilesHistoryDbSession(){
         jadeFilesHistoryDBLayer.closeSession();
 	}
 

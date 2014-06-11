@@ -7058,3 +7058,19 @@ body .bs.v-app .v-app-loading {
 .bs .v-table-row-odd {
 	background-color: #EFF0F1;
 }
+
+.bs .jadeStatusSuccessLabel {
+	width: 16px;
+	height: 16px;
+	border: 1px solid black;
+	border-radius: 8px;
+	background-color: #3FC72C;
+}
+
+.bs .jadeStatusErrorLabel {
+	width: 16px;
+	height: 16px;
+	border: 1px solid black;
+	border-radius: 8px;
+	background-color: #FA3816;
+}
