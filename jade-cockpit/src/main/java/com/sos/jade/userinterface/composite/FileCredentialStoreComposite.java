@@ -2,10 +2,10 @@ package com.sos.jade.userinterface.composite;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 
+import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.JSOptionsClass;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
-import com.sos.VirtualFileSystem.Options.keepass4j.SOSCredentialStoreOptions;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSCheckBox;
 

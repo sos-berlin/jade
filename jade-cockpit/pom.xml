@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,7 +12,7 @@
     <groupId>com.sos-berlin.products.jade</groupId>
     <artifactId>jade-cockpit</artifactId>
     <name>${project.artifactId}</name>
-    
+
     <build>
         <resources>
     <!--
@@ -25,7 +27,12 @@
     </build>
 
     <dependencies>
-    
+        <dependency>
+            <groupId>com.sos-berlin.products.commons</groupId>
+            <artifactId>credentialstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sos-berlin.products.commons</groupId>
             <artifactId>sos-settings</artifactId>
@@ -100,41 +107,41 @@
    
    -->
 
-		<dependency>
-			<groupId>org.eclipse.swt</groupId>
-			<artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
-			<version>${swt.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.eclipse.ui</groupId>
-			<artifactId>org.eclipse.ui.workbench</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.ui</groupId>
+            <artifactId>org.eclipse.ui.workbench</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.eclipse.jface</groupId>
-			<artifactId>org.eclipse.jface</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.jface</groupId>
+            <artifactId>org.eclipse.jface</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.eclipse.jface</groupId>
-			<artifactId>text</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.jface</groupId>
+            <artifactId>text</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.eclipse.core</groupId>
-			<artifactId>runtime</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.core</groupId>
-			<artifactId>commands</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.equinox</groupId>
-			<artifactId>common</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>runtime</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>commands</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
 
     </dependencies>
 </project>
