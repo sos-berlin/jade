@@ -6,7 +6,6 @@ import java.util.List;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.data.JadeHistoryBeanContainer;
-import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Table;
@@ -57,6 +56,12 @@ public class JadeFilesHistoryTable extends Table{
 		}
 	}
 	
+	
+	/**
+	 * replaces the present container with a new created container related to the given historyItems
+	 * 
+	 * @param historyItems List of JadeFilesHistoryDBItems
+	 */
 	public void populateDatasource(List<JadeFilesHistoryDBItem> historyItems){
 		this.historyItems = historyItems;
 		this.setContainerDataSource(this.container = (new JadeHistoryBeanContainer()).createJadeFilesHistoryContainer(this.historyItems));

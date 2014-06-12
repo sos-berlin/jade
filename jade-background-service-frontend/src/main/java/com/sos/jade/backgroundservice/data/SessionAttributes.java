@@ -1,4 +1,4 @@
-package com.sos.jade.backgroundservice;
+package com.sos.jade.backgroundservice.data;
 
 import java.util.UUID;
 

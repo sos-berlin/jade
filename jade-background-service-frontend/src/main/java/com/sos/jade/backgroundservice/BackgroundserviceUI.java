@@ -2,6 +2,7 @@ package com.sos.jade.backgroundservice;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.sos.jade.backgroundservice.view.components.filter.FilterLayoutWindow;

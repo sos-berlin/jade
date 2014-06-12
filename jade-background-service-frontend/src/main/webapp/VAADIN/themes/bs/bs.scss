@@ -16,6 +16,8 @@
 
   $round-corners-component-radius: 3px;
 
+  $round-corners-menu-radius: 5px;
+
   
   /**********style definitions here !**********/  
   
@@ -31,6 +33,7 @@
   	padding-left: 10px;
   	vertical-align: bottom;
   	height: 70px;
+  	white-space: nowrap;
   }
   
   .jadePanel{
@@ -67,7 +70,6 @@
   }
   
   .v-table-body{
-/*  	overflow: visible; */
   	background-color: #F5F5F5;
   }
   
@@ -94,5 +96,76 @@
   	border-radius: $round-corners-radius;
   	background-color: #FA3816;  
   }
+  
+  .jadeMenuBar{
+	height: 23px;
+	text-shadow: none;
+	font-weight: bold;
+	padding: 0 8px;
+ 	background: #E5E5E5;
+	color: #323336;
+  }
+  
+  .jadeMenuBar .v-menubar .v-menubar-menuitem:hover {
+	color: #FFFFFF;
+	text-shadow: none;
+  }
+
+  .jadeMenuBar .v-menubar-submenu {
+	background: #E5E5E5;
+	border: none;
+	border-radius: $round-corners-component-radius;
+	-webkit-border-radius: $round-corners-component-radius;
+	-moz-border-radius: $round-corners-component-radius;
+	-o-border-radius: $round-corners-component-radius;
+	overflow: hidden;
+	padding: 4px 0;
+	text-shadow: none;
+  }
+
+  .jadeMenuBar .v-menubar-menuitem .v-menubar-submenu{
+ 	background: #E5E5E5;
+	color: #323336;
+	text-shadow: none;
+  }
+  
+  .jadeMenuBar .v-menubar-menuitem-selected,
+  .jadeMenuBar .v-menubar-submenu .v-menubar-menuitem-selected{
+	background: #E77B37;
+	color: #FFFFFF;
+	text-shadow: none;
+  }
+  
+  .jadeMenuBarLayout{
+  	background-color: #E5E5E5;
+	border: 1px solid #C2C3C4;
+  	border-radius: $round-corners-menu-radius;
+  	padding-left: 7px;
+  }
+  
+  .jadeMainVLayout{
+  	padding-bottom: 10px;
+  }
+  
+  .jadeDetailLayout{
+	border-bottom-left-radius: $round-corners-radius;
+	border-bottom-right-radius: $round-corners-radius;
+  	border: 1px solid #C2C3C4;
+  }
+  
+  .jadeDetailLayoutNoBorder{
+  	border-radius: $round-corners-radius;
+  }
+  
+  .jadeDetailLabel{
+  	font-weight: normal;
+  	color: black;
+  }
+  
+  .jadeDetailLabelCaption{
+	font-weight: bold;
+	color: grey;	
+	padding-left: 10px;
+}
   
 }

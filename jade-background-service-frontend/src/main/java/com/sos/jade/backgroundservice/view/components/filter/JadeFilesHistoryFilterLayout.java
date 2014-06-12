@@ -24,6 +24,12 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * A FilterLayout with pre-configured Components, the Layout extends Vaadins {@link com.vaadin.ui.VerticalLayout VerticalLayout}
+ * 
+ * @author SP
+ *
+ */
 public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private static final String STATUS_SUCCESS = "success";
@@ -60,10 +66,124 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		this.ui = ui;
 		this.setSizeFull();
 		this.setMargin(true);
-		initJadeFilterComponents();
+		initJadeFilesHistoryFilterComponents();
 	}
 	
-	private void initJadeFilterComponents(){
+	/**
+	 * helper method to create a pre configured {@link com.vaadin.ui.HorizontalLayout HorizontalLayout}
+	 * 
+	 * @return the created {@link com.vaadin.ui.HorizontalLayout HorizontalLayout}
+	 */
+	private HorizontalLayout initHLayout(){
+		HorizontalLayout hl = new HorizontalLayout();
+		hl.setHeight(50.0f, Unit.PIXELS);
+		hl.setWidth(300.0f, Unit.PIXELS);
+		return hl;
+	}
+	
+	/**
+	 * helper method to create an empty {@link com.vaadin.ui.Label Label}
+	 * 
+	 * @return the created {@link com.vaadin.ui.Label Label}
+	 */
+	private Label initDummyLabel(){
+		Label lbl = new Label();
+		lbl.setSizeFull();
+		return lbl;
+	}
+	
+	/**
+	 * helper method to create a pre configured {@link com.vaadin.ui.DateField DateField}
+	 * 
+	 * @return the created {@link com.vaadin.ui.DateField DateField}
+	 */
+	private DateField initDateField(String caption, Date date){
+		DateField df = new DateField(caption, date);
+		df.setSizeFull();
+		return df;
+	}
+	
+	/**
+	 * helper method to create a pre configured {@link com.vaadin.ui.TextField TextField}
+	 * 
+	 * @return the created {@link com.vaadin.ui.TextField TextField}
+	 */
+	private TextField initTextField(String caption, String text){
+		TextField tf = new TextField(caption, text);
+		tf.setHeight(23.0f, Unit.PIXELS);
+		tf.setWidth("100%");
+		tf.setInputPrompt(caption);
+		tf.setValue("");
+		return tf;
+	}
+
+	private void checkTextFieldValues(){
+		if("".equals(mandator)){
+			mandator = null;
+		}
+		if("".equals(protocol)){
+			protocol = null;
+		}
+		if("".equals(sourceFile)){
+			sourceFile = null;
+		}
+		if("".equals(sourceHost)){
+			sourceHost = null;
+		}
+		if("".equals(targetFile)){
+			targetFile = null;
+		}
+		if("".equals(targetHost)){
+			targetHost = null;
+		}
+	}
+
+
+	/**
+	 * tells the {@link IJadeFileListener} to filter the JadeFilesHistoryDBItems with the given
+	 * JadeFilesHistoryFilter and populates the {@link com.sos.jade.backgroundservice.view.components.JadeMixedTable JadeMixedTable} with the filtered data
+	 * 
+	 * @param listener the {@link IJadeFileListener} which holds the methods to access the JadeFilesHistoryDBLayer
+	 * @param historyFilter the JadeFilesHistoryFilter to filter JadeFilesHistoryDBItems and the related JadeFilesDBItem with
+	 */
+	private void filterData(final IJadeFileListener listener, final JadeFilesHistoryFilter historyFilter) {
+		
+		SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(1);
+			objTPE.runTask(
+					new Thread() {
+		            
+					@Override
+		            public void run() {
+		                try {
+		                	listener.filterJadeFilesHistory(historyFilter);
+		                } catch (final Exception e) {
+		                    listener.getException(e);
+		                }
+						UI.getCurrent().access(new Runnable() {
+							@Override
+							public void run() {
+						        ui.getTblMixed().populateDatasource(ui.getHistoryItems());
+						        ui.getTblMixed().markAsDirty();
+								listener.closeJadeFilesHistoryDbSession();
+						        ui.getTblMixed().setVisible(true);
+							}
+						});
+		            };
+	        });
+		try {
+			objTPE.shutDown();
+			objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
+	
+	/**
+	 * initializes the {@link JadeFilesHistoryFilterLayout} with its components
+	 * 
+	 */
+	private void initJadeFilesHistoryFilterComponents(){
 		vlMain = new VerticalLayout();
 		vlMain.setHeight(250.0f, Unit.PIXELS);
 		addComponent(vlMain);
@@ -100,7 +220,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		nsOperation = new NativeSelect("Operation", operationList);
 		Button btnCommit = new Button("OK");
 		Button btnDiscard = new Button("Discard");
-		Label lblDummy = initDummyLabel();
 
 		hlFirst.addComponents(tfMandator, tfTargetFile);
 		hlFirst.setExpandRatio(tfMandator, 1);
@@ -127,7 +246,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			@Override
 			public void buttonClick(ClickEvent event) {
 				ui.setMarkedRow(null);
-				ui.setHistoryTableNotVisible();
+				ui.setDetailViewVisible(true);
 				JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 				checkTextFieldValues();
 				filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
@@ -142,8 +261,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				filter.setTargetFilename(tfTargetFile.getValue());
 				filter.setTargetHost(tfTargetHost.getValue());
 				filter.setMandator(tfMandator.getValue());
-				// TODO fileSize impl
-				getFilteredData(new JadeFileListenerProxy(ui), filter);
+				filterData(new JadeFileListenerProxy(ui), filter);
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
 			}
 		});
@@ -157,95 +275,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			}
 		});
 	}
-	
-//	private VerticalLayout initVLayout(){
-//		VerticalLayout vl = new VerticalLayout();
-//		vl.setWidth(150.0f, Unit.PIXELS);
-//		return vl;
-//	}
-	
-	private HorizontalLayout initHLayout(){
-		HorizontalLayout hl = new HorizontalLayout();
-		hl.setHeight(50.0f, Unit.PIXELS);
-		hl.setWidth(300.0f, Unit.PIXELS);
-		return hl;
-	}
-	
-	private Label initDummyLabel(){
-		Label lbl = new Label();
-		lbl.setSizeFull();
-		return lbl;
-	}
-	
-	private DateField initDateField(String caption, Date date){
-		DateField df = new DateField(caption, date);
-		df.setSizeFull();
-		return df;
-	}
-	
-	private TextField initTextField(String caption, String text){
-		TextField tf = new TextField(caption, text);
-		tf.setHeight(23.0f, Unit.PIXELS);
-		tf.setWidth("100%");
-		tf.setInputPrompt(caption);
-		tf.setValue("");
-		return tf;
-	}
-
-	private void checkTextFieldValues(){
-		if("".equals(mandator)){
-			mandator = null;
-		}
-		if("".equals(protocol)){
-			protocol = null;
-		}
-		if("".equals(sourceFile)){
-			sourceFile = null;
-		}
-		if("".equals(sourceHost)){
-			sourceHost = null;
-		}
-		if("".equals(targetFile)){
-			targetFile = null;
-		}
-		if("".equals(targetHost)){
-			targetHost = null;
-		}
-	}
-
-
-	private void getFilteredData(final IJadeFileListener listener, final JadeFilesHistoryFilter historyFilter) {
-		
-		SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(1);
-			objTPE.runTask(
-					new Thread() {
-		            
-					@Override
-		            public void run() {
-		                try {
-		                	listener.filterJadeFilesHistory(historyFilter);
-		                } catch (final Exception e) {
-		                    listener.getException(e);
-		                }
-						UI.getCurrent().access(new Runnable() {
-							@Override
-							public void run() {
-						        ui.getTblMixed().populateDatasource(ui.getHistoryItems());
-						        ui.getTblMixed().markAsDirty();
-								listener.closeJadeFilesHistoryDbSession();
-						        ui.getTblMixed().setVisible(true);
-							}
-						});
-		            };
-	        });
-		try {
-			objTPE.shutDown();
-			objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
-		}
-		catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-    }
 	
 }
 

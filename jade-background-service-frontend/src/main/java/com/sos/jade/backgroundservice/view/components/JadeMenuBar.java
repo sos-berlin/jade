@@ -5,6 +5,12 @@ import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 
+/**
+ * A MenuBar with the Jade related MenuItems; extends Vaadins {@link com.vaadin.ui.MenuBar MenuBar}
+ * 
+ * @author SP
+ *
+ */
 public class JadeMenuBar extends MenuBar {
 	private static final long serialVersionUID = 1L;
 	private MenuItem mFile;
@@ -12,14 +18,18 @@ public class JadeMenuBar extends MenuBar {
 	private MenuItem mPreferences;
 	private MenuItem mHelp;
 	private MenuItem smActivateFilter;
+	private MenuItem smLoadFilter;
+	private MenuItem smSaveFilter;
 
 	public JadeMenuBar() {
 		setAutoOpen(true);
-		setHeight(25.0f, Unit.PIXELS);
+		addStyleName("jadeMenuBar");
+		
+//		setHeight(25.0f, Unit.PIXELS);
 		mFile = addItem("File", fileCommand);
 		
 		mFilter = addItem("Filter", filterCommand);
-		smActivateFilter = mFilter.addItem("filter...", activateFilterCommand);
+		this.smActivateFilter = mFilter.addItem("filter...", activateFilterCommand);
 		mPreferences = addItem("Preferences", preferencesCommand);
 		
 		mHelp = addItem("Help", helpCommand);
@@ -46,7 +56,7 @@ public class JadeMenuBar extends MenuBar {
 		private static final long serialVersionUID = 1L;
 
 		public void menuSelected(MenuItem selectedItem) {
-			((MainView)UI.getCurrent().getContent()).setHistoryTableNotVisible();
+			((MainView)UI.getCurrent().getContent()).setDetailViewVisible(false);
 			UI.getCurrent().addWindow(((BackgroundserviceUI)UI.getCurrent()).getModalWindow());
 	    }  
 	};

@@ -7012,6 +7012,7 @@ body .bs.v-app .v-app-loading {
 	padding-left: 10px;
 	vertical-align: bottom;
 	height: 70px;
+	white-space: nowrap;
 }
 
 .bs .jadePanel {
@@ -7073,4 +7074,74 @@ body .bs.v-app .v-app-loading {
 	border: 1px solid black;
 	border-radius: 8px;
 	background-color: #FA3816;
+}
+
+.bs .jadeMenuBar {
+	height: 23px;
+	text-shadow: none;
+	font-weight: bold;
+	padding: 0 8px;
+	background: #E5E5E5;
+	color: #323336;
+}
+
+.bs .jadeMenuBar .v-menubar .v-menubar-menuitem:hover {
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.bs .jadeMenuBar .v-menubar-submenu {
+	background: #E5E5E5;
+	border: none;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
+	overflow: hidden;
+	padding: 4px 0;
+	text-shadow: none;
+}
+
+.bs .jadeMenuBar .v-menubar-menuitem .v-menubar-submenu {
+	background: #E5E5E5;
+	color: #323336;
+	text-shadow: none;
+}
+
+.bs .jadeMenuBar .v-menubar-menuitem-selected, .bs .jadeMenuBar .v-menubar-submenu .v-menubar-menuitem-selected {
+	background: #E77B37;
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.bs .jadeMenuBarLayout {
+	background-color: #E5E5E5;
+	border: 1px solid #C2C3C4;
+	border-radius: 5px;
+	padding-left: 7px;
+}
+
+.bs .jadeMainVLayout {
+	padding-bottom: 10px;
+}
+
+.bs .jadeDetailLayout {
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border: 1px solid #C2C3C4;
+}
+
+.bs .jadeDetailLayoutNoBorder {
+	border-radius: 8px;
+}
+
+.bs .jadeDetailLabel {
+	font-weight: normal;
+	color: black;
+}
+
+.bs .jadeDetailLabelCaption {
+	font-weight: bold;
+	color: grey;
+	padding-left: 10px;
 }
