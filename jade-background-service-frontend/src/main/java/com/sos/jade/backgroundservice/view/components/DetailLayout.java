@@ -3,13 +3,13 @@ package com.sos.jade.backgroundservice.view.components;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import oracle.net.aso.d;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
+import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -17,20 +17,11 @@ import com.vaadin.ui.VerticalLayout;
 public class DetailLayout extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	private JadeFilesHistoryDBItem jadeFilesHistoryDBItem;
-	
 	private Label lblGuid;
 	private	Label lblSosftpId;
-	private Label lblOperation; 
-	private Label lblTransferTimestamp;
-	private Label lblPid;
-	private Label lblPpid;
-	private Label lblTargetHost;
 	private Label lblTargetHostIp; 
 	private Label lblTargetUser;
 	private Label lblTargetDir; 
-	private Label lblTargetFilename;
-	private Label lblProtocol; 
 	private Label lblPort;
 	private Label lblStatus; 
 	private Label lblLastErrorMessage;
@@ -40,29 +31,38 @@ public class DetailLayout extends VerticalLayout {
 	private Label lblJumpUser;
 	private Label lblJumpProtocol;
 	private Label lblJumpPort;
-	private Label lblFileHistoryCreated; 
-	private Label lblFileHistoryCreatedBy;
-	private Label lblFileHistoryModified; 
-	private Label lblFileHistoryModifiedBy; 
-	// JadeFilesDBItem properties
 	private Label lblId;
-	private Label lblMandator;
-	private Label lblSourceHost;
 	private Label lblSourceHostIp;
 	private Label lblSourceUser;
 	private Label lblSourceDir; 
 	private Label lblSourceFilename;
 	private Label lblMd5;
+	// not needed except for detailed detail view
 	private Label lblFileSize;
 	private Label lblFileCreated; 
 	private Label lblFileCreatedBy;
 	private Label lblFileModified; 
 	private Label lblFileModifiedBy;
+	private Label lblOperation; 
+	private Label lblTransferTimestamp;
+	private Label lblPid;
+	private Label lblPpid;
+	private Label lblTargetHost;
+	private Label lblTargetFilename;
+	private Label lblProtocol; 
+	private Label lblFileHistoryCreated; 
+	private Label lblFileHistoryCreatedBy;
+	private Label lblFileHistoryModified; 
+	private Label lblFileHistoryModifiedBy; 
+	private Label lblMandator;
+	private Label lblSourceHost;
 	private SimpleDateFormat sdfOut = new SimpleDateFormat("dd.MM.YYYY hh:mm:ss");
 	private List<HorizontalLayout> detailLayouts = new ArrayList<HorizontalLayout>();
+	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
 	
 	public DetailLayout() {
-		this.setSizeFull();
+		this.setHeight(200.0f, Unit.PIXELS);
+		this.setWidth("100%");
 		this.setMargin(true);
 		this.setSpacing(true);
 		this.addStyleName("jadeDetailLayout");
@@ -88,7 +88,6 @@ public class DetailLayout extends VerticalLayout {
 	private HorizontalLayout initHlayout(Component... components){
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setSizeFull();
-        hl.addStyleName("jadeDetailLayoutNoBorder");
 		this.addComponent(hl);
 		this.setExpandRatio(hl, 1);
 		hl.addComponents(components);
@@ -99,6 +98,7 @@ public class DetailLayout extends VerticalLayout {
 		HorizontalLayout hl = new HorizontalLayout();
 		hl.setSizeFull();
 		hl.setSpacing(true);
+        hl.addStyleName("jadeDetailLayoutNoBorder");
  		hl.addComponents(caption, value);
     	hl.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
     	hl.setComponentAlignment(value, Alignment.MIDDLE_LEFT);
@@ -106,7 +106,70 @@ public class DetailLayout extends VerticalLayout {
 		return hl;
 	}
 	
+	private Label initDummyValueLabel(){
+		Label lbl = new Label();
+		lbl.addStyleName("jadeDetailLabel");
+		return lbl;
+	}
+	
 	private void initLayouts(){
+		Label lblGuidCaption = initLabel("guidCaption",
+				messages.getValue("DetailLayout.guid"), "jadeDetailLabelCaption"); 
+		Label lblMd5Caption = initLabel("md5Caption", 
+				messages.getValue("DetailLayout.md5"), "jadeDetailLabelCaption"); 
+		Label lblPortCaption = initLabel("portCaption", 
+				messages.getValue("DetailLayout.port"), "jadeDetailLabelCaption"); 
+		Label lblLastErrorMessageCaption = initLabel("lastErrorMessageCaption", 
+				messages.getValue("DetailLayout.lastErrorMessage"), "jadeDetailLabelCaption"); 
+        this.detailLayouts.add(
+    		initHlayout(
+				initHLabelLayout(lblGuidCaption, lblGuid), 
+				initHLabelLayout(lblMd5Caption, lblMd5), 
+				initHLabelLayout(lblPortCaption, lblPort), 
+				initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
+		Label lblJumpHostCaption = initLabel("jumpHostCaption", 
+				messages.getValue("DetailLayout.jumpHost"), "jadeDetailLabelCaption"); 
+		Label lblJumpPortCaption = initLabel("jumpPortCaption", 
+				messages.getValue("DetailLayout.jumpPort"), "jadeDetailLabelCaption"); 
+		Label lblJumpProtocolCaption = initLabel("jumpProtocolCaption", 
+				messages.getValue("DetailLayout.jumpProtocol"), "jadeDetailLabelCaption"); 
+		Label lblJumpUserCaption = initLabel("jumpUserCaption", 
+				messages.getValue("DetailLayout.jumpUser"), "jadeDetailLabelCaption"); 
+        this.detailLayouts.add(
+    		initHlayout(
+				initHLabelLayout(lblJumpHostCaption, lblJumpHost), 
+				initHLabelLayout(lblJumpPortCaption, lblJumpPort), 
+				initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), 
+				initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
+		Label lblLogFilenameCaption = initLabel("logFilenameCaption", 
+				"Log Filename:", "jadeDetailLabelCaption"); 
+		Label lblSourceDirCaption = initLabel("sourceDirCaption", 
+				messages.getValue("DetailLayout.sourceDirectory"), "jadeDetailLabelCaption"); 
+		Label lblSourceFilenameCaption = initLabel("sourceFilenameCaption", 
+				messages.getValue("DetailLayout.sourceFilename"), "jadeDetailLabelCaption"); 
+		Label lblSourceUserCaption = initLabel("sourceUserCaption", 
+				messages.getValue("DetailLayout.sourceUser"), "jadeDetailLabelCaption"); 
+        this.detailLayouts.add(
+    		initHlayout(
+				initHLabelLayout(lblSourceDirCaption, lblSourceDir), 
+				initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), 
+				initHLabelLayout(lblSourceUserCaption, lblSourceUser),
+				initHLabelLayout(lblLogFilenameCaption, lblLogFilename)));
+		Label lblTargetDirCaption = initLabel("targetDirCaption", 
+				messages.getValue("DetailLayout.targetDirectory"), "jadeDetailLabelCaption"); 
+		Label lblTargetUserCaption = initLabel("targetUserCaption", 
+				messages.getValue("DetailLayout.targetUser"), "jadeDetailLabelCaption"); 
+		Label lblDummy1Caption = initLabel("dummy1Caption", "", "jadeDetailLabelCaption"); 
+		Label lblDummy2Caption = initLabel("dummy2Caption", "", "jadeDetailLabelCaption"); 
+        this.detailLayouts.add(
+    		initHlayout(
+				initHLabelLayout(lblTargetDirCaption, lblTargetDir), 
+				initHLabelLayout(lblTargetUserCaption, lblTargetUser), 
+				initHLabelLayout(lblDummy1Caption, initDummyValueLabel()), 
+				initHLabelLayout(lblDummy2Caption, initDummyValueLabel())));
+	}
+	
+	private void initDetailedLayouts(){
 		Label lblGuidCaption = initLabel("guidCaption", "GUID:", "jadeDetailLabelCaption"); 
 		Label lblPidCaption = initLabel("pidCaption", "PID:", "jadeDetailLabelCaption"); 
 		Label lblPpidCaption = initLabel("pPidCaption", "PPID:", "jadeDetailLabelCaption"); 
@@ -254,11 +317,20 @@ public class DetailLayout extends VerticalLayout {
 		this.lblProtocol.setValue(historyItem.getProtocol()); 
 		this.lblPort.setValue(historyItem.getPort().toString());
 		this.lblStatus.setValue(historyItem.getStatus()); 
-		this.lblLastErrorMessage.setValue(historyItem.getLastErrorMessage());
+		if (historyItem.getLastErrorMessage() != null && !"NULL".equals(historyItem.getLastErrorMessage()))
+			this.lblLastErrorMessage.setValue(historyItem.getLastErrorMessage());
+		else
+			this.lblLastErrorMessage.setValue(messages.getValue("DetailLayout.none"));
 		this.lblLogFilename.setValue(historyItem.getLogFilename()); 
-		this.lblJumpHost.setValue(historyItem.getJumpHost());
+		if (historyItem.getJumpHost() != null && !"NULL".equals(historyItem.getJumpHost()))
+			this.lblJumpHost.setValue(historyItem.getJumpHost());
+		else
+			this.lblJumpHost.setValue(messages.getValue("DetailLayout.notSet"));
 		this.lblJumpHostIp.setValue(historyItem.getJumpHostIp());
-		this.lblJumpUser.setValue(historyItem.getJumpUser());
+		if (historyItem.getJumpUser() != null && !"NULL".equals(historyItem.getJumpUser()))
+			this.lblJumpUser.setValue(historyItem.getJumpUser());
+		else
+			this.lblJumpUser.setValue(messages.getValue("DetailLayout.notSet"));
 		this.lblJumpProtocol.setValue(historyItem.getJumpProtocol());
 		this.lblJumpPort.setValue(historyItem.getJumpPort().toString());
 		this.lblFileHistoryCreated.setValue(sdfOut.format(historyItem.getCreated())); 
@@ -289,45 +361,5 @@ public class DetailLayout extends VerticalLayout {
 				}
 			}
 		}
-			//		// JadeFilesHistoryDBItem properties
-			//		this.lblGuid.setValue(null);
-			//		this.lblSosftpId.setValue(null);
-			//		this.lblOperation.setValue(null); 
-			//		this.lblTransferTimestamp.setValue(null);
-			//		this.lblPid.setValue(null);
-			//		this.lblPpid.setValue(null);
-			//		this.lblTargetHost.setValue(null);
-			//		this.lblTargetHostIp.setValue(null); 
-			//		this.lblTargetUser.setValue(null);
-			//		this.lblTargetDir.setValue(null); 
-			//		this.lblTargetFilename.setValue(null);
-			//		this.lblProtocol.setValue(null); 
-			//		this.lblPort.setValue(null);
-			//		this.lblStatus.setValue(null); 
-			//		this.lblLastErrorMessage.setValue(null);
-			//		this.lblLogFilename.setValue(null); 
-			//		this.lblJumpHost.setValue(null);
-			//		this.lblJumpHostIp.setValue(null);
-			//		this.lblJumpUser.setValue(null);
-			//		this.lblJumpProtocol.setValue(null);
-			//		this.lblJumpPort.setValue(null);
-			//		this.lblFileHistoryCreated.setValue(null); 
-			//		this.lblFileHistoryCreatedBy.setValue(null);
-			//		this.lblFileHistoryModified.setValue(null); 
-			//		this.lblFileHistoryModifiedBy.setValue(null); 
-			//		// JadeFilesDBItem properties
-			//		this.lblId.setValue(null);
-			//		this.lblMandator.setValue(null);
-			//		this.lblSourceHost.setValue(null);
-			//		this.lblSourceHostIp.setValue(null);
-			//		this.lblSourceUser.setValue(null);
-			//		this.lblSourceDir.setValue(null); 
-			//		this.lblSourceFilename.setValue(null);
-			//		this.lblMd5.setValue(null);
-			//		this.lblFileSize.setValue(null);
-			//		this.lblFileCreated.setValue(null); 
-			//		this.lblFileCreatedBy.setValue(null);
-			//		this.lblFileModified.setValue(null); 
-			//		this.lblFileModifiedBy.setValue(null);
 	}
 }

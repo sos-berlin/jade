@@ -7031,6 +7031,9 @@ body .bs.v-app .v-app-loading {
 
 .bs .v-select-select {
 	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
 	border: 1px solid #D2D3D4;
 	display: inline-block;
 	-webkit-display: inline-block;
@@ -7040,8 +7043,11 @@ body .bs.v-app .v-app-loading {
 	-moz-box-sizing: border-box;
 }
 
-.bs .v-table {
+.bs .jadeBsTable {
 	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
 }
 
 .bs .v-table-table {
@@ -7060,11 +7066,43 @@ body .bs.v-app .v-app-loading {
 	background-color: #EFF0F1;
 }
 
+.bs .v-table .v-selected, .bs .black .v-table .v-selected {
+	background: transparent url(../bs/images/table_selected.png) repeat-x;
+	color: #000000;
+	text-shadow: none;
+	font-weight: bold;
+}
+
+.bs .v-table-focus .v-table-cell-content {
+	border-top: 1px dotted #D5D5D5;
+	border-bottom: 1px dotted #D5D5D5;
+}
+
+.bs .v-table-cell-content {
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 0 6px;
+	border-right: 1px solid #d3d4d5;
+}
+
+.bs .v-table .v-selected .v-table-cell-content {
+	border-right-color: #d3d4d5;
+}
+
+.bs .v-table-header-wrap, .bs .white .v-table-header-wrap, .bs .v-table-header-drag {
+	text-transform: none;
+	font-size: 12px;
+	font-weight: bold;
+}
+
 .bs .jadeStatusSuccessLabel {
 	width: 16px;
 	height: 16px;
 	border: 1px solid black;
 	border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	-o-border-radius: 8px;
 	background-color: #3FC72C;
 }
 
@@ -7073,6 +7111,9 @@ body .bs.v-app .v-app-loading {
 	height: 16px;
 	border: 1px solid black;
 	border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	-o-border-radius: 8px;
 	background-color: #FA3816;
 }
 
@@ -7085,8 +7126,8 @@ body .bs.v-app .v-app-loading {
 	color: #323336;
 }
 
-.bs .jadeMenuBar .v-menubar .v-menubar-menuitem:hover {
-	color: #FFFFFF;
+.bs .v-menubar .v-menubar-menuitem:hover, .bs .jadeMenuBar .v-menubar .v-menubar-menuitem:hover {
+	color: #000000;
 	text-shadow: none;
 }
 
@@ -7108,9 +7149,9 @@ body .bs.v-app .v-app-loading {
 	text-shadow: none;
 }
 
-.bs .jadeMenuBar .v-menubar-menuitem-selected, .bs .jadeMenuBar .v-menubar-submenu .v-menubar-menuitem-selected {
-	background: #E77B37;
-	color: #FFFFFF;
+.bs .v-menubar .v-menubar-menuitem-selected, .bs .v-menubar .v-menubar-submenu .v-menubar-menuitem-selected, .bs .v-menubar-submenu .v-menubar-menuitem-selected {
+	background: #F3BFA0;
+	color: #000000;
 	text-shadow: none;
 }
 
@@ -7118,6 +7159,9 @@ body .bs.v-app .v-app-loading {
 	background-color: #E5E5E5;
 	border: 1px solid #C2C3C4;
 	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
 	padding-left: 7px;
 }
 
@@ -7127,12 +7171,31 @@ body .bs.v-app .v-app-loading {
 
 .bs .jadeDetailLayout {
 	border-bottom-left-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-bottom-left-radius: 8px;
+	-o-border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+	-moz-border-bottom-right-radius: 8px;
+	-o-border-bottom-right-radius: 8px;
 	border: 1px solid #C2C3C4;
 }
 
 .bs .jadeDetailLayoutNoBorder {
 	border-radius: 8px;
+	color: #000000;
+}
+
+.bs .jadeDetailLayoutNoBorder:hover, .bs .jadeDetailLayoutNoBorder:hover .jadeDetailLabel {
+	background: #F3BFA0;
+	font-weight: bold;
+	text-shadow: none;
+}
+
+.bs .jadeDetailLayoutNoBorder:hover .jadeDetailLabelCaption {
+	background: #F3BFA0;
+	font-weight: bolder;
+	text-shadow: none;
 }
 
 .bs .jadeDetailLabel {

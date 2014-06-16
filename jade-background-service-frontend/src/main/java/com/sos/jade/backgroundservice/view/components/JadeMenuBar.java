@@ -1,6 +1,9 @@
 package com.sos.jade.backgroundservice.view.components;
 
+import java.util.Locale;
+
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -20,19 +23,28 @@ public class JadeMenuBar extends MenuBar {
 	private MenuItem smActivateFilter;
 	private MenuItem smLoadFilter;
 	private MenuItem smSaveFilter;
+	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
 
 	public JadeMenuBar() {
 		setAutoOpen(true);
 		addStyleName("jadeMenuBar");
 		
 //		setHeight(25.0f, Unit.PIXELS);
-		mFile = addItem("File", fileCommand);
+//		mFile = addItem("File", fileCommand);
+//		
+//		mFilter = addItem("Filter", filterCommand);
+//		this.smActivateFilter = mFilter.addItem("filter...", activateFilterCommand);
+//		mPreferences = addItem("Preferences", preferencesCommand);
+//		
+//		mHelp = addItem("Help", helpCommand);
 		
-		mFilter = addItem("Filter", filterCommand);
-		this.smActivateFilter = mFilter.addItem("filter...", activateFilterCommand);
-		mPreferences = addItem("Preferences", preferencesCommand);
+		mFile = addItem(messages.getValue("JadeMenuBar.file"), fileCommand);
 		
-		mHelp = addItem("Help", helpCommand);
+		mFilter = addItem(messages.getValue("JadeMenuBar.filter"), filterCommand);
+		this.smActivateFilter = mFilter.addItem(messages.getValue("JadeMenuBar.doFilter"), activateFilterCommand);
+		mPreferences = addItem(messages.getValue("JadeMenuBar.preferences"), preferencesCommand);
+		
+		mHelp = addItem(messages.getValue("JadeMenuBar.help"), helpCommand);
 		
 	}
 

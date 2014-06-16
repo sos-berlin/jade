@@ -17,6 +17,10 @@
   $round-corners-component-radius: 3px;
 
   $round-corners-menu-radius: 5px;
+  
+  $default-sos-rabbit-orange: #E77B37;
+
+  $light-sos-rabbit-orange: #F3BFA0;
 
   
   /**********style definitions here !**********/  
@@ -52,6 +56,9 @@
  
   .v-select-select{
     border-radius: $round-corners-component-radius;
+	-webkit-border-radius: $round-corners-component-radius;
+	-moz-border-radius: $round-corners-component-radius;
+	-o-border-radius: $round-corners-component-radius;
     border: 1px solid #D2D3D4;
     display: inline-block;
     -webkit-display: inline-block;
@@ -61,8 +68,12 @@
 	-moz-box-sizing: border-box;
   }
   
-  .v-table{
+  /* styles for Table Layout */
+  .jadeBsTable{
   	border-radius: $round-corners-component-radius;
+	-webkit-border-radius: $round-corners-component-radius;
+	-moz-border-radius: $round-corners-component-radius;
+	-o-border-radius: $round-corners-component-radius;
   }
   
   .v-table-table{
@@ -81,11 +92,46 @@
   	background-color: #EFF0F1;
   }
   
-  .jadeStatusSuccessLabel{
+  .v-table .v-selected, 
+  .black .v-table .v-selected {
+	background: transparent url(../bs/images/table_selected.png) repeat-x;
+	color: #000000;
+	text-shadow: none;
+	font-weight: bold;
+  }
+
+  .v-table-focus .v-table-cell-content {
+	border-top: 1px dotted #D5D5D5;
+	border-bottom: 1px dotted #D5D5D5;
+  }
+
+  .v-table-cell-content {
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 0 6px;
+	border-right: 1px solid #d3d4d5;
+  }
+
+  .v-table .v-selected .v-table-cell-content {
+	border-right-color: #d3d4d5;
+  }
+  
+  .v-table-header-wrap, 
+  .white .v-table-header-wrap, 
+  .v-table-header-drag {
+	text-transform: none;
+	font-size: 12px;
+	font-weight: bold;
+  }
+
+   .jadeStatusSuccessLabel{
   	width: 16px;
   	height: 16px;
   	border: 1px solid black;
   	border-radius: $round-corners-radius;
+	-webkit-border-radius: $round-corners-radius;
+	-moz-border-radius: $round-corners-radius;
+	-o-border-radius: $round-corners-radius;
   	background-color: #3FC72C;  
   }
   
@@ -94,6 +140,9 @@
   	height: 16px;
   	border: 1px solid black;
   	border-radius: $round-corners-radius;
+	-webkit-border-radius: $round-corners-radius;
+	-moz-border-radius: $round-corners-radius;
+	-o-border-radius: $round-corners-radius;
   	background-color: #FA3816;  
   }
   
@@ -106,8 +155,9 @@
 	color: #323336;
   }
   
+  .v-menubar .v-menubar-menuitem:hover,
   .jadeMenuBar .v-menubar .v-menubar-menuitem:hover {
-	color: #FFFFFF;
+	color: #000000;
 	text-shadow: none;
   }
 
@@ -129,10 +179,12 @@
 	text-shadow: none;
   }
   
-  .jadeMenuBar .v-menubar-menuitem-selected,
-  .jadeMenuBar .v-menubar-submenu .v-menubar-menuitem-selected{
-	background: #E77B37;
-	color: #FFFFFF;
+  .v-menubar .v-menubar-menuitem-selected,
+  .v-menubar .v-menubar-submenu .v-menubar-menuitem-selected,
+  .v-menubar-submenu .v-menubar-menuitem-selected {
+/* 	background: $default-sos-rabbit-orange; */
+	background: $light-sos-rabbit-orange;
+	color: #000000;
 	text-shadow: none;
   }
   
@@ -140,6 +192,9 @@
   	background-color: #E5E5E5;
 	border: 1px solid #C2C3C4;
   	border-radius: $round-corners-menu-radius;
+	-webkit-border-radius: $round-corners-menu-radius;
+	-moz-border-radius: $round-corners-menu-radius;
+	-o-border-radius: $round-corners-menu-radius;
   	padding-left: 7px;
   }
   
@@ -149,12 +204,36 @@
   
   .jadeDetailLayout{
 	border-bottom-left-radius: $round-corners-radius;
+	-webkit-border-bottom-left-radius: $round-corners-radius;
+	-moz-border-bottom-left-radius: $round-corners-radius;
+	-o-border-bottom-left-radius: $round-corners-radius;
 	border-bottom-right-radius: $round-corners-radius;
+	-webkit-border-bottom-right-radius: $round-corners-radius;
+	-moz-border-bottom-right-radius: $round-corners-radius;
+	-o-border-bottom-right-radius: $round-corners-radius;
   	border: 1px solid #C2C3C4;
   }
   
   .jadeDetailLayoutNoBorder{
   	border-radius: $round-corners-radius;
+/* 	background: #E5E5E5; */
+	color: #000000;
+  }
+  
+  .jadeDetailLayoutNoBorder:hover,
+  .jadeDetailLayoutNoBorder:hover .jadeDetailLabel{
+/* 	background: $default-sos-rabbit-orange; */
+	background: $light-sos-rabbit-orange;
+/* 	color: #FFFFFF !important; */
+	font-weight: bold;
+	text-shadow: none;
+  }
+  
+  .jadeDetailLayoutNoBorder:hover .jadeDetailLabelCaption{
+/* 	background: $default-sos-rabbit-orange; */
+	background: $light-sos-rabbit-orange;
+	font-weight: bolder;
+	text-shadow: none;
   }
   
   .jadeDetailLabel{
@@ -166,6 +245,6 @@
 	font-weight: bold;
 	color: grey;	
 	padding-left: 10px;
-}
-  
+  }
+    
 }

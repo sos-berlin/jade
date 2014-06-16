@@ -1,6 +1,8 @@
 package com.sos.jade.backgroundservice.view;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import sos.ftphistory.db.JadeFilesDBItem;
@@ -10,6 +12,7 @@ import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
+import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.components.DetailLayout;
 import com.sos.jade.backgroundservice.view.components.JadeFilesHistoryTable;
 import com.sos.jade.backgroundservice.view.components.JadeFilesTable;
@@ -42,6 +45,7 @@ public class MainView extends CustomComponent{
 	private DetailLayout details;
 	private Float lastSplitPosition;
 	private boolean first = true;
+	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
 
 	public MainView() {
 		this.fileListener = new JadeFileListenerProxy(this);
@@ -92,7 +96,8 @@ public class MainView extends CustomComponent{
 		imgTitle.setSource(titleResource);
         hLayout.addComponent(imgTitle);
 
-        final Label lblTitle = new Label("JADE background service");
+//        final Label lblTitle = new Label("JADE background service");
+        final Label lblTitle = new Label(messages.getValue("MainView.title"));
         lblTitle.setStyleName("jadeTitleLabel");
         hLayout.addComponent(lblTitle);
         
@@ -141,14 +146,22 @@ public class MainView extends CustomComponent{
 		if(markedRow != null && markedRow.equals(item)){
 			markedRow = null;
 			details.setVisible(false);
+			setSplitPosition();
+		}else if (markedRow != null && !markedRow.equals(item)){
+			markedRow = item;
+			details.setVisible(true);
 		}else{
 			markedRow = item;
 			details.setVisible(true);
+			setSplitPosition();
 		}
+	}
+	
+	private void setSplitPosition(){
 		Float newLastSplitPosition = vSplitPanel.getSplitPosition();
 		if(first){
 			first = false;
-			vSplitPanel.setSplitPosition(50);
+			vSplitPanel.setSplitPosition(65);
 		}else{
 			vSplitPanel.setSplitPosition(lastSplitPosition);
 		}

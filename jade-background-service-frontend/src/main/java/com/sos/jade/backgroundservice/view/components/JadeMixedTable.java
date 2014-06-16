@@ -2,12 +2,14 @@ package com.sos.jade.backgroundservice.view.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.data.JadeFilesHistoryContainer;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
+import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 
@@ -17,6 +19,7 @@ public class JadeMixedTable extends Table{
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private JadeFilesHistoryContainer container;
 	private static final int PAGE_LENGTH = 10;
+	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
 	
 	private static final Object[] visibleColumns = new String[] {
 		JadeHistoryFileColumns.STATUS.getName(), JadeFileColumns.MANDATOR.getName(),
@@ -46,12 +49,26 @@ public class JadeMixedTable extends Table{
 		setEditable(false);
 		setColumnReorderingAllowed(true);
 		setPageLength(PAGE_LENGTH);
+		addStyleName("jadeBsTable");
 		setColumnAlignment(JadeHistoryFileColumns.STATUS.getName(), Align.CENTER);
 		setCellStyleGenerator(new StatusCellStyleGenerator());
 		enableContentRefreshing(true);
 		if (container != null){
 			this.setVisibleColumns(visibleColumns);
 		}
+		setColumnHeaders();
+	}
+	
+	private void setColumnHeaders(){
+		setColumnHeader(JadeHistoryFileColumns.STATUS.getName(), messages.getValue("MixedTable.status"));
+		setColumnHeader(JadeFileColumns.MANDATOR.getName(), messages.getValue("MixedTable.mandator"));
+		setColumnHeader(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), messages.getValue("MixedTable.transferTimestamp"));
+		setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue("MixedTable.operation"));
+		setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue("MixedTable.protocol"));
+		setColumnHeader(JadeHistoryFileColumns.TARGET_FILENAME.getName(), messages.getValue("MixedTable.targetFilename"));
+		setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue("MixedTable.fileSize"));
+		setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue("MixedTable.sourceHost"));
+		setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue("MixedTable.targetHost"));
 	}
 	
 	/**
