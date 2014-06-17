@@ -7167,6 +7167,7 @@ body .bs.v-app .v-app-loading {
 
 .bs .jadeMainVLayout {
 	padding-bottom: 10px;
+	margin-bottom: 0px;
 }
 
 .bs .jadeDetailLayout {
@@ -7179,10 +7180,11 @@ body .bs.v-app .v-app-loading {
 	-moz-border-bottom-right-radius: 8px;
 	-o-border-bottom-right-radius: 8px;
 	border: 1px solid #C2C3C4;
+	margin-bottom: 0px;
 }
 
 .bs .jadeDetailLayoutNoBorder {
-	border-radius: 8px;
+	border-radius: 6px;
 	color: #000000;
 }
 
@@ -7207,4 +7209,9 @@ body .bs.v-app .v-app-loading {
 	font-weight: bold;
 	color: grey;
 	padding-left: 10px;
+}
+
+.bs .jadeImage {
+	cursor: pointer;
+	margin: 2px;
 }

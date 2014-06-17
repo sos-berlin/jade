@@ -58,7 +58,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private TextField tfProtocol;
 	private NativeSelect nsStatus;
 	private NativeSelect nsOperation;
-	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
+	private Button btnCommit;
+	private Button btnDiscard;
+
+	private JadeBSMessages messages;
 
 	@SuppressWarnings("unused")
 	private static final long oneDay = 24 * 60 * 60 * 1000;
@@ -67,6 +70,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	public JadeFilesHistoryFilterLayout(MainView ui){
 		super();
 		this.ui = ui;
+		this.messages = ui.getMessages();
 		this.setSizeFull();
 		this.setMargin(true);
 		initJadeFilesHistoryFilterComponents();
@@ -221,8 +225,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		operationList.add(OPERATION_SEND);
 		operationList.add(OPERATION_RECEIVE);
 		nsOperation = new NativeSelect(messages.getValue("FilterLayout.operation"), operationList);
-		Button btnCommit = new Button(messages.getValue("FilterLayout.ok"));
-		Button btnDiscard = new Button(messages.getValue("FilterLayout.discard"));
+		btnCommit = new Button(messages.getValue("FilterLayout.ok"));
+		btnDiscard = new Button(messages.getValue("FilterLayout.discard"));
 
 		hlFirst.addComponents(tfMandator, tfSourceFile);
 		hlFirst.setExpandRatio(tfMandator, 1);
@@ -277,6 +281,21 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
 			}
 		});
+	}
+	
+	public void refreshCaptions(Locale locale){
+		dfTimestampFrom.setCaption(messages.getValue("FilterLayout.from", locale));
+		dfTimestampTo.setCaption(messages.getValue("FilterLayout.to", locale));
+		tfMandator.setCaption(messages.getValue("FilterLayout.mandator", locale));
+		tfProtocol.setCaption(messages.getValue("FilterLayout.protocol", locale));
+		tfSourceFile.setCaption(messages.getValue("FilterLayout.sourceFile", locale));
+		tfSourceHost.setCaption(messages.getValue("FilterLayout.sourceHost", locale));
+		tfTargetFile.setCaption(messages.getValue("FilterLayout.targetFile", locale));
+		tfTargetHost.setCaption(messages.getValue("FilterLayout.targetHost", locale));
+		nsStatus.setCaption(messages.getValue("FilterLayout.status", locale));
+		nsOperation.setCaption(messages.getValue("FilterLayout.operation", locale));
+		btnCommit.setCaption(messages.getValue("FilterLayout.ok", locale));
+		btnDiscard.setCaption(messages.getValue("FilterLayout.discard", locale));
 	}
 	
 }

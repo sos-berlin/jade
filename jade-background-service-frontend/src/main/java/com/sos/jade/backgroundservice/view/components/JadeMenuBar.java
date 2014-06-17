@@ -5,6 +5,7 @@ import java.util.Locale;
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 
@@ -23,28 +24,20 @@ public class JadeMenuBar extends MenuBar {
 	private MenuItem smActivateFilter;
 	private MenuItem smLoadFilter;
 	private MenuItem smSaveFilter;
-	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
+	private JadeBSMessages messages;
 
-	public JadeMenuBar() {
+	public JadeMenuBar(JadeBSMessages messages) {
+		this.messages = messages;
 		setAutoOpen(true);
 		addStyleName("jadeMenuBar");
 		
-//		setHeight(25.0f, Unit.PIXELS);
-//		mFile = addItem("File", fileCommand);
-//		
-//		mFilter = addItem("Filter", filterCommand);
-//		this.smActivateFilter = mFilter.addItem("filter...", activateFilterCommand);
-//		mPreferences = addItem("Preferences", preferencesCommand);
-//		
-//		mHelp = addItem("Help", helpCommand);
+		mFile = addItem(messages.getValue("JadeMenuBar.file", VaadinSession.getCurrent().getLocale()), fileCommand);
 		
-		mFile = addItem(messages.getValue("JadeMenuBar.file"), fileCommand);
+		mFilter = addItem(messages.getValue("JadeMenuBar.filter", VaadinSession.getCurrent().getLocale()), filterCommand);
+		this.smActivateFilter = mFilter.addItem(messages.getValue("JadeMenuBar.doFilter", VaadinSession.getCurrent().getLocale()), activateFilterCommand);
+		mPreferences = addItem(messages.getValue("JadeMenuBar.preferences", VaadinSession.getCurrent().getLocale()), preferencesCommand);
 		
-		mFilter = addItem(messages.getValue("JadeMenuBar.filter"), filterCommand);
-		this.smActivateFilter = mFilter.addItem(messages.getValue("JadeMenuBar.doFilter"), activateFilterCommand);
-		mPreferences = addItem(messages.getValue("JadeMenuBar.preferences"), preferencesCommand);
-		
-		mHelp = addItem(messages.getValue("JadeMenuBar.help"), helpCommand);
+		mHelp = addItem(messages.getValue("JadeMenuBar.help", VaadinSession.getCurrent().getLocale()), helpCommand);
 		
 	}
 
@@ -88,5 +81,14 @@ public class JadeMenuBar extends MenuBar {
 	        //TODO
 	    }  
 	};
+
+	public void refreshCaptions(Locale locale){
+		mFile.setText(messages.getValue("JadeMenuBar.file", locale));
+		mFilter.setText(messages.getValue("JadeMenuBar.filter", locale));
+		smActivateFilter.setText(messages.getValue("JadeMenuBar.doFilter", locale));
+		mPreferences.setText(messages.getValue("JadeMenuBar.preferences", locale));
+		mHelp.setText(messages.getValue("JadeMenuBar.help", locale));
+		JadeMenuBar.this.markAsDirty();
+	}
 
 }

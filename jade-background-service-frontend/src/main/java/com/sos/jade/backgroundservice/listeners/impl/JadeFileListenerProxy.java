@@ -3,13 +3,13 @@
  */
 package com.sos.jade.backgroundservice.listeners.impl;
 
+import org.apache.log4j.Logger;
+
 import sos.ftphistory.JadeFilesFilter;
 import sos.ftphistory.JadeFilesHistoryFilter;
 
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
-
-import org.apache.log4j.Logger; 
 
 /**
  * @author SP

@@ -6,17 +6,16 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.List;
 
-import com.sos.JSHelper.Options.SOSOptionFolderName;
-import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
-import com.sos.jade.backgroundservice.view.MainView;
-import com.vaadin.server.VaadinService;
-
 import sos.ftphistory.JadeFilesFilter;
 import sos.ftphistory.JadeFilesHistoryFilter;
 import sos.ftphistory.db.JadeFilesDBItem;
 import sos.ftphistory.db.JadeFilesDBLayer;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 import sos.ftphistory.db.JadeFilesHistoryDBLayer;
+
+import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
+import com.sos.jade.backgroundservice.view.MainView;
+import com.vaadin.server.VaadinService;
 
 public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private static final long serialVersionUID = 1L;

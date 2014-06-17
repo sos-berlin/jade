@@ -37,7 +37,7 @@ public class DetailLayout extends VerticalLayout {
 	private Label lblSourceDir; 
 	private Label lblSourceFilename;
 	private Label lblMd5;
-	// not needed except for detailed detail view
+	// not needed except for detailed detail view (Method: initDetailedLayouts())
 	private Label lblFileSize;
 	private Label lblFileCreated; 
 	private Label lblFileCreatedBy;
@@ -56,22 +56,66 @@ public class DetailLayout extends VerticalLayout {
 	private Label lblFileHistoryModifiedBy; 
 	private Label lblMandator;
 	private Label lblSourceHost;
+	private Label lblGuidCaption; 
+	private Label lblPidCaption; 
+	private Label lblPpidCaption; 
+	private Label lblOperationCaption; 
+	private Label lblFileHistoryCreatedCaption; 
+	private Label lblFileHistoryCreatedByCaption; 
+	private Label lblFileHistoryModifiedCaption; 
+	private Label lblFileHistoryModifiedByCaption; 
+	private Label lblProtocolCaption; 
+	private Label lblPortCaption; 
+	private Label lblLogFilenameCaption; 
+	private Label lblLastErrorMessageCaption; 
+	private Label lblSourceDirCaption; 
+	private Label lblSourceFilenameCaption; 
+	private Label lblSourceHostCaption; 
+	private Label lblSourceUserCaption; 
+	private Label lblSourceHostIpCaption;
+	private Label lblTargetDirCaption; 
+	private Label lblTargetFilenameCaption; 
+	private Label lblTargetHostCaption; 
+	private Label lblTargetHostIpCaption;
+	private Label lblTargetUserCaption; 
+	private Label lblJumpHostCaption; 
+	private Label lblJumpHostIpCaption;
+	private Label lblJumpPortCaption; 
+	private Label lblJumpProtocolCaption; 
+	private Label lblJumpUserCaption; 
+	private Label lblTransferTimestampCaption; 
+	private Label lblMd5Caption; 
+	private Label lblFileSizeCaption; 
+	private Label lblMandatorCaption; 
+	private Label lblFileCreatedCaption; 
+	private Label lblFileCreatedByCaption; 
+	private Label lblFileModifiedCaption; 
+	private Label lblFileModifiedByCaption; 
 	private SimpleDateFormat sdfOut = new SimpleDateFormat("dd.MM.YYYY hh:mm:ss");
 	private List<HorizontalLayout> detailLayouts = new ArrayList<HorizontalLayout>();
-	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
+	private JadeBSMessages messages;
+	private JadeFilesHistoryDBItem historyItem;	
+	private static final String CAPTION_STYLE = "jadeDetailLabelCaption";
+	private static final String VALUE_STYLE= "jadeDetailLabel";
 	
-	public DetailLayout() {
-		this.setHeight(200.0f, Unit.PIXELS);
+	public DetailLayout(JadeBSMessages messages) {
+		this.messages = messages;
+		this.setHeight(180.0f, Unit.PIXELS);
 		this.setWidth("100%");
 		this.setMargin(true);
 		this.setSpacing(true);
 		this.addStyleName("jadeDetailLayout");
         initLabels();
+        initCaptionLabels();
         initLayouts();
 	}
 	
-	private Label initLabel(String id, String styleName){
-		return initLabel(id, null, styleName);
+	private Label initValueLabel(String id){
+		return initLabel(id, null, VALUE_STYLE);
+	}
+	
+	private Label initCaptionLabel(String id, String value){
+		return initLabel(id, value, CAPTION_STYLE);
 	}
 	
 	private Label initLabel(String id, String value, String styleName){
@@ -108,142 +152,81 @@ public class DetailLayout extends VerticalLayout {
 	
 	private Label initDummyValueLabel(){
 		Label lbl = new Label();
-		lbl.addStyleName("jadeDetailLabel");
+		lbl.addStyleName(VALUE_STYLE);
 		return lbl;
 	}
 	
 	private void initLayouts(){
-		Label lblGuidCaption = initLabel("guidCaption",
-				messages.getValue("DetailLayout.guid"), "jadeDetailLabelCaption"); 
-		Label lblMd5Caption = initLabel("md5Caption", 
-				messages.getValue("DetailLayout.md5"), "jadeDetailLabelCaption"); 
-		Label lblPortCaption = initLabel("portCaption", 
-				messages.getValue("DetailLayout.port"), "jadeDetailLabelCaption"); 
-		Label lblLastErrorMessageCaption = initLabel("lastErrorMessageCaption", 
-				messages.getValue("DetailLayout.lastErrorMessage"), "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblGuidCaption, lblGuid), 
 				initHLabelLayout(lblMd5Caption, lblMd5), 
 				initHLabelLayout(lblPortCaption, lblPort), 
 				initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
-		Label lblJumpHostCaption = initLabel("jumpHostCaption", 
-				messages.getValue("DetailLayout.jumpHost"), "jadeDetailLabelCaption"); 
-		Label lblJumpPortCaption = initLabel("jumpPortCaption", 
-				messages.getValue("DetailLayout.jumpPort"), "jadeDetailLabelCaption"); 
-		Label lblJumpProtocolCaption = initLabel("jumpProtocolCaption", 
-				messages.getValue("DetailLayout.jumpProtocol"), "jadeDetailLabelCaption"); 
-		Label lblJumpUserCaption = initLabel("jumpUserCaption", 
-				messages.getValue("DetailLayout.jumpUser"), "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblJumpHostCaption, lblJumpHost), 
 				initHLabelLayout(lblJumpPortCaption, lblJumpPort), 
 				initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), 
 				initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
-		Label lblLogFilenameCaption = initLabel("logFilenameCaption", 
-				"Log Filename:", "jadeDetailLabelCaption"); 
-		Label lblSourceDirCaption = initLabel("sourceDirCaption", 
-				messages.getValue("DetailLayout.sourceDirectory"), "jadeDetailLabelCaption"); 
-		Label lblSourceFilenameCaption = initLabel("sourceFilenameCaption", 
-				messages.getValue("DetailLayout.sourceFilename"), "jadeDetailLabelCaption"); 
-		Label lblSourceUserCaption = initLabel("sourceUserCaption", 
-				messages.getValue("DetailLayout.sourceUser"), "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblSourceDirCaption, lblSourceDir), 
 				initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), 
 				initHLabelLayout(lblSourceUserCaption, lblSourceUser),
 				initHLabelLayout(lblLogFilenameCaption, lblLogFilename)));
-		Label lblTargetDirCaption = initLabel("targetDirCaption", 
-				messages.getValue("DetailLayout.targetDirectory"), "jadeDetailLabelCaption"); 
-		Label lblTargetUserCaption = initLabel("targetUserCaption", 
-				messages.getValue("DetailLayout.targetUser"), "jadeDetailLabelCaption"); 
-		Label lblDummy1Caption = initLabel("dummy1Caption", "", "jadeDetailLabelCaption"); 
-		Label lblDummy2Caption = initLabel("dummy2Caption", "", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblTargetDirCaption, lblTargetDir), 
 				initHLabelLayout(lblTargetUserCaption, lblTargetUser), 
-				initHLabelLayout(lblDummy1Caption, initDummyValueLabel()), 
-				initHLabelLayout(lblDummy2Caption, initDummyValueLabel())));
+				initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), 
+				initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel())));
 	}
 	
+	@SuppressWarnings("unused")
 	private void initDetailedLayouts(){
-		Label lblGuidCaption = initLabel("guidCaption", "GUID:", "jadeDetailLabelCaption"); 
-		Label lblPidCaption = initLabel("pidCaption", "PID:", "jadeDetailLabelCaption"); 
-		Label lblPpidCaption = initLabel("pPidCaption", "PPID:", "jadeDetailLabelCaption"); 
-		Label lblOperationCaption = initLabel("operationCaption", "Operation:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblGuidCaption, lblGuid), 
         		initHLabelLayout(lblPidCaption, lblPid), 
         		initHLabelLayout(lblPpidCaption, lblPpid), 
         		initHLabelLayout(lblOperationCaption, lblOperation)));
-		Label lblFileHistoryCreatedCaption = initLabel("fileHistoryCreatedCaption", "File History Created:", "jadeDetailLabelCaption"); 
-		Label lblFileHistoryCreatedByCaption = initLabel("fileHistoryCreatedByCaption", "File History Created By:", "jadeDetailLabelCaption"); 
-		Label lblFileHistoryModifiedCaption = initLabel("fileHistoryModifiedCaption", "File History Modified:", "jadeDetailLabelCaption"); 
-		Label lblFileHistoryModifiedByCaption = initLabel("fileHistoryModifiedByCaption", "File History Modified By:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
         		initHLabelLayout(lblFileHistoryCreatedCaption, lblFileHistoryCreated), 
         		initHLabelLayout(lblFileHistoryCreatedByCaption, lblFileHistoryCreatedBy), 
         		initHLabelLayout(lblFileHistoryModifiedCaption, lblFileHistoryModified), 
         		initHLabelLayout(lblFileHistoryModifiedByCaption, lblFileHistoryModifiedBy)));
-		Label lblProtocolCaption = initLabel("protocolCaption", "Protocol:", "jadeDetailLabelCaption"); 
-		Label lblPortCaption = initLabel("portCaption", "Port:", "jadeDetailLabelCaption"); 
-		Label lblLogFilenameCaption = initLabel("logFilenameCaption", "Log Filename:", "jadeDetailLabelCaption"); 
-		Label lblLastErrorMessageCaption = initLabel("lastErrorMessageCaption", "Last Error Message:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
     				initHLabelLayout(lblProtocolCaption, lblProtocol), 
 					initHLabelLayout(lblPortCaption, lblPort), 
 					initHLabelLayout(lblLogFilenameCaption, lblLogFilename), 
 					initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
-		Label lblSourceDirCaption = initLabel("sourceDirCaption", "Source Directory:", "jadeDetailLabelCaption"); 
-		Label lblSourceFilenameCaption = initLabel("sourceFilenameCaption", "Source Filename:", "jadeDetailLabelCaption"); 
-		Label lblSourceHostCaption = initLabel("sourceHostCaption", "Source Host:", "jadeDetailLabelCaption"); 
-		Label lblSourceUserCaption = initLabel("sourceUserCaption", "Source User:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblSourceDirCaption, lblSourceDir), 
 				initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), 
 				initHLabelLayout(lblSourceHostCaption, lblSourceHost), 
 				initHLabelLayout(lblSourceUserCaption, lblSourceUser)));
-		Label lblTargetDirCaption = initLabel("targetDirCaption", "Target Directory:", "jadeDetailLabelCaption"); 
-		Label lblTargetFilenameCaption = initLabel("targetFilenameCaption", "Target Filename:", "jadeDetailLabelCaption"); 
-		Label lblTargetHostCaption = initLabel("targetHostCaption", "Target Host:", "jadeDetailLabelCaption"); 
-		Label lblTargetUserCaption = initLabel("targetUserCaption", "Target User:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblTargetDirCaption, lblTargetDir), 
 				initHLabelLayout(lblTargetFilenameCaption, lblTargetFilename), 
 				initHLabelLayout(lblTargetHostCaption, lblTargetHost), 
 				initHLabelLayout(lblTargetUserCaption, lblTargetUser)));
-		Label lblJumpHostCaption = initLabel("jumpHostCaption", "Jump Host:", "jadeDetailLabelCaption"); 
-		Label lblJumpPortCaption = initLabel("jumpPortCaption", "Jump Port:", "jadeDetailLabelCaption"); 
-		Label lblJumpProtocolCaption = initLabel("jumpProtocolCaption", "Jump Protocol:", "jadeDetailLabelCaption"); 
-		Label lblJumpUserCaption = initLabel("jumpUserCaption", "Jump User:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblJumpHostCaption, lblJumpHost), 
 				initHLabelLayout(lblJumpPortCaption, lblJumpPort), 
 				initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), 
 				initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
-		Label lblTransferTimestampCaption = initLabel("transferTimestampCaption", "Transfer Timestamp:", "jadeDetailLabelCaption"); 
-		Label lblMd5Caption = initLabel("md5Caption", "MD5:", "jadeDetailLabelCaption"); 
-		Label lblFileSizeCaption = initLabel("fileSizeCaption", "File Size:", "jadeDetailLabelCaption"); 
-		Label lblMandatorCaption = initLabel("mandatorCaption", "Mandator:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblTransferTimestampCaption, lblTransferTimestamp), 
 				initHLabelLayout(lblMd5Caption, lblMd5), 
         		initHLabelLayout(lblFileSizeCaption, lblFileSize), 
         		initHLabelLayout(lblMandatorCaption, lblMandator)));
-		Label lblFileCreatedCaption = initLabel("fileCreatedCaption", "File Created:", "jadeDetailLabelCaption"); 
-		Label lblFileCreatedByCaption = initLabel("fileCreatedByCaption", "File Created By:", "jadeDetailLabelCaption"); 
-		Label lblFileModifiedCaption = initLabel("fileModifiedCaption", "File Modified:", "jadeDetailLabelCaption"); 
-		Label lblFileModifiedByCaption = initLabel("fileModifiedByCaption", "File Modified By:", "jadeDetailLabelCaption"); 
         this.detailLayouts.add(
     		initHlayout(
 				initHLabelLayout(lblFileCreatedCaption, lblFileCreated), 
@@ -257,51 +240,51 @@ public class DetailLayout extends VerticalLayout {
         //unused: lblId; corresponding id from DB for JadeFilesDBItem
 	}
 	
-	
 	private void initLabels(){
 		// JadeFilesHistoryDBItem properties
-		this.lblGuid = initLabel("GUID", "jadeDetailLabel");
-		this.lblSosftpId = initLabel("SosFtpId", "jadeDetailLabel");
-		this.lblOperation = initLabel("Operation", "jadeDetailLabel"); 
-		this.lblTransferTimestamp = initLabel("Timestamp", "jadeDetailLabel");
-		this.lblPid = initLabel("PID", "jadeDetailLabel");
-		this.lblPpid = initLabel("PPID", "jadeDetailLabel");
-		this.lblTargetHost = initLabel("TargetHost", "jadeDetailLabel");
-		this.lblTargetHostIp = initLabel("TargetHostIp", "jadeDetailLabel"); 
-		this.lblTargetUser = initLabel("TargetUser", "jadeDetailLabel");
-		this.lblTargetDir = initLabel("TargetDir", "jadeDetailLabel"); 
-		this.lblTargetFilename = initLabel("TargetFilename", "jadeDetailLabel");
-		this.lblProtocol = initLabel("Protocol", "jadeDetailLabel"); 
-		this.lblPort = initLabel("Port", "jadeDetailLabel");
-		this.lblStatus = initLabel("Status", "jadeDetailLabel"); 
-		this.lblLastErrorMessage = initLabel("LastErrorMessage", "jadeDetailLabel");
-		this.lblLogFilename = initLabel("LogFilename", "jadeDetailLabel"); 
-		this.lblJumpHost = initLabel("JumpHost", "jadeDetailLabel");
-		this.lblJumpHostIp = initLabel("JumpHostIp", "jadeDetailLabel");
-		this.lblJumpUser = initLabel("JumpUser", "jadeDetailLabel");
-		this.lblJumpProtocol = initLabel("JumpProtocol", "jadeDetailLabel");
-		this.lblJumpPort = initLabel("JumpPort", "jadeDetailLabel");
-		this.lblFileHistoryCreated = initLabel("FileHistoryCreated", "jadeDetailLabel"); 
-		this.lblFileHistoryCreatedBy = initLabel("FileHistoryCreatedBy", "jadeDetailLabel");
-		this.lblFileHistoryModified = initLabel("FileHistoryModified", "jadeDetailLabel"); 
-		this.lblFileHistoryModifiedBy = initLabel("FileHistoryModifiedBy", "jadeDetailLabel"); 
+		this.lblGuid = initValueLabel("GUID");
+		this.lblSosftpId = initValueLabel("SosFtpId");
+		this.lblOperation = initValueLabel("Operation"); 
+		this.lblTransferTimestamp = initValueLabel("Timestamp");
+		this.lblPid = initValueLabel("PID");
+		this.lblPpid = initValueLabel("PPID");
+		this.lblTargetHost = initValueLabel("TargetHost");
+		this.lblTargetHostIp = initValueLabel("TargetHostIp"); 
+		this.lblTargetUser = initValueLabel("TargetUser");
+		this.lblTargetDir = initValueLabel("TargetDir"); 
+		this.lblTargetFilename = initValueLabel("TargetFilename");
+		this.lblProtocol = initValueLabel("Protocol"); 
+		this.lblPort = initValueLabel("Port");
+		this.lblStatus = initValueLabel("Status"); 
+		this.lblLastErrorMessage = initValueLabel("LastErrorMessage");
+		this.lblLogFilename = initValueLabel("LogFilename"); 
+		this.lblJumpHost = initValueLabel("JumpHost");
+		this.lblJumpHostIp = initValueLabel("JumpHostIp");
+		this.lblJumpUser = initValueLabel("JumpUser");
+		this.lblJumpProtocol = initValueLabel("JumpProtocol");
+		this.lblJumpPort = initValueLabel("JumpPort");
+		this.lblFileHistoryCreated = initValueLabel("FileHistoryCreated"); 
+		this.lblFileHistoryCreatedBy = initValueLabel("FileHistoryCreatedBy");
+		this.lblFileHistoryModified = initValueLabel("FileHistoryModified"); 
+		this.lblFileHistoryModifiedBy = initValueLabel("FileHistoryModifiedBy"); 
 		// JadeFilesDBItem properties
-		this.lblId = initLabel("ID", "jadeDetailLabel");
-		this.lblMandator = initLabel("Mandator", "jadeDetailLabel");
-		this.lblSourceHost = initLabel("SourceHost", "jadeDetailLabel");
-		this.lblSourceHostIp = initLabel("SourceHostIp", "jadeDetailLabel");
-		this.lblSourceUser = initLabel("SourceUser", "jadeDetailLabel");
-		this.lblSourceDir = initLabel("SourceDir", "jadeDetailLabel"); 
-		this.lblSourceFilename = initLabel("SourceFilename", "jadeDetailLabel");
-		this.lblMd5 = initLabel("MD5", "jadeDetailLabel");
-		this.lblFileSize = initLabel("FileSize", "jadeDetailLabel");
-		this.lblFileCreated = initLabel("FileCreated", "jadeDetailLabel"); 
-		this.lblFileCreatedBy = initLabel("FileCreatedBy", "jadeDetailLabel");
-		this.lblFileModified = initLabel("FileModified", "jadeDetailLabel"); 
-		this.lblFileModifiedBy = initLabel("FileModifiedBy", "jadeDetailLabel");
+		this.lblId = initValueLabel("ID");
+		this.lblMandator = initValueLabel("Mandator");
+		this.lblSourceHost = initValueLabel("SourceHost");
+		this.lblSourceHostIp = initValueLabel("SourceHostIp");
+		this.lblSourceUser = initValueLabel("SourceUser");
+		this.lblSourceDir = initValueLabel("SourceDir"); 
+		this.lblSourceFilename = initValueLabel("SourceFilename");
+		this.lblMd5 = initValueLabel("MD5");
+		this.lblFileSize = initValueLabel("FileSize");
+		this.lblFileCreated = initValueLabel("FileCreated"); 
+		this.lblFileCreatedBy = initValueLabel("FileCreatedBy");
+		this.lblFileModified = initValueLabel("FileModified"); 
+		this.lblFileModifiedBy = initValueLabel("FileModifiedBy");
 	}
 
 	public void setLabelValues(JadeFilesHistoryDBItem historyItem){
+		this.historyItem = historyItem;
 		// JadeFilesHistoryDBItem properties
 		this.lblGuid.setValue(historyItem.getGuid());
 		this.lblSosftpId.setValue(historyItem.getSosftpId().toString());
@@ -353,6 +336,41 @@ public class DetailLayout extends VerticalLayout {
 		this.lblFileModifiedBy.setValue(historyItem.getJadeFilesDBItem().getModifiedBy());
 	}
 	
+	private void initCaptionLabels(){
+		lblGuidCaption = initCaptionLabel("guidCaption", messages.getValue("DetailLayout.guid")); 
+		lblPidCaption = initCaptionLabel("pidCaption", messages.getValue("DetailLayout.pid")); 
+		lblPpidCaption = initCaptionLabel("pPidCaption", messages.getValue("DetailLayout.ppid")); 
+		lblOperationCaption = initCaptionLabel("operationCaption", messages.getValue("DetailLayout.operation")); 
+		lblFileHistoryCreatedCaption = initCaptionLabel("fileHistoryCreatedCaption", messages.getValue("DetailLayout.fileHistoryCreated")); 
+		lblFileHistoryCreatedByCaption = initCaptionLabel("fileHistoryCreatedByCaption", messages.getValue("DetailLayout.fileHistoryCreatedBy")); 
+		lblFileHistoryModifiedCaption = initCaptionLabel("fileHistoryModifiedCaption", messages.getValue("DetailLayout.fileHistoryModified")); 
+		lblFileHistoryModifiedByCaption = initCaptionLabel("fileHistoryModifiedByCaption", messages.getValue("DetailLayout.fileHistoryModifiedBy")); 
+		lblProtocolCaption = initCaptionLabel("protocolCaption", messages.getValue("DetailLayout.protocol")); 
+		lblPortCaption = initCaptionLabel("portCaption", messages.getValue("DetailLayout.port")); 
+		lblLogFilenameCaption = initCaptionLabel("logFilenameCaption", messages.getValue("DetailLayout.logFilename")); 
+		lblLastErrorMessageCaption = initCaptionLabel("lastErrorMessageCaption", messages.getValue("DetailLayout.lastErrorMessage")); 
+		lblSourceDirCaption = initCaptionLabel("sourceDirCaption", messages.getValue("DetailLayout.sourceDirectory")); 
+		lblSourceFilenameCaption = initCaptionLabel("sourceFilenameCaption", messages.getValue("DetailLayout.sourceFilename")); 
+		lblSourceHostCaption = initCaptionLabel("sourceHostCaption", messages.getValue("DetailLayout.sourceHost")); 
+		lblSourceUserCaption = initCaptionLabel("sourceUserCaption", messages.getValue("DetailLayout.sourceUser")); 
+		lblTargetDirCaption = initCaptionLabel("targetDirCaption", messages.getValue("DetailLayout.targetDirectory")); 
+		lblTargetFilenameCaption = initCaptionLabel("targetFilenameCaption", messages.getValue("DetailLayout.targetFilename")); 
+		lblTargetHostCaption = initCaptionLabel("targetHostCaption", messages.getValue("DetailLayout.targetHost")); 
+		lblTargetUserCaption = initCaptionLabel("targetUserCaption", messages.getValue("DetailLayout.targetUser")); 
+		lblJumpHostCaption = initCaptionLabel("jumpHostCaption", messages.getValue("DetailLayout.jumpHost")); 
+		lblJumpPortCaption = initCaptionLabel("jumpPortCaption", messages.getValue("DetailLayout.jumpPort")); 
+		lblJumpProtocolCaption = initCaptionLabel("jumpProtocolCaption", messages.getValue("DetailLayout.jumpProtocol")); 
+		lblJumpUserCaption = initCaptionLabel("jumpUserCaption", messages.getValue("DetailLayout.jumpUser")); 
+		lblTransferTimestampCaption = initCaptionLabel("transferTimestampCaption", messages.getValue("DetailLayout.transferTimestamp")); 
+		lblMd5Caption = initCaptionLabel("md5Caption", messages.getValue("DetailLayout.md5")); 
+		lblFileSizeCaption = initCaptionLabel("fileSizeCaption", messages.getValue("DetailLayout.fileSize")); 
+		lblMandatorCaption = initCaptionLabel("mandatorCaption", messages.getValue("DetailLayout.mandator")); 
+		lblFileCreatedCaption = initCaptionLabel("fileCreatedCaption", messages.getValue("DetailLayout.fileCreated")); 
+		lblFileCreatedByCaption = initCaptionLabel("fileCreatedByCaption", messages.getValue("DetailLayout.fileCreatedBy")); 
+		lblFileModifiedCaption = initCaptionLabel("fileModifiedCaption", messages.getValue("DetailLayout.fileModified")); 
+		lblFileModifiedByCaption = initCaptionLabel("fileModifiedByCaption", messages.getValue("DetailLayout.fileModifiedBy")); 
+	}
+	
 	public void resetLabelValues(){
 		for (HorizontalLayout hl : this.detailLayouts) {
 			for (int i = 0; i < hl.getComponentCount(); i++) {
@@ -362,4 +380,52 @@ public class DetailLayout extends VerticalLayout {
 			}
 		}
 	}
+	
+	public void refreshCaptions(Locale locale){
+		lblGuidCaption.setValue(messages.getValue("DetailLayout.guid", locale)); 
+		lblPidCaption.setValue(messages.getValue("DetailLayout.pid", locale)); 
+		lblPpidCaption.setValue(messages.getValue("DetailLayout.ppid", locale)); 
+		lblOperationCaption.setValue(messages.getValue("DetailLayout.operation", locale)); 
+		lblFileHistoryCreatedCaption.setValue(messages.getValue("DetailLayout.fileHistoryCreated", locale)); 
+		lblFileHistoryCreatedByCaption.setValue(messages.getValue("DetailLayout.fileHistoryCreatedBy", locale)); 
+		lblFileHistoryModifiedCaption.setValue(messages.getValue("DetailLayout.fileHistoryModified", locale)); 
+		lblFileHistoryModifiedByCaption.setValue(messages.getValue("DetailLayout.fileHistoryModifiedBy", locale)); 
+		lblProtocolCaption.setValue(messages.getValue("DetailLayout.protocol", locale)); 
+		lblPortCaption.setValue(messages.getValue("DetailLayout.port", locale)); 
+		lblLogFilenameCaption.setValue(messages.getValue("DetailLayout.logFilename", locale)); 
+		lblLastErrorMessageCaption.setValue(messages.getValue("DetailLayout.lastErrorMessage", locale)); 
+		lblSourceDirCaption.setValue(messages.getValue("DetailLayout.sourceDirectory", locale)); 
+		lblSourceFilenameCaption.setValue(messages.getValue("DetailLayout.sourceFilename", locale)); 
+		lblSourceHostCaption.setValue(messages.getValue("DetailLayout.sourceHost", locale)); 
+		lblSourceUserCaption.setValue(messages.getValue("DetailLayout.sourceUser", locale)); 
+		lblTargetDirCaption.setValue(messages.getValue("DetailLayout.targetDirectory", locale)); 
+		lblTargetFilenameCaption.setValue(messages.getValue("DetailLayout.targetFilename", locale)); 
+		lblTargetHostCaption.setValue(messages.getValue("DetailLayout.targetHost", locale)); 
+		lblTargetUserCaption.setValue(messages.getValue("DetailLayout.targetUser", locale)); 
+		lblJumpHostCaption.setValue(messages.getValue("DetailLayout.jumpHost", locale)); 
+		lblJumpPortCaption.setValue(messages.getValue("DetailLayout.jumpPort", locale)); 
+		lblJumpProtocolCaption.setValue(messages.getValue("DetailLayout.jumpProtocol", locale)); 
+		lblJumpUserCaption.setValue(messages.getValue("DetailLayout.jumpUser", locale)); 
+		lblTransferTimestampCaption.setValue(messages.getValue("DetailLayout.transferTimestamp", locale)); 
+		lblMd5Caption.setValue(messages.getValue("DetailLayout.md5", locale)); 
+		lblFileSizeCaption.setValue(messages.getValue("DetailLayout.fileSize", locale)); 
+		lblMandatorCaption.setValue(messages.getValue("DetailLayout.mandator", locale)); 
+		lblFileCreatedCaption.setValue(messages.getValue("DetailLayout.fileCreated", locale)); 
+		lblFileCreatedByCaption.setValue(messages.getValue("DetailLayout.fileCreatedBy", locale)); 
+		lblFileModifiedCaption.setValue(messages.getValue("DetailLayout.fileModified", locale)); 
+		lblFileModifiedByCaption.setValue(messages.getValue("DetailLayout.fileModifiedBy", locale)); 
+		if (historyItem != null && historyItem.getLastErrorMessage() != null && !"NULL".equals(historyItem.getLastErrorMessage()))
+			this.lblLastErrorMessage.setValue(historyItem.getLastErrorMessage());
+		else
+			this.lblLastErrorMessage.setValue(messages.getValue("DetailLayout.none", locale));
+		if (historyItem != null && historyItem.getJumpHost() != null && !"NULL".equals(historyItem.getJumpHost()))
+			this.lblJumpHost.setValue(historyItem.getJumpHost());
+		else
+			this.lblJumpHost.setValue(messages.getValue("DetailLayout.notSet", locale));
+		if (historyItem != null && historyItem.getJumpUser() != null && !"NULL".equals(historyItem.getJumpUser()))
+			this.lblJumpUser.setValue(historyItem.getJumpUser());
+		else
+			this.lblJumpUser.setValue(messages.getValue("DetailLayout.notSet", locale));
+	}
+
 }

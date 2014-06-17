@@ -19,7 +19,7 @@ public class JadeMixedTable extends Table{
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private JadeFilesHistoryContainer container;
 	private static final int PAGE_LENGTH = 10;
-	private JadeBSMessages messages = new JadeBSMessages("JADEBSMessages", Locale.getDefault());
+	private JadeBSMessages messages;
 	
 	private static final Object[] visibleColumns = new String[] {
 		JadeHistoryFileColumns.STATUS.getName(), JadeFileColumns.MANDATOR.getName(),
@@ -28,11 +28,12 @@ public class JadeMixedTable extends Table{
 		JadeFileColumns.FILE_SIZE.getName(), JadeFileColumns.SOURCE_HOST.getName(), 
 		JadeHistoryFileColumns.TARGET_HOST.getName()};
 	
-	public JadeMixedTable(List<JadeFilesHistoryDBItem> historyItems){
+	public JadeMixedTable(List<JadeFilesHistoryDBItem> historyItems, JadeBSMessages messages){
 		if(historyItems == null){
 			historyItems = new ArrayList<JadeFilesHistoryDBItem>();
 		}
 		this.historyItems = historyItems;
+		this.messages = messages;
 		init();
 	}
 	
@@ -48,6 +49,7 @@ public class JadeMixedTable extends Table{
 		setImmediate(true);
 		setEditable(false);
 		setColumnReorderingAllowed(true);
+		setMultiSelect(false);
 		setPageLength(PAGE_LENGTH);
 		addStyleName("jadeBsTable");
 		setColumnAlignment(JadeHistoryFileColumns.STATUS.getName(), Align.CENTER);
@@ -69,6 +71,18 @@ public class JadeMixedTable extends Table{
 		setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue("MixedTable.fileSize"));
 		setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue("MixedTable.sourceHost"));
 		setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue("MixedTable.targetHost"));
+	}
+	
+	public void refreshColumnHeaders(Locale locale){
+		setColumnHeader(JadeHistoryFileColumns.STATUS.getName(), messages.getValue("MixedTable.status", locale));
+		setColumnHeader(JadeFileColumns.MANDATOR.getName(), messages.getValue("MixedTable.mandator", locale));
+		setColumnHeader(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), messages.getValue("MixedTable.transferTimestamp", locale));
+		setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue("MixedTable.operation", locale));
+		setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue("MixedTable.protocol", locale));
+		setColumnHeader(JadeHistoryFileColumns.TARGET_FILENAME.getName(), messages.getValue("MixedTable.targetFilename", locale));
+		setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue("MixedTable.fileSize", locale));
+		setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue("MixedTable.sourceHost", locale));
+		setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue("MixedTable.targetHost", locale));
 	}
 	
 	/**
@@ -107,8 +121,8 @@ public class JadeMixedTable extends Table{
 			}
 			return null;
 		}
-	}    
-    
+	}
+
 }
 
 

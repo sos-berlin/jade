@@ -33,6 +33,11 @@ public class JadeBSMessages implements Serializable{
 	public String getValue(String key){
 		return bundle.getString(key);
 	}
+
+	public String getValue(String key, Locale locale){
+		return ResourceBundle.getBundle(bundleName, locale).getString(key);
+	}
+
 	
 	public void setLocale (Locale locale){
 		this.locale = locale;
