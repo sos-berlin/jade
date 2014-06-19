@@ -17,9 +17,7 @@ import com.sos.jade.backgroundservice.view.MainView;
  */
 public class JadeFileListenerProxy extends JadeFileListenerImpl implements IJadeFileListener {
 
-	@SuppressWarnings("unused")
 	private final String				conClassName	= this.getClass().getSimpleName();
-	@SuppressWarnings("unused")
 	private final Logger				logger			= Logger.getLogger(this.getClass());
 	@SuppressWarnings("unused")
 	private static final String			conSVNVersion	= "$Id: SOSDataExchangeAdapter.java 24550 2014-05-14 18:52:08Z kb $";

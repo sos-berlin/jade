@@ -26,7 +26,9 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
 		String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		objOptions.hibernateConfigurationFileName.Value(absolutePath + objOptions.hibernateConfigurationFileName.Value());
+//		objOptions.hibernateConfigurationFileName.Value(absolutePath + objOptions.hibernateConfigurationFileName.Value());
+		
+		objOptions.hibernateConfigurationFileName.Value(objOptions.hibernateConfigurationFileName.Value());
 		objOptions.hibernateConfigurationFileName.CheckMandatory();
 		this.jadeFilesDBLayer = new JadeFilesDBLayer(objOptions.hibernateConfigurationFileName.JSFile());
 		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(objOptions.hibernateConfigurationFileName.JSFile());

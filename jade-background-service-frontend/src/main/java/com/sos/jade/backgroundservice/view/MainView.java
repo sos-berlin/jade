@@ -26,6 +26,7 @@ import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -198,9 +199,26 @@ public class MainView extends CustomComponent{
 	}
 	
 	private void initTables(){
+		VerticalLayout vlTableLayout = new VerticalLayout();
+		vlTableLayout.setSizeFull();
+        vSplitPanel.addComponent(vlTableLayout);
+        Button btnResetColumnWith = new Button("<->");
+        btnResetColumnWith.setHeight(20.0f, Unit.PIXELS);
+        btnResetColumnWith.setDescription("resize column width");
+        vlTableLayout.addComponent(btnResetColumnWith);
         tblMixed = new JadeMixedTable(historyItems, messages);
-        vSplitPanel.addComponent(tblMixed);
         tblMixed.setVisible(true);
+        vlTableLayout.addComponent(tblMixed);
+        vlTableLayout.setComponentAlignment(btnResetColumnWith, Alignment.BOTTOM_RIGHT);
+        vlTableLayout.setExpandRatio(tblMixed, 1);
+        btnResetColumnWith.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(Button.ClickEvent event) {
+				tblMixed.resetColumnWidths();
+			}
+		});
 	}
 	
 	private VerticalSplitPanel initVerticalSplitPanel(){
