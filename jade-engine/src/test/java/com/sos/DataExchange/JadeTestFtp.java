@@ -221,4 +221,22 @@ public class JadeTestFtp extends JadeTestBase {
 		super.testUseProfileWOCreatingTestFiles();
 	}
 
+	@Test
+	public void testsend_local2ftp_target_replacing() throws Exception {
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::send_local2ftp_target_replacing";
+		objOptions.settings.Value(strSettingsFile);
+		objOptions.profile.Value("send_local2ftp_target_replacing");
+		super.testUseProfileWOCreatingTestFiles();
+	}
+	
+	@Test
+	public void testcopy_local2ftp_ascii() throws Exception {
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::copy_local2ftp_ascii";
+		objOptions.settings.Value(strSettingsFile);
+		objOptions.profile.Value("copy_local2ftp_ascii");
+		super.testUseProfileWOCreatingTestFiles();
+	}
+
 }
