@@ -1,26 +1,20 @@
 package sos.scheduler.job;
-import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
-import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
-import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0017;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0018;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
-
-import java.io.File;
-
-import sos.spooler.Job_chain;
-import sos.spooler.Order;
-import sos.spooler.Variable_set;
 
 import com.sos.DataExchange.JadeEngine;
-import com.sos.JSHelper.Basics.JSVersionInfo;
+import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import sos.spooler.Job_chain;
+import sos.spooler.Order;
+import sos.spooler.Variable_set;
+
+import java.io.File;
+
+import static com.sos.scheduler.messages.JSMessages.*;
 
 /**
  * \file SOSDExJSAdapterClass.java
@@ -98,7 +92,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
 	private void doProcessing() throws Exception {
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
-		logger.debug(JSVersionInfo.getVersionString());
+		logger.debug(VersionInfo.VERSION_STRING);
 		logger.debug(conSVNVersion);
 		if (objJadeEngine == null) {
 			objJadeEngine = new JadeEngine();
@@ -164,7 +158,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
 	/**
 	 *
-	 * @param pstrOrder4FileName
 	 * @param pstrOrderJobChainName
 	 */
 	protected void createOrder(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {

@@ -1,23 +1,19 @@
 package sos.scheduler.jade;
 
-import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
-import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
-import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
-
-import java.util.HashMap;
-
-import sos.scheduler.job.SOSDExJSAdapterClass;
-import sos.spooler.Variable_set;
-
 import com.sos.DataExchange.Jade4DMZ;
-import com.sos.JSHelper.Basics.JSVersionInfo;
+import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import sos.scheduler.job.SOSDExJSAdapterClass;
+import sos.spooler.Variable_set;
+
+import java.util.HashMap;
+
+import static com.sos.scheduler.messages.JSMessages.*;
 
 /**
  * \file SOSJade4DMZJSAdapter.java
@@ -84,7 +80,7 @@ public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
 	private void doProcessing() throws Exception {
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
 
-		logger.debug(JSVersionInfo.getVersionString());
+		logger.debug(VersionInfo.VERSION_STRING);
 		logger.debug(conSVNVersion);
 		Jade4DMZ objR = new Jade4DMZ();
 		objO = objR.Options();

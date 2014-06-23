@@ -1,16 +1,15 @@
 package com.sos.DataExchange;
 
-import org.apache.log4j.Logger;
-
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
-import com.sos.JSHelper.Basics.JSVersionInfo;
+import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.ParametersMissingButRequiredException;
 import com.sos.JSHelper.Logging.Log4JHelper;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import org.apache.log4j.Logger;
 
 /**
  * \class 		SOSDataExchangeEngineMain - Main-Class for "Transfer files by FTP/SFTP and execute commands by SSH"
@@ -104,7 +103,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 				logger = Logger.getRootLogger();
 			}
 
-			logger.info(getMsg(SOSDX_Intro) + " -- " + JSVersionInfo.getVersionString());
+			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
 			logger.debug(conSVNVersion);
 
 			objO.CheckMandatory();
