@@ -10,10 +10,12 @@ import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.components.DetailLayout;
+import com.sos.jade.backgroundservice.view.components.JadeDetailTable;
 import com.sos.jade.backgroundservice.view.components.JadeMenuBar;
 import com.sos.jade.backgroundservice.view.components.JadeMixedTable;
 import com.sos.jade.backgroundservice.view.components.filter.FilterLayoutWindow;
@@ -43,6 +45,7 @@ public class MainView extends CustomComponent{
 	private List<JadeFilesDBItem> fileItems;
 	private VerticalSplitPanel vSplitPanel;
 	private JadeMixedTable tblMixed;
+	private JadeDetailTable tblDetails;
 	private Item markedRow;
 	private IJadeFileListener fileListener;
 	private DetailLayout details;
@@ -51,6 +54,7 @@ public class MainView extends CustomComponent{
     private Image imgDe;
     private Image imgGb;
     private Image imgUs;
+    private Image imgEs;
     private JadeMenuBar jmb;
     private Label lblTitle;
 
@@ -70,11 +74,13 @@ public class MainView extends CustomComponent{
 			public void itemClick(ItemClickEvent event) {
 				if (markedRow == null || !markedRow.equals(event.getItemId())){
 					JadeFilesHistoryDBItem historyItem = (JadeFilesHistoryDBItem)event.getItemId();
-					details.setLabelValues(historyItem);
+//					details.setLabelValues(historyItem);
+					tblDetails.populateDatasource(historyItem);
 				}
 				toggleTableVisiblity(event.getItem());
 			}
 		});
+        
 	}
 	
 	private void initComponents(){
@@ -127,15 +133,18 @@ public class MainView extends CustomComponent{
         imgDe = initLanguageIcon("images/de_marble.png");
         imgGb = initLanguageIcon("images/gb_marble.png");
         imgUs = initLanguageIcon("images/us_marble.png");
+        imgEs = initLanguageIcon("images/es.png");
 
 		hlMenuBar.addComponent(imgDe);
 		hlMenuBar.addComponent(imgUs);
 		hlMenuBar.addComponent(imgGb);
+		hlMenuBar.addComponent(imgEs);
 
 		hlMenuBar.setExpandRatio(jmb, 1);
 		hlMenuBar.setComponentAlignment(imgDe, Alignment.MIDDLE_RIGHT);
 		hlMenuBar.setComponentAlignment(imgUs, Alignment.MIDDLE_RIGHT);
 		hlMenuBar.setComponentAlignment(imgGb, Alignment.MIDDLE_RIGHT);
+		hlMenuBar.setComponentAlignment(imgEs, Alignment.MIDDLE_RIGHT);
 		
 		setLanguageIconClickHandlers();
 		
@@ -184,6 +193,14 @@ public class MainView extends CustomComponent{
 				refreshLocalization(Locale.US);
 			}
 		});
+		imgEs.addClickListener(new MouseEvents.ClickListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(ClickEvent event) {
+				refreshLocalization(new Locale("es", "ES"));
+			}
+		});
 	}
 	
 	private void refreshLocalization(Locale locale){
@@ -193,16 +210,21 @@ public class MainView extends CustomComponent{
 		MainView.this.jmb.refreshCaptions(locale);
 		MainView.this.details.refreshCaptions(locale);
 		MainView.this.tblMixed.refreshColumnHeaders(locale);
+		MainView.this.tblDetails.refreshColumnHeaders(locale);
+		((JadeDetailsContainer)MainView.this.tblDetails.getContainerDataSource()).updateLocale(locale);
 		((JadeFilesHistoryFilterLayout)((BackgroundserviceUI)MainView.this.getParent()).
 				getModalWindow().getContent()).refreshCaptions(locale);
 		MainView.this.markAsDirtyRecursive();
 	}
 	
 	private void initTables(){
+		HorizontalLayout hlTableMainLayout = new HorizontalLayout();
 		VerticalLayout vlTableLayout = new VerticalLayout();
 		vlTableLayout.setSizeFull();
-        vSplitPanel.addComponent(vlTableLayout);
+		hlTableMainLayout.addComponent(vlTableLayout);
+        vSplitPanel.addComponent(hlTableMainLayout);
         Button btnResetColumnWith = new Button("<->");
+        btnResetColumnWith.addStyleName("jadeSizeRestButton");
         btnResetColumnWith.setHeight(20.0f, Unit.PIXELS);
         btnResetColumnWith.setDescription("resize column width");
         vlTableLayout.addComponent(btnResetColumnWith);
@@ -219,6 +241,10 @@ public class MainView extends CustomComponent{
 				tblMixed.resetColumnWidths();
 			}
 		});
+        tblDetails = new JadeDetailTable(null, messages);
+        tblDetails.setVisible(false);
+        hlTableMainLayout.addComponent(tblDetails);
+        hlTableMainLayout.setExpandRatio(vlTableLayout, 1);
 	}
 	
 	private VerticalSplitPanel initVerticalSplitPanel(){
@@ -237,13 +263,16 @@ public class MainView extends CustomComponent{
 		if(markedRow != null && markedRow.equals(item)){
 			markedRow = null;
 			details.setVisible(false);
+			tblDetails.setVisible(false);
 			setSplitPosition();
 		}else if (markedRow != null && !markedRow.equals(item)){
 			markedRow = item;
 			details.setVisible(true);
+			tblDetails.setVisible(true);
 		}else{
 			markedRow = item;
 			details.setVisible(true);
+			tblDetails.setVisible(true);
 			setSplitPosition();
 		}
 	}
@@ -275,7 +304,7 @@ public class MainView extends CustomComponent{
 						public void run() {
 							fileListener.closeJadeFilesHistoryDbSession();
 					        tblMixed.populateDatasource(historyItems);
-					//        tblMixed.refreshRowCache();
+					        tblMixed.refreshRowCache();
 					        tblMixed.markAsDirty();
 					        tblMixed.setVisible(true);
 						}

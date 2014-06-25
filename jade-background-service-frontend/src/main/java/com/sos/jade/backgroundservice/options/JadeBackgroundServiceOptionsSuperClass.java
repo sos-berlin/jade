@@ -153,6 +153,87 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 		hibernateConfigurationFileName = pHibernateConfigurationFileName;
 	}
 
+	/**
+	 * \option Devel
+	 * \type SOSOptionDevelopment
+	 * \brief Devel - SOSOptionDevelopment
+	 *
+	 * \details
+	 * sets the state of Development; possible states are DEVEL, QA, RELEASED
+	 *
+	 * \mandatory: false
+	 *
+	 * \created 20.06.2014 13:59:12 by SP
+	 */
+	@JSOptionDefinition(name = "devel", 
+						description = "sets the state of Development; possible states are DEVEL, QA, RELEASED", 
+						key = "devel", 
+						type = "SOSOptionDevelopment", 
+						mandatory = false)
+	public SOSOptionDevelopment devel = new SOSOptionDevelopment( // ...
+			this, // ....
+			conClassName + ".devel", // ...
+			"sets the state of Development; possible states are DEVEL, QA, RELEASED", // ...
+			"env:develMode", // ...
+			"DEVEL", // ...
+			false);
+
+	public SOSOptionDevelopment getDevel() {
+
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::getDevel";
+
+		return devel;
+	} // public String getDevel
+
+	public JadeBackgroundServiceOptionsSuperClass setDevel(
+			final SOSOptionDevelopment pstrValue) {
+
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::setDevel";
+		devel = pstrValue;
+		return this;
+	} // public JadeBackgroundServiceOptionsSuperClass setDevel
+
+	/**
+	 * \option webserverType
+	 * \type SOSOptionWebserverType
+	 * \brief webserverType - webserverType
+	 *
+	 * \details
+	 * the type of webserver which runs the application
+	 *
+	 * \mandatory: false
+	 *
+	 * \created 20.06.2014 14:40:51 by SP
+	 */
+	@JSOptionDefinition(name = "webserverType", description = "the type of webserver which runs the application", key = "webserverType", type = "SOSOptionWebserverType", mandatory = false)
+	public SOSOptionWebserverType webserverType = new SOSOptionWebserverType( // ...
+			this, // ....
+			conClassName + ".webserverType", // ...
+			"the type of webserver which runs the application, possible values are TOMCAT, JETTY", // ...
+			"env:serverType", // ...
+			"TOMCAT", // ...
+			false);
+
+	public SOSOptionWebserverType getWebserverType() {
+
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::getWebserverType";
+
+		return webserverType;
+	} // public String getWebserverType
+
+	public JadeBackgroundServiceOptionsSuperClass setWebserverType(final SOSOptionWebserverType pstrValue) {
+
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::setWebserverType";
+		webserverType = pstrValue;
+		return this;
+	} // public JadeBackgroundServiceOptionsSuperClass setWebserverType
+
+
+	
 	public JadeBackgroundServiceOptionsSuperClass() {
 		objParentClass = this.getClass();
 	} // public JadeBackgroundServiceOptionsSuperClass

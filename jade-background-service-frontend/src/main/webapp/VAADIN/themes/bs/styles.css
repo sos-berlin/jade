@@ -7215,3 +7215,7 @@ body .bs.v-app .v-app-loading {
 	cursor: pointer;
 	margin: 2px;
 }
+
+.bs .jadeSizeRestButton {
+	background-color: #F5F5F5;
+}

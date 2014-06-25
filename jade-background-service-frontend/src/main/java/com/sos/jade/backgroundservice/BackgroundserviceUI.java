@@ -1,5 +1,7 @@
 package com.sos.jade.backgroundservice;
 
+import java.util.prefs.Preferences;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 
@@ -24,11 +26,14 @@ import com.vaadin.ui.UI;
 @Push
 public class BackgroundserviceUI extends UI {
 	private static final long serialVersionUID = 1L;
+	public static final JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
+	public static Cookie cookie;
+	public static final Preferences prefs = jadeBsOptions.getPreferenceStore();
+	public static String parentNodeName;
 	private MainView ui;
 	private FilterLayoutWindow modalWindow;
 
-	public final static JadeBackgroundServiceOptions objOptions = new JadeBackgroundServiceOptions();
-	public static Cookie cookie;
+
 	@WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class)
     public static class Servlet extends VaadinServlet {
@@ -41,7 +46,9 @@ public class BackgroundserviceUI extends UI {
 			VaadinSession.getCurrent().getLockInstance().lock();
 			if (VaadinSession.getCurrent().getAttribute(SessionAttributes.SESSION_ID.name()) == null) {
 				VaadinSession.getCurrent().setAttribute(SessionAttributes.SESSION_ID.name(), SessionAttributes.SESSION_ID);
-				String remoteHost = ((VaadinServletRequest) request).getHttpServletRequest().getRemoteHost();
+				// will be changed later to user credentials
+				parentNodeName = ((VaadinServletRequest) request).getHttpServletRequest().getRemoteAddr();
+				prefs.node(parentNodeName);
 				setCookieUsage(request);
 			}
 		} finally {

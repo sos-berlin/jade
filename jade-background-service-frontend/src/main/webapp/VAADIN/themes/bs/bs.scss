@@ -23,6 +23,8 @@
   $default-sos-rabbit-orange: #E77B37;
 
   $light-sos-rabbit-orange: #F3BFA0;
+  
+  $default-background-color: #F5F5F5;
 
   
   /**********style definitions here !**********/  
@@ -43,12 +45,12 @@
   }
   
   .jadePanel{
-  	background: none #F5F5F5 scroll scrollbar !important;
+  	background: none $default-background-color scroll scrollbar !important;
   	overflow: hidden;
   }
   
   .v-panel-content{
-  	background-color: #F5F5F5 !important;
+  	background-color: $default-background-color !important;
   	overflow: hidden;
   }
   
@@ -88,7 +90,7 @@
   }
   
   .v-table-body{
-  	background-color: #F5F5F5;
+  	background-color: $default-background-color;
   }
   
   .v-table-row{
@@ -255,6 +257,10 @@
   .jadeImage{
   	cursor: pointer;
   	margin: 2px;
+  }
+    
+  .jadeSizeRestButton{
+  	background-color: $default-background-color;
   }
     
 }
