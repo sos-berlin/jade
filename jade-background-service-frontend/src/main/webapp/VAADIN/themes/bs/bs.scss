@@ -72,7 +72,7 @@
 	-moz-box-sizing: border-box;
   }
   
-  /* styles for Table Layout */
+  /************ styles for Table Layout ********************/
   .jadeBsTable{
   	border-radius: $round-corners-component-radius;
 	-webkit-border-radius: $round-corners-component-radius;
@@ -80,11 +80,13 @@
 	-o-border-radius: $round-corners-component-radius;
   }
   
-/* 
-  .jadeBsTable .v-table-header{
-  	cursor: pointer;
+  .jadeBsDetailTable{
+  	border-radius: $round-corners-component-radius;
+	-webkit-border-radius: $round-corners-component-radius;
+	-moz-border-radius: $round-corners-component-radius;
+	-o-border-radius: $round-corners-component-radius;
   }
-*/  
+  
   .v-table-table{
   	overflow: visible !important;
   }
@@ -95,6 +97,14 @@
   
   .v-table-row{
   	background-color: #FFFFFF;
+  }
+  
+  .jadeBsDetailTable .v-table-row:hover,
+  .jadeBsDetailTable .v-table-row-odd:hover{
+ 	background: transparent url(../bs/images/table_selected.png) repeat-x;
+	color: #000000;
+	text-shadow: none;
+	font-weight: bold;
   }
   
   .v-table-row-odd{
@@ -133,6 +143,7 @@
 	font-weight: bold;
   }
 
+  /************ styles for Status Labels ********************/
    .jadeStatusSuccessLabel{
   	width: 16px;
   	height: 16px;
@@ -155,6 +166,7 @@
   	background-color: #FA3816;  
   }
   
+  /************ styles for Menu Bars ********************/
   .jadeMenuBar{
 	height: 23px;
 	text-shadow: none;
@@ -212,6 +224,7 @@
   	margin-bottom: 0px;
   }
   
+  /************ styles for Detail Layout ********************/
   .jadeDetailLayout{
 	border-bottom-left-radius: $round-corners-radius;
 	-webkit-border-bottom-left-radius: $round-corners-radius;
@@ -259,8 +272,53 @@
   	margin: 2px;
   }
     
-  .jadeSizeRestButton{
-  	background-color: $default-background-color;
+  /**************** styles for Buttons ********************/
+  .jadeResizeButton,
+  .jadeResizeButton .v-button:focus,
+  .jadeResizeButton .v-button:active,
+  .jadeResizeButton .v-button.v-pressed{
+	background-repeat: repeat-x;
+	background-image: url(../bs/images/btn_bgr_grey.png);
+	border: 1px solid #C2C3C4;
+  	border-radius: $round-corners-menu-radius;
+	-webkit-border-radius: $round-corners-menu-radius;
+	-moz-border-radius: $round-corners-menu-radius;
+	-o-border-radius: $round-corners-menu-radius;
+	cursor: pointer;
+    height: 22px;
+  }
+  
+  .v-button:focus .jadeResizeButton,
+  .v-button:active .jadeResizeButton,
+  .v-button.v-pressed .jadeResizeButton,
+  .v-pressed .jadeResizeButton,
+  .jadeResizeButton .v-button:focus,
+  .jadeResizeButton .v-button:active,
+  .jadeResizeButton .v-button.v-pressed,
+  .jadeResizeButton .v-pressed,
+  .jadeResizeButton .v-button:active .v-button-wrap, 
+  .jadeResizeButton .v-button:focus .v-button-wrap,
+  .jadeResizeButton .v-button:active .v-button-wrap, 
+  .jadeResizeButton .v-button:focus .v-button-wrap,
+  .jadeResizeButton .v-button.v-pressed .v-button-wrap,
+  .jadeResizeButton .v-button-wrap, 
+  .jadeResizeButton .v-disabled.v-button .v-button-wrap,
+  .jadeResizeButton .v-button .v-widget .jadeResizeButton .v-button-jadeResizeButton .v-pressed{
+	background-repeat: repeat-x;
+	background-image: url(../bs/images/btn_bgr_grey.png);
+	background-color: transparent;
+    outline: none;
   }
     
+  .jadeResizeButton .v-button-wrap, 
+  .jadeResizeButton  .v-disabled.v-button .v-button-wrap {
+  	background: transparent;
+	padding: 1px;
+	display: inline;
+  }
+  
+  .jadeResizeButton .v-button .v-icon {
+	margin-left: -3px;
+  }
+  
 }

@@ -148,42 +148,32 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 
 	/**
 	 * tells the {@link IJadeFileListener} to filter the JadeFilesHistoryDBItems with the given
-	 * JadeFilesHistoryFilter and populates the {@link com.sos.jade.backgroundservice.view.components.JadeMixedTable JadeMixedTable} with the filtered data
+	 * JadeFilesHistoryFilter and populates the {@link com.sos.jade.backgroundservice.view.components.JadeFileHistoryTable JadeFileHistoryTable} with the filtered data
 	 * 
 	 * @param listener the {@link IJadeFileListener} which holds the methods to access the JadeFilesHistoryDBLayer
 	 * @param historyFilter the JadeFilesHistoryFilter to filter JadeFilesHistoryDBItems and the related JadeFilesDBItem with
 	 */
 	private void filterData(final IJadeFileListener listener, final JadeFilesHistoryFilter historyFilter) {
-		
-		SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(1);
-			objTPE.runTask(
-					new Thread() {
-		            
+		new Thread() {
+			@Override
+	        public void run() {
+	            try {
+	            	listener.filterJadeFilesHistory(historyFilter);
+	            } catch (final Exception e) {
+	                listener.getException(e);
+	            }
+				UI.getCurrent().access(new Runnable() {
 					@Override
-		            public void run() {
-		                try {
-		                	listener.filterJadeFilesHistory(historyFilter);
-		                } catch (final Exception e) {
-		                    listener.getException(e);
-		                }
-						UI.getCurrent().access(new Runnable() {
-							@Override
-							public void run() {
-						        ui.getTblMixed().populateDatasource(ui.getHistoryItems());
-						        ui.getTblMixed().markAsDirty();
-								listener.closeJadeFilesHistoryDbSession();
-						        ui.getTblMixed().setVisible(true);
-							}
-						});
-		            };
-	        });
-		try {
-			objTPE.shutDown();
-			objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
-		}
-		catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+					public void run() {
+				        ui.getTblDetails().setVisible(false);
+				        ui.getTblFileHistory().populateDatasource(ui.getHistoryItems());
+				        ui.getTblFileHistory().markAsDirty();
+						listener.closeJadeFilesHistoryDbSession();
+				        ui.getProgress().setVisible(false);
+					}
+				});
+	        }
+		}.start();
     }
 	
 	/**
@@ -254,6 +244,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			public void buttonClick(ClickEvent event) {
 				ui.setMarkedRow(null);
 				ui.setDetailViewVisible(true);
+				ui.getProgress().setVisible(true);
 				JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 				checkTextFieldValues();
 				filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
@@ -268,8 +259,9 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				filter.setTargetFilename(tfTargetFile.getValue());
 				filter.setTargetHost(tfTargetHost.getValue());
 				filter.setMandator(tfMandator.getValue());
-				filterData(new JadeFileListenerProxy(ui), filter);
+//				ui.initJadeFilesHistoryDbLayer(filter);
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
+				filterData(new JadeFileListenerProxy(ui), filter);
 			}
 		});
 		

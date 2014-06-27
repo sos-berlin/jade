@@ -58,39 +58,29 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
 	
 	private void addContainerProperties(){
 		addContainerProperty(JadeHistoryFileColumns.STATUS.getName(), 
-//				JadeHistoryFileColumns.STATUS.getType(),
-//				Embedded.class,
 				Label.class,
 				new Label());
-
 		addContainerProperty(JadeFileColumns.MANDATOR.getName(), 
 				JadeFileColumns.MANDATOR.getType(), 
 				JadeFileColumns.MANDATOR.getDefaultValue());
-
 		addContainerProperty(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), 
 				JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getType(), 
 				JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getDefaultValue());
-
 		addContainerProperty(JadeHistoryFileColumns.OPERATION.getName(), 
 				JadeHistoryFileColumns.OPERATION.getType(), 
 				JadeHistoryFileColumns.OPERATION.getDefaultValue());
-
 		addContainerProperty(JadeHistoryFileColumns.PROTOCOL.getName(), 
 				JadeHistoryFileColumns.PROTOCOL.getType(), 
 				JadeHistoryFileColumns.PROTOCOL.getDefaultValue());
-
 		addContainerProperty(JadeHistoryFileColumns.TARGET_FILENAME.getName(), 
 				JadeHistoryFileColumns.TARGET_FILENAME.getType(), 
 				JadeHistoryFileColumns.TARGET_FILENAME.getDefaultValue());
-
 		addContainerProperty(JadeFileColumns.FILE_SIZE.getName(), 
 				JadeFileColumns.FILE_SIZE.getType(), 
 				JadeFileColumns.FILE_SIZE.getDefaultValue());
-
 		addContainerProperty(JadeFileColumns.SOURCE_HOST.getName(), 
 				JadeFileColumns.SOURCE_HOST.getType(), 
 				JadeFileColumns.SOURCE_HOST.getDefaultValue());
-
 		addContainerProperty(JadeHistoryFileColumns.TARGET_HOST.getName(), 
 				JadeHistoryFileColumns.TARGET_HOST.getType(), 
 				JadeHistoryFileColumns.TARGET_HOST.getDefaultValue());
@@ -98,7 +88,6 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
 	
 	private class StatusSuccessLabel extends Label{
 		private static final long serialVersionUID = 1L;
-		
 		public StatusSuccessLabel() {
 			setWidth(16.0f, Unit.PIXELS);
 			setHeight(16.0f, Unit.PIXELS);
@@ -108,7 +97,6 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
 	
 	private class StatusErrorLabel extends Label{
 		private static final long serialVersionUID = 1L;
-		
 		public StatusErrorLabel() {
 			setWidth(16.0f, Unit.PIXELS);
 			setHeight(16.0f, Unit.PIXELS);

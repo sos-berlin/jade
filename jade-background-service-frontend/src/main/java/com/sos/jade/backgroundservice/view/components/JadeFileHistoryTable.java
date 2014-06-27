@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.view.components;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +21,14 @@ import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 
-public class JadeMixedTable extends Table{
+public class JadeFileHistoryTable extends Table{
 
 	private static final long serialVersionUID = 2134585331362934124L;
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private JadeFilesHistoryContainer container;
 	private static final int PAGE_LENGTH = 20;
 	private JadeBSMessages messages;
+	private static final String CLASS_NODE_NAME = "history-table";
 	private static final String COLUMN_ORDER = "colOrder";
 	private static final String PREF_NODE_NAME_ORDER = "table_column_order";
 	private static final String PREF_NODE_NAME_WIDTHS = "table_column_widths";
@@ -41,7 +42,7 @@ public class JadeMixedTable extends Table{
 //	private String lastColOrder;
 //	private String sessionsLastColOrder;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
-	private final Logger log = Logger.getLogger(JadeMixedTable.class);
+	private final Logger log = Logger.getLogger(JadeFileHistoryTable.class);
 	
 	private static final Object[] visibleColumns = new String[] {
 		JadeHistoryFileColumns.STATUS.getName(), JadeFileColumns.MANDATOR.getName(),
@@ -50,13 +51,12 @@ public class JadeMixedTable extends Table{
 		JadeFileColumns.FILE_SIZE.getName(), JadeFileColumns.SOURCE_HOST.getName(), 
 		JadeHistoryFileColumns.TARGET_HOST.getName()};
 	
-	public JadeMixedTable(List<JadeFilesHistoryDBItem> historyItems, JadeBSMessages messages){
+	public JadeFileHistoryTable(List<JadeFilesHistoryDBItem> historyItems, JadeBSMessages messages){
 		if(historyItems == null){
 			historyItems = new ArrayList<JadeFilesHistoryDBItem>();
 		}
 		this.historyItems = historyItems;
 		this.messages = messages;
-//		this.prefs = Preferences.userNodeForPackage(this.getClass());
 		init();
 	}
 	
@@ -80,7 +80,7 @@ public class JadeMixedTable extends Table{
 		setColumnAlignment(JadeHistoryFileColumns.STATUS.getName(), Align.CENTER);
 		setCellStyleGenerator(new StatusCellStyleGenerator());
 		enableContentRefreshing(true);
-		String strVc = prefs.node(parentNodeName).node(PREF_NODE_NAME_ORDER).get(PREF_KEY_NAME_ORDER, null);
+		String strVc = prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_ORDER).get(PREF_KEY_NAME_ORDER, null);
 		if (strVc != null){
 			this.setVisibleColumns((Object[])strVc.split(DELIMITER_REGEX));
 			this.refreshRowCache();
@@ -106,11 +106,6 @@ public class JadeMixedTable extends Table{
 				this.setVisibleColumns(visibleColumns);
 			}
 		}
-//		defaultColumnWidths = new HashMap<String, Integer>();
-//		for (Object column : this.getVisibleColumns()){
-//			defaultColumnWidths.put(column.toString(), this.getColumnWidth(column));
-//			log.debug("default width of " + column.toString() + " is " + String.valueOf(this.getColumnWidth(column)));
-//		}
 		setPreferencesColumnsWidth();
 		setColumnsCollapsed();
 		setColumnHeaders();
@@ -119,7 +114,7 @@ public class JadeMixedTable extends Table{
 	
 	private void setPreferencesColumnsWidth(){
 		for(Object key : visibleColumns){
-			int width = prefs.node(parentNodeName).node(PREF_NODE_NAME_WIDTHS).getInt(key.toString(), 0);
+			int width = prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).getInt(key.toString(), 0);
 			if (width != 0){
 				setColumnWidth(key.toString(), width);
 				log.debug("setting width of column " + key.toString() + " to " + String.valueOf(width));
@@ -167,6 +162,8 @@ public class JadeMixedTable extends Table{
 		this.historyItems = historyItems;
 		this.setContainerDataSource(this.container = new JadeFilesHistoryContainer(this.historyItems));
 		this.setVisibleColumns(visibleColumns);
+		this.fireItemSetChange();
+		this.fireValueChange(true);
 	}
 
 	/**
@@ -202,7 +199,7 @@ public class JadeMixedTable extends Table{
 
 			@Override
 			public void columnReorder(ColumnReorderEvent event) {
-				Object[] reorderedVisibleColumns = JadeMixedTable.this.getVisibleColumns();
+				Object[] reorderedVisibleColumns = JadeFileHistoryTable.this.getVisibleColumns();
 				setOrderedColumnsPreferencesNode(reorderedVisibleColumns);
 //				String newCookieValue = createCookieOrderValueString(reorderedVisibleColumns);
 //				if(lastColOrder != null && cookie.getValue().contains(lastColOrder)){
@@ -232,7 +229,7 @@ public class JadeMixedTable extends Table{
 		        // unresized columns would go on using all the available space, which can be more
 		        // than before changing width of the others.
 		        for(Object col : visibleColumns){
-			        prefs.node(parentNodeName).node(PREF_NODE_NAME_WIDTHS).putInt(col.toString(), getColumnWidth(col));
+			        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).putInt(col.toString(), getColumnWidth(col));
 		        	log.debug("actual width of " + col.toString() + " = " + String.valueOf(getColumnWidth(col)));
 		        }
 				try {
@@ -243,22 +240,13 @@ public class JadeMixedTable extends Table{
 				}
 			}
 		});
-//		this.addHeaderClickListener(new Table.HeaderClickListener() {
-//			
-//			@Override
-//			public void headerClick(HeaderClickEvent event) {
-//				if(event.getPropertyId() == null){
-//					resetColumnWidths();
-//				}
-//			}
-//		});
 		this.addItemSetChangeListener(new ItemSetChangeListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void containerItemSetChange(ItemSetChangeEvent event) {
 				for(Object column : container.getContainerPropertyIds()){
-			        prefs.node(parentNodeName).node(PREF_NODE_NAME_COLLAPSE).putBoolean(column.toString(), isColumnCollapsed(column));
+			        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_COLLAPSE).putBoolean(column.toString(), isColumnCollapsed(column));
 				}
 			}
 		});
@@ -269,9 +257,7 @@ public class JadeMixedTable extends Table{
 			for (Object column : container.getContainerPropertyIds()) {
 				setColumnCollapsed(
 						column,
-						prefs.node(parentNodeName)
-								.node(PREF_NODE_NAME_COLLAPSE)
-								.getBoolean(column.toString(), false));
+						prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_COLLAPSE).getBoolean(column.toString(), false));
 			}
 		}
 	}
@@ -298,7 +284,7 @@ public class JadeMixedTable extends Table{
 	}
 	
 	private void setOrderedColumnsPreferencesNode(Object[] orderedCols){
-		prefs.node(parentNodeName).node(PREF_NODE_NAME_ORDER).put(PREF_KEY_NAME_ORDER, createOrderedColumnsString(orderedCols));
+		prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_ORDER).put(PREF_KEY_NAME_ORDER, createOrderedColumnsString(orderedCols));
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -311,7 +297,7 @@ public class JadeMixedTable extends Table{
 		for(Object key : this.getVisibleColumns()){
 			// width = -1 means the column takes all the accesible space 
 			setColumnWidth(key.toString(), -1);
-	        prefs.node(parentNodeName).node(PREF_NODE_NAME_WIDTHS).putInt(key.toString(), -1);
+	        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).putInt(key.toString(), -1);
 		}
 		this.refreshRowCache();
 		this.markAsDirty();

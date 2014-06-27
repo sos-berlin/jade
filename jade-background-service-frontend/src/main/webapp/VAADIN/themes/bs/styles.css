@@ -7050,6 +7050,13 @@ body .bs.v-app .v-app-loading {
 	-o-border-radius: 3px;
 }
 
+.bs .jadeBsDetailTable {
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-o-border-radius: 3px;
+}
+
 .bs .v-table-table {
 	overflow: visible !important;
 }
@@ -7060,6 +7067,13 @@ body .bs.v-app .v-app-loading {
 
 .bs .v-table-row {
 	background-color: #FFFFFF;
+}
+
+.bs .jadeBsDetailTable .v-table-row:hover, .bs .jadeBsDetailTable .v-table-row-odd:hover {
+	background: transparent url(../bs/images/table_selected.png) repeat-x;
+	color: #000000;
+	text-shadow: none;
+	font-weight: bold;
 }
 
 .bs .v-table-row-odd {
@@ -7216,6 +7230,31 @@ body .bs.v-app .v-app-loading {
 	margin: 2px;
 }
 
-.bs .jadeSizeRestButton {
-	background-color: #F5F5F5;
+.bs .jadeResizeButton, .bs .jadeResizeButton .v-button:focus, .bs .jadeResizeButton .v-button:active, .bs .jadeResizeButton .v-button.v-pressed {
+	background-repeat: repeat-x;
+	background-image: url(../bs/images/btn_bgr_grey.png);
+	border: 1px solid #C2C3C4;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	cursor: pointer;
+	height: 22px;
+}
+
+.bs .v-button:focus .jadeResizeButton, .bs .v-button:active .jadeResizeButton, .bs .v-button.v-pressed .jadeResizeButton, .bs .v-pressed .jadeResizeButton, .bs .jadeResizeButton .v-button:focus, .bs .jadeResizeButton .v-button:active, .bs .jadeResizeButton .v-button.v-pressed, .bs .jadeResizeButton .v-pressed, .bs .jadeResizeButton .v-button:active .v-button-wrap, .bs .jadeResizeButton .v-button:focus .v-button-wrap, .bs .jadeResizeButton .v-button:active .v-button-wrap, .bs .jadeResizeButton .v-button:focus .v-button-wrap, .bs .jadeResizeButton .v-button.v-pressed .v-button-wrap, .bs .jadeResizeButton .v-button-wrap, .bs .jadeResizeButton .v-disabled.v-button .v-button-wrap, .bs .jadeResizeButton .v-button .v-widget .jadeResizeButton .v-button-jadeResizeButton .v-pressed {
+	background-repeat: repeat-x;
+	background-image: url(../bs/images/btn_bgr_grey.png);
+	background-color: transparent;
+	outline: none;
+}
+
+.bs .jadeResizeButton .v-button-wrap, .bs .jadeResizeButton .v-disabled.v-button .v-button-wrap {
+	background: transparent;
+	padding: 1px;
+	display: inline;
+}
+
+.bs .jadeResizeButton .v-button .v-icon {
+	margin-left: -3px;
 }

@@ -35,13 +35,6 @@ public class JadeFileListenerProxy extends JadeFileListenerImpl implements IJade
 	}
 
 	@Override
-	public void filterJadeFiles(JadeFilesFilter filter) {
-		logger.debug("filterJadeFiles entered");
-		super.filterJadeFiles(filter);
-		logger.debug("filterJadeFiles exit");
-	}
-
-	@Override
 	public void getFileHistoryByIdFromLayer(Long id) {
 		logger.debug("getFileHistoryByIdFromLayer entered");
 		super.getFileHistoryByIdFromLayer(id);

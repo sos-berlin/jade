@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.List;
 
-import sos.ftphistory.JadeFilesFilter;
+import org.apache.log4j.Logger;
+
 import sos.ftphistory.JadeFilesHistoryFilter;
-import sos.ftphistory.db.JadeFilesDBItem;
 import sos.ftphistory.db.JadeFilesDBLayer;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 import sos.ftphistory.db.JadeFilesHistoryDBLayer;
@@ -16,12 +16,14 @@ import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.server.VaadinService;
+import com.vaadin.ui.UI;
 
 public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private static final long serialVersionUID = 1L;
 	private JadeFilesDBLayer jadeFilesDBLayer;
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	public MainView ui;
+	private Logger log = Logger.getLogger(JadeFilesHistoryDBItem.class);
 	
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
@@ -47,14 +49,6 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	}
 
 	@Override
-	public void filterJadeFiles(JadeFilesFilter filter) {
-		if(filter != null){
-			this.jadeFilesDBLayer.setFilter(filter);
-		}
-		getFilteredFiles();
-	}
-
-	@Override
 	public void getFileHistoryByIdFromLayer(Long id) {
 		initJadeFilesDbSession();
 		getFileHistoryFromDb(id);
@@ -67,12 +61,6 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 			this.jadeFilesHistoryDBLayer.setFilter(filter);
 		}
 		getFilteredFilesHistory();
-	}
-	
-	private void getFilteredFiles(){
-		initJadeFilesDbSession();
-		getFilesFromDb();
-		closeJadeFilesDbSession();
 	}
 	
 	private void getFilteredFilesHistory(){
@@ -89,15 +77,6 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 		}
 	}
 	
-	private void getFilesFromDb(){
-        try {
-        	List<JadeFilesDBItem> received = jadeFilesDBLayer.getFiles();
- 			ui.setFileItems(received);
-		} catch (ParseException e) {
-			getException(e);
-		}
-	}
-
 	private void getFilesHistoryFromDb(){
         try {
         	List<JadeFilesHistoryDBItem> received = jadeFilesHistoryDBLayer.getHistoryFiles();
@@ -112,16 +91,58 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	}
 
 	private void closeJadeFilesDbSession(){
-        jadeFilesDBLayer.closeSession();
+		// let some time pass before closing the actual hibernate session
+		new Thread(){
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(10000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				UI.getCurrent().access(new Runnable() {
+					@Override
+					public void run() {
+				        jadeFilesDBLayer.closeSession();
+					}
+				});
+			};
+		}.start();
 	}
 
 	private void initJadeFilesHistoryDbSession(){
-        jadeFilesHistoryDBLayer.initSession();
+        try {
+		} catch (Exception e) {
+			try {
+				log.error("Exception occurred while initializing Session for the first time" + e);
+				// retry
+				jadeFilesHistoryDBLayer.initSession();
+			} catch (Exception e1) {
+				log.error("Exception occurred while initializing Session for the second time" + e1);
+			}
+		}
 	}
 
 	@Override
 	public void closeJadeFilesHistoryDbSession(){
-        jadeFilesHistoryDBLayer.closeSession();
+		// let some time pass before closing the actual hibernate session
+		new Thread(){
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(10000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				UI.getCurrent().access(new Runnable() {
+					@Override
+					public void run() {
+				        jadeFilesHistoryDBLayer.closeSession();
+						log.debug("Hibernate SESSION closed in Listener");
+					}
+				});
+			};
+		}.start();
 	}
 
 }
