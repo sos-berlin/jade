@@ -154,6 +154,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	 * @param historyFilter the JadeFilesHistoryFilter to filter JadeFilesHistoryDBItems and the related JadeFilesDBItem with
 	 */
 	private void filterData(final IJadeFileListener listener, final JadeFilesHistoryFilter historyFilter) {
+		
 		new Thread() {
 			@Override
 	        public void run() {
@@ -245,6 +246,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				ui.setMarkedRow(null);
 				ui.setDetailViewVisible(true);
 				ui.getProgress().setVisible(true);
+				ui.new TimeCountThread().start();
 				JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 				checkTextFieldValues();
 				filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
