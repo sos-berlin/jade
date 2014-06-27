@@ -831,10 +831,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	public boolean transfer() throws Exception {
 		boolean flgReturnCode = false;
 		try { // to connect, authenticate and execute commands
-			logger.debug(Options().dirtyString());
-			logger.debug("Source : " + Options().Source().dirtyString());
-			logger.debug("Target : " + Options().Target().dirtyString());
 			Options().CheckMandatory();
+			logger.debug(Options().dirtyString());
 			logger.debug("Source : " + Options().Source().dirtyString());
 			logger.debug("Target : " + Options().Target().dirtyString());
 			setTextProperties();
@@ -1032,12 +1030,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::sendTransferHistory";
 		if (objOptions.SendTransferHistory.isTrue()) {
-			String strBackgroundServiceHostName = objOptions.scheduler_host.Value();
+			String strBackgroundServiceHostName = objOptions.BackgroundServiceHost.Value();
 			if (isEmpty(strBackgroundServiceHostName)) {
 				logger.debug("No data sent to the background service due to missing host name");
 				return;
 			}
-			if (objOptions.scheduler_port.isNotDirty()) {
+			if (objOptions.BackgroundServicePort.isNotDirty()) {
 				logger.debug("No data sent to the background service due to missing port number");
 				return;
 			}
@@ -1080,14 +1078,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		 * ? alternativ Metadaten der Tabelle lesen (Spalten) und mit den Auftragsparameter vergleichen
 		 */
 		if (objFactory == null) {
-			objFactory = new SchedulerObjectFactory(objOptions.scheduler_host.Value(), objOptions.scheduler_port.value());
+			objFactory = new SchedulerObjectFactory(objOptions.BackgroundServiceHost.Value(), objOptions.BackgroundServicePort.value());
 			objFactory.initMarshaller(Spooler.class);
-			objFactory.Options().TransferMethod.Value(objOptions.Scheduler_Transfer_Method.Value());
-			objFactory.Options().PortNumber.Value(objOptions.scheduler_port.Value());
-			objFactory.Options().ServerName.Value(objOptions.scheduler_host.Value());
+			objFactory.Options().TransferMethod.Set(objOptions.BackgroundServiceTransferMethod);
+			objFactory.Options().PortNumber.Set(objOptions.BackgroundServicePort);
+			objFactory.Options().ServerName.Set(objOptions.BackgroundServiceHost);
 		}
 		JSCmdAddOrder objOrder = objFactory.createAddOrder();
-		objOrder.setJobChain(objOptions.scheduler_job_chain.Value() /* "scheduler_sosftp_history" */);
+		objOrder.setJobChain(objOptions.BackgroundServiceJobChainName.Value() /* "scheduler_sosftp_history" */);
 		//		objOrder.setTitle(SOSVfs_Title_276.get());
 		Params objParams = objFactory.setParams(objSchedulerOrderParameterSet);
 		objOrder.setParams(objParams);

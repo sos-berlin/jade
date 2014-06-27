@@ -54,7 +54,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	private JADEOptions		objOptions				= null;
 	private final String		strSettingsFileName		= "./scripts/sosdex_settings.ini";
 //	protected String			strSettingsFile			= "R:/backup/sos/java/development/SOSDataExchange/examples/jade_settings.ini";
-	protected String			strSettingsFile			= "./examples/jade_settings.ini";
+	protected String			strSettingsFile			= "R:/java.sources/trunk/products/jade/jade-engine/src/test/resources/examples/jade_settings.ini";
 	private ISOSVFSHandler		objVFS					= null;
 	@SuppressWarnings("unused")
 	private ISOSVfsFileTransfer	ftpClient				= null;
