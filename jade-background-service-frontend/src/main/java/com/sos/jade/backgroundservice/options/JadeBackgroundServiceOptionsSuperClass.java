@@ -67,49 +67,6 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	private static Logger		logger				= Logger.getLogger(JadeBackgroundServiceOptionsSuperClass.class);
 
 	/**
-	 * \var Click_for_Details : 
-	 * 
-	 *
-	 */
-	@JSOptionDefinition(
-						name = "clickForDetails",
-						description = "",
-						key = "clickForDetails",
-						type = "SOSOptionString",
-						mandatory = false)
-	public SOSOptionBoolean		clickForDetails	= new SOSOptionBoolean(this, conClassName + ".clickForDetails", // HashMap-Key
-															"", // Titel
-															"false", // InitValue
-															"false", // DefaultValue
-															false // isMandatory
-													);
-	
-	/**
-	 * \brief getClickForDetails : 
-	 * 
-	 * \details
-	 * 
-	 *
-	 * \return 
-	 *
-	 */
-	public SOSOptionBoolean getClickForDetails() {
-		return clickForDetails;
-	}
-
-	/**
-	 * \brief setClickForDetails : 
-	 * 
-	 * \details
-	 * 
-	 *
-	 * @param ClickForDetails : 
-	 */
-	public void setClickForDetails(final SOSOptionBoolean pClickForDetails) {
-		clickForDetails = pClickForDetails;
-	}
-	
-	/**
 	 * \var hibernateConfigurationFileName : 
 	 * 
 	 *

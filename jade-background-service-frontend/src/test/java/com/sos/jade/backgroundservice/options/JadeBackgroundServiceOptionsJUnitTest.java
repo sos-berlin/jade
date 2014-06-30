@@ -1,6 +1,5 @@
 package com.sos.jade.backgroundservice.options;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -11,7 +10,6 @@ import org.junit.Test;
 
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-import com.sos.JSHelper.Logging.Log4JHelper;
 
 /**
  * \class 		JadeBackgroundServiceOptionsJUnitTest - JadeBackgroundService
@@ -40,11 +38,10 @@ import com.sos.JSHelper.Logging.Log4JHelper;
  * \endverbatim
  */
 public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
+	@SuppressWarnings("unused")
 	private final String			conClassName	= "JadeBackgroundServiceOptionsJUnitTest";						//$NON-NLS-1$
 	@SuppressWarnings("unused")
 	private static Logger			logger			= Logger.getLogger(JadeBackgroundServiceOptionsJUnitTest.class);
-	@SuppressWarnings("unused")
-	private static Log4JHelper		objLogger		= null;
 	protected JadeBackgroundServiceOptions	objOptions		= null;
 
 	public JadeBackgroundServiceOptionsJUnitTest() {
@@ -62,7 +59,6 @@ public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
 	@Before 
 	public void setUp() throws Exception {
 		System.setProperty("JADE_BS_HIBERNATE_CONFIG", "/WEB-INF/classes/hibernate.cfg.xml");
-		objLogger = new Log4JHelper("./log4j.properties"); //$NON-NLS-1$
 		objOptions = new JadeBackgroundServiceOptions();
 		JSListenerClass.bolLogDebugInformation = true;
 		JSListenerClass.intMaxDebugLevel = 9;
@@ -70,21 +66,6 @@ public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
 
 	@After 
 	public void tearDown() throws Exception {
-	}
-
-	/**
-	 * \brief testClickForDetails : 
-	 * 
-	 * \details
-	 * 
-	 *
-	 */
-	@Test 
-	public void testClickForDetails() { // SOSOptionString
-		objOptions.clickForDetails.Value("++false++");
-		assertEquals("", objOptions.clickForDetails.Value(), "++false++");
-		objOptions.clickForDetails.setTrue();
-		assertTrue("Text", objOptions.clickForDetails.value());
 	}
 
 	@Test 

@@ -168,7 +168,7 @@
   
   /************ styles for Menu Bars ********************/
   .jadeMenuBar{
-	height: 23px;
+/*	height: 23px; */
 	text-shadow: none;
 	font-weight: bold;
 	padding: 0 8px;
@@ -319,6 +319,33 @@
   
   .jadeResizeButton .v-button .v-icon {
 	margin-left: -3px;
+  }
+  
+  .jadeProgressBar{
+  	height: 20px;
+	width: 20px;
+	background: url(../base/common/img/loading-indicator.gif) no-repeat 50%;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+  }
+
+  .jadeProgressBarMedium{
+  	height: 20px;
+	width: 20px;
+	background: url(../base/common/img/loading-indicator-delay.gif) no-repeat 50%;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+  }
+
+  .jadeProgressBarSlow{
+  	height: 20px;
+	width: 20px;
+	background: url(../base/common/img/loading-indicator-wait.gif) no-repeat 50%;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
   }
   
 }

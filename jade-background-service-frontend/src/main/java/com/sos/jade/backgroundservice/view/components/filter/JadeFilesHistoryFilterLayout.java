@@ -14,6 +14,7 @@ import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
+import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -73,6 +74,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		this.messages = ui.getMessages();
 		this.setSizeFull();
 		this.setMargin(true);
+		this.focus();
 		initJadeFilesHistoryFilterComponents();
 	}
 	
@@ -170,6 +172,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				        ui.getTblFileHistory().populateDatasource(ui.getHistoryItems());
 				        ui.getTblFileHistory().markAsDirty();
 						listener.closeJadeFilesHistoryDbSession();
+						ui.getProgress().setPrimaryStyleName("jadeProgressBar");
 				        ui.getProgress().setVisible(false);
 					}
 				});
@@ -237,7 +240,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		hlButtons.addComponents(btnDiscard, btnCommit);
 		hlButtons.setComponentAlignment(btnDiscard, Alignment.MIDDLE_LEFT);
 		hlButtons.setComponentAlignment(btnCommit, Alignment.MIDDLE_LEFT);
-		
+		btnCommit.setClickShortcut(KeyCode.ENTER, null);
+		btnDiscard.setClickShortcut(KeyCode.ESCAPE, null);
 		btnCommit.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 
@@ -246,7 +250,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				ui.setMarkedRow(null);
 				ui.setDetailViewVisible(true);
 				ui.getProgress().setVisible(true);
-				ui.new TimeCountThread().start();
+				ui.getProgressStart().setTime(new Date().getTime());
+				ui.getJmb().getSmDublicatesFilter().setChecked(false);
+				ui.new SleeperThreadMedium().start();
+				ui.new SleeperThreadLong().start();
 				JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 				checkTextFieldValues();
 				filter.setTransferTimestampFrom(dfTimestampFrom.getValue());

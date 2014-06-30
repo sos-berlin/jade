@@ -248,6 +248,7 @@ public class JadeFileHistoryTable extends Table{
 				for(Object column : container.getContainerPropertyIds()){
 			        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_COLLAPSE).putBoolean(column.toString(), isColumnCollapsed(column));
 				}
+				JadeFileHistoryTable.this.markAsDirty();
 			}
 		});
 	}

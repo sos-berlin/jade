@@ -4,6 +4,8 @@ import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,6 +26,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	public MainView ui;
 	private Logger log = Logger.getLogger(JadeFilesHistoryDBItem.class);
+	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
 	
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
@@ -112,6 +115,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 
 	private void initJadeFilesHistoryDbSession(){
         try {
+			jadeFilesHistoryDBLayer.initSession();
 		} catch (Exception e) {
 			try {
 				log.error("Exception occurred while initializing Session for the first time" + e);
@@ -138,7 +142,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 					@Override
 					public void run() {
 				        jadeFilesHistoryDBLayer.closeSession();
-						log.debug("Hibernate SESSION closed in Listener");
+						log.debug("Hibernate SESSION closed in Listener at " + sdf.format(new Date()) + "!");
 					}
 				});
 			};

@@ -11,11 +11,12 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.Label;
 
-public class JadeFilesHistoryContainer extends IndexedContainer {
-
+public class JadeFilesHistoryContainer extends IndexedContainer{
+	private List<JadeFilesHistoryDBItem> historyItems;
 	private static final long serialVersionUID = 1L;
 
 	public JadeFilesHistoryContainer(List<JadeFilesHistoryDBItem> historyItems) {
+		this.historyItems = historyItems;
 		addContainerProperties();
 		addItems(historyItems);
 	}
@@ -111,9 +112,10 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
             Item oldItem = this.getItem(itemId);
             if (oldItem != null){
                 for (Object property: getContainerPropertyIds()){
-                    oldItem.getItemProperty(property)
-                               .setValue(newItem.getItemProperty(property).getValue());
+                    oldItem.getItemProperty(property).setValue(newItem.getItemProperty(property).getValue());
                 }
             }
         }
-    }}
+    }
+    
+}
