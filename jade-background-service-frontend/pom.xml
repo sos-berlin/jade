@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-	    <groupId>com.sos-berlin.products</groupId>
+	    <groupId>com.sos-berlin</groupId>
 	    <artifactId>jade</artifactId>
     	<version>1.8-SNAPSHOT</version>
   	</parent>
   	
-	<groupId>com.sos-berlin.products.jade</groupId>
+	<groupId>com.sos-berlin.jade</groupId>
 	<artifactId>jade-background-service-frontend</artifactId>
 	<packaging>war</packaging>
 	<name>${project.artifactId}</name>
@@ -211,13 +211,13 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.sos-berlin.products.jobscheduler</groupId>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
             <version>${project.version}</version>
 		</dependency>
 <!--  		
 		<dependency>
-			<groupId>com.sos-berlin.products.jobscheduler</groupId>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
             <version>${project.version}</version>
 		</dependency>

@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.sos-berlin.products</groupId>
+    <groupId>com.sos-berlin</groupId>
     <artifactId>jade</artifactId>
     <version>1.8-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.sos-berlin.products.jade</groupId>
+  <groupId>com.sos-berlin.jade</groupId>
   <artifactId>jade-all</artifactId>
   <name>${project.artifactId}</name>
   <packaging>pom</packaging>
@@ -41,35 +41,35 @@
     <dependencies>
         
         <dependency>
-            <groupId>com.sos-berlin.products.jade</groupId>
+            <groupId>com.sos-berlin.jade</groupId>
             <artifactId>jade-batches</artifactId>
             <version>${project.version}</version>
         </dependency>
         
 <!--	project not in release status  
         <dependency>
-            <groupId>com.sos-berlin.products.jade</groupId>
+            <groupId>com.sos-berlin.jade</groupId>
             <artifactId>jade-cockpit</artifactId>
             <version>${project.version}</version>
         </dependency>
 -->
         
         <dependency>
-            <groupId>com.sos-berlin.products.jade</groupId>
+            <groupId>com.sos-berlin.jade</groupId>
             <artifactId>jade-engine</artifactId>
             <version>${project.version}</version>
         </dependency>
         
 <!--	project will be added, when it´s done [SP]  
         <dependency>
-            <groupId>com.sos-berlin.products.jade</groupId>
+            <groupId>com.sos-berlin.jade</groupId>
             <artifactId>jade-background-service-frontend</artifactId>
             <version>${project.version}</version>
         </dependency>
 -->        
 <!--	project not in release status  
         <dependency>
-            <groupId>com.sos-berlin.products.jade</groupId>
+            <groupId>com.sos-berlin.jade</groupId>
             <artifactId>jade-file-watcher</artifactId>
             <version>${project.version}</version>
         </dependency>
