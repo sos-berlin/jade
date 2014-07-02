@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
+import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
@@ -18,16 +19,6 @@ import com.vaadin.ui.Table;
 
 public class JadeDetailTable extends Table {
 	private static final long serialVersionUID = 1L;
-	private static final String COLUMN_ORDER = "colOrder";
-	private static final String CLASS_NODE_NAME = "detail-table";
-	private static final String PREF_NODE_NAME_ORDER = "table_column_order";
-	private static final String PREF_NODE_NAME_WIDTHS = "table_column_widths";
-	private static final String PREF_NODE_NAME_COLLAPSE = "table_column_collapse";
-	private static final String PREF_KEY_NAME_ORDER = "column_order";
-	private static final String DELIMITER = "|";
-	private static final String ENTRY_DELIMITER = ";";
-	private static final String DELIMITER_REGEX = "[|]";
-	private static final String EQUAL_CHAR = "=";
 	private static final int PAGE_LENGTH = 20;
 	private JadeFilesHistoryDBItem detailItem;
 	private JadeBSMessages messages;
@@ -67,7 +58,17 @@ public class JadeDetailTable extends Table {
 			this.setVisibleColumns(visibleColumns);
 		}
 		setColumnHeaders();
-		setPreferencesColumnsWidth();
+		try {
+			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).keys().length > 0){
+				setPreferencesColumnsWidth();
+			}else{
+				setDefaultColumnsWidth();
+			}
+		} catch (BackingStoreException e) {
+			log.debug("[ERROR] reading from PreferenceStore, setting default widths instead!");
+			setDefaultColumnsWidth();
+			saveDefaultColumnsWidthToPreferences();
+		}
 		initConfigurationChangeListeners();
 	}
 	
@@ -77,6 +78,11 @@ public class JadeDetailTable extends Table {
 	private void setColumnHeaders(){
 		setColumnHeader("key", messages.getValue("DetailLayout.keyHeader"));
 		setColumnHeader("value", messages.getValue("DetailLayout.valueHeader"));
+	}
+
+	private void setDefaultColumnsWidth(){
+		setColumnWidth("key", 200);
+		setColumnWidth("value", 220);
 	}
 	
 	/**
@@ -116,7 +122,7 @@ public class JadeDetailTable extends Table {
 		        // unresized columns would go on using all the available space, which can be more
 		        // than before changing width of the others.
 		        for(Object col : visibleColumns){
-			        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).putInt(col.toString(), getColumnWidth(col));
+			        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(col.toString(), getColumnWidth(col));
 		        	log.debug("actual width of " + col.toString() + " = " + String.valueOf(getColumnWidth(col)));
 		        }
 				try {
@@ -130,23 +136,28 @@ public class JadeDetailTable extends Table {
 	}
 	
 	public void resetColumnWidths(){
-		for(Object key : this.getVisibleColumns()){
+		for(Object column : this.getVisibleColumns()){
 			// width = -1 means the column takes all the accessible space 
-			setColumnWidth(key.toString(), -1);
-	        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).putInt(key.toString(), -1);
+			setColumnWidth(column.toString(), -1);
+	        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(column.toString(), -1);
 		}
 		this.refreshRowCache();
 		this.markAsDirty();
 	}
 	
 	private void setPreferencesColumnsWidth(){
-		for(Object key : visibleColumns){
-			int width = prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).getInt(key.toString(), 0);
+		for(Object column : visibleColumns){
+			int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(column.toString(), 0);
 			if (width != 0){
-				setColumnWidth(key.toString(), width);
-				log.debug("setting width of column " + key.toString() + " to " + String.valueOf(width));
+				setColumnWidth(column.toString(), width);
+				log.debug("setting width of column " + column.toString() + " to " + String.valueOf(width));
 			}
 		}
+	}
+	
+	private void saveDefaultColumnsWidthToPreferences(){
+        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt("key", 200);
+        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt("value", 220);
 	}
 	
 }

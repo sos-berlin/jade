@@ -55,7 +55,7 @@ public class JadeFileListenerProxy extends JadeFileListenerImpl implements IJade
 	@Override
 	public void closeJadeFilesHistoryDbSession() {
 		super.closeJadeFilesHistoryDbSession();
-		logger.debug("hibernate session closed at " + sdf.format(new Date()) + "!");
+		logger.debug("hibernate session close started at " + sdf.format(new Date()) + "!");
 	}
 
 }

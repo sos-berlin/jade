@@ -142,7 +142,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 					@Override
 					public void run() {
 				        jadeFilesHistoryDBLayer.closeSession();
-						log.debug("Hibernate SESSION closed in Listener at " + sdf.format(new Date()) + "!");
+						log.debug("Hibernate SESSION finally closed at " + sdf.format(new Date()) + "!");
 					}
 				});
 			};

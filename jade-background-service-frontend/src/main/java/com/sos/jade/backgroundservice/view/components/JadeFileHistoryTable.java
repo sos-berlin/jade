@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
+import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.data.JadeFilesHistoryContainer;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
@@ -28,16 +29,6 @@ public class JadeFileHistoryTable extends Table{
 	private JadeFilesHistoryContainer container;
 	private static final int PAGE_LENGTH = 20;
 	private JadeBSMessages messages;
-	private static final String CLASS_NODE_NAME = "history-table";
-	private static final String COLUMN_ORDER = "colOrder";
-	private static final String PREF_NODE_NAME_ORDER = "table_column_order";
-	private static final String PREF_NODE_NAME_WIDTHS = "table_column_widths";
-	private static final String PREF_NODE_NAME_COLLAPSE = "table_column_collapse";
-	private static final String PREF_KEY_NAME_ORDER = "column_order";
-	private static final String DELIMITER = "|";
-	private static final String ENTRY_DELIMITER = ";";
-	private static final String DELIMITER_REGEX = "[|]";
-	private static final String EQUAL_CHAR = "=";
 //	private Map<String, Integer> defaultColumnWidths;
 //	private String lastColOrder;
 //	private String sessionsLastColOrder;
@@ -80,9 +71,9 @@ public class JadeFileHistoryTable extends Table{
 		setColumnAlignment(JadeHistoryFileColumns.STATUS.getName(), Align.CENTER);
 		setCellStyleGenerator(new StatusCellStyleGenerator());
 		enableContentRefreshing(true);
-		String strVc = prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_ORDER).get(PREF_KEY_NAME_ORDER, null);
+		String strVc = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).get(JadeBSConstants.PREF_KEY_ORDER, null);
 		if (strVc != null){
-			this.setVisibleColumns((Object[])strVc.split(DELIMITER_REGEX));
+			this.setVisibleColumns((Object[])strVc.split(JadeBSConstants.DELIMITER_REGEX));
 			this.refreshRowCache();
 			this.markAsDirty();
 			log.debug("VisibleColumnsOrder after setting from Preferences: " + createOrderedColumnsString(this.getVisibleColumns()));
@@ -114,7 +105,7 @@ public class JadeFileHistoryTable extends Table{
 	
 	private void setPreferencesColumnsWidth(){
 		for(Object key : visibleColumns){
-			int width = prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).getInt(key.toString(), 0);
+			int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
 			if (width != 0){
 				setColumnWidth(key.toString(), width);
 				log.debug("setting width of column " + key.toString() + " to " + String.valueOf(width));
@@ -229,7 +220,7 @@ public class JadeFileHistoryTable extends Table{
 		        // unresized columns would go on using all the available space, which can be more
 		        // than before changing width of the others.
 		        for(Object col : visibleColumns){
-			        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).putInt(col.toString(), getColumnWidth(col));
+			        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(col.toString(), getColumnWidth(col));
 		        	log.debug("actual width of " + col.toString() + " = " + String.valueOf(getColumnWidth(col)));
 		        }
 				try {
@@ -246,7 +237,7 @@ public class JadeFileHistoryTable extends Table{
 			@Override
 			public void containerItemSetChange(ItemSetChangeEvent event) {
 				for(Object column : container.getContainerPropertyIds()){
-			        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_COLLAPSE).putBoolean(column.toString(), isColumnCollapsed(column));
+			        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).putBoolean(column.toString(), isColumnCollapsed(column));
 				}
 				JadeFileHistoryTable.this.markAsDirty();
 			}
@@ -258,7 +249,7 @@ public class JadeFileHistoryTable extends Table{
 			for (Object column : container.getContainerPropertyIds()) {
 				setColumnCollapsed(
 						column,
-						prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_COLLAPSE).getBoolean(column.toString(), false));
+						prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).getBoolean(column.toString(), false));
 			}
 		}
 	}
@@ -276,7 +267,7 @@ public class JadeFileHistoryTable extends Table{
 		boolean first = true;
 		for (Object obj : orderedCols){
 			if (!first){
-				sb.append(DELIMITER);
+				sb.append(JadeBSConstants.DELIMITER);
 			}
 			sb.append(obj.toString());
 			first = false;
@@ -285,7 +276,7 @@ public class JadeFileHistoryTable extends Table{
 	}
 	
 	private void setOrderedColumnsPreferencesNode(Object[] orderedCols){
-		prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_ORDER).put(PREF_KEY_NAME_ORDER, createOrderedColumnsString(orderedCols));
+		prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).put(JadeBSConstants.PREF_KEY_ORDER, createOrderedColumnsString(orderedCols));
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -298,7 +289,7 @@ public class JadeFileHistoryTable extends Table{
 		for(Object key : this.getVisibleColumns()){
 			// width = -1 means the column takes all the accesible space 
 			setColumnWidth(key.toString(), -1);
-	        prefs.node(parentNodeName).node(CLASS_NODE_NAME).node(PREF_NODE_NAME_WIDTHS).putInt(key.toString(), -1);
+	        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(key.toString(), -1);
 		}
 		this.refreshRowCache();
 		this.markAsDirty();

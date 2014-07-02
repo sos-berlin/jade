@@ -1,11 +1,13 @@
 package com.sos.jade.backgroundservice.view;
 
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import org.apache.log4j.Logger;
@@ -15,6 +17,7 @@ import sos.ftphistory.db.JadeFilesHistoryDBItem;
 import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
@@ -22,10 +25,12 @@ import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.components.JadeDetailTable;
 import com.sos.jade.backgroundservice.view.components.JadeFileHistoryTable;
 import com.sos.jade.backgroundservice.view.components.JadeMenuBar;
+import com.sos.jade.backgroundservice.view.components.filter.DuplicatesFilter;
 import com.sos.jade.backgroundservice.view.components.filter.JadeFilesHistoryFilterLayout;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.event.MouseEvents;
@@ -53,7 +58,7 @@ public class MainView extends CustomComponent{
 	private IJadeFileListener fileListener;
 //	private boolean first = true;
     private Image imgDe;
-    private Image imgGb;
+    private Image imgUk;
     private Image imgUs;
     private Image imgEs;
     private JadeMenuBar jmb;
@@ -61,7 +66,6 @@ public class MainView extends CustomComponent{
     private VerticalLayout vRest;
     private HorizontalLayout hlTableMainLayout;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
-	private static final String CLASS_NODE_NAME = "main-view";
 	private final Logger log = Logger.getLogger(MainView.class);
 	private ProgressBar progress;
 	private JadeBSMessages messages;
@@ -70,11 +74,13 @@ public class MainView extends CustomComponent{
 	private static final String primaryProgressBarStyle = "v-progressbar";
 	private static final Long DELAY_MEDIUM = 2000L;
 	private static final Long DELAY_LONG = 5000L;
-	private boolean removeDublicates = false;
+	private boolean removeDuplicates = false;
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+	private Locale currentLocale = VaadinSession.getCurrent().getLocale();
+	private DuplicatesFilter duplicatesFilter = new DuplicatesFilter();
 
 	public MainView() {
-		this.messages = new JadeBSMessages("JADEBSMessages", VaadinSession.getCurrent().getLocale());
+		this.messages = new JadeBSMessages("JADEBSMessages", currentLocale);
 		this.fileListener = new JadeFileListenerProxy(this);
 		setImmediate(true);
 		initView();
@@ -83,17 +89,21 @@ public class MainView extends CustomComponent{
 	private void initView(){
 		initComponents();
     	progress.setVisible(true);
-    	runFilter(null);
+    	if(checkReuseLastFilterSettings()){
+        	runFilter(createReusedFilter());
+    	}else{
+        	runFilter(null);
+    	}
 	}
 	
 	private void runFilter(final JadeFilesHistoryFilter filter){
+    	progressStart = new Date();
     	new SleeperThreadMedium().start();
     	new SleeperThreadLong().start();
 		new Thread() {
             @Override
             public void run() {
 		        try {
-		        	progressStart = new Date();
 		        	fileListener.filterJadeFilesHistory(filter);
 		        } catch (final Exception e) {
 		        	fileListener.getException(e);
@@ -103,7 +113,18 @@ public class MainView extends CustomComponent{
 					public void run() {
 				        tblFileHistory.populateDatasource(historyItems);
 						fileListener.closeJadeFilesHistoryDbSession();
-						log.debug("feedback from Hibernate SESSION closing received in MainView at " + sdf.format(new Date()) + "!");
+						if(checkRemoveDuplicatesSettings()){
+							duplicatesFilter.setHistoryItems(historyItems);
+							((IndexedContainer)tblFileHistory.getContainerDataSource()).addContainerFilter(duplicatesFilter);
+						}else if(((IndexedContainer)tblFileHistory.getContainerDataSource()).hasContainerFilters()){
+							duplicatesFilter.setHistoryItems(historyItems);
+							((IndexedContainer)tblFileHistory.getContainerDataSource()).removeContainerFilter(duplicatesFilter);
+						}
+						jmb.refreshSelectedLangOnInit();
+						jmb.getSmDuplicatesFilter().setChecked(checkRemoveDuplicatesSettings());
+						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
+						refreshButtonVisibility();
+						log.debug("feedback received from proxy about Hibernate SESSION close at " + sdf.format(new Date()) + "!");
 					}
 				});
             };
@@ -118,7 +139,7 @@ public class MainView extends CustomComponent{
         vLayout.addStyleName("jadeMainVLayout");
         setCompositionRoot(vLayout);
         
-        vLayout.addComponent(initTitleLayout());
+        vLayout.addComponent(createTitleLayout());
         
         HorizontalLayout hlMenuBar = initHLayout(25.0f);
         hlMenuBar.addStyleName("jadeMenuBarLayout");
@@ -126,14 +147,18 @@ public class MainView extends CustomComponent{
         jmb = new JadeMenuBar(messages);
         hlMenuBar.addComponent(jmb);
         imgDe = initLanguageIcon("images/de_marble.png");
-        imgGb = initLanguageIcon("images/gb_marble.png");
+        imgUk = initLanguageIcon("images/gb_marble.png");
         imgUs = initLanguageIcon("images/us_marble.png");
         imgEs = initLanguageIcon("images/es_marble.png");
-		hlMenuBar.addComponents(imgDe, imgUs, imgGb, imgEs);
+		hlMenuBar.addComponents(imgDe, imgUs, imgUk, imgEs);
+		imgDe.setVisible(false);
+		imgUk.setVisible(false);
+		imgUs.setVisible(false);
+		imgEs.setVisible(false);
 		hlMenuBar.setExpandRatio(jmb, 1);
 		hlMenuBar.setComponentAlignment(imgDe, Alignment.MIDDLE_RIGHT);
 		hlMenuBar.setComponentAlignment(imgUs, Alignment.MIDDLE_RIGHT);
-		hlMenuBar.setComponentAlignment(imgGb, Alignment.MIDDLE_RIGHT);
+		hlMenuBar.setComponentAlignment(imgUk, Alignment.MIDDLE_RIGHT);
 		hlMenuBar.setComponentAlignment(imgEs, Alignment.MIDDLE_RIGHT);
 		setLanguageIconClickHandlers();
 		
@@ -141,7 +166,8 @@ public class MainView extends CustomComponent{
         vRest.setSizeFull();
         vLayout.addComponent(vRest);
         vLayout.setExpandRatio(vRest, 1);
-        initTables();
+        createResetAndProgressLayout();
+        createTablesLayout();
 	}
 	
 	private ProgressBar initProgressBar(){
@@ -151,13 +177,13 @@ public class MainView extends CustomComponent{
 		return progressBar;
 	}
 	
-	private HorizontalLayout initTitleLayout(){
+	private HorizontalLayout createTitleLayout(){
         HorizontalLayout hLayout = initHLayout(75.0f);
         final Image imgTitle = new Image();
         ThemeResource titleResource = new ThemeResource("images/job_scheduler_rabbit_circle_60x60.gif");
 		imgTitle.setSource(titleResource);
         hLayout.addComponent(imgTitle);
-        lblTitle = new Label(messages.getValue("MainView.title", VaadinSession.getCurrent().getLocale()));
+        lblTitle = new Label(messages.getValue("MainView.title", currentLocale));
         lblTitle.setStyleName("jadeTitleLabel");
         hLayout.addComponent(lblTitle);
         final Image imgLogo = new Image();
@@ -193,33 +219,48 @@ public class MainView extends CustomComponent{
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void click(ClickEvent event) {
-				refreshLocalization(Locale.GERMANY);
+				currentLocale = Locale.GERMANY;
+				refreshLocalization(currentLocale);
+				imgDe.setVisible(false);
+				refreshButtonVisibility();
 			}
 		});
-		imgGb.addClickListener(new MouseEvents.ClickListener() {
+		imgUk.addClickListener(new MouseEvents.ClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void click(ClickEvent event) {
-				refreshLocalization(Locale.UK);
+				currentLocale = Locale.UK;
+				refreshLocalization(currentLocale);
+				imgUk.setVisible(false);
+				refreshButtonVisibility();
 			}
 		});
 		imgUs.addClickListener(new MouseEvents.ClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void click(ClickEvent event) {
-				refreshLocalization(Locale.US);
+				currentLocale = Locale.US;
+				refreshLocalization(currentLocale);
+				imgUs.setVisible(false);
+				refreshButtonVisibility();
 			}
 		});
 		imgEs.addClickListener(new MouseEvents.ClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void click(ClickEvent event) {
-				refreshLocalization(new Locale("es", "ES"));
+				currentLocale = new Locale("es", "ES");
+				refreshLocalization(currentLocale);
+				imgEs.setVisible(false);
+				refreshButtonVisibility();
 			}
 		});
 	}
 	
-	private void refreshLocalization(Locale locale){
+	public void refreshLocalization(Locale locale){
+		if(locale == null){
+			locale = Locale.getDefault();
+		}
 		VaadinSession.getCurrent().setLocale(locale);
 		MainView.this.messages.setLocale(locale);
 		MainView.this.lblTitle.setValue(messages.getValue("MainView.title", locale));
@@ -234,11 +275,48 @@ public class MainView extends CustomComponent{
 		MainView.this.markAsDirtyRecursive();
 	}
 	
-	private void initTables(){
-		hlTableMainLayout = new HorizontalLayout();
-		hlTableMainLayout.setSizeFull();
+	public void refreshButtonVisibility(){
+		List<Locale> checkedLocales = jmb.getCheckedLanguages();
+		for(Locale checkedLocale : checkedLocales){
+			if(checkedLocale.getCountry().equals(currentLocale.getCountry())){
+				setButtonNotVisibile(checkedLocale);
+			}else{
+				setButtonVisibile(checkedLocale);
+			}
+		}
+		if(!checkedLocales.contains(currentLocale)){
+			currentLocale = Locale.getDefault();
+			refreshLocalization(currentLocale);
+			setButtonNotVisibile(currentLocale);
+		}
+	}
+	
+	private void setButtonNotVisibile(Locale locale){
+		if(locale.getCountry().equals(Locale.GERMANY.getCountry())){
+			imgDe.setVisible(false);
+		}else if(locale.getCountry().equals(Locale.UK.getCountry())){
+			imgUk.setVisible(false);
+		}else if(locale.getCountry().equals(Locale.US.getCountry())){
+			imgUs.setVisible(false);
+		}else if(locale.getCountry().equals(new Locale("es", "ES").getCountry())){
+			imgEs.setVisible(false);
+		}
+	}
+	
+	private void setButtonVisibile(Locale locale){
+		if(locale.getCountry().equals(Locale.GERMANY.getCountry())){
+			imgDe.setVisible(true);
+		}else if(locale.getCountry().equals(Locale.UK.getCountry())){
+			imgUk.setVisible(true);
+		}else if(locale.getCountry().equals(Locale.US.getCountry())){
+			imgUs.setVisible(true);
+		}else if(locale.getCountry().equals(new Locale("es", "ES").getCountry())){
+			imgEs.setVisible(true);
+		}
+	}
+	
+	private void createResetAndProgressLayout(){
 		hlResetAndProgress = new HorizontalLayout();
-//		hlResetAndProgress.setSizeUndefined();
 		hlResetAndProgress.setWidth("100%");
 		vRest.addComponent(hlResetAndProgress);
         Button btnResetColumnWith = new Button();
@@ -247,6 +325,26 @@ public class MainView extends CustomComponent{
         btnResetColumnWith.setIcon(new ThemeResource("images/resize_orange_40x20.png"));
         btnResetColumnWith.setDescription("reset column width to default");
         hlResetAndProgress.addComponent(btnResetColumnWith);
+        btnResetColumnWith.addClickListener(new Button.ClickListener() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void buttonClick(Button.ClickEvent event) {
+				tblFileHistory.resetColumnWidths();
+				if(tblDetails.isVisible()){
+					tblDetails.resetColumnWidths();
+				}
+			}
+		});
+		progress = initProgressBar();
+		hlResetAndProgress.addComponent(progress);
+		hlResetAndProgress.setComponentAlignment(progress, Alignment.TOP_CENTER);
+		hlResetAndProgress.setExpandRatio(progress, 1);
+		progress.setVisible(false);
+ 	}
+	
+	private void createTablesLayout(){
+		hlTableMainLayout = new HorizontalLayout();
+		hlTableMainLayout.setSizeFull();
         vRest.addComponent(hlTableMainLayout);
         vRest.setExpandRatio(hlTableMainLayout, 1);
         tblFileHistory = new JadeFileHistoryTable(historyItems, messages);
@@ -272,25 +370,10 @@ public class MainView extends CustomComponent{
 	        	progress.setVisible(false);
 			}
 		});
-        btnResetColumnWith.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public void buttonClick(Button.ClickEvent event) {
-				tblFileHistory.resetColumnWidths();
-				if(tblDetails.isVisible()){
-					tblDetails.resetColumnWidths();
-				}
-			}
-		});
         tblDetails = new JadeDetailTable(null, messages);
         tblDetails.setVisible(false);
         hlTableMainLayout.addComponent(tblDetails);
         hlTableMainLayout.setExpandRatio(tblFileHistory, 1);
-		progress = initProgressBar();
-		hlResetAndProgress.addComponent(progress);
-		hlResetAndProgress.setComponentAlignment(progress, Alignment.TOP_CENTER);
-		hlResetAndProgress.setExpandRatio(progress, 1);
-		progress.setVisible(false);
 	}
 	
 	private void toggleTableVisiblity(Item item){
@@ -309,6 +392,137 @@ public class MainView extends CustomComponent{
 			hlTableMainLayout.setExpandRatio(tblFileHistory, 2);
 			hlTableMainLayout.setExpandRatio(tblDetails, 1);
 		}
+	}
+	
+	/**
+	 * Timed Thread, to update the Progress Indicator after a medium delay with a yellow background
+	 * 
+	 * @author SP
+	 *
+	 */
+	public class SleeperThreadMedium extends Thread{
+		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+		Date actual = null;
+		@Override
+		public void run() {
+			log.debug("SleeperThreadMedium started at " + sdf.format(new Date()) + "!");
+			progress.setPrimaryStyleName("jadeProgressBar");
+			if(progressStart == null){
+				progressStart = new Date();
+			}
+			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_MEDIUM){
+				continue;
+			}
+			UI.getCurrent().access(new Runnable() {
+				@Override
+				public void run() {
+					progress.setPrimaryStyleName("jadeProgressBarMedium");
+					log.debug("SleeperThreadMedium ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
+				}
+			});
+		}
+	}
+	
+	/**
+	 * Timed Thread, to update the Progress Indicator after a long delay with a red background
+	 * 
+	 * @author SP
+	 *
+	 */
+	public class SleeperThreadLong extends Thread{
+		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+		Date actual = null;
+		@Override
+		public void run() {
+			log.debug("SleeperThreadLong started at " + sdf.format(new Date()) + "!");
+			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_LONG){
+				continue;
+			}
+			UI.getCurrent().access(new Runnable() {
+				@Override
+				public void run() {
+					progress.setPrimaryStyleName("jadeProgressBarSlow");
+					log.debug("SleeperThreadLong ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
+				}
+			});
+		}
+	}
+
+	private boolean checkReuseLastFilterSettings(){
+		boolean lastUsed = false;
+		try {
+			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
+				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
+						.node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+						.getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
+			}
+		} catch (BackingStoreException e) {
+			log.warn("Unable to read from PreferenceStore, using defaults.");
+			e.printStackTrace();
+		}
+		return lastUsed;
+	}
+	
+	private boolean checkRemoveDuplicatesSettings(){
+		boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
+				.node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+				.getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
+		return removeDuplicates;
+	}
+	
+	private JadeFilesHistoryFilter createReusedFilter(){
+		JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
+		Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, 0L);
+		if(timeFrom != 0L){
+			filter.setTransferTimestampFrom(new Date(timeFrom));
+		}
+		Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, 0L); 
+		if(timeTo != 0L){
+			filter.setTransferTimestampTo(new Date(timeTo));
+		}
+		String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
+		if(protocol != null && !"".equals(protocol)){
+			filter.setProtocol(protocol);
+		}
+		String status = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_STATUS, null); 
+		if(status != null && !"".equals(status)){
+			filter.setStatus(status);
+		}
+		String operation = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_OPERATION, null);
+		if(operation != null && !"".equals(operation)){
+			filter.setOperation(operation);
+		}
+		String sourceFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, null);
+		if(sourceFile != null && !"".equals(sourceFile)){
+			filter.setSourceFile(sourceFile);
+		}
+		String sourceHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, null);
+		if(sourceHost != null && !"".equals(sourceHost)){
+			filter.setSourceHost(sourceHost);
+		}
+		String targetFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_TARGET_FILE, null);
+		if(targetFile != null && !"".equals(targetFile)){
+			filter.setTargetFilename(targetFile);
+		}
+		String targetHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_TARGET_HOST, null);
+		if(targetHost != null && !"".equals(targetHost)){
+			filter.setTargetHost(targetHost);
+		}
+		String mandator = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+				.get(JadeBSConstants.FILTER_OPTION_MANDATOR, null);
+		if(mandator != null && !"".equals(mandator)){
+			filter.setMandator(mandator);
+		}
+		return filter;
 	}
 	
 	public void setMarkedRow(Item markedRow) {
@@ -351,59 +565,24 @@ public class MainView extends CustomComponent{
 		return jmb;
 	}
 
-	/**
-	 * Timed Thread, to update the Progress Indicator after a medium delay with a yellow background
-	 * 
-	 * @author SP
-	 *
-	 */
-	public class SleeperThreadMedium extends Thread{
-		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
-		Date actual = null;
-		@Override
-		public void run() {
-			log.debug("SleeperThreadMedium started at " + sdf.format(new Date()) + "!");
-			progress.setPrimaryStyleName("jadeProgressBar");
-			if(progressStart == null){
-				progressStart = new Date();
-			}
-			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_MEDIUM){
-				continue;
-			}
-			UI.getCurrent().access(new Runnable() {
-				@Override
-				public void run() {
-					progress.setPrimaryStyleName("jadeProgressBarMedium");
-					log.debug("SleeperThreadMedium ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
-				}
-			});
-		}
-		
+	public Image getImgDe() {
+		return imgDe;
 	}
-	
-	/**
-	 * Timed Thread, to update the Progress Indicator after a long delay with a red background
-	 * 
-	 * @author SP
-	 *
-	 */
-	public class SleeperThreadLong extends Thread{
-		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
-		Date actual = null;
-		@Override
-		public void run() {
-			log.debug("SleeperThreadLong started at " + sdf.format(new Date()) + "!");
-			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_LONG){
-				continue;
-			}
-			UI.getCurrent().access(new Runnable() {
-				@Override
-				public void run() {
-					progress.setPrimaryStyleName("jadeProgressBarSlow");
-					log.debug("SleeperThreadLong ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
-				}
-			});
-		}
-		
+
+	public Image getImgUk() {
+		return imgUk;
 	}
+
+	public Image getImgUs() {
+		return imgUs;
+	}
+
+	public Image getImgEs() {
+		return imgEs;
+	}
+
+	public Locale getCurrentLocale() {
+		return currentLocale;
+	}
+
 }

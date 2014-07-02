@@ -1,19 +1,26 @@
 package com.sos.jade.backgroundservice.view.components.filter;
 
+import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+import org.apache.log4j.Logger;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 
-import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
+import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
+import com.sos.jade.backgroundservice.view.components.JadeMenuBar;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -61,7 +68,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private NativeSelect nsOperation;
 	private Button btnCommit;
 	private Button btnDiscard;
-
+	private Preferences prefs = jadeBsOptions.getPreferenceStore();
+	private JadeFilesHistoryFilter lastFilter;
+	private Logger log = Logger.getLogger(JadeFilesHistoryFilterLayout.class);
+	
 	private JadeBSMessages messages;
 
 	@SuppressWarnings("unused")
@@ -76,6 +86,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		this.setMargin(true);
 		this.focus();
 		initJadeFilesHistoryFilterComponents();
+		checkLastFilterSettings();
 	}
 	
 	/**
@@ -244,44 +255,154 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		btnDiscard.setClickShortcut(KeyCode.ESCAPE, null);
 		btnCommit.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
-
 			@Override
 			public void buttonClick(ClickEvent event) {
 				ui.setMarkedRow(null);
 				ui.setDetailViewVisible(true);
 				ui.getProgress().setVisible(true);
 				ui.getProgressStart().setTime(new Date().getTime());
-				ui.getJmb().getSmDublicatesFilter().setChecked(false);
+				ui.getJmb().getSmDuplicatesFilter().setChecked(false);
 				ui.new SleeperThreadMedium().start();
 				ui.new SleeperThreadLong().start();
-				JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 				checkTextFieldValues();
-				filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
-				filter.setTransferTimestampTo(dfTimestampTo.getValue());
-				filter.setProtocol(tfProtocol.getValue());
-				if(nsStatus.getValue() != null && !"".equals(nsStatus.getValue()))
-					filter.setStatus(nsStatus.getValue().toString());
-				if(nsOperation.getValue() != null && !"".equals(nsOperation.getValue()))
-					filter.setOperation(nsOperation.getValue().toString());
-				filter.setSourceFile(tfSourceFile.getValue());
-				filter.setSourceHost(tfSourceHost.getValue());
-				filter.setTargetFilename(tfTargetFile.getValue());
-				filter.setTargetHost(tfTargetHost.getValue());
-				filter.setMandator(tfMandator.getValue());
-//				ui.initJadeFilesHistoryDbLayer(filter);
+				saveFilterPreferences();
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
-				filterData(new JadeFileListenerProxy(ui), filter);
+				filterData(new JadeFileListenerProxy(ui), createJadeFilesHistoryFilter());
 			}
 		});
-		
 		btnDiscard.addClickListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
-			
 			@Override
 			public void buttonClick(ClickEvent event) {
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
 			}
 		});
+	}
+	
+	private JadeFilesHistoryFilter createJadeFilesHistoryFilter(){
+		JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
+		filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
+		filter.setTransferTimestampTo(dfTimestampTo.getValue());
+		filter.setProtocol(tfProtocol.getValue());
+		if(nsStatus.getValue() != null && !"".equals(nsStatus.getValue()))
+			filter.setStatus(nsStatus.getValue().toString());
+		if(nsOperation.getValue() != null && !"".equals(nsOperation.getValue()))
+			filter.setOperation(nsOperation.getValue().toString());
+		filter.setSourceFile(tfSourceFile.getValue());
+		filter.setSourceHost(tfSourceHost.getValue());
+		filter.setTargetFilename(tfTargetFile.getValue());
+		filter.setTargetHost(tfTargetHost.getValue());
+		filter.setMandator(tfMandator.getValue());
+		return filter;
+	}
+	
+	private void saveFilterPreferences(){
+		if(dfTimestampFrom.getValue() != null){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, dfTimestampFrom.getValue().getTime());
+		}
+		if(dfTimestampTo.getValue() != null){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, dfTimestampTo.getValue().getTime());
+		}
+		if(tfProtocol.getValue() != null && !"".equals(tfProtocol.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_PROTOCOL, tfProtocol.getValue());
+		}
+		if(nsStatus.getValue() != null && !"".equals(nsStatus.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_STATUS, nsStatus.getValue().toString());
+		}
+		if(nsOperation.getValue() != null && !"".equals(nsOperation.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_OPERATION, nsOperation.getValue().toString());
+		}
+		if(tfSourceFile.getValue() != null && !"".equals(tfSourceFile.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, tfSourceFile.getValue());
+		}
+		if(tfSourceHost.getValue() != null && !"".equals(tfSourceHost.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, tfSourceHost.getValue());
+		}
+		if(tfTargetFile.getValue() != null && !"".equals(tfTargetFile.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_TARGET_FILE, tfTargetFile.getValue());
+		}
+		if(tfTargetHost.getValue() != null && !"".equals(tfTargetHost.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_TARGET_HOST, tfTargetHost.getValue());
+		}
+		if(tfMandator.getValue() != null && !"".equals(tfMandator.getValue())){
+			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+			.put(JadeBSConstants.FILTER_OPTION_MANDATOR, tfMandator.getValue());
+		}
+	}
+	
+	private void checkLastFilterSettings(){
+		boolean lastUsed = false;
+		try {
+			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
+				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
+						.node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+						.getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
+			}
+		} catch (BackingStoreException e) {
+			log.warn("Unable to read from PreferenceStore, using defaults.");
+			e.printStackTrace();
+		}
+		if (lastUsed){
+			Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, 0L);
+			if(timeFrom != 0L){
+				dfTimestampFrom.setValue(new Date(timeFrom));
+			}
+			Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, 0L); 
+			if(timeTo != 0L){
+				dfTimestampTo.setValue(new Date(timeTo));
+			}
+			String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
+			if(protocol != null && !"".equals(protocol)){
+				tfProtocol.setValue(protocol);
+			}
+			String status = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_STATUS, null); 
+			if(status != null && !"".equals(status)){
+				nsStatus.setValue(status);
+			}
+			String operation = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_OPERATION, null);
+			if(operation != null && !"".equals(operation)){
+				nsOperation.setValue(operation);
+			}
+			String sourceFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, null);
+			if(sourceFile != null && !"".equals(sourceFile)){
+				tfSourceFile.setValue(sourceFile);
+			}
+			String sourceHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, null);
+			if(sourceHost != null && !"".equals(sourceHost)){
+				tfSourceHost.setValue(sourceHost);
+			}
+			String targetFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_TARGET_FILE, null);
+			if(targetFile != null && !"".equals(targetFile)){
+				tfTargetFile.setValue(targetFile);
+			}
+			String targetHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_TARGET_HOST, null);
+			if(targetHost != null && !"".equals(targetHost)){
+				tfTargetHost.setValue(targetHost);
+			}
+			String mandator = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+					.get(JadeBSConstants.FILTER_OPTION_MANDATOR, null);
+			if(mandator != null && !"".equals(mandator)){
+				tfMandator.setValue(mandator);
+			}
+		}
 	}
 	
 	public void refreshCaptions(Locale locale){

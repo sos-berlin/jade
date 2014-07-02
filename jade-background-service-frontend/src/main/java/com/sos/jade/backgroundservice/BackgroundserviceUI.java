@@ -49,7 +49,7 @@ public class BackgroundserviceUI extends UI {
 				// will be changed later to user credentials
 				parentNodeName = ((VaadinServletRequest) request).getHttpServletRequest().getRemoteAddr();
 				prefs.node(parentNodeName);
-				setCookieUsage(request);
+//				setCookieUsage(request);
 			}
 		} finally {
 			VaadinSession.getCurrent().getLockInstance().unlock();

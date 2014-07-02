@@ -1,4 +1,4 @@
-package com.sos.jade.backgroundservice.util;
+package com.sos.jade.backgroundservice.view.components.filter;
 
 import java.util.ArrayList;
 import java.util.Date;
