@@ -41,6 +41,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.ProgressBar;
@@ -56,7 +57,7 @@ public class MainView extends CustomComponent{
 	private JadeDetailTable tblDetails;
 	private Item markedRow;
 	private IJadeFileListener fileListener;
-//	private boolean first = true;
+	private boolean first = true;
     private Image imgDe;
     private Image imgUk;
     private Image imgUs;
@@ -64,7 +65,7 @@ public class MainView extends CustomComponent{
     private JadeMenuBar jmb;
     private Label lblTitle;
     private VerticalLayout vRest;
-    private HorizontalLayout hlTableMainLayout;
+//    private HorizontalLayout hlTableMainLayout;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
 	private final Logger log = Logger.getLogger(MainView.class);
 	private ProgressBar progress;
@@ -78,6 +79,8 @@ public class MainView extends CustomComponent{
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
 	private Locale currentLocale = VaadinSession.getCurrent().getLocale();
 	private DuplicatesFilter duplicatesFilter = new DuplicatesFilter();
+	private Float lastSplitPosition;
+	private HorizontalSplitPanel splitter;
 
 	public MainView() {
 		this.messages = new JadeBSMessages("JADEBSMessages", currentLocale);
@@ -121,6 +124,7 @@ public class MainView extends CustomComponent{
 							((IndexedContainer)tblFileHistory.getContainerDataSource()).removeContainerFilter(duplicatesFilter);
 						}
 						jmb.refreshSelectedLangOnInit();
+						jmb.refreshSelectedDetailsOnInit();
 						jmb.getSmDuplicatesFilter().setChecked(checkRemoveDuplicatesSettings());
 						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
 						refreshButtonVisibility();
@@ -175,6 +179,13 @@ public class MainView extends CustomComponent{
 		progressBar.setImmediate(true);
 		progressBar.setIndeterminate(true);
 		return progressBar;
+	}
+	
+	private HorizontalSplitPanel initHSplitPanel(){
+		HorizontalSplitPanel split = new HorizontalSplitPanel();
+		split.setSizeFull();
+		split.setSplitPosition(100.0f);
+		return split;
 	}
 	
 	private HorizontalLayout createTitleLayout(){
@@ -343,12 +354,11 @@ public class MainView extends CustomComponent{
  	}
 	
 	private void createTablesLayout(){
-		hlTableMainLayout = new HorizontalLayout();
-		hlTableMainLayout.setSizeFull();
-        vRest.addComponent(hlTableMainLayout);
-        vRest.setExpandRatio(hlTableMainLayout, 1);
+        splitter = initHSplitPanel();
+        vRest.addComponent(splitter);
+        vRest.setExpandRatio(splitter, 1);
         tblFileHistory = new JadeFileHistoryTable(historyItems, messages);
-        hlTableMainLayout.addComponent(tblFileHistory);
+        splitter.addComponent(tblFileHistory);
         tblFileHistory.addItemClickListener(new ItemClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -358,6 +368,7 @@ public class MainView extends CustomComponent{
 					tblDetails.populateDatasource(historyItem);
 				}
 				toggleTableVisiblity(event.getItem());
+				jmb.filterDetailItems();
 			}
 		});
         tblFileHistory.addValueChangeListener(new ValueChangeListener() {
@@ -372,25 +383,33 @@ public class MainView extends CustomComponent{
 		});
         tblDetails = new JadeDetailTable(null, messages);
         tblDetails.setVisible(false);
-        hlTableMainLayout.addComponent(tblDetails);
-        hlTableMainLayout.setExpandRatio(tblFileHistory, 1);
+        splitter.addComponent(tblDetails);
 	}
 	
-	private void toggleTableVisiblity(Item item){
-		if(markedRow != null && markedRow.equals(item)){
+	private void setSplitPosition(){
+		Float newLastSplitPosition = splitter.getSplitPosition();
+		if(first){
+			first = false;
+			splitter.setSplitPosition(75);
+		}else{
+			splitter.setSplitPosition(lastSplitPosition);
+		}
+		lastSplitPosition = newLastSplitPosition;
+	}
+	
+	public void toggleTableVisiblity(Item item){
+		if(item == null || (markedRow != null && markedRow.equals(item))){
 			markedRow = null;
 			tblDetails.setVisible(false);
-			hlTableMainLayout.setExpandRatio(tblFileHistory, 1);
+			setSplitPosition();
 		}else if (markedRow != null && !markedRow.equals(item)){
 			markedRow = item;
 			tblDetails.setVisible(true);
-			hlTableMainLayout.setExpandRatio(tblFileHistory, 2);
-			hlTableMainLayout.setExpandRatio(tblDetails, 1);
+			setSplitPosition();
 		}else{
 			markedRow = item;
 			tblDetails.setVisible(true);
-			hlTableMainLayout.setExpandRatio(tblFileHistory, 2);
-			hlTableMainLayout.setExpandRatio(tblDetails, 1);
+			setSplitPosition();
 		}
 	}
 	

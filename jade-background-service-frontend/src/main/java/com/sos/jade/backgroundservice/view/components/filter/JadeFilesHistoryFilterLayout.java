@@ -16,6 +16,8 @@ import org.apache.log4j.Logger;
 import sos.ftphistory.JadeFilesHistoryFilter;
 
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
+import com.sos.jade.backgroundservice.enums.JadeFileColumns;
+import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
@@ -47,6 +49,9 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private static final String OPERATION_SEND = "send";
 	private static final String OPERATION_RECEIVE = "receive";
 	private static final String OPERATION_COPY = "copy";
+	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
+	private static final String MESSAGE_RESOURCE_FILE = "file.";
+	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
 	private VerticalLayout vlMain;
 	private Date timestampFrom;
 	private Date timestampTo;
@@ -215,21 +220,21 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		
 		dfTimestampFrom = initDateField(messages.getValue("FilterLayout.from"), timestampFrom);
 		dfTimestampTo = initDateField(messages.getValue("FilterLayout.to"), timestampTo);
-		tfMandator = initTextField(messages.getValue("FilterLayout.mandator"), mandator);
-		tfProtocol = initTextField(messages.getValue("FilterLayout.protocol"), protocol);
-		tfSourceFile = initTextField(messages.getValue("FilterLayout.sourceFile"), sourceFile);
-		tfSourceHost = initTextField(messages.getValue("FilterLayout.sourceHost"), sourceHost);
-		tfTargetFile = initTextField(messages.getValue("FilterLayout.targetFile"), targetFile);
-		tfTargetHost = initTextField(messages.getValue("FilterLayout.targetHost"), targetHost);
+		tfMandator = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()), mandator);
+		tfProtocol = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()), protocol);
+		tfSourceFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName()), sourceFile);
+		tfSourceHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()), sourceHost);
+		tfTargetFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName()), targetFile);
+		tfTargetHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()), targetHost);
 		List<String> statusList = new ArrayList<String>();
 		statusList.add(STATUS_SUCCESS);
 		statusList.add(STATUS_ERROR);
-		nsStatus = new NativeSelect(messages.getValue("FilterLayout.status"), statusList);
+		nsStatus = new NativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName()), statusList);
 		List<String> operationList = new ArrayList<String>();
 		operationList.add(OPERATION_COPY);
 		operationList.add(OPERATION_SEND);
 		operationList.add(OPERATION_RECEIVE);
-		nsOperation = new NativeSelect(messages.getValue("FilterLayout.operation"), operationList);
+		nsOperation = new NativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()), operationList);
 		btnCommit = new Button(messages.getValue("FilterLayout.ok"));
 		btnDiscard = new Button(messages.getValue("FilterLayout.discard"));
 
@@ -258,7 +263,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			@Override
 			public void buttonClick(ClickEvent event) {
 				ui.setMarkedRow(null);
-				ui.setDetailViewVisible(true);
+				ui.setDetailViewVisible(false);
+				ui.toggleTableVisiblity(null);
 				ui.getProgress().setVisible(true);
 				ui.getProgressStart().setTime(new Date().getTime());
 				ui.getJmb().getSmDuplicatesFilter().setChecked(false);
@@ -408,14 +414,20 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	public void refreshCaptions(Locale locale){
 		dfTimestampFrom.setCaption(messages.getValue("FilterLayout.from", locale));
 		dfTimestampTo.setCaption(messages.getValue("FilterLayout.to", locale));
-		tfMandator.setCaption(messages.getValue("FilterLayout.mandator", locale));
-		tfProtocol.setCaption(messages.getValue("FilterLayout.protocol", locale));
-		tfSourceFile.setCaption(messages.getValue("FilterLayout.sourceFile", locale));
-		tfSourceHost.setCaption(messages.getValue("FilterLayout.sourceHost", locale));
-		tfTargetFile.setCaption(messages.getValue("FilterLayout.targetFile", locale));
-		tfTargetHost.setCaption(messages.getValue("FilterLayout.targetHost", locale));
-		nsStatus.setCaption(messages.getValue("FilterLayout.status", locale));
-		nsOperation.setCaption(messages.getValue("FilterLayout.operation", locale));
+		tfMandator.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
+		tfMandator.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
+		tfProtocol.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
+		tfProtocol.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
+		tfSourceFile.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName(), locale));
+		tfSourceFile.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName(), locale));
+		tfSourceHost.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName(), locale));
+		tfSourceHost.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName(), locale));
+		tfTargetFile.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName(), locale));
+		tfTargetFile.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName(), locale));
+		tfTargetHost.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName(), locale));
+		tfTargetHost.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName(), locale));
+		nsStatus.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName(), locale));
+		nsOperation.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName(), locale));
 		btnCommit.setCaption(messages.getValue("FilterLayout.ok", locale));
 		btnDiscard.setCaption(messages.getValue("FilterLayout.discard", locale));
 	}

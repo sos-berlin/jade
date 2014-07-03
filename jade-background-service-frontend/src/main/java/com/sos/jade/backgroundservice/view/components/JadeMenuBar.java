@@ -13,14 +13,19 @@ import org.apache.log4j.Logger;
 
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
+import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
+import com.sos.jade.backgroundservice.data.JadeHistoryDetailItem;
+import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
+import com.sos.jade.backgroundservice.view.components.filter.DetailFilter;
 import com.sos.jade.backgroundservice.view.components.filter.DuplicatesFilter;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 /**
  * A MenuBar with the Jade related MenuItems; extends Vaadins {@link com.vaadin.ui.MenuBar MenuBar}
@@ -30,6 +35,11 @@ import com.vaadin.ui.UI;
  */
 public class JadeMenuBar extends MenuBar {
 	private static final long serialVersionUID = 1L;
+	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
+	private static final String MESSAGE_RESOURCE_FILE = "file.";
+	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
+	private Preferences prefs = jadeBsOptions.getPreferenceStore();
+	private Logger log = Logger.getLogger(JadeMenuBar.class);
 	private MenuItem mFile;
 	private MenuItem mFilter;
 	private MenuItem mPreferences;
@@ -47,51 +57,61 @@ public class JadeMenuBar extends MenuBar {
 	private MenuItem ssmSpanishCheck;
 	private MenuItem ssmActivateAllChecks;
 	private MenuItem ssmDeactivateAllChecks;
-	private Preferences prefs = jadeBsOptions.getPreferenceStore();
-	private Logger log = Logger.getLogger(JadeMenuBar.class);
-	
 	private JadeBSMessages messages;
 	private boolean duplicatesFilterActive = false;
-	private DuplicatesFilter filter = new DuplicatesFilter();
+	private DuplicatesFilter duplicatesFilter = new DuplicatesFilter();
+	private DetailFilter lastDetailFilter;
+	private DetailFilter detailFilter;
+	private Locale actualLocale;
+	private Locale lastLocale;
+	private List<String> globalDetailKeys;
+	private MenuBar.Command detailCommand;
 
 
 	public JadeMenuBar(JadeBSMessages messages) {
 		this.messages = messages;
 		setAutoOpen(true);
 		addStyleName("jadeMenuBar");
+		actualLocale = VaadinSession.getCurrent().getLocale();
+		globalDetailKeys = setGlobalDetailKeys();
+		detailCommand = new MenuBar.Command() {
+		    public void menuSelected(MenuItem selectedItem) {
+	    		filterDetailItems();
+		    }  
+		};
 		createTopLevelMenuItems();
 		createFilterMenuItems();
 		createPreferencesLanguageMenuItems();
 		createPreferencesReuseFilterMenuItem();
+		createPreferencesVisibleDetails();
 	}
 	
 	private void createTopLevelMenuItems(){
-		this.mFile = addItem(messages.getValue("JadeMenuBar.file", VaadinSession.getCurrent().getLocale()), null);
-		this.mFilter = addItem(messages.getValue("JadeMenuBar.filter", VaadinSession.getCurrent().getLocale()), null);
-		this.mPreferences = addItem(messages.getValue("JadeMenuBar.preferences", VaadinSession.getCurrent().getLocale()), null);
-		this.mHelp = addItem(messages.getValue("JadeMenuBar.help", VaadinSession.getCurrent().getLocale()), null);
+		this.mFile = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "file", actualLocale), null);
+		this.mFilter = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "filter", actualLocale), null);
+		this.mPreferences = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "preferences", actualLocale), null);
+		this.mHelp = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "help", actualLocale), null);
 	}
 	
 	private void createFilterMenuItems(){
-		this.smActivateFilter = mFilter.addItem(messages.getValue("JadeMenuBar.doFilter", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		this.smActivateFilter = mFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "doFilter", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			public void menuSelected(MenuItem selectedItem) {
-				((MainView)UI.getCurrent().getContent()).setDetailViewVisible(false);
 				UI.getCurrent().addWindow(((BackgroundserviceUI)UI.getCurrent()).getModalWindow());
 		    }  
 		});
-		this.smDuplicatesFilter = mFilter.addItem(messages.getValue("JadeMenuBar.removeDuplicates", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		this.smDuplicatesFilter = mFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "removeDuplicates", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			public void menuSelected(MenuItem selectedItem) {
 				if(((MainView)UI.getCurrent().getContent()).getTblDetails().isVisible()){
 					((MainView)UI.getCurrent().getContent()).getTblDetails().setVisible(false);
 					((MainView)UI.getCurrent().getContent()).setMarkedRow(null);
 				}
-				filter.setHistoryItems(((MainView)UI.getCurrent().getContent()).getHistoryItems());
+				duplicatesFilter.setHistoryItems(((MainView)UI.getCurrent().getContent()).getHistoryItems());
 				if(selectedItem.isChecked()){
-					((IndexedContainer)((MainView)UI.getCurrent().getContent()).getTblFileHistory().getContainerDataSource()).addContainerFilter(filter);
+					((IndexedContainer)((MainView)UI.getCurrent().getContent()).getTblFileHistory().getContainerDataSource()).addContainerFilter(duplicatesFilter);
 				}else{
-					((IndexedContainer)((MainView)UI.getCurrent().getContent()).getTblFileHistory().getContainerDataSource()).removeContainerFilter(filter);
+					((IndexedContainer)((MainView)UI.getCurrent().getContent()).getTblFileHistory().getContainerDataSource()).removeContainerFilter(duplicatesFilter);
 				}
 				prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
 				.node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, selectedItem.isChecked());
@@ -103,7 +123,7 @@ public class JadeMenuBar extends MenuBar {
 
 	private void createPreferencesReuseFilterMenuItem(){
 		mPreferences.addSeparator();
-		smPreferencesReuseFilter = this.mPreferences.addItem(messages.getValue("JadeMenuBar.reuseFilter", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		smPreferencesReuseFilter = this.mPreferences.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "reuseFilter", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -115,8 +135,8 @@ public class JadeMenuBar extends MenuBar {
 	}
 	
 	private void createPreferencesLanguageMenuItems(){
-		smPreferencesLanguages = mPreferences.addItem(messages.getValue("JadeMenuBar.lang", VaadinSession.getCurrent().getLocale()), null);
-		ssmGermanCheck = smPreferencesLanguages.addItem(messages.getValue("JadeMenuBar.checkGerman", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		smPreferencesLanguages = mPreferences.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "lang", actualLocale), null);
+		ssmGermanCheck = smPreferencesLanguages.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "checkGerman", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -128,7 +148,7 @@ public class JadeMenuBar extends MenuBar {
 			}
 		});
 		ssmGermanCheck.setCheckable(true);
-		ssmEnglishUKCheck = smPreferencesLanguages.addItem(messages.getValue("JadeMenuBar.checkUK", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		ssmEnglishUKCheck = smPreferencesLanguages.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "checkUK", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -140,7 +160,7 @@ public class JadeMenuBar extends MenuBar {
 			}
 		});
 		ssmEnglishUKCheck.setCheckable(true);
-		ssmEnglishUSCheck = smPreferencesLanguages.addItem(messages.getValue("JadeMenuBar.checkUS", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		ssmEnglishUSCheck = smPreferencesLanguages.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "checkUS", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -152,7 +172,7 @@ public class JadeMenuBar extends MenuBar {
 			}
 		});
 		ssmEnglishUSCheck.setCheckable(true);
-		ssmSpanishCheck = smPreferencesLanguages.addItem(messages.getValue("JadeMenuBar.checkSpanish", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		ssmSpanishCheck = smPreferencesLanguages.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "checkSpanish", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -165,7 +185,7 @@ public class JadeMenuBar extends MenuBar {
 		});
 		ssmSpanishCheck.setCheckable(true);
 		smPreferencesLanguages.addSeparator();
-		ssmActivateAllChecks = smPreferencesLanguages.addItem(messages.getValue("JadeMenuBar.checkAll", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		ssmActivateAllChecks = smPreferencesLanguages.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "checkAll", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -188,7 +208,7 @@ public class JadeMenuBar extends MenuBar {
 		        ((MainView)UI.getCurrent().getContent()).refreshButtonVisibility();
 			}
 		});
-		ssmDeactivateAllChecks = smPreferencesLanguages.addItem(messages.getValue("JadeMenuBar.checkNone", VaadinSession.getCurrent().getLocale()), new MenuBar.Command() {
+		ssmDeactivateAllChecks = smPreferencesLanguages.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "checkNone", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
@@ -267,6 +287,42 @@ public class JadeMenuBar extends MenuBar {
 		}
 	}
 	
+	public void refreshSelectedDetailsOnInit(){
+		try {
+			if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
+					.nodeExists(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS)) {
+				for (MenuItem item : smPreferencesDetails.getChildren()) {
+					for (String key : globalDetailKeys) {
+						if (item.getText().equals(
+								messages.getValue(key, actualLocale))) {
+							String target = null;
+							if (key.contains(MESSAGE_RESOURCE_HISTORY)) {
+								target = MESSAGE_RESOURCE_BASE
+										+ MESSAGE_RESOURCE_HISTORY;
+							} else if (key.contains(MESSAGE_RESOURCE_FILE)) {
+								target = MESSAGE_RESOURCE_BASE
+										+ MESSAGE_RESOURCE_FILE;
+							} else {
+								target = MESSAGE_RESOURCE_BASE;
+							}
+							item.setChecked(prefs.node(parentNodeName)
+									.node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
+									.node(JadeBSConstants.PREF_NODE_PREFERENCES)
+									.node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS)
+									.getBoolean(key.replace(target, ""), false));
+							break;
+						}
+					}
+				}
+			}
+		} catch (BackingStoreException e) {
+			log.warn("Unable to read from PreferenceStore, using defaults.");
+			for (MenuItem item : smPreferencesDetails.getChildren()) {
+				item.setChecked(true);
+			}
+		}
+	}
+	
 	public List<Locale> getCheckedLanguages(){
 		List<Locale> checkedLocales = new ArrayList<Locale>();
 		if(ssmGermanCheck.isChecked()){
@@ -285,24 +341,124 @@ public class JadeMenuBar extends MenuBar {
 	}
 
 	public void refreshCaptions(Locale locale){
-		mFile.setText(messages.getValue("JadeMenuBar.file", locale));
-		mFilter.setText(messages.getValue("JadeMenuBar.filter", locale));
-		smActivateFilter.setText(messages.getValue("JadeMenuBar.doFilter", locale));
-		smDuplicatesFilter.setText(messages.getValue("JadeMenuBar.removeDuplicates", locale));
-		mPreferences.setText(messages.getValue("JadeMenuBar.preferences", locale));
-		mHelp.setText(messages.getValue("JadeMenuBar.help", locale));
-		smPreferencesLanguages.setText(messages.getValue("JadeMenuBar.lang", locale));
-		smPreferencesReuseFilter.setText(messages.getValue("JadeMenuBar.reuseFilter", locale));
-		smPreferencesDetails.setText(messages.getValue("JadeMenuBar.visibleDetails", locale));
-		ssmGermanCheck.setText(messages.getValue("JadeMenuBar.checkGerman", locale));
-		ssmEnglishUKCheck.setText(messages.getValue("JadeMenuBar.checkUK", locale));
-		ssmEnglishUSCheck.setText(messages.getValue("JadeMenuBar.checkUS", locale));
-		ssmSpanishCheck.setText(messages.getValue("JadeMenuBar.checkSpanish", locale));
-		ssmActivateAllChecks.setText(messages.getValue("JadeMenuBar.checkAll", locale));
-		ssmDeactivateAllChecks.setText(messages.getValue("JadeMenuBar.checkNone", locale));
+		lastLocale = actualLocale;
+		actualLocale = locale;
+		mFile.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "file", actualLocale));
+		mFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "filter", actualLocale));
+		smActivateFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "doFilter", actualLocale));
+		smDuplicatesFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "removeDuplicates", actualLocale));
+		mPreferences.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "preferences", actualLocale));
+		mHelp.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "help", actualLocale));
+		smPreferencesLanguages.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "lang", actualLocale));
+		smPreferencesReuseFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "reuseFilter", actualLocale));
+		smPreferencesDetails.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "visibleDetails", actualLocale));
+		ssmGermanCheck.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkGerman", actualLocale));
+		ssmEnglishUKCheck.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkUK", actualLocale));
+		ssmEnglishUSCheck.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkUS", actualLocale));
+		ssmSpanishCheck.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkSpanish", actualLocale));
+		ssmActivateAllChecks.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkAll", actualLocale));
+		ssmDeactivateAllChecks.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkNone", actualLocale));
+		for(MenuItem item : smPreferencesDetails.getChildren()){
+			for(String key : globalDetailKeys){
+				if(item.getText().equals(messages.getValue(key, lastLocale))){
+					item.setText(messages.getValue(key, actualLocale));
+					break;
+				}
+			}
+		}
 		JadeMenuBar.this.markAsDirty();
 	}
 
+	private void createPreferencesVisibleDetails(){
+		smPreferencesDetails = mPreferences.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "visibleDetails", actualLocale), null);
+		for(String messageKey : globalDetailKeys){
+			smPreferencesDetails.addItem(messages.getValue(messageKey, actualLocale), detailCommand);
+		}
+		for(MenuItem mi : smPreferencesDetails.getChildren()){
+			mi.setCheckable(true);
+			mi.setChecked(true);
+		}
+	}
+	
+	public void filterDetailItems(){
+		if(lastDetailFilter != null){
+			((JadeDetailsContainer)((MainView)UI.getCurrent().getContent()).getTblDetails().getContainerDataSource()).removeContainerFilter(lastDetailFilter);
+		}
+		List<String> itemMessageKeysToFilter = new ArrayList<String>();
+		for (MenuItem item : smPreferencesDetails.getChildren()){
+			if(item.isChecked()){
+				for(String key : globalDetailKeys){
+					if(item.getText().equals(messages.getValue(key, actualLocale))){
+						itemMessageKeysToFilter.add(key);
+						break;
+					}
+				}
+			}
+		}
+		for(String detail : globalDetailKeys){
+			String target = null;
+			if(detail.contains(MESSAGE_RESOURCE_HISTORY)){
+				target = MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY;
+			}else if(detail.contains(MESSAGE_RESOURCE_FILE)){
+				target = MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE;
+			}else{
+				target = MESSAGE_RESOURCE_BASE;
+			}
+			if(itemMessageKeysToFilter.contains(detail)){
+		        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
+		        .node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).putBoolean(detail.replace(target, ""), true);
+			}else{
+		        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
+		        .node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).putBoolean(detail.replace(target, ""), false);
+			}
+		}
+		detailFilter = new DetailFilter(itemMessageKeysToFilter);
+		((JadeDetailsContainer)((MainView)UI.getCurrent().getContent()).getTblDetails().getContainerDataSource()).addContainerFilter(detailFilter);
+		lastDetailFilter = detailFilter;
+		((MainView)UI.getCurrent().getContent()).getTblDetails().markAsDirty();
+	}
+	
+	private List<String> setGlobalDetailKeys() {
+		List<String> keys = new ArrayList<String>();
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.GUID.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST_IP.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_USER.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_DIR.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.MD5.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.FILE_SIZE.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST_IP.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_USER.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_DIR.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PORT.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PID.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PPID.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LOG_FILENAME.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST_IP.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_USER.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PROTOCOL.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PORT.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.CREATED.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.CREATED_BY.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.JADE_FILE_MODIFIED.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.JADE_FILE_MODIFIED_BY.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.CREATED.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.CREATED_BY.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.MODIFIED.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.MODIFIED_BY.getName());
+		return keys;
+	}
+	
 	public MenuItem getSmDuplicatesFilter() {
 		return smDuplicatesFilter;
 	}
@@ -311,10 +467,8 @@ public class JadeMenuBar extends MenuBar {
 		return smPreferencesReuseFilter;
 	}
 	
-	private void createPreferencesVisibleDetails(){
-		smPreferencesDetails = mPreferences.addItem(messages.getValue("JadeMenuBar.visibleDetails", VaadinSession.getCurrent().getLocale()), null);
-		for(JadeHistoryFileColumns column : JadeHistoryFileColumns.values()){
-			
-		}
+	public MenuItem getSmPreferencesDetails() {
+		return smPreferencesDetails;
 	}
+	
 }

@@ -12,13 +12,13 @@ public class JadeHistoryDetailItem implements Serializable{
 	private String displayName;
 	private String messageKey;
 	private JadeBSMessages messages;
-
+	private static final String COLON = ":";
 	public JadeHistoryDetailItem (JadeBSMessages messages, String key, Object value, String messageKey){
 		this.messages = messages;
 		this.key = key;
 		this.value = value;
 		this.messageKey = messageKey;
-		this.displayName = messages.getValue(messageKey);
+		this.displayName = messages.getValue(messageKey) + COLON;
 		
 	}
 	
@@ -37,10 +37,10 @@ public class JadeHistoryDetailItem implements Serializable{
 	}
 	
 	public String getDisplayName() {
-		return messages.getValue(messageKey);
+		return messages.getValue(messageKey) + COLON;
 	}
 	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+		this.displayName = displayName + COLON;
 	}
 
 	public String getMessageKey() {

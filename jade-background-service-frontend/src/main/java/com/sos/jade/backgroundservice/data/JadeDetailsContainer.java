@@ -21,6 +21,9 @@ public class JadeDetailsContainer extends IndexedContainer {
 	private JadeBSMessages messages;
 	private JadeFilesHistoryDBItem historyItem;
 	private StringToDateConverter dateConverter = new StringToDateConverter(); 
+	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
+	private static final String MESSAGE_RESOURCE_FILE = "file.";
+	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
 
 	public JadeDetailsContainer(JadeFilesHistoryDBItem historyItem, JadeBSMessages messages) {
 		this.historyItem = historyItem;
@@ -35,196 +38,196 @@ public class JadeDetailsContainer extends IndexedContainer {
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.STATUS.getName(), 
 				historyItem.getStatus(), 
-				"DetailLayout.status"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.GUID.getName(),
 				historyItem.getGuid(), 
-				"DetailLayout.guid"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.GUID.getName()));
 		if (historyItem.getLastErrorMessage() != null && !"NULL".equals(historyItem.getLastErrorMessage())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName(), 
 					historyItem.getLastErrorMessage(), 
-					"DetailLayout.lastErrorMessage"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName(), 
 					messages.getValue("DetailLayout.none"), 
-					"DetailLayout.lastErrorMessage"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName()));
 		}
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.SOURCE_HOST.getName(), 
 				historyItem.getJadeFilesDBItem().getSourceHost(), 
-				"DetailLayout.sourceHost"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.SOURCE_HOST_IP.getName(), 
 				historyItem.getJadeFilesDBItem().getSourceHostIp(), 
-				"DetailLayout.sourceHostIp"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST_IP.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.SOURCE_USER.getName(), 
 				historyItem.getJadeFilesDBItem().getSourceUser(), 
-				"DetailLayout.sourceUser"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_USER.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.SOURCE_DIR.getName(), 
 				historyItem.getJadeFilesDBItem().getSourceDir(), 
-				"DetailLayout.sourceDirectory"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_DIR.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.SOURCE_FILENAME.getName(), 
 				historyItem.getJadeFilesDBItem().getSourceFilename(), 
-				"DetailLayout.sourceFilename"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.MD5.getName(), 
 				historyItem.getJadeFilesDBItem().getMd5(), 
-				"DetailLayout.md5"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.MD5.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.FILE_SIZE.getName(), 
 				historyItem.getJadeFilesDBItem().getFileSize(), 
-				"DetailLayout.fileSize"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.FILE_SIZE.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.TARGET_HOST.getName(), 
 				historyItem.getTargetHost(), 
-				"DetailLayout.targetHost"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.TARGET_HOST_IP.getName(), 
 				historyItem.getTargetHostIp(), 
-				"DetailLayout.targetHostIp"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST_IP.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.TARGET_USER.getName(), 
 				historyItem.getTargetUser(), 
-				"DetailLayout.targetUser"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_USER.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.TARGET_DIR.getName(), 
 				historyItem.getTargetDir(), 
-				"DetailLayout.targetDirectory"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_DIR.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.TARGET_FILENAME.getName(), 
 				historyItem.getTargetFilename(), 
-				"DetailLayout.targetFilename"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.PROTOCOL.getName(), 
 				historyItem.getProtocol(), 
-				"DetailLayout.protocol"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.PORT.getName(), 
 				historyItem.getPort(), 
-				"DetailLayout.port"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PORT.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.OPERATION.getName(), 
 				historyItem.getOperation(), 
-				"DetailLayout.operation"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), 
 				historyItem.getTransferTimestamp(), 
-				"DetailLayout.transferTimestamp"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.PID.getName(), 
 				historyItem.getPid(), 
-				"DetailLayout.pid"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PID.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.PPID.getName(), 
 				historyItem.getPPid(), 
-				"DetailLayout.ppid"));
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PPID.getName()));
 		if(historyItem.getLogFilename() != null && !"NULL".equals(historyItem.getLogFilename())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.LOG_FILENAME.getName(), 
 					historyItem.getLogFilename(), 
-					"DetailLayout.logFilename"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LOG_FILENAME.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.LOG_FILENAME.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
-					"DetailLayout.logFilename"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LOG_FILENAME.getName()));
 		}
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.MANDATOR.getName(), 
 				historyItem.getJadeFilesDBItem().getMandator(), 
-				"DetailLayout.mandator"));
+				MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()));
 		if (historyItem.getJumpHost() != null && !"NULL".equals(historyItem.getJumpHost())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_HOST.getName(), 
 					historyItem.getJumpHost(), 
-					"DetailLayout.jumpHost"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_HOST.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
-					"DetailLayout.jumpHost"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST.getName()));
 		}
 		if (historyItem.getJumpHostIp() != null && !"NULL".equals(historyItem.getJumpHostIp())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_HOST_IP.getName(), 
 					historyItem.getJumpHostIp(), 
-					"DetailLayout.jumpHostIp"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST_IP.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_HOST_IP.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
-					"DetailLayout.jumpHostIp"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST_IP.getName()));
 		}
 		if (historyItem.getJumpUser() != null && !"NULL".equals(historyItem.getJumpUser())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_USER.getName(), 
 					historyItem.getJumpUser(), 
-					"DetailLayout.jumpUser"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_USER.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_USER.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
-					"DetailLayout.jumpUser"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_USER.getName()));
 		}
 		if(historyItem.getJumpProtocol() != null && !"NULL".equals(historyItem.getJumpProtocol())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_PROTOCOL.getName(), 
 					historyItem.getJumpProtocol(), 
-					"DetailLayout.jumpProtocol"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PROTOCOL.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_PROTOCOL.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
-					"DetailLayout.jumpProtocol"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PROTOCOL.getName()));
 		}
 		if(historyItem.getJumpPort() != null && !"NULL".equals(historyItem.getJumpPort())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_PORT.getName(), 
 					historyItem.getJumpPort(), 
-					"DetailLayout.jumpPort"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PORT.getName()));
 		}else{
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
 					JadeHistoryFileColumns.JUMP_PORT.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
-					"DetailLayout.jumpPort"));
+					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PORT.getName()));
 		}
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.CREATED.getName(), 
 				historyItem.getCreated(), 
-				"DetailLayout.fileHistoryCreated"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.CREATED.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.CREATED_BY.getName(), 
 				historyItem.getCreatedBy(), 
-				"DetailLayout.fileHistoryCreatedBy"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.CREATED_BY.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.MODIFIED.getName(), 
 				historyItem.getModified(), 
-				"DetailLayout.fileHistoryModified"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.MODIFIED.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.MODIFIED_BY.getName(), 
 				historyItem.getModifiedBy(), 
-				"DetailLayout.fileHistoryModifiedBy"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HISTORY + JadeHistoryFileColumns.MODIFIED_BY.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.CREATED.getName(), 
 				historyItem.getJadeFilesDBItem().getCreated(), 
-				"DetailLayout.fileCreated"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.CREATED.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.CREATED_BY.getName(), 
 				historyItem.getJadeFilesDBItem().getCreatedBy(), 
-				"DetailLayout.fileCreatedBy"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.CREATED_BY.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.JADE_FILE_MODIFIED.getName(), 
 				historyItem.getJadeFilesDBItem().getModified(), 
-				"DetailLayout.fileModified"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.JADE_FILE_MODIFIED.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.JADE_FILE_MODIFIED_BY.getName(), 
 				historyItem.getJadeFilesDBItem().getModifiedBy(), 
-				"DetailLayout.fileModifiedBy"));
+				MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE + JadeFileColumns.JADE_FILE_MODIFIED_BY.getName()));
 		return detailItems;
 	}
 	
@@ -260,19 +263,25 @@ public class JadeDetailsContainer extends IndexedContainer {
 		for(Object itemId : this.getItemIds()){
 			Item item = getItem(itemId); 
 			String messageKey = ((JadeHistoryDetailItem)itemId).getMessageKey();
-			item.getItemProperty("key").setValue(messages.getValue(messageKey, locale));
+			item.getItemProperty("key").setValue(messages.getValue(messageKey, locale) + ":");
 			if(((messageKey.toLowerCase().contains("created") || messageKey.toLowerCase().contains("modified")) 
 					&& !messageKey.contains("By")) || messageKey.toLowerCase().contains("timestamp")){
 				item.getItemProperty("value").setValue(dateConverter.convertToPresentation(
 						(Date)((JadeHistoryDetailItem)itemId).getValue(), String.class, locale));
-			}else if("DetailLayout.lastErrorMessage".equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getLastErrorMessage())){
+			}else if((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName()).equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getLastErrorMessage())){
 				item.getItemProperty("value").setValue(messages.getValue("DetailLayout.none", locale));
-			}else if(("DetailLayout.jumpHost".equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpHost())) ||
-					("DetailLayout.jumpHostIp".equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpHostIp())) ||
-					("DetailLayout.jumpUser".equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpUser())) ||
-					("DetailLayout.logFilename".equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getLogFilename())) ||
-					("DetailLayout.jumpProtocol".equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpProtocol())) ||
-					("DetailLayout.jumpPort".equalsIgnoreCase(messageKey) && this.historyItem.getJumpPort() != null)){
+			}else if(((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST.getName())
+					.equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpHost())) ||
+					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST_IP.getName())
+							.equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpHostIp())) ||
+					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_USER.getName())
+							.equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpUser())) ||
+					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LOG_FILENAME.getName())
+							.equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getLogFilename())) ||
+					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PROTOCOL.getName())
+							.equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpProtocol())) ||
+					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PORT.getName())
+							.equalsIgnoreCase(messageKey) && this.historyItem.getJumpPort() != null)){
 				item.getItemProperty("value").setValue(messages.getValue("DetailLayout.notSet", locale));
 			}
 		}

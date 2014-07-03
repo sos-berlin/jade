@@ -22,11 +22,8 @@ public abstract class JadeBSConstants {
 	public static final String PREF_KEY_UK 								= "uk";
 	public static final String PREF_KEY_US 								= "us";
 	public static final String PREF_KEY_ES 								= "es";
-//	public static final String PREF_NODE_BUTTONS_VISIBLE				= "buttons_visibility";
-//	public static final String PREF_KEY_BUTTON_DE						= "button_de";
-//	public static final String PREF_KEY_BUTTON_UK						= "button_uk";
-//	public static final String PREF_KEY_BUTTON_US						= "button_us";
-//	public static final String PREF_KEY_BUTTON_ES						= "button_es";
+	// preferences for details
+	public static final String PREF_NODE_VISIBLE_DETAILS				= "visible-details";
 	// preferences for filters 
 	public static final String PREF_NODE_PREFERENCES					= "preferences";
 	public static final String PREF_NODE_PREFERENCES_GENERAL			= "general";
