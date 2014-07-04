@@ -8,7 +8,6 @@
         <version>1.8-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.sos-berlin</groupId>
     <artifactId>jade</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
