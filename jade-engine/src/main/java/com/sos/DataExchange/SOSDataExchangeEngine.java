@@ -682,13 +682,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 				String strM = pobjO.subject.Value();
 				pobjO.subject.Value(objOptions.replaceVars(strM));
+//				http://www.sos-berlin.com/jira/browse/SOSFTP-201
 				strM = pobjO.body.Value();
-				pobjO.body.Value(objOptions.replaceVars(strM));
+				strM = objOptions.replaceVars(strM);
 				strM += "\n" + "List of transferred Files:" + "\n";
 				for (SOSFileListEntry objListItem : objSourceFileList.List()) {
 					String strSourceFileName = objListItem.getSourceFilename();
 					strM += strSourceFileName + "\n";
 				}
+				pobjO.body.Value(strM);
 				if (pobjO.from.isDirty() == false) {
 					pobjO.from.Value("JADE@sos-berlin.com");
 				}
