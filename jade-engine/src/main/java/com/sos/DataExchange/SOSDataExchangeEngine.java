@@ -1,9 +1,40 @@
 package com.sos.DataExchange;
 
+import static com.sos.DataExchange.SOSJadeMessageCodes.EXCEPTION_RAISED;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_D_0200;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0100;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0101;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0100;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0101;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0102;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0104;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0115;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_T_0010;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_T_0012;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_T_0013;
+import static com.sos.DataExchange.SOSJadeMessageCodes.TRANSACTION_ABORTED;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import sos.net.SOSMail;
+import sos.net.mail.options.SOSSmtpMailOptions;
+import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.Options.*;
+import com.sos.JSHelper.Options.JSOptionsClass;
+import com.sos.JSHelper.Options.SOSOptionBoolean;
+import com.sos.JSHelper.Options.SOSOptionCommandString;
+import com.sos.JSHelper.Options.SOSOptionFolderName;
+import com.sos.JSHelper.Options.SOSOptionRegExp;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.io.Files.JSFile;
@@ -19,19 +50,6 @@ import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
 import com.sos.scheduler.model.objects.Spooler;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import sos.net.SOSMail;
-import sos.net.mail.options.SOSSmtpMailOptions;
-import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
-
-import static com.sos.DataExchange.SOSJadeMessageCodes.*;
 
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
 	private static final String		conKeyWordLAST_ERROR			= "last_error";
@@ -682,13 +700,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 				String strM = pobjO.subject.Value();
 				pobjO.subject.Value(objOptions.replaceVars(strM));
+//				http://www.sos-berlin.com/jira/browse/SOSFTP-201
 				strM = pobjO.body.Value();
-				pobjO.body.Value(objOptions.replaceVars(strM));
+				strM = objOptions.replaceVars(strM);
 				strM += "\n" + "List of transferred Files:" + "\n";
 				for (SOSFileListEntry objListItem : objSourceFileList.List()) {
 					String strSourceFileName = objListItem.getSourceFilename();
 					strM += strSourceFileName + "\n";
 				}
+				pobjO.body.Value(strM);
 				if (pobjO.from.isDirty() == false) {
 					pobjO.from.Value("JADE@sos-berlin.com");
 				}
