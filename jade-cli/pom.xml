@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.sos-berlin.products</groupId>
+		<groupId>com.sos-berlin</groupId>
 		<artifactId>jade</artifactId>
-		<version>1.7-SNAPSHOT</version>
+		<version>1.8-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.sos-berlin.products.jade</groupId>
+	<groupId>com.sos-berlin.jade</groupId>
 
 	<artifactId>jade-cli</artifactId>
     <name>${project.artifactId}</name>
