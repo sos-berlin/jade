@@ -326,8 +326,8 @@ public class JadeFileHistoryTable extends Table{
 
    @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
-        handleColumnCollapseEvent(variables);
         super.changeVariables(source, variables);
+        handleColumnCollapseEvent(variables);
     }
 
     /**
@@ -341,12 +341,15 @@ public class JadeFileHistoryTable extends Table{
             Object[] visibleColumns = getVisibleColumns();
             for (int j = 0; j < visibleColumns.length; j++) {
                 boolean isCollapsed = ArrayUtils.contains(collapsedCollumns , variables.get(visibleColumns[j]));
-                if (isColumnCollapsed(visibleColumns[j]) != isCollapsed){
+//                if (isColumnCollapsed(visibleColumns[j]) != isCollapsed){
+//                    fireEvent(new ColumnCollapseEvent(this, visibleColumns[j], isCollapsed));
+//                }
+                if (isColumnCollapsed(visibleColumns[j]) && !isCollapsed){
                     fireEvent(new ColumnCollapseEvent(this, visibleColumns[j], isColumnCollapsed(visibleColumns[j])));
+                }else if (!isColumnCollapsed(visibleColumns[j]) && !isCollapsed){
+                    fireEvent(new ColumnCollapseEvent(this, visibleColumns[j], isCollapsed));
                 }
             }
-        }else{
-        	
         }
     }
    
@@ -359,7 +362,8 @@ public class JadeFileHistoryTable extends Table{
     }
 	   
     public static class ColumnCollapseEvent extends Component.Event {
-        public static final java.lang.reflect.Method COLUMN_COLLAPSE_METHOD;
+		private static final long serialVersionUID = 1L;
+		public static final java.lang.reflect.Method COLUMN_COLLAPSE_METHOD;
 
         static {
             try {
