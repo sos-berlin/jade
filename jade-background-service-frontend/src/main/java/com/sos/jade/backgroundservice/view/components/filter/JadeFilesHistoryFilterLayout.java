@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 
+import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
@@ -22,7 +23,6 @@ import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
-import com.sos.jade.backgroundservice.view.components.JadeMenuBar;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -50,7 +50,9 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private static final String OPERATION_RECEIVE = "receive";
 	private static final String OPERATION_COPY = "copy";
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
+	@SuppressWarnings("unused")
 	private static final String MESSAGE_RESOURCE_FILE = "file.";
+	@SuppressWarnings("unused")
 	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
 	private VerticalLayout vlMain;
 	private Date timestampFrom;
@@ -74,6 +76,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private Button btnCommit;
 	private Button btnDiscard;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
+	@SuppressWarnings("unused")
 	private JadeFilesHistoryFilter lastFilter;
 	private Logger log = Logger.getLogger(JadeFilesHistoryFilterLayout.class);
 	
@@ -81,12 +84,12 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 
 	@SuppressWarnings("unused")
 	private static final long oneDay = 24 * 60 * 60 * 1000;
-	private MainView ui;
+	private MainView mainView;
 	
-	public JadeFilesHistoryFilterLayout(MainView ui){
+	public JadeFilesHistoryFilterLayout(){
 		super();
-		this.ui = ui;
-		this.messages = ui.getMessages();
+		this.mainView = getMainViewFromCurrentUI();
+		this.messages = mainView.getMessages();
 		this.setSizeFull();
 		this.setMargin(true);
 		this.focus();
@@ -184,12 +187,15 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				UI.getCurrent().access(new Runnable() {
 					@Override
 					public void run() {
-				        ui.getTblDetails().setVisible(false);
-				        ui.getTblFileHistory().populateDatasource(ui.getHistoryItems());
-				        ui.getTblFileHistory().markAsDirty();
+						if(mainView == null){
+							mainView = getMainViewFromCurrentUI();
+						}
+				        mainView.getTblDetails().setVisible(false);
+				        mainView.getTblFileHistory().populateDatasource(mainView.getHistoryItems());
+				        mainView.getTblFileHistory().markAsDirty();
 						listener.closeJadeFilesHistoryDbSession();
-						ui.getProgress().setPrimaryStyleName("jadeProgressBar");
-				        ui.getProgress().setVisible(false);
+						mainView.getProgress().setPrimaryStyleName("jadeProgressBar");
+				        mainView.getProgress().setVisible(false);
 					}
 				});
 	        }
@@ -262,18 +268,21 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(ClickEvent event) {
-				ui.setMarkedRow(null);
-				ui.setDetailViewVisible(false);
-				ui.toggleTableVisiblity(null);
-				ui.getProgress().setVisible(true);
-				ui.getProgressStart().setTime(new Date().getTime());
-				ui.getJmb().getSmDuplicatesFilter().setChecked(false);
-				ui.new SleeperThreadMedium().start();
-				ui.new SleeperThreadLong().start();
+				if(mainView == null){
+					mainView = getMainViewFromCurrentUI();
+				}
+				mainView.setMarkedRow(null);
+				mainView.setDetailViewVisible(false);
+				mainView.toggleTableVisiblity(null);
+				mainView.getProgress().setVisible(true);
+				mainView.getProgressStart().setTime(new Date().getTime());
+				mainView.getJmb().getSmDuplicatesFilter().setChecked(false);
+				mainView.new SleeperThreadMedium().start();
+				mainView.new SleeperThreadLong().start();
 				checkTextFieldValues();
 				saveFilterPreferences();
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
-				filterData(new JadeFileListenerProxy(ui), createJadeFilesHistoryFilter());
+				filterData(new JadeFileListenerProxy(mainView), createJadeFilesHistoryFilter());
 			}
 		});
 		btnDiscard.addClickListener(new ClickListener() {
@@ -348,9 +357,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private void checkLastFilterSettings(){
 		boolean lastUsed = false;
 		try {
-			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
-				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
-						.node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
+				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
 						.getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
 			}
 		} catch (BackingStoreException e) {
@@ -408,6 +416,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			if(mandator != null && !"".equals(mandator)){
 				tfMandator.setValue(mandator);
 			}
+			lastFilter = createJadeFilesHistoryFilter();
 		}
 	}
 	
@@ -430,6 +439,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		nsOperation.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName(), locale));
 		btnCommit.setCaption(messages.getValue("FilterLayout.ok", locale));
 		btnDiscard.setCaption(messages.getValue("FilterLayout.discard", locale));
+	}
+	
+	private MainView getMainViewFromCurrentUI(){
+		return ((BackgroundserviceUI)UI.getCurrent()).getMainView();
 	}
 	
 }

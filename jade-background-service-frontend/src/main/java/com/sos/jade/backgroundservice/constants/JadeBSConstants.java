@@ -45,5 +45,6 @@ public abstract class JadeBSConstants {
 	public static final String ENTRY_DELIMITER 							= ";";
 	public static final String DELIMITER_REGEX 							= "[|]";
 	public static final String EQUAL_CHAR 								= "=";
+	public static final String JS_AUTH_SERVER							= "http://sp:40177";
 	
 }

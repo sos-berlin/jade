@@ -8,8 +8,8 @@ import com.sos.JSHelper.Annotations.JSOptionDefinition;
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
 import com.sos.JSHelper.Listener.JSListener;
 import com.sos.JSHelper.Options.JSOptionsClass;
-import com.sos.JSHelper.Options.SOSOptionBoolean;
 import com.sos.JSHelper.Options.SOSOptionInFileName;
+import com.sos.JSHelper.Options.SOSOptionString;
 
 /**
  * \class 		JadeBackgroundServiceOptionsSuperClass - JadeBackgroundService
@@ -110,6 +110,28 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 		hibernateConfigurationFileName = pHibernateConfigurationFileName;
 	}
 
+    /**
+     * \var configurationFile : 
+     * 
+     *
+     */
+    @JSOptionDefinition(name = "security_server", description = "", key = "security_server", type = "SOSOptionString", mandatory = false)
+    public SOSOptionString securityServer = new SOSOptionString(this, conClassName + ".SecurityServer", // HashMap-Key
+                                                                  "Security Server for security rest service", // Titel
+                                                                  " ", // InitValue
+                                                                  " ", // DefaultValue
+                                                                  false // isMandatory
+                                                          );
+
+    public SOSOptionString getSecurityServer() {
+        return this.securityServer;
+    }
+ 
+    public void setSecurityServer(final SOSOptionString p_securityServer) {
+        this.securityServer = p_securityServer;
+    }
+    
+	
 	/**
 	 * \option Devel
 	 * \type SOSOptionDevelopment

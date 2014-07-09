@@ -215,13 +215,13 @@
 			<artifactId>ftp-history</artifactId>
             <version>${project.version}</version>
 		</dependency>
-<!--  		
+
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
             <version>${project.version}</version>
 		</dependency>
--->		
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>

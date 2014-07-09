@@ -6,9 +6,13 @@ import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
@@ -19,6 +23,9 @@ import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.vaadin.data.Container.ItemSetChangeEvent;
+import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 
@@ -72,13 +79,6 @@ public class JadeFileHistoryTable extends Table{
 		setColumnAlignment(JadeHistoryFileColumns.STATUS.getName(), Align.CENTER);
 		setCellStyleGenerator(new StatusCellStyleGenerator());
 		enableContentRefreshing(true);
-		String strVc = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).get(JadeBSConstants.PREF_KEY_ORDER, null);
-		if (strVc != null){
-			this.setVisibleColumns((Object[])strVc.split(JadeBSConstants.DELIMITER_REGEX));
-			this.refreshRowCache();
-			this.markAsDirty();
-			log.debug("VisibleColumnsOrder after setting from Preferences: " + createOrderedColumnsString(this.getVisibleColumns()));
-		}
 		// cookie processing not needed anymore, better work with Preferences
 //		else if(cookie != null && cookie.getValue().contains(COLUMN_ORDER)){
 //			lastColOrder = cookie.getValue().substring(
@@ -93,15 +93,28 @@ public class JadeFileHistoryTable extends Table{
 //			this.refreshRowCache();
 //			this.markAsDirty();
 //		}
-		else{
-			if (container != null){
-				this.setVisibleColumns(visibleColumns);
-			}
-		}
-		setPreferencesColumnsWidth();
-		setColumnsCollapsed();
 		setColumnHeaders();
 		initConfigurationChangeListeners();
+		setSavedPreferences();
+	}
+	
+	private void setSavedPreferences(){
+		setPreferencesColumnsWidth();
+		getColumnsCollapsed();
+		setPreferencesColumnOrder();
+	}
+	
+	private void setPreferencesColumnOrder(){
+		String strVc = null;
+		strVc = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).get(JadeBSConstants.PREF_KEY_ORDER, null);
+		if (strVc != null && ((historyItems != null && historyItems.size() > 0) || this.container != null)){
+			this.setVisibleColumns((Object[])strVc.split(JadeBSConstants.DELIMITER_REGEX));
+			this.refreshRowCache();
+			this.markAsDirty();
+			log.debug("VisibleColumnsOrder after setting from Preferences: " + createOrderedColumnsString(this.getVisibleColumns()));
+		}else if (container != null){
+			this.setVisibleColumns(visibleColumns);
+		}
 	}
 	
 	private void setPreferencesColumnsWidth(){
@@ -171,7 +184,7 @@ public class JadeFileHistoryTable extends Table{
 	public void populateDatasource(List<JadeFilesHistoryDBItem> historyItems){
 		this.historyItems = historyItems;
 		this.setContainerDataSource(this.container = new JadeFilesHistoryContainer(this.historyItems));
-		this.setVisibleColumns(visibleColumns);
+		setSavedPreferences();
 		this.fireItemSetChange();
 		this.fireValueChange(true);
 	}
@@ -222,17 +235,12 @@ public class JadeFileHistoryTable extends Table{
 //				sessionsLastColOrder = newCookieValue;
 			}
 		});
+
 		this.addColumnResizeListener(new Table.ColumnResizeListener() {
-			
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void columnResize(ColumnResizeEvent event) {
-				int oldWidth = event.getPreviousWidth();
-		        // Get the new width of the resized column
-		        int width = event.getCurrentWidth();
-		        
-		        // Get the property ID of the resized column
-		        String column = (String) event.getPropertyId();
-//		        prefs.node(PREF_NODE_NAME_WIDTHS).putInt(column, width);
 		        // save all column widths, to make sure that unresized columns are displayed.
 		        // correctly after reload. Because of default size = -1 all columns use the 
 		        // available space equally. If some columns are resized and others not, the 
@@ -250,25 +258,27 @@ public class JadeFileHistoryTable extends Table{
 				}
 			}
 		});
-		this.addItemSetChangeListener(new ItemSetChangeListener() {
+
+		this.addColumnCollapseListener(new ColumnCollapseListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public void containerItemSetChange(ItemSetChangeEvent event) {
-				for(Object column : container.getContainerPropertyIds()){
-			        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).putBoolean(column.toString(), isColumnCollapsed(column));
-				}
-				JadeFileHistoryTable.this.markAsDirty();
+			public void columnCollapse(ColumnCollapseEvent event) {
+				Object column = event.getPropertyId();
+				setColumnCollapsed(column, event.getCollapsed());
+		        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).putBoolean(column.toString(), event.getCollapsed());
+				
 			}
 		});
 	}
 	
-	private void setColumnsCollapsed(){
+	private void getColumnsCollapsed(){
 		if (container != null) {
 			for (Object column : container.getContainerPropertyIds()) {
 				setColumnCollapsed(
 						column,
-						prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).getBoolean(column.toString(), false));
+						prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE)
+						.node(JadeBSConstants.PREF_NODE_COLLAPSE).getBoolean(column.toString(), false));
 			}
 		}
 	}
@@ -306,13 +316,108 @@ public class JadeFileHistoryTable extends Table{
 	
 	public void resetColumnWidths(){
 		for(Object key : this.getVisibleColumns()){
-			// width = -1 means the column takes all the accesible space 
+			// width = -1 means the column takes all the available space 
 			setColumnWidth(key.toString(), -1);
 	        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(key.toString(), -1);
 		}
 		this.refreshRowCache();
 		this.markAsDirty();
 	}
+
+   @Override
+    public void changeVariables(Object source, Map<String, Object> variables) {
+        handleColumnCollapseEvent(variables);
+        super.changeVariables(source, variables);
+    }
+
+    /**
+     * Handles the column collapse event sent by the client.
+     *
+     * @param variables
+     */
+    private void handleColumnCollapseEvent(Map<String, Object> variables) {
+        if (variables.containsKey("collapsedcolumns")) {
+            String[] collapsedCollumns  = (String[]) variables.get("collapsedcolumns");
+            Object[] visibleColumns = getVisibleColumns();
+            for (int j = 0; j < visibleColumns.length; j++) {
+                boolean isCollapsed = ArrayUtils.contains(collapsedCollumns , variables.get(visibleColumns[j]));
+                if (isColumnCollapsed(visibleColumns[j]) != isCollapsed){
+                    fireEvent(new ColumnCollapseEvent(this, visibleColumns[j], isColumnCollapsed(visibleColumns[j])));
+                }
+            }
+        }else{
+        	
+        }
+    }
+   
+    public void addColumnCollapseListener(ColumnCollapseListener listener){
+        addListener("columnCollapse", ColumnCollapseEvent.class, listener, ColumnCollapseEvent.COLUMN_COLLAPSE_METHOD);
+    }
+   
+    public void removeColumnCollapseListener(ColumnCollapseListener listener){
+        removeListener("columnCollapse", ColumnCollapseEvent.class, listener);
+    }
+	   
+    public static class ColumnCollapseEvent extends Component.Event {
+        public static final java.lang.reflect.Method COLUMN_COLLAPSE_METHOD;
+
+        static {
+            try {
+                COLUMN_COLLAPSE_METHOD = ColumnCollapseListener.class.getDeclaredMethod("columnCollapse",
+                                new Class[] { ColumnCollapseEvent.class });
+            } catch (final java.lang.NoSuchMethodException e) {
+                // This should never happen
+                throw new java.lang.RuntimeException(e);
+            }
+        }
+
+        private final boolean collapsed;
+        private final Object columnPropertyId;
+
+        /**
+         * Constructor
+         *
+         * @param source
+         *            The source of the event
+         * @param propertyId
+         *            The columns property id
+         * @param collapsed
+         *            Indicates if colum was collapsed or elapsed
+         */
+        public ColumnCollapseEvent(Component source, Object propertyId, boolean collapsed) {
+            super(source);
+            this.collapsed = collapsed;
+            columnPropertyId = propertyId;
+        }
+
+        /**
+         * Get the column property id of the column that was resized.
+         *
+         * @return The column property id
+         */
+        public Object getPropertyId() {
+            return columnPropertyId;
+        }
+       
+        public boolean getCollapsed(){
+            return collapsed;
+        }
+       
+    }
+	   
+    /**
+     * Interface for listening to column collapse events.
+     */
+    public interface ColumnCollapseListener extends Serializable {
+
+        /**
+         * This method is triggered when the column has been collapsed or elapsed
+         *
+         * @param event
+         *            The event which contains the column property id and new collapse state
+         */
+        public void columnCollapse(ColumnCollapseEvent event);
+    }
 }
 
 

@@ -19,12 +19,14 @@ import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
+import com.sos.jade.backgroundservice.enums.JadeCountry;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.components.JadeDetailTable;
 import com.sos.jade.backgroundservice.view.components.JadeFileHistoryTable;
 import com.sos.jade.backgroundservice.view.components.JadeMenuBar;
+import com.sos.jade.backgroundservice.view.components.LoginView;
 import com.sos.jade.backgroundservice.view.components.filter.DuplicatesFilter;
 import com.sos.jade.backgroundservice.view.components.filter.JadeFilesHistoryFilterLayout;
 import com.vaadin.data.Item;
@@ -33,24 +35,30 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
-import com.vaadin.event.MouseEvents;
-import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.LayoutEvents;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-public class MainView extends CustomComponent{
-	
+public class MainView extends CustomComponent implements View{
 	private static final long serialVersionUID = 6368275374953898482L;
+	public static final String NAME = "";
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private JadeFileHistoryTable tblFileHistory;
@@ -58,14 +66,13 @@ public class MainView extends CustomComponent{
 	private Item markedRow;
 	private IJadeFileListener fileListener;
 	private boolean first = true;
-    private Image imgDe;
-    private Image imgUk;
-    private Image imgUs;
-    private Image imgEs;
+    private CssLayout lblDE;
+    private CssLayout lblUK;
+    private CssLayout lblUS;
+    private CssLayout lblES;
     private JadeMenuBar jmb;
     private Label lblTitle;
     private VerticalLayout vRest;
-//    private HorizontalLayout hlTableMainLayout;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
 	private final Logger log = Logger.getLogger(MainView.class);
 	private ProgressBar progress;
@@ -85,11 +92,12 @@ public class MainView extends CustomComponent{
 	public MainView() {
 		this.messages = new JadeBSMessages("JADEBSMessages", currentLocale);
 		this.fileListener = new JadeFileListenerProxy(this);
+		setSizeFull();
 		setImmediate(true);
-		initView();
+//		initView();
 	}
 	
-	private void initView(){
+	public void initView(){
 		initComponents();
     	progress.setVisible(true);
     	if(checkReuseLastFilterSettings()){
@@ -114,6 +122,8 @@ public class MainView extends CustomComponent{
 				UI.getCurrent().access(new Runnable() {
 					@Override
 					public void run() {
+						jmb.getSmDuplicatesFilter().setChecked(checkRemoveDuplicatesSettings());
+						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
 				        tblFileHistory.populateDatasource(historyItems);
 						fileListener.closeJadeFilesHistoryDbSession();
 						if(checkRemoveDuplicatesSettings()){
@@ -123,12 +133,16 @@ public class MainView extends CustomComponent{
 							duplicatesFilter.setHistoryItems(historyItems);
 							((IndexedContainer)tblFileHistory.getContainerDataSource()).removeContainerFilter(duplicatesFilter);
 						}
+						log.debug("feedback received from proxy about Hibernate SESSION close at " + sdf.format(new Date()) + "!");
+					}
+				});
+				UI.getCurrent().access(new Runnable() {
+					
+					@Override
+					public void run() {
 						jmb.refreshSelectedLangOnInit();
 						jmb.refreshSelectedDetailsOnInit();
-						jmb.getSmDuplicatesFilter().setChecked(checkRemoveDuplicatesSettings());
-						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
 						refreshButtonVisibility();
-						log.debug("feedback received from proxy about Hibernate SESSION close at " + sdf.format(new Date()) + "!");
 					}
 				});
             };
@@ -150,20 +164,20 @@ public class MainView extends CustomComponent{
         vLayout.addComponent(hlMenuBar);
         jmb = new JadeMenuBar(messages);
         hlMenuBar.addComponent(jmb);
-        imgDe = initLanguageIcon("images/de_marble.png");
-        imgUk = initLanguageIcon("images/gb_marble.png");
-        imgUs = initLanguageIcon("images/us_marble.png");
-        imgEs = initLanguageIcon("images/es_marble.png");
-		hlMenuBar.addComponents(imgDe, imgUs, imgUk, imgEs);
-		imgDe.setVisible(false);
-		imgUk.setVisible(false);
-		imgUs.setVisible(false);
-		imgEs.setVisible(false);
+        lblDE = initCountryLabel(JadeCountry.GERMANY);
+        lblUK = initCountryLabel(JadeCountry.UK);
+        lblUS = initCountryLabel(JadeCountry.US);
+        lblES = initCountryLabel(JadeCountry.SPAIN);
+		hlMenuBar.addComponents(lblDE, lblUS, lblUK, lblES);
+		lblDE.setVisible(false);
+		lblUK.setVisible(false);
+		lblUS.setVisible(false);
+		lblES.setVisible(false);
 		hlMenuBar.setExpandRatio(jmb, 1);
-		hlMenuBar.setComponentAlignment(imgDe, Alignment.MIDDLE_RIGHT);
-		hlMenuBar.setComponentAlignment(imgUs, Alignment.MIDDLE_RIGHT);
-		hlMenuBar.setComponentAlignment(imgUk, Alignment.MIDDLE_RIGHT);
-		hlMenuBar.setComponentAlignment(imgEs, Alignment.MIDDLE_RIGHT);
+		hlMenuBar.setComponentAlignment(lblDE, Alignment.BOTTOM_RIGHT);
+		hlMenuBar.setComponentAlignment(lblUS, Alignment.BOTTOM_RIGHT);
+		hlMenuBar.setComponentAlignment(lblUK, Alignment.BOTTOM_RIGHT);
+		hlMenuBar.setComponentAlignment(lblES, Alignment.BOTTOM_RIGHT);
 		setLanguageIconClickHandlers();
 		
         vRest = new VerticalLayout();
@@ -172,6 +186,16 @@ public class MainView extends CustomComponent{
         vLayout.setExpandRatio(vRest, 1);
         createResetAndProgressLayout();
         createTablesLayout();
+    	Button logout = new Button("Logout", new Button.ClickListener() {
+    		@Override 
+    		public void buttonClick(ClickEvent event) {
+    			// "Logout" the user
+    			getSession().setAttribute("user", null);
+    			// Refresh this view, should redirect to login view
+    			((BackgroundserviceUI)getUI()).setContent(new LoginView());
+    		}
+    	});
+    	vRest.addComponent(logout);
 	}
 	
 	private ProgressBar initProgressBar(){
@@ -215,56 +239,82 @@ public class MainView extends CustomComponent{
 		return hl;
 	}
 	
-	private Image initLanguageIcon(String resource){
-		Image img = new Image();
-		ThemeResource tr = new ThemeResource(resource);
-		img.setSource(tr);
-		img.setWidth(20.0f, Unit.PIXELS);
-		img.setHeight(20.0f, Unit.PIXELS);
-		img.addStyleName("jadeImage");
-		return img;
+	/**
+	 * Wraps a {@link com.vaadin.ui.Label Label} into an {@link com.vaadin.ui.CssLayout CssLayout}, so a {@link com.vaadin.event.LayoutEvents.LayoutClickListener ClickListener} can be added
+	 * dependent on the given JadeCountry the {@link com.vaadin.ui.Label Label} gets a background image with the related flag 
+	 * 
+	 * @param country A {@link com.sos.jade.backgroundservice.enums.JadeCountry JadeCountry}
+	 * @return the {@link com.vaadin.ui.CssLayout CssLayout} containing a {@link com.vaadin.ui.Label Label} with a country related background image
+	 */
+	private CssLayout initCountryLabel(JadeCountry country){
+		CssLayout layout = new CssLayout();
+		Label lbl = new Label();
+		lbl.setSizeUndefined();
+		switch(country){
+		case GERMANY:
+			lbl.setPrimaryStyleName("jadeGermanyLabel");
+			layout.setStyleName("jadeGermanyLabel");
+			break;
+		case UK:
+			lbl.setPrimaryStyleName("jadeUKLabel");
+			layout.setStyleName("jadeUKLabel");
+			break;
+		case US:
+			lbl.setPrimaryStyleName("jadeUSLabel");
+			layout.setStyleName("jadeUSLabel");
+			break;
+		case SPAIN:
+			lbl.setPrimaryStyleName("jadeSpainLabel");
+			layout.setStyleName("jadeSpainLabel");
+			break;
+		}
+		layout.addComponent(lbl);
+		return layout;
 	}
 	
 	private void setLanguageIconClickHandlers(){
-		imgDe.addClickListener(new MouseEvents.ClickListener() {
+		lblDE.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
-			public void click(ClickEvent event) {
+			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = Locale.GERMANY;
 				refreshLocalization(currentLocale);
-				imgDe.setVisible(false);
+				lblDE.setVisible(false);
 				refreshButtonVisibility();
 			}
 		});
-		imgUk.addClickListener(new MouseEvents.ClickListener() {
+		lblUK.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
-			public void click(ClickEvent event) {
+			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = Locale.UK;
 				refreshLocalization(currentLocale);
-				imgUk.setVisible(false);
+				lblUK.setVisible(false);
 				refreshButtonVisibility();
 			}
+			
 		});
-		imgUs.addClickListener(new MouseEvents.ClickListener() {
+		lblUS.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
-			public void click(ClickEvent event) {
+			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = Locale.US;
 				refreshLocalization(currentLocale);
-				imgUs.setVisible(false);
+				lblUS.setVisible(false);
 				refreshButtonVisibility();
 			}
+			
 		});
-		imgEs.addClickListener(new MouseEvents.ClickListener() {
+		lblES.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
 			private static final long serialVersionUID = 1L;
 			@Override
-			public void click(ClickEvent event) {
+			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = new Locale("es", "ES");
 				refreshLocalization(currentLocale);
-				imgEs.setVisible(false);
+				lblES.setVisible(false);
 				refreshButtonVisibility();
 			}
+			
 		});
 	}
 	
@@ -304,25 +354,25 @@ public class MainView extends CustomComponent{
 	
 	private void setButtonNotVisibile(Locale locale){
 		if(locale.getCountry().equals(Locale.GERMANY.getCountry())){
-			imgDe.setVisible(false);
+			lblDE.setVisible(false);
 		}else if(locale.getCountry().equals(Locale.UK.getCountry())){
-			imgUk.setVisible(false);
+			lblUK.setVisible(false);
 		}else if(locale.getCountry().equals(Locale.US.getCountry())){
-			imgUs.setVisible(false);
+			lblUS.setVisible(false);
 		}else if(locale.getCountry().equals(new Locale("es", "ES").getCountry())){
-			imgEs.setVisible(false);
+			lblES.setVisible(false);
 		}
 	}
 	
 	private void setButtonVisibile(Locale locale){
 		if(locale.getCountry().equals(Locale.GERMANY.getCountry())){
-			imgDe.setVisible(true);
+			lblDE.setVisible(true);
 		}else if(locale.getCountry().equals(Locale.UK.getCountry())){
-			imgUk.setVisible(true);
+			lblUK.setVisible(true);
 		}else if(locale.getCountry().equals(Locale.US.getCountry())){
-			imgUs.setVisible(true);
+			lblUS.setVisible(true);
 		}else if(locale.getCountry().equals(new Locale("es", "ES").getCountry())){
-			imgEs.setVisible(true);
+			lblES.setVisible(true);
 		}
 	}
 	
@@ -397,11 +447,16 @@ public class MainView extends CustomComponent{
 		lastSplitPosition = newLastSplitPosition;
 	}
 	
+	public void setSplitPosition(final float position){
+		lastSplitPosition = splitter.getSplitPosition();
+		splitter.setSplitPosition(position);
+	}
+	
 	public void toggleTableVisiblity(Item item){
 		if(item == null || (markedRow != null && markedRow.equals(item))){
 			markedRow = null;
 			tblDetails.setVisible(false);
-			setSplitPosition();
+			setSplitPosition(100.0f);
 		}else if (markedRow != null && !markedRow.equals(item)){
 			markedRow = item;
 			tblDetails.setVisible(true);
@@ -470,10 +525,9 @@ public class MainView extends CustomComponent{
 	private boolean checkReuseLastFilterSettings(){
 		boolean lastUsed = false;
 		try {
-			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
-				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
-						.node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
-						.getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
+			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
+				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER)
+						.node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
 			}
 		} catch (BackingStoreException e) {
 			log.warn("Unable to read from PreferenceStore, using defaults.");
@@ -483,9 +537,8 @@ public class MainView extends CustomComponent{
 	}
 	
 	private boolean checkRemoveDuplicatesSettings(){
-		boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR)
-				.node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
-				.getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
+		boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER)
+				.node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
 		return removeDuplicates;
 	}
 	
@@ -493,7 +546,7 @@ public class MainView extends CustomComponent{
 		JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 		Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
 				.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, 0L);
-		if(timeFrom != 0L){
+ 		if(timeFrom != 0L){
 			filter.setTransferTimestampFrom(new Date(timeFrom));
 		}
 		Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
@@ -584,24 +637,31 @@ public class MainView extends CustomComponent{
 		return jmb;
 	}
 
-	public Image getImgDe() {
-		return imgDe;
+	public CssLayout getLblDE() {
+		return lblDE;
 	}
 
-	public Image getImgUk() {
-		return imgUk;
+	public CssLayout getLblUK() {
+		return lblUK;
 	}
 
-	public Image getImgUs() {
-		return imgUs;
+	public CssLayout getLblUS() {
+		return lblUS;
 	}
 
-	public Image getImgEs() {
-		return imgEs;
+	public CssLayout getLblES() {
+		return lblES;
 	}
 
 	public Locale getCurrentLocale() {
 		return currentLocale;
+	}
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+		String username = String.valueOf(getSession().getAttribute("user"));
+		Notification note = new Notification("Login", Type.HUMANIZED_MESSAGE);
+		note.show(username +" is logged in");
 	}
 
 }
