@@ -9,7 +9,7 @@
   	</parent>
   	
 	<groupId>com.sos-berlin.jade</groupId>
-	<artifactId>jade-background-service-frontend</artifactId>
+	<artifactId>jade-background-service-cockpit</artifactId>
 	<packaging>war</packaging>
 	<name>${project.artifactId}</name>
 
