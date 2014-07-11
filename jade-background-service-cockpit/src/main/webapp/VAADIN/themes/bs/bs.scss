@@ -176,11 +176,6 @@
 	cursor: pointer;
   }  
 
-  .jadeGermanyLabel:disabled{
-	background: transparent url(../bs/images/de_marble20x20_disabled.png);
-	cursor: auto;
-  }  
-
   .jadeUKLabel{
   	width: 20px;
   	height: 20px;
@@ -188,11 +183,6 @@
 	display: inline-block;
 	background: transparent url(../bs/images/gb_marble20x20.png);
 	cursor: pointer;
-  }  
-
-  .jadeUKLabel:disabled{
-	background: transparent url(../bs/images/gb_marble20x20_disabled.png);
-	cursor: auto;
   }  
 
   .jadeUSLabel{
@@ -204,11 +194,6 @@
 	cursor: pointer;
   }  
 
-  .jadeUSLabel:disabled{
-	background: transparent url(../bs/images/us_marble20x20_disabled.png);
-	cursor: auto;
-  }  
-
   .jadeSpainLabel{
   	width: 20px;
   	height: 20px;
@@ -216,11 +201,6 @@
 	display: inline-block;
 	background: transparent url(../bs/images/es_marble20x20.png);
 	cursor: pointer;
-  }  
-
-  .jadeSpainLabel:disabled{
-	background: transparent url(../bs/images/es_marble20x20_disabled.png);
-	cursor: auto;
   }  
 
   /************ styles for Menu Bars ************************/
@@ -405,4 +385,11 @@
 	-moz-border-radius: 4px;
   }
   
+  .jadeAboutWindow{
+/*  	margin-left: 10px;*/
+  	margin-top: 10px;
+  	padding-left: 10px;
+  	padding-right: 10px;
+  	
+  }
 }
