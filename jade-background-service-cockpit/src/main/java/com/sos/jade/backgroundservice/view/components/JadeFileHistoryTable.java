@@ -3,14 +3,13 @@ package com.sos.jade.backgroundservice.view.components;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import java.io.Serializable;
-import java.lang.reflect.Method;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -22,9 +21,6 @@ import com.sos.jade.backgroundservice.data.JadeFilesHistoryContainer;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
-import com.vaadin.data.Container.ItemSetChangeEvent;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;

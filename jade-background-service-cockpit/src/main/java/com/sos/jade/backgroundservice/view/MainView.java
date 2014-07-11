@@ -4,6 +4,7 @@ import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -88,6 +89,8 @@ public class MainView extends CustomComponent implements View{
 	private DuplicatesFilter duplicatesFilter = new DuplicatesFilter();
 	private Float lastSplitPosition;
 	private HorizontalSplitPanel splitter;
+	private List<CssLayout> allLangs = new ArrayList<CssLayout>();
+	private List<Locale> allLocales = new ArrayList<Locale>();
 
 	public MainView() {
 		this.messages = new JadeBSMessages("JADEBSMessages", currentLocale);
@@ -143,6 +146,7 @@ public class MainView extends CustomComponent implements View{
 						jmb.refreshSelectedLangOnInit();
 						jmb.refreshSelectedDetailsOnInit();
 						refreshButtonVisibility();
+						disableCurrentLocaleIcon();
 					}
 				});
             };
@@ -168,11 +172,11 @@ public class MainView extends CustomComponent implements View{
         lblUK = initCountryLabel(JadeCountry.UK);
         lblUS = initCountryLabel(JadeCountry.US);
         lblES = initCountryLabel(JadeCountry.SPAIN);
+        allLangs.add(lblDE);
+        allLangs.add(lblUK);
+        allLangs.add(lblUS);
+        allLangs.add(lblES);
 		hlMenuBar.addComponents(lblDE, lblUS, lblUK, lblES);
-		lblDE.setVisible(false);
-		lblUK.setVisible(false);
-		lblUS.setVisible(false);
-		lblES.setVisible(false);
 		hlMenuBar.setExpandRatio(jmb, 1);
 		hlMenuBar.setComponentAlignment(lblDE, Alignment.BOTTOM_RIGHT);
 		hlMenuBar.setComponentAlignment(lblUS, Alignment.BOTTOM_RIGHT);
@@ -254,22 +258,56 @@ public class MainView extends CustomComponent implements View{
 		case GERMANY:
 			lbl.setPrimaryStyleName("jadeGermanyLabel");
 			layout.setStyleName("jadeGermanyLabel");
+			allLocales.add(Locale.GERMANY);
 			break;
 		case UK:
 			lbl.setPrimaryStyleName("jadeUKLabel");
 			layout.setStyleName("jadeUKLabel");
+			allLocales.add(Locale.UK);
 			break;
 		case US:
 			lbl.setPrimaryStyleName("jadeUSLabel");
 			layout.setStyleName("jadeUSLabel");
+			allLocales.add(Locale.US);
 			break;
 		case SPAIN:
 			lbl.setPrimaryStyleName("jadeSpainLabel");
 			layout.setStyleName("jadeSpainLabel");
+			allLocales.add(new Locale("es", "ES"));
 			break;
 		}
 		layout.addComponent(lbl);
 		return layout;
+	}
+	
+	private void disableCurrentLocaleIcon(){
+		if(currentLocale != null){
+			String country = currentLocale.getCountry();
+			switch(country){
+			case "DE":
+				lblDE.setEnabled(false);
+				break;
+			case "GB":
+				lblUK.setEnabled(false);
+				break;
+			case "US":
+				lblUS.setEnabled(false);
+				break;
+			case "ES":
+				lblES.setEnabled(false);
+				break;
+			}
+		}
+	}
+	
+	private void disableLanguageIconFor(CssLayout lang){
+		for(CssLayout language : allLangs){
+			if(language.equals(lang)){
+				language.setEnabled(false);
+			}else{
+				language.setEnabled(true);
+			}
+		}
 	}
 	
 	private void setLanguageIconClickHandlers(){
@@ -279,7 +317,7 @@ public class MainView extends CustomComponent implements View{
 			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = Locale.GERMANY;
 				refreshLocalization(currentLocale);
-				lblDE.setVisible(false);
+				disableLanguageIconFor(lblDE);
 				refreshButtonVisibility();
 			}
 		});
@@ -289,7 +327,7 @@ public class MainView extends CustomComponent implements View{
 			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = Locale.UK;
 				refreshLocalization(currentLocale);
-				lblUK.setVisible(false);
+				disableLanguageIconFor(lblUK);
 				refreshButtonVisibility();
 			}
 			
@@ -300,7 +338,7 @@ public class MainView extends CustomComponent implements View{
 			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = Locale.US;
 				refreshLocalization(currentLocale);
-				lblUS.setVisible(false);
+				disableLanguageIconFor(lblUS);
 				refreshButtonVisibility();
 			}
 			
@@ -311,7 +349,7 @@ public class MainView extends CustomComponent implements View{
 			public void layoutClick(LayoutClickEvent event) {
 				currentLocale = new Locale("es", "ES");
 				refreshLocalization(currentLocale);
-				lblES.setVisible(false);
+				disableLanguageIconFor(lblES);
 				refreshButtonVisibility();
 			}
 			
@@ -323,32 +361,33 @@ public class MainView extends CustomComponent implements View{
 			locale = Locale.getDefault();
 		}
 		VaadinSession.getCurrent().setLocale(locale);
-		MainView.this.messages.setLocale(locale);
-		MainView.this.lblTitle.setValue(messages.getValue("MainView.title", locale));
-		MainView.this.jmb.refreshCaptions(locale);
-		MainView.this.tblFileHistory.refreshColumnHeaders(locale);
-		MainView.this.tblDetails.refreshColumnHeaders(locale);
-		if(MainView.this.tblDetails.getContainerDataSource().getItemIds() != null && 
-				!MainView.this.tblDetails.getContainerDataSource().getItemIds().isEmpty())
-			((JadeDetailsContainer)MainView.this.tblDetails.getContainerDataSource()).updateLocale(locale);
-		((JadeFilesHistoryFilterLayout)((BackgroundserviceUI)MainView.this.getParent()).
+		messages.setLocale(locale);
+		lblTitle.setValue(messages.getValue("MainView.title", locale));
+		jmb.refreshCaptions(locale);
+		tblFileHistory.refreshColumnHeaders(locale);
+		tblDetails.refreshColumnHeaders(locale);
+		if(tblDetails.getContainerDataSource().getItemIds() != null && 
+				!tblDetails.getContainerDataSource().getItemIds().isEmpty()){
+			((JadeDetailsContainer)tblDetails.getContainerDataSource()).updateLocale(locale);
+		}
+		((JadeFilesHistoryFilterLayout)((BackgroundserviceUI)getUI()).
 				getModalWindow().getContent()).refreshCaptions(locale);
-		MainView.this.markAsDirtyRecursive();
+		markAsDirtyRecursive();
 	}
 	
 	public void refreshButtonVisibility(){
 		List<Locale> checkedLocales = jmb.getCheckedLanguages();
 		for(Locale checkedLocale : checkedLocales){
-			if(checkedLocale.getCountry().equals(currentLocale.getCountry())){
-				setButtonNotVisibile(checkedLocale);
-			}else{
-				setButtonVisibile(checkedLocale);
+			setButtonVisibile(checkedLocale);
+		}
+		for(Locale locale : allLocales){
+			if(!checkedLocales.contains(locale)){
+				setButtonNotVisibile(locale);
 			}
 		}
 		if(!checkedLocales.contains(currentLocale)){
 			currentLocale = Locale.getDefault();
 			refreshLocalization(currentLocale);
-			setButtonNotVisibile(currentLocale);
 		}
 	}
 	

@@ -13,6 +13,7 @@ import com.sos.auth.rest.permission.model.SOSPermissionShiro;
 import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
+import com.sos.jade.backgroundservice.view.components.AboutWindow;
 import com.sos.jade.backgroundservice.view.components.LoginView;
 import com.sos.jade.backgroundservice.view.components.filter.FilterLayoutWindow;
 import com.vaadin.annotations.Push;
@@ -40,6 +41,7 @@ public class BackgroundserviceUI extends UI {
 	public static String parentNodeName;
 	private MainView mainView;
 	private FilterLayoutWindow modalWindow;
+	private AboutWindow aboutWindow;
     private static final String COMMAND_PERMISSIONS = "/jobscheduler/rest/sosPermission/permissions?session_id=%s";
     private static final String SESSION_ID = "session_id";
     private static final String SECURITY_SERVER = "security_server";
@@ -67,6 +69,7 @@ public class BackgroundserviceUI extends UI {
 			VaadinSession.getCurrent().getLockInstance().unlock();
 		}
     	mainView = new MainView();
+    	aboutWindow = new AboutWindow();
     	// no content for this view, the navigator does the trick
 		// Create a new instance of the navigator. The navigator will attach itself automatically to this view. 
 		new Navigator(this, this);
@@ -181,6 +184,10 @@ public class BackgroundserviceUI extends UI {
 
 	public void setMainView(MainView mainView) {
 		this.mainView = mainView;
+	}
+
+	public AboutWindow getAboutWindow() {
+		return aboutWindow;
 	}
 
 }

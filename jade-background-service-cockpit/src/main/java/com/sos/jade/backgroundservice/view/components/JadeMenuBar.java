@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
-import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
@@ -21,6 +20,7 @@ import com.sos.jade.backgroundservice.view.MainView;
 import com.sos.jade.backgroundservice.view.components.filter.DetailFilter;
 import com.sos.jade.backgroundservice.view.components.filter.DuplicatesFilter;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
@@ -36,6 +36,7 @@ public class JadeMenuBar extends MenuBar {
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
 	private static final String MESSAGE_RESOURCE_FILE = "file.";
 	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
+	private static final String MESSAGE_RESOURCE_HELP = "help.";
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
 	private Logger log = Logger.getLogger(JadeMenuBar.class);
 	private MenuItem mFile;
@@ -55,6 +56,13 @@ public class JadeMenuBar extends MenuBar {
 	private MenuItem ssmSpanishCheck;
 	private MenuItem ssmActivateAllChecks;
 	private MenuItem ssmDeactivateAllChecks;
+	private MenuItem smAbout;
+	private MenuItem smLinks;
+	private MenuItem ssmLinksParameterReference;
+	private MenuItem ssmLinksManual;
+	private MenuItem ssmLinksFaq;
+	private MenuItem ssmLinksApiReference;
+	private MenuItem ssmLinksClientDocu;
 	private JadeBSMessages messages;
 	private DuplicatesFilter duplicatesFilter = new DuplicatesFilter();
 	private DetailFilter lastDetailFilter;
@@ -84,6 +92,7 @@ public class JadeMenuBar extends MenuBar {
 		createPreferencesLanguageMenuItems();
 		createPreferencesReuseFilterMenuItem();
 		createPreferencesVisibleDetails();
+		createHelpMenuItems();
 	}
 	
 	private void createTopLevelMenuItems(){
@@ -268,6 +277,54 @@ public class JadeMenuBar extends MenuBar {
 		});
 	}
 	
+	private void createHelpMenuItems(){
+		smAbout = mHelp.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "about", actualLocale), new Command() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				getUI().addWindow(((BackgroundserviceUI)getUI()).getAboutWindow());
+			}
+		});
+		mHelp.addSeparator();
+		smLinks = mHelp.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "links", actualLocale), null);
+		ssmLinksFaq = smLinks.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "faq", actualLocale), new Command() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				getUI().getPage().open(new ExternalResource("http://www.sos-berlin.com/mediawiki/index.php/JADE_/_SOSFTP_FAQ").getURL(), "_blank");
+			}
+		});
+		ssmLinksManual = smLinks.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "manual", actualLocale), new Command() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				getUI().getPage().open(new ExternalResource("http://www.sos-berlin.com/doc/en/jade/JADE%20Users%20Manual.pdf").getURL(), "_blank");
+			}
+		});
+		ssmLinksClientDocu = smLinks.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "clientDocu", actualLocale), new Command() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				getUI().getPage().open(new ExternalResource("http://www.sos-berlin.com/modules/cjaycontent/doc/jade/jade.xml").getURL(), "_blank");
+			}
+		});
+		ssmLinksParameterReference = smLinks.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "params", actualLocale), new Command() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				getUI().getPage().open(new ExternalResource("http://www.sos-berlin.com/doc/en/jade/JADE%20Parameter%20Reference.pdf").getURL(), "_blank");
+			}
+		});
+		ssmLinksApiReference = smLinks.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "api", actualLocale), new Command() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				getUI().getPage().open(new ExternalResource("http://www.sos-berlin.com/doc/en/jade/JADE%20API%20Reference.pdf").getURL(), "_blank");
+			}
+		});
+	}
+	
 	private void uncheckAllLangs(){
     	ssmGermanCheck.setChecked(false);
     	ssmEnglishUKCheck.setChecked(false);
@@ -384,6 +441,13 @@ public class JadeMenuBar extends MenuBar {
 		ssmSpanishCheck.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkSpanish", actualLocale));
 		ssmActivateAllChecks.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkAll", actualLocale));
 		ssmDeactivateAllChecks.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "checkNone", actualLocale));
+		smAbout.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "about", actualLocale));
+		smLinks.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "links", actualLocale));
+		ssmLinksParameterReference.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "params", actualLocale));
+		ssmLinksManual.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "manual", actualLocale));
+		ssmLinksFaq.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "faq", actualLocale));
+		ssmLinksClientDocu.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "clientDocu", actualLocale));
+		ssmLinksApiReference.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "api", actualLocale));
 		for(MenuItem item : smPreferencesDetails.getChildren()){
 			for(String key : globalDetailKeys){
 				if(item.getText().equals(messages.getValue(key, lastLocale))){

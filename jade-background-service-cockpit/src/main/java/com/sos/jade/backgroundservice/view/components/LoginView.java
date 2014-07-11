@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.prefs.Preferences;
 
 import com.sos.auth.SOSJaxbSubject;
-import com.sos.auth.rest.SOSShiroCurrentUserAnswer;
 import com.sos.auth.rest.SOSWebserviceAuthenticationRecord;
 import com.sos.auth.rest.client.SOSRestShiroClient;
 import com.sos.auth.rest.permission.model.SOSPermissionShiro;
