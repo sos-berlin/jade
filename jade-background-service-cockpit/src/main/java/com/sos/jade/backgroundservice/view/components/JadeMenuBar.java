@@ -3,27 +3,39 @@ package com.sos.jade.backgroundservice.view.components;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import org.apache.http.impl.client.AutoRetryHttpClient;
 import org.apache.log4j.Logger;
+
+import sos.ftphistory.JadeFilesHistoryFilter;
 
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
+import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
+import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
+import com.sos.jade.backgroundservice.view.MainView.SleeperThreadLong;
+import com.sos.jade.backgroundservice.view.MainView.SleeperThreadMedium;
 import com.sos.jade.backgroundservice.view.components.filter.DetailFilter;
 import com.sos.jade.backgroundservice.view.components.filter.DuplicatesFilter;
+import com.sos.jade.backgroundservice.view.components.filter.FilterLayoutWindow;
+import com.sos.jade.backgroundservice.view.components.filter.JadeFilesHistoryFilterLayout;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 /**
  * A MenuBar with the Jade related MenuItems; extends Vaadins {@link com.vaadin.ui.MenuBar MenuBar}
@@ -45,10 +57,11 @@ public class JadeMenuBar extends MenuBar {
 	private MenuItem mHelp;
 	private MenuItem smActivateFilter;
 	private MenuItem smDuplicatesFilter;
+	private MenuItem smPreferencesReuseFilter;
+	private MenuItem smAutoRefresh;
 	private MenuItem smLoadFilter;
 	private MenuItem smSaveFilter;
 	private MenuItem smPreferencesLanguages;
-	private MenuItem smPreferencesReuseFilter;
 	private MenuItem smPreferencesDetails;
 	private MenuItem ssmGermanCheck;
 	private MenuItem ssmEnglishUKCheck;
@@ -90,7 +103,6 @@ public class JadeMenuBar extends MenuBar {
 		createTopLevelMenuItems();
 		createFilterMenuItems();
 		createPreferencesLanguageMenuItems();
-		createPreferencesReuseFilterMenuItem();
 		createPreferencesVisibleDetails();
 		createHelpMenuItems();
 	}
@@ -110,6 +122,28 @@ public class JadeMenuBar extends MenuBar {
 		    }  
 		});
 		mFilter.addSeparator();
+		createRemoveDuplicatesMenuItem();
+		createReuseFilterMenuItem();
+		createAutoRefreshMenuItem();
+	}
+	
+	private void createAutoRefreshMenuItem(){
+		this.smAutoRefresh = mFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "autorefresh", actualLocale), new Command() {
+			
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+				.putBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, selectedItem.isChecked());
+				if(mainView == null){
+					mainView = getMainViewFromCurrentUI();
+				}
+				mainView.setAutoRefresh(selectedItem.isChecked());
+			}
+		});
+		smAutoRefresh.setCheckable(true);
+	}
+
+	private void createRemoveDuplicatesMenuItem(){
 		this.smDuplicatesFilter = mFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "removeDuplicates", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			public void menuSelected(MenuItem selectedItem) {
@@ -135,8 +169,8 @@ public class JadeMenuBar extends MenuBar {
 		this.smDuplicatesFilter.setCheckable(true);
 		this.smDuplicatesFilter.setEnabled(true);
 	}
-
-	private void createPreferencesReuseFilterMenuItem(){
+	
+	private void createReuseFilterMenuItem(){
 		smPreferencesReuseFilter = this.mFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "reuseFilter", actualLocale), new MenuBar.Command() {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -332,6 +366,21 @@ public class JadeMenuBar extends MenuBar {
     	ssmSpanishCheck.setChecked(false);
 	}
 	
+	public void refreshAutoRefreshOnInit(){
+		try {
+			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
+				boolean refresh = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+						.getBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, false);
+				smAutoRefresh.setChecked(refresh);
+				mainView.setAutoRefresh(refresh);
+			}
+		} catch (BackingStoreException e) {
+			log.warn("Unable to read from PreferenceStore, using defaults.");
+			smAutoRefresh.setChecked(false);
+			mainView.setAutoRefresh(false);
+		}
+	}
+	
 	public void refreshSelectedLangOnInit(){
 		try {
 			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
@@ -448,6 +497,7 @@ public class JadeMenuBar extends MenuBar {
 		ssmLinksFaq.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "faq", actualLocale));
 		ssmLinksClientDocu.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "clientDocu", actualLocale));
 		ssmLinksApiReference.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "api", actualLocale));
+		smAutoRefresh.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "autorefresh", actualLocale));
 		for(MenuItem item : smPreferencesDetails.getChildren()){
 			for(String key : globalDetailKeys){
 				if(item.getText().equals(messages.getValue(key, lastLocale))){

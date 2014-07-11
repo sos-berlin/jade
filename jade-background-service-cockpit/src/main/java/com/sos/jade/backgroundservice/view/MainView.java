@@ -59,7 +59,11 @@ import com.vaadin.ui.VerticalLayout;
 
 public class MainView extends CustomComponent implements View{
 	private static final long serialVersionUID = 6368275374953898482L;
+	private static final String primaryProgressBarStyle = "v-progressbar";
+	private static final Long DELAY_MEDIUM = 2000L;
+	private static final Long DELAY_LONG = 5000L;
 	public static final String NAME = "";
+	private static final Long WAIT = 60000L;
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	private List<JadeFilesHistoryDBItem> historyItems;
 	private JadeFileHistoryTable tblFileHistory;
@@ -80,17 +84,15 @@ public class MainView extends CustomComponent implements View{
 	private JadeBSMessages messages;
 	private Date progressStart;
 	private HorizontalLayout hlResetAndProgress;
-	private static final String primaryProgressBarStyle = "v-progressbar";
-	private static final Long DELAY_MEDIUM = 2000L;
-	private static final Long DELAY_LONG = 5000L;
 	private boolean removeDuplicates = false;
-	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 	private Locale currentLocale = VaadinSession.getCurrent().getLocale();
 	private DuplicatesFilter duplicatesFilter = new DuplicatesFilter();
 	private Float lastSplitPosition;
 	private HorizontalSplitPanel splitter;
 	private List<CssLayout> allLangs = new ArrayList<CssLayout>();
 	private List<Locale> allLocales = new ArrayList<Locale>();
+	private boolean autoRefresh = false;
 
 	public MainView() {
 		this.messages = new JadeBSMessages("JADEBSMessages", currentLocale);
@@ -114,43 +116,7 @@ public class MainView extends CustomComponent implements View{
     	progressStart = new Date();
     	new SleeperThreadMedium().start();
     	new SleeperThreadLong().start();
-		new Thread() {
-            @Override
-            public void run() {
-		        try {
-		        	fileListener.filterJadeFilesHistory(filter);
-		        } catch (final Exception e) {
-		        	fileListener.getException(e);
-		        }
-				UI.getCurrent().access(new Runnable() {
-					@Override
-					public void run() {
-						jmb.getSmDuplicatesFilter().setChecked(checkRemoveDuplicatesSettings());
-						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
-				        tblFileHistory.populateDatasource(historyItems);
-						fileListener.closeJadeFilesHistoryDbSession();
-						if(checkRemoveDuplicatesSettings()){
-							duplicatesFilter.setHistoryItems(historyItems);
-							((IndexedContainer)tblFileHistory.getContainerDataSource()).addContainerFilter(duplicatesFilter);
-						}else if(((IndexedContainer)tblFileHistory.getContainerDataSource()).hasContainerFilters()){
-							duplicatesFilter.setHistoryItems(historyItems);
-							((IndexedContainer)tblFileHistory.getContainerDataSource()).removeContainerFilter(duplicatesFilter);
-						}
-						log.debug("feedback received from proxy about Hibernate SESSION close at " + sdf.format(new Date()) + "!");
-					}
-				});
-				UI.getCurrent().access(new Runnable() {
-					
-					@Override
-					public void run() {
-						jmb.refreshSelectedLangOnInit();
-						jmb.refreshSelectedDetailsOnInit();
-						refreshButtonVisibility();
-						disableCurrentLocaleIcon();
-					}
-				});
-            };
-        }.start();
+    	new FilterThread(filter, true).start();
 	}
 	
 	private void initComponents(){
@@ -475,11 +441,17 @@ public class MainView extends CustomComponent implements View{
         splitter.addComponent(tblDetails);
 	}
 	
-	private void setSplitPosition(){
+	private void setSplitPosition(Boolean itemVisible){
 		Float newLastSplitPosition = splitter.getSplitPosition();
 		if(first){
 			first = false;
 			splitter.setSplitPosition(75);
+		}else if(itemVisible){
+			if(lastSplitPosition.equals(100.0f)){
+				splitter.setSplitPosition(75);
+			}else{
+				splitter.setSplitPosition(lastSplitPosition);
+			}
 		}else{
 			splitter.setSplitPosition(lastSplitPosition);
 		}
@@ -499,11 +471,11 @@ public class MainView extends CustomComponent implements View{
 		}else if (markedRow != null && !markedRow.equals(item)){
 			markedRow = item;
 			tblDetails.setVisible(true);
-			setSplitPosition();
+			setSplitPosition(true);
 		}else{
 			markedRow = item;
 			tblDetails.setVisible(true);
-			setSplitPosition();
+			setSplitPosition(true);
 		}
 	}
 	
@@ -559,6 +531,102 @@ public class MainView extends CustomComponent implements View{
 				}
 			});
 		}
+	}
+
+	/**
+	 * Timed Thread, to automatically update Table with new Data
+	 * 
+	 * @author SP
+	 *
+	 */
+	public class AutoRefreshThread extends Thread{
+		Date actual = null;
+		Date started = new Date();
+		@Override
+		public void run() {
+			try {
+				sleep(WAIT);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			UI.getCurrent().access(new Runnable() {
+				@Override
+				public void run() {
+					if(!autoRefresh){
+						return;
+					}else{
+						autoRefresh();
+					}
+				}
+			});
+		}
+	}
+	
+	private class FilterThread extends Thread{
+		private JadeFilesHistoryFilter filter;
+		private boolean updateMenuBar;
+
+		public FilterThread(JadeFilesHistoryFilter filter, boolean updateMenuBar){
+			this.filter = filter;
+			this.updateMenuBar = updateMenuBar;
+		}
+		
+        @Override
+        public void run() {
+	        try {
+	        	fileListener.filterJadeFilesHistory(filter);
+	        } catch (final Exception e) {
+	        	fileListener.getException(e);
+	        }
+			UI.getCurrent().access(new Runnable() {
+				@Override
+				public void run() {
+					if (updateMenuBar) {
+						jmb.getSmDuplicatesFilter().setChecked(checkRemoveDuplicatesSettings());
+						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
+					}
+					tblFileHistory.populateDatasource(historyItems);
+					fileListener.closeJadeFilesHistoryDbSession();
+					if(checkRemoveDuplicatesSettings()){
+						duplicatesFilter.setHistoryItems(historyItems);
+						((IndexedContainer)tblFileHistory.getContainerDataSource()).addContainerFilter(duplicatesFilter);
+					}else if(((IndexedContainer)tblFileHistory.getContainerDataSource()).hasContainerFilters()){
+						duplicatesFilter.setHistoryItems(historyItems);
+						((IndexedContainer)tblFileHistory.getContainerDataSource()).removeContainerFilter(duplicatesFilter);
+					}
+					log.debug("feedback received from proxy about Hibernate SESSION close at " + sdf.format(new Date()) + "!");
+				}
+			});
+			UI.getCurrent().access(new Runnable() {
+				@Override
+				public void run() {
+					if (updateMenuBar) {
+						jmb.refreshSelectedLangOnInit();
+						jmb.refreshSelectedDetailsOnInit();
+						jmb.refreshAutoRefreshOnInit();
+					}
+					refreshButtonVisibility();
+					disableCurrentLocaleIcon();
+					markAsDirty();
+				}
+			});
+        };
+	}
+	
+	private void autoRefresh(){
+		toggleTableVisiblity(null);
+    	FilterThread filterThread;
+		if(checkReuseLastFilterSettings()){
+			filterThread = new FilterThread(createReusedFilter(), false);
+		}else{
+			filterThread = new FilterThread(null, false);
+		}
+		filterThread.start();
+		do{
+			continue;
+		}while(filterThread.isAlive());
+		new AutoRefreshThread().start();
 	}
 
 	private boolean checkReuseLastFilterSettings(){
@@ -694,6 +762,17 @@ public class MainView extends CustomComponent implements View{
 
 	public Locale getCurrentLocale() {
 		return currentLocale;
+	}
+
+	public boolean isAutoRefresh() {
+		return autoRefresh;
+	}
+
+	public void setAutoRefresh(boolean autoRefresh) {
+		this.autoRefresh = autoRefresh;
+		if(this.autoRefresh){
+			new AutoRefreshThread().start();
+		}
 	}
 
 	@Override
