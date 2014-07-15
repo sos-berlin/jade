@@ -193,6 +193,15 @@ public class JadeTestFtp extends JadeTestBase {
 		objOptions.profile.Value("Copy_Local2FTP_recursive");
 		super.testUseProfileWOCreatingTestFiles();
 	}
+	
+	@Test
+	public void copy_local2ftp_replacingWithCreateDirectory() throws Exception {
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::copy_local2ftp_replacingWithCreateDirectory";
+		objOptions.settings.Value(strSettingsFile);
+		objOptions.profile.Value("copy_local2ftp_replacingWithCreateDirectory");
+		super.testUseProfileWOCreatingTestFiles();
+	}
 
 	@Test
 	public void testPCL_FTP_REC() throws Exception {
