@@ -99,7 +99,7 @@ public class MainView extends CustomComponent implements View{
 		this.fileListener = new JadeFileListenerProxy(this);
 		setSizeFull();
 		setImmediate(true);
-//		initView();
+		initView();
 	}
 	
 	public void initView(){
@@ -156,16 +156,6 @@ public class MainView extends CustomComponent implements View{
         vLayout.setExpandRatio(vRest, 1);
         createResetAndProgressLayout();
         createTablesLayout();
-    	Button logout = new Button("Logout", new Button.ClickListener() {
-    		@Override 
-    		public void buttonClick(ClickEvent event) {
-    			// "Logout" the user
-    			getSession().setAttribute("user", null);
-    			// Refresh this view, should redirect to login view
-    			((BackgroundserviceUI)getUI()).setContent(new LoginView());
-    		}
-    	});
-    	vRest.addComponent(logout);
 	}
 	
 	private ProgressBar initProgressBar(){
@@ -344,11 +334,11 @@ public class MainView extends CustomComponent implements View{
 	public void refreshButtonVisibility(){
 		List<Locale> checkedLocales = jmb.getCheckedLanguages();
 		for(Locale checkedLocale : checkedLocales){
-			setButtonVisibile(checkedLocale);
+			setButtonVisible(checkedLocale);
 		}
 		for(Locale locale : allLocales){
 			if(!checkedLocales.contains(locale)){
-				setButtonNotVisibile(locale);
+				setButtonNotVisible(locale);
 			}
 		}
 		if(!checkedLocales.contains(currentLocale)){
@@ -357,7 +347,7 @@ public class MainView extends CustomComponent implements View{
 		}
 	}
 	
-	private void setButtonNotVisibile(Locale locale){
+	private void setButtonNotVisible(Locale locale){
 		if(locale.getCountry().equals(Locale.GERMANY.getCountry())){
 			lblDE.setVisible(false);
 		}else if(locale.getCountry().equals(Locale.UK.getCountry())){
@@ -369,7 +359,7 @@ public class MainView extends CustomComponent implements View{
 		}
 	}
 	
-	private void setButtonVisibile(Locale locale){
+	private void setButtonVisible(Locale locale){
 		if(locale.getCountry().equals(Locale.GERMANY.getCountry())){
 			lblDE.setVisible(true);
 		}else if(locale.getCountry().equals(Locale.UK.getCountry())){
@@ -606,6 +596,12 @@ public class MainView extends CustomComponent implements View{
 						jmb.refreshSelectedDetailsOnInit();
 						jmb.refreshAutoRefreshOnInit();
 					}
+					markAsDirty();
+				}
+			});
+			UI.getCurrent().access(new Runnable() {
+				@Override
+				public void run() {
 					refreshButtonVisibility();
 					disableCurrentLocaleIcon();
 					markAsDirty();

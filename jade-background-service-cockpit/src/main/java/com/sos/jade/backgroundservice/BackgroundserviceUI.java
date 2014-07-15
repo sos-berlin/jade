@@ -25,6 +25,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -36,7 +37,7 @@ import com.vaadin.ui.UI;
 public class BackgroundserviceUI extends UI {
 	private static final long serialVersionUID = 1L;
 	public static final JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
-	public static Cookie cookie;
+//	public static Cookie cookie;
 	public static final Preferences prefs = jadeBsOptions.getPreferenceStore();
 	public static String parentNodeName;
 	private MainView mainView;
@@ -61,8 +62,10 @@ public class BackgroundserviceUI extends UI {
 			VaadinSession.getCurrent().getLockInstance().lock();
 			if (VaadinSession.getCurrent().getAttribute(SessionAttributes.SESSION_ID.name()) == null) {
 				VaadinSession.getCurrent().setAttribute(SessionAttributes.SESSION_ID.name(), SessionAttributes.SESSION_ID);
-				jsSessionId = request.getParameter(SESSION_ID);
-				securityServer = request.getParameter(SECURITY_SERVER);
+//				jsSessionId = request.getParameter(SESSION_ID);
+//				securityServer = request.getParameter(SECURITY_SERVER);
+				parentNodeName = ((VaadinServletRequest) request).getHttpServletRequest().getRemoteAddr();
+				prefs.node(parentNodeName);
 //				setCookieUsage(request);
 			}
 		} finally {
@@ -70,52 +73,55 @@ public class BackgroundserviceUI extends UI {
 		}
     	mainView = new MainView();
     	aboutWindow = new AboutWindow();
-    	// no content for this view, the navigator does the trick
-		// Create a new instance of the navigator. The navigator will attach itself automatically to this view. 
-		new Navigator(this, this);
-		// the initial log view where the user can login to the application 
-		getNavigator().addView(LoginView.NAME, LoginView.class);
-		// add the main view of the application 
-		getNavigator().addView(MainView.NAME, mainView); 
-		// use a view change handler to ensure the user is always redirected to the login view if the user is not logged in.
-		getNavigator().addViewChangeListener(new ViewChangeListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override 
-			public boolean beforeViewChange(ViewChangeEvent event) {
-				//Check if a user has logged in
-				boolean isLoggedIn = getSession().getAttribute("user") != null;
-				boolean isLoginView = event.getNewView() instanceof LoginView;
-				if (!isLoggedIn && !isLoginView) { 
-					// Redirect to login view always if a user has not yet logged in 
-					getNavigator().navigateTo(LoginView.NAME); 
-					return false;
-				} else if (isLoggedIn && isLoginView) { 
-					// If someone tries to access to login view while logged in, 
-					// navigate to MainView
-					mainView.initView();
-					modalWindow = new FilterLayoutWindow();
-					getNavigator().navigateTo(MainView.NAME); 
-					return false; 
-				}
-				return true; 
-			}
-
-			@Override 
-			public void afterViewChange(ViewChangeEvent event) {
-
-			} 
-		}); 
-    	if(checkJsSessionId()){
-			prefs.node(parentNodeName);
-			// No login view needed, navigate directly to mainView 
-			mainView.initView();
-			modalWindow = new FilterLayoutWindow();
-			getNavigator().navigateTo(MainView.NAME);
-    	}else{
-    		// no authentication with the given sessionId or sessionId is null, navigate to login view
-    		getNavigator().navigateTo(LoginView.NAME);
-    	}
+		modalWindow = new FilterLayoutWindow();
+    	setContent(mainView);
+//    	// for the future
+//    	// no content for this view, the navigator does the trick
+//		// Create a new instance of the navigator. The navigator will attach itself automatically to this view. 
+//		new Navigator(this, this);
+//		// the initial log view where the user can login to the application 
+//		getNavigator().addView(LoginView.NAME, LoginView.class);
+//		// add the main view of the application 
+//		getNavigator().addView(MainView.NAME, mainView); 
+//		// use a view change handler to ensure the user is always redirected to the login view if the user is not logged in.
+//		getNavigator().addViewChangeListener(new ViewChangeListener() {
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override 
+//			public boolean beforeViewChange(ViewChangeEvent event) {
+//				//Check if a user has logged in
+//				boolean isLoggedIn = getSession().getAttribute("user") != null;
+//				boolean isLoginView = event.getNewView() instanceof LoginView;
+//				if (!isLoggedIn && !isLoginView) { 
+//					// Redirect to login view always if a user has not yet logged in 
+//					getNavigator().navigateTo(LoginView.NAME); 
+//					return false;
+//				} else if (isLoggedIn && isLoginView) { 
+//					// If someone tries to access to login view while logged in, 
+//					// navigate to MainView
+//					mainView.initView();
+//					modalWindow = new FilterLayoutWindow();
+//					getNavigator().navigateTo(MainView.NAME); 
+//					return false; 
+//				}
+//				return true; 
+//			}
+//
+//			@Override 
+//			public void afterViewChange(ViewChangeEvent event) {
+//
+//			} 
+//		}); 
+//    	if(checkJsSessionId()){
+//			prefs.node(parentNodeName);
+//			// No login view needed, navigate directly to mainView 
+//			mainView.initView();
+//			modalWindow = new FilterLayoutWindow();
+//			getNavigator().navigateTo(MainView.NAME);
+//    	}else{
+//    		// no authentication with the given sessionId or sessionId is null, navigate to login view
+//    		getNavigator().navigateTo(LoginView.NAME);
+//    	}
     }
 
 //	private void setCookieUsage(final VaadinRequest request){
@@ -136,39 +142,39 @@ public class BackgroundserviceUI extends UI {
 //        response.addCookie(this.cookie);
 //	}
 	
-	private boolean checkJsSessionId(){
-		if(jsSessionId == null){
-			jsSessionId = VaadinService.getCurrentRequest().getParameter(SESSION_ID);
-		}
-		if(securityServer == null){
-			securityServer = VaadinService.getCurrentRequest().getParameter(SECURITY_SERVER);
-		}
-		if (securityServer != null && jsSessionId != null) {
-			SOSRestShiroClient sosRestShiroClient = new SOSRestShiroClient();
-			SOSWebserviceAuthenticationRecord sosWebserviceAuthenticationRecord = new SOSWebserviceAuthenticationRecord();
-			sosWebserviceAuthenticationRecord.setResource(securityServer + COMMAND_PERMISSIONS);
-			sosWebserviceAuthenticationRecord.setSessionId(jsSessionId);
-			try {
-        		SOSPermissionShiro sosPermissionShiro = sosRestShiroClient.getSOSPermissionShiro(new URL(String.format(sosWebserviceAuthenticationRecord.getResource(), sosWebserviceAuthenticationRecord.getSessionId())));
-        		if(sosPermissionShiro.isAuthenticated()){
-            		SOSJaxbSubject currentUser = new SOSJaxbSubject(sosPermissionShiro);
-                    if (currentUser == null){
-						Notification.show("error authenticating with sessionID", Type.ERROR_MESSAGE);
-                    }else if (!currentUser.isAuthenticated()) {
-            			Notification.show("could not authenticate with sessionID", Type.ERROR_MESSAGE);
-            		}else{
-    					getSession().setAttribute("user", sosPermissionShiro.getUser());
-    					parentNodeName = sosPermissionShiro.getUser();
-    					return true;
-            		}
-        		}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
+//	private boolean checkJsSessionId(){
+//		if(jsSessionId == null){
+//			jsSessionId = VaadinService.getCurrentRequest().getParameter(SESSION_ID);
+//		}
+//		if(securityServer == null){
+//			securityServer = VaadinService.getCurrentRequest().getParameter(SECURITY_SERVER);
+//		}
+//		if (securityServer != null && jsSessionId != null) {
+//			SOSRestShiroClient sosRestShiroClient = new SOSRestShiroClient();
+//			SOSWebserviceAuthenticationRecord sosWebserviceAuthenticationRecord = new SOSWebserviceAuthenticationRecord();
+//			sosWebserviceAuthenticationRecord.setResource(securityServer + COMMAND_PERMISSIONS);
+//			sosWebserviceAuthenticationRecord.setSessionId(jsSessionId);
+//			try {
+//        		SOSPermissionShiro sosPermissionShiro = sosRestShiroClient.getSOSPermissionShiro(new URL(String.format(sosWebserviceAuthenticationRecord.getResource(), sosWebserviceAuthenticationRecord.getSessionId())));
+//        		if(sosPermissionShiro.isAuthenticated()){
+//            		SOSJaxbSubject currentUser = new SOSJaxbSubject(sosPermissionShiro);
+//                    if (currentUser == null){
+//						Notification.show("error authenticating with sessionID", Type.ERROR_MESSAGE);
+//                    }else if (!currentUser.isAuthenticated()) {
+//            			Notification.show("could not authenticate with sessionID", Type.ERROR_MESSAGE);
+//            		}else{
+//    					getSession().setAttribute("user", sosPermissionShiro.getUser());
+//    					parentNodeName = sosPermissionShiro.getUser();
+//    					return true;
+//            		}
+//        		}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return false;
+//			}
+//		}
+//		return false;
+//	}
 
 	public FilterLayoutWindow getModalWindow() {
 		return modalWindow;

@@ -67,6 +67,11 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
+			        <packagingExcludes>
+						WEB-INF/lib/dom4j*.jar, 
+						WEB-INF/lib/guava*.jar, 
+						WEB-INF/lib/x*.jar 
+					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
@@ -170,10 +175,12 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!--
 		  Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
@@ -198,15 +205,16 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -214,24 +222,202 @@
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
             <version>${project.version}</version>
+<!-- 			<scope>provided</scope> -->
+			<exclusions>
+		        <exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>jobscheduler-helper</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-util</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-connection</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-settings</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>hibernate-commons</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>sos-scheduler</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>sos</groupId>
+		            <artifactId>hostware</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>junit</groupId>
+		            <artifactId>junit</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>javassist</groupId>
+		            <artifactId>javassist</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>javax.transaction</groupId>
+		            <artifactId>jta</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>antlr</groupId>
+		            <artifactId>antlr</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>joda-time</groupId>
+		            <artifactId>joda-time</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>commons-collections</groupId>
+		            <artifactId>commons-collections</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.oracle</groupId>
+		            <artifactId>ojdbc6</artifactId>
+		        </exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
             <version>${project.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+		        <exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>hibernate-commons</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>jobscheduler-helper</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>javassist</groupId>
+		            <artifactId>javassist</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sun.jersey</groupId>
+		            <artifactId>jersey-client</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.sun.jersey</groupId>
+		            <artifactId>jersey-server</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.oracle</groupId>
+		            <artifactId>ojdbc6</artifactId>
+		        </exclusion>
+				<exclusion>
+					<groupId>org.apache.shiro</groupId>
+					<artifactId>shiro-all</artifactId>
+				</exclusion>
+		        <exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson-core</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson-annotations</artifactId>
+		        </exclusion>
+				<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sos-berlin.jobscheduler</groupId>
+					<artifactId>jobscheduler-web-services-globals</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>jobscheduler-helper</artifactId>
             <version>${project.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+		        <exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-util</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>commons-codec</groupId>
+		            <artifactId>commons-codec</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>commons-logging</groupId>
+		            <artifactId>commons-logging</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>xalan</groupId>
+		            <artifactId>xalan</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>xerces</groupId>
+		            <artifactId>xercesImpl</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>net.sf.saxon</groupId>
+		            <artifactId>Saxon-HE</artifactId>
+		        </exclusion>
+			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+<!-- 		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<scope>provided</scope>
 		</dependency>
-		
+ -->
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>hibernate-commons</artifactId>
+			<version>1.8-SNAPSHOT</version>
+			<exclusions>
+		       <exclusion>
+				    <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>jobscheduler-helper</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>joda-time</groupId>
+		            <artifactId>joda-time</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>joda-time</groupId>
+		            <artifactId>joda-time-hibernate</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson-annotations</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>com.google.guava</groupId>
+		            <artifactId>guava</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>javassist</groupId>
+		            <artifactId>javassist</artifactId>
+		        </exclusion>
+				<exclusion>
+					<groupId>org.eclipse.swt</groupId>
+					<artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
+				</exclusion>
+				<exclusion>
+		           <groupId>net.sourceforge.jtds</groupId>
+		           <artifactId>jtds</artifactId>
+		        </exclusion>
+		        <exclusion>
+			     <groupId>org.postgresql</groupId>
+			     <artifactId>postgresql</artifactId>
+		        </exclusion>      
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 </project>
