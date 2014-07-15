@@ -96,7 +96,7 @@ public class JadeMenuBar extends MenuBar {
 		};
 		createTopLevelMenuItems();
 		createFileMenuItems();
-		createFilterMenuItems();
+//		createFilterMenuItems();
 		createPreferencesLanguageMenuItems();
 		createPreferencesVisibleDetails();
 		createHelpMenuItems();
