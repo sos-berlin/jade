@@ -1,34 +1,11 @@
 package com.sos.DataExchange;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-
-import junit.framework.Assert;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.Logging.Log4JHelper;
-import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod;
+import com.sos.JSHelper.Options.*;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.Options.SOSOptionJSTransferMethod.enuJSTransferModes;
-import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation.enuJadeOperations;
-import com.sos.JSHelper.Options.SOSOptionPortNumber;
-import com.sos.JSHelper.Options.SOSOptionRegExp;
-import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
@@ -38,6 +15,19 @@ import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Options.SOSConnection2Options;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import junit.framework.Assert;
+import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
 
 public abstract class JadeTestBase extends JSToolBox {
 	class WriteFile4Polling implements Runnable {
@@ -176,7 +166,6 @@ public abstract class JadeTestBase extends JSToolBox {
 	private JadeEngine				objJadeEngine	= null;
 	protected final String			conClassName	= "JadeTestBase";
 	protected static final Logger	logger			= Logger.getLogger(JadeTestBase.class);
-	protected static Log4JHelper	objLogger		= null;
 
 	/**
 	 * \brief tearDownAfterClass
@@ -644,10 +633,6 @@ public abstract class JadeTestBase extends JSToolBox {
 //		String strLog4JFileName = "./log4j.properties";
 		String strLog4JFileName = "./src/test/resources/log4j.properties";
 		String strT = new File(strLog4JFileName).getAbsolutePath();
-		objLogger = new Log4JHelper(strLog4JFileName);
-		//		objLogger.setLevel(Level.DEBUG);
-		logger.setLevel(Level.INFO);
-		//		 RootLogger.setLevel(Level.INFO);
 		logger.info("log4j properties filename = " + strT);
 		objOptions = new JADEOptions();
 		objOptions.Source().protocol.Value(enuSourceTransferType);

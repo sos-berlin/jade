@@ -2,19 +2,17 @@
  *
  */
 package com.sos.jade.userinterface.adapters;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.eclipse.swt.widgets.Display;
-
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSToolBox;
-import com.sos.JSHelper.Logging.Log4JHelper;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.jade.userinterface.composite.LogFileComposite;
 import com.sos.jade.userinterface.data.JadeTreeViewEntry;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @author KB
@@ -28,7 +26,6 @@ public class SOSDataExchangeAdapter extends JSToolBox {
 	@SuppressWarnings("unused")
 	private static final String			conSVNVersion	= "$Id$";
 	@SuppressWarnings("unused")
-	private static Log4JHelper			objLogger		= null;
 	private JADEOptions				objOptions		= null;
 	@SuppressWarnings("unused")
 	private final ISOSVFSHandler		objVFS			= null;
@@ -76,9 +73,6 @@ public class SOSDataExchangeAdapter extends JSToolBox {
 		// String strLog4JFileName = "./log4j.properties";
 		// String strT = new File(strLog4JFileName).getAbsolutePath();
 		// System.out.println(strT);
-		//		objLogger = new Log4JHelper(strLog4JFileName); //$NON-NLS-1$
-		// objLogger.setLevel(Level.DEBUG);
-		// // objLogger.setLevel(Level.INFO);
 		// logger.info("logfilename = " + strT);
 //		objOptions = objTreeViewEntry.getOptions();
 		objOptions = null;

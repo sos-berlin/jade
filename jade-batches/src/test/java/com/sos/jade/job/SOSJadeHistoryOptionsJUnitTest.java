@@ -2,19 +2,12 @@
 
 package com.sos.jade.job;
 
-import static org.junit.Assert.assertEquals;
-
-
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-import com.sos.JSHelper.Logging.Log4JHelper;
+import org.apache.log4j.Logger;
+import org.junit.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * \class 		SOSJadeHistoryOptionsJUnitTest - Import from order or file to JadeHistoryTable
@@ -47,7 +40,6 @@ public class SOSJadeHistoryOptionsJUnitTest extends  JSToolBox {
 		@SuppressWarnings("unused") //$NON-NLS-1$
 	private static Logger		logger			= Logger.getLogger(SOSJadeHistoryOptionsJUnitTest.class);
 	@SuppressWarnings("unused")
-	private static Log4JHelper	objLogger		= null;
 	private SOSJadeHistory objE = null;
 
 	protected SOSJadeHistoryOptions	objOptions			= null;
@@ -66,7 +58,6 @@ public class SOSJadeHistoryOptionsJUnitTest extends  JSToolBox {
 
 	@Before
 	public void setUp() throws Exception {
-		objLogger = new Log4JHelper("./log4j.properties"); //$NON-NLS-1$
 		objE = new SOSJadeHistory();
 		objE.registerMessageListener(this);
 		objOptions = objE.Options();

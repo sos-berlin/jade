@@ -3,7 +3,6 @@ package com.sos.DataExchange;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.JSHelper.Basics.VersionInfo;
-import com.sos.JSHelper.Logging.Log4JHelper;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
@@ -32,7 +31,6 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 
 	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngine4DMZMain.class);
 	@SuppressWarnings("unused")
-	private static Log4JHelper	objLoggerHelper	= null;
 	protected JADEOptions		objOptions		= null;
 
 	/**
@@ -53,10 +51,6 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 
 		// will setup basic logging to the console, and the error messages will be gone.
 		org.apache.log4j.BasicConfigurator.configure();
-
-		// objLoggerHelper = new Log4JHelper("./log4j.properties");
-		//
-		// logger = Logger.getRootLogger();
 
 	 	SOSDataExchangeEngine4DMZMain objEngine = new SOSDataExchangeEngine4DMZMain();
 	 	objEngine.Execute(pstrArgs);
@@ -88,17 +82,9 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 				}
 			}
 
-			objLoggerHelper = new Log4JHelper(strLog4jPropertyFileName);
-			logger = Logger.getRootLogger();
-
 			objM.setJSJobUtilites(this);
 			objO.SendTransferHistory.value(true);
 			objO.CommandLineArgs(pstrArgs);
-
-			if (objO.log4jPropertyFileName.isDirty()) {
-				objLoggerHelper = new Log4JHelper(objO.log4jPropertyFileName.Value());
-				logger = Logger.getRootLogger();
-			}
 
 			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
 			logger.debug(conSVNVersion);

@@ -2,20 +2,12 @@
 
 package com.sos.jade.job;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-import com.sos.JSHelper.Logging.Log4JHelper;
+import org.apache.log4j.Logger;
+import org.junit.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * \class 		JadeDeleteHistoryOptionsJUnitTest - Delete entries in Jade history table
@@ -48,7 +40,6 @@ public class JadeDeleteHistoryOptionsJUnitTest extends  JSToolBox {
 		@SuppressWarnings("unused") //$NON-NLS-1$
 	private static Logger		logger			= Logger.getLogger(JadeDeleteHistoryOptionsJUnitTest.class);
 	@SuppressWarnings("unused")
-	private static Log4JHelper	objLogger		= null;
 	private JadeDeleteHistory objE = null;
 
 	protected JadeDeleteHistoryOptions	objOptions			= null;
@@ -67,7 +58,6 @@ public class JadeDeleteHistoryOptionsJUnitTest extends  JSToolBox {
 
 	@Before
 	public void setUp() throws Exception {
-		objLogger = new Log4JHelper("./log4j.properties"); //$NON-NLS-1$
 		objE = new JadeDeleteHistory();
 		objE.registerMessageListener(this);
 		objOptions = objE.Options();

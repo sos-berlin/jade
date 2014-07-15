@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSToolBox;
-import com.sos.JSHelper.Logging.Log4JHelper;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.Options.SOSOptionJSTransferMethod.enuJSTransferModes;
@@ -50,7 +49,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	private static final String	conHostName8OF9_SOS		= "8of9.sos";
 	private final String		conClassName			= "SOSFTPCommandSendTest";
 	private final static Logger		logger					= Logger.getLogger(SOSDataExchangeEngineTest.class);
-	private static Log4JHelper	objLogger				= null;
 	private JADEOptions		objOptions				= null;
 	private final String		strSettingsFileName		= "./scripts/sosdex_settings.ini";
 //	protected String			strSettingsFile			= "R:/backup/sos/java/development/SOSDataExchange/examples/jade_settings.ini";
@@ -106,9 +104,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	@Before public void setUp() throws Exception {
 		String strLog4JFileName = "./log4j.properties";
 		String strT = new File(strLog4JFileName).getAbsolutePath();
-		objLogger = new Log4JHelper(strLog4JFileName);
-		objLogger.setLevel(Level.DEBUG);
-		// objLogger.setLevel(Level.INFO);
 		logger.info("log4j properties filename = " + strT);
 		//		objOptions = new JADEOptions();
 		objOptions = new JADEOptions();
@@ -325,7 +320,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	}
 
 	/**
-	 * Test method for {@link JadeEngine.net.sosftp.SOSFTPCommandSend#SOSFTPCommandSend(java.util.HashMap)}.
+	 * Test method for {@link sos.net.sosftp.SOSFTPCommandSend#SOSFTPCommandSend(java.util.HashMap)}.
 	 */
 	// @Test
 	public void testSOSFTPCommandSendHashMapOfStringString() {
@@ -333,7 +328,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	}
 
 	/**
-	 * Test method for {@link JadeEngine.net.sosftp.SOSFTPCommandSend#Options()}.
+	 * Test method for {@link sos.net.sosftp.SOSFTPCommandSend#Options()}.
 	 */
 	// @Test
 	public void testOptions() {
@@ -471,7 +466,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	}
 
 	/**
-	 * Test method for {@link JadeEngine.net.sosftp.SOSFTPCommandSend#send()}.
+	 * Test method for {@link sos.net.sosftp.SOSFTPCommandSend#send()}.
 	 * @throws Exception
 	 *
 	 */

@@ -1,8 +1,7 @@
 package com.sos.jade.job;
 
-import org.apache.log4j.Logger;
 import com.sos.JSHelper.Basics.JSToolBox;
-import com.sos.JSHelper.Logging.Log4JHelper;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -24,7 +23,6 @@ public class SOSJadeHistoryMain extends JSToolBox {
 	private final static String					conClassName						= "SOSJadeHistoryMain"; //$NON-NLS-1$
 	private static Logger		logger			= Logger.getLogger(SOSJadeHistoryMain.class);
 	@SuppressWarnings("unused")	
-	private static Log4JHelper	objLogger		= null;
 
 	protected SOSJadeHistoryOptions	objOptions			= null;
 
@@ -42,8 +40,6 @@ public class SOSJadeHistoryMain extends JSToolBox {
 	public final static void main(String[] pstrArgs) {
 
 		final String conMethodName = conClassName + "::Main"; //$NON-NLS-1$
-
-		objLogger = new Log4JHelper("./log4j.properties"); //$NON-NLS-1$
 
 		logger = Logger.getRootLogger();
 		logger.info("SOSJadeHistory - Main"); //$NON-NLS-1$
