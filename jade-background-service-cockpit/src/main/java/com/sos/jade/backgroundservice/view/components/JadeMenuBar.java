@@ -95,8 +95,8 @@ public class JadeMenuBar extends MenuBar {
 		    }  
 		};
 		createTopLevelMenuItems();
-		createFileMenuItems();
-//		createFilterMenuItems();
+//		createFileMenuItems();
+		createFilterMenuItems();
 		createPreferencesLanguageMenuItems();
 		createPreferencesVisibleDetails();
 		createHelpMenuItems();
@@ -541,12 +541,12 @@ public class JadeMenuBar extends MenuBar {
 		ssmLinksClientDocu.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "clientDocu", actualLocale));
 		ssmLinksApiReference.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_HELP + "api", actualLocale));
 		smAutoRefresh.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "autorefresh", actualLocale));
-		smLoadFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadFilter", actualLocale));
-		ssmLoadDetailsFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadDetailsFilter", actualLocale));
-		ssmLoadHistoryFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadHistoryFilter", actualLocale));
-		smSaveFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveFilter", actualLocale));
-		ssmSaveDetailsFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveDetailsFilter", actualLocale));
-		ssmSaveHistoryFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveHistoryFilter", actualLocale));
+//		smLoadFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadFilter", actualLocale));
+//		ssmLoadDetailsFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadDetailsFilter", actualLocale));
+//		ssmLoadHistoryFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadHistoryFilter", actualLocale));
+//		smSaveFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveFilter", actualLocale));
+//		ssmSaveDetailsFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveDetailsFilter", actualLocale));
+//		ssmSaveHistoryFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveHistoryFilter", actualLocale));
 		for(MenuItem item : smPreferencesDetails.getChildren()){
 			for(String key : globalDetailKeys){
 				if(item.getText().equals(messages.getValue(key, lastLocale))){
