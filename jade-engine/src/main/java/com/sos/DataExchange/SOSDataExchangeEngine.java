@@ -1,5 +1,4 @@
 package com.sos.DataExchange;
-
 import static com.sos.DataExchange.SOSJadeMessageCodes.EXCEPTION_RAISED;
 import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_D_0200;
 import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0100;
@@ -612,6 +611,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return objOptions;
 	}
 
+	@Override
+	public JADEOptions freshInstanceOfOptions() { 
+		objOptions = new JADEOptions();
+		return objOptions;
+	}
+
 	@Override public void setJadeOptions(final JSOptionsClass pobjOptions) {
 		objOptions = (JADEOptions) pobjOptions;
 	}
@@ -700,7 +705,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 				String strM = pobjO.subject.Value();
 				pobjO.subject.Value(objOptions.replaceVars(strM));
-//				http://www.sos-berlin.com/jira/browse/SOSFTP-201
+				//				http://www.sos-berlin.com/jira/browse/SOSFTP-201
 				strM = pobjO.body.Value();
 				strM = objOptions.replaceVars(strM);
 				strM += "\n" + "List of transferred Files:" + "\n";
@@ -937,11 +942,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
 								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
 								objSourceFileList.renameAtomicTransferFiles();
-								
 								executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
 								executePostTransferCommands(objDataTargetClient, objOptions.Target().PostTransferCommands);
 								executePostTransferCommands(objDataSourceClient, objOptions.Source().PostTransferCommands);
-								
 								objSourceFileList.DeleteSourceFiles();
 								if (objOptions.TransactionMode.isTrue()) {
 									objSourceFileList.EndTransaction();
@@ -1001,8 +1004,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			throw e;
 		}
 	}
-	
-	
+
 	private void executePostTransferCommands(final ISOSVfsFileTransfer objVfsFileTransfer, final SOSOptionCommandString postTransferCommands) throws Exception {
 		if (postTransferCommands.IsNotEmpty()) {
 			// TODO Command separator as global option
@@ -1012,7 +1014,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 		}
 	}
-	
 
 	private void selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
 			final SOSOptionBoolean poptRecurseFolders) throws Exception {
@@ -1047,8 +1048,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 *
 	 */
 	public void sendTransferHistory() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::sendTransferHistory";
+		@SuppressWarnings("unused") final String conMethodName = conClassName + "::sendTransferHistory";
 		if (objOptions.SendTransferHistory.isTrue()) {
 			String strBackgroundServiceHostName = objOptions.BackgroundServiceHost.Value();
 			if (isEmpty(strBackgroundServiceHostName)) {
@@ -1059,7 +1059,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				logger.debug("No data sent to the background service due to missing port number");
 				return;
 			}
-
 			for (SOSFileListEntry objEntry : objSourceFileList.List()) {
 				if (sendTransferHistory4File(objEntry)) {
 					lngNoOfTransferHistoryRecordsSent++;
@@ -1072,7 +1071,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			logger.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
 		}
 	} // private void sendTransferHistory
-	
 	SchedulerObjectFactory	objFactory	= null;
 
 	/**
