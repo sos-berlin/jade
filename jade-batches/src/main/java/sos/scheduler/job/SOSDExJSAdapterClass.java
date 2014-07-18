@@ -1,5 +1,19 @@
 package sos.scheduler.job;
 
+import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0017;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0018;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
+
+import java.io.File;
+
+import sos.spooler.Job_chain;
+import sos.spooler.Order;
+import sos.spooler.Variable_set;
+
 import com.sos.DataExchange.JadeEngine;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -8,13 +22,6 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import sos.spooler.Job_chain;
-import sos.spooler.Order;
-import sos.spooler.Variable_set;
-
-import java.io.File;
-
-import static com.sos.scheduler.messages.JSMessages.*;
 
 /**
  * \file SOSDExJSAdapterClass.java
@@ -101,6 +108,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 				objJadeEngine = new JadeEngine();
 				objJadeOptions = objJadeEngine.Options();
 			}
+		}
+		else {
+			objJadeOptions = objJadeEngine.freshInstanceOfOptions();
 		}
 		objJadeOptions.CurrentNodeName(getCurrentNodeName());
 		hsmParameters = getSchedulerParameterAsProperties(getJobOrOrderParameters());
