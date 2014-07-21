@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -1844,7 +1843,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		CreateTestFiles(15);
 		executeGenericIniFile("", "cumulate_using_cumulative_file");
 	}
-
+// sftp_cumulate_using_cumulative_file
+	@Test public void testsftp_cumulate_using_cumulative_file() throws Exception {
+		CreateTestFiles(15);
+		executeGenericIniFile("", "sftp_cumulate_using_cumulative_file");
+	}
+	
 	@Test public void testCopyFilesWithMD5() throws Exception {
 		CreateTestFiles(15);
 		executeGenericIniFile("", "copy_files_with_md5");
