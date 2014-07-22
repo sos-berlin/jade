@@ -67,11 +67,13 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
+<!--
 			        <packagingExcludes>
 						WEB-INF/lib/dom4j*.jar, 
 						WEB-INF/lib/guava*.jar, 
 						WEB-INF/lib/x*.jar 
 					</packagingExcludes>
+-->
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
@@ -97,7 +99,7 @@
 					<noServer>false</noServer>
 					<!-- Remove draftCompile when project is ready -->
 					<draftCompile>false</draftCompile>
-					<style>PRETTY</style>
+					<style>OBF</style>
 					<strict>true</strict>
 				</configuration>
 				<executions>
@@ -175,12 +177,10 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<!--
 		  Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
@@ -200,21 +200,19 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-push</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -222,7 +220,8 @@
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
             <version>${project.version}</version>
-<!-- 			<scope>provided</scope> -->
+<!-- 
+			<scope>provided</scope>
 			<exclusions>
 		        <exclusion>
 		            <groupId>com.sos-berlin.jobscheduler</groupId>
@@ -281,12 +280,14 @@
 		            <artifactId>ojdbc6</artifactId>
 		        </exclusion>
 			</exclusions>
-		</dependency>
+ -->
+ 		</dependency>
 
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
             <version>${project.version}</version>
+<!-- 
 			<scope>provided</scope>
 			<exclusions>
 		        <exclusion>
@@ -334,8 +335,10 @@
 					<artifactId>jobscheduler-web-services-globals</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+ -->
+ 		</dependency>
 
+<!-- 
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>jobscheduler-helper</artifactId>
@@ -367,19 +370,15 @@
 		            <artifactId>Saxon-HE</artifactId>
 		        </exclusion>
 			</exclusions>
-		</dependency>
-
-<!-- 		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<scope>provided</scope>
-		</dependency>
+ 		</dependency>
  -->
+
+<!--  
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>hibernate-commons</artifactId>
 			<version>1.8-SNAPSHOT</version>
-			<exclusions>
+ 			<exclusions>
 		       <exclusion>
 				    <groupId>com.sos-berlin.jobscheduler</groupId>
 		            <artifactId>jobscheduler-helper</artifactId>
@@ -418,6 +417,10 @@
 		        </exclusion>      
 			</exclusions>
 		</dependency>
-
+ -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
 	</dependencies>
 </project>
