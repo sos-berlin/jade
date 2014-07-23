@@ -103,7 +103,7 @@ public class JadeMenuBar extends MenuBar {
 	}
 	
 	private void createTopLevelMenuItems(){
-		this.mFile = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "file", actualLocale), null);
+//		this.mFile = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "file", actualLocale), null);
 		this.mFilter = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "filter", actualLocale), null);
 		this.mPreferences = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "preferences", actualLocale), null);
 		this.mHelp = addItem(messages.getValue(MESSAGE_RESOURCE_BASE + "help", actualLocale), null);
@@ -518,7 +518,7 @@ public class JadeMenuBar extends MenuBar {
 	public void refreshCaptions(Locale locale){
 		lastLocale = actualLocale;
 		actualLocale = locale;
-		mFile.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "file", actualLocale));
+//		mFile.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "file", actualLocale));
 		mFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "filter", actualLocale));
 		smActivateFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "doFilter", actualLocale));
 		smDuplicatesFilter.setText(messages.getValue(MESSAGE_RESOURCE_BASE + "removeDuplicates", actualLocale));

@@ -82,7 +82,7 @@ public class MainView extends CustomComponent implements View{
 	private final Logger log = Logger.getLogger(MainView.class);
 	private ProgressBar progress;
 	private JadeBSMessages messages;
-	private Date progressStart;
+//	private Date progressStart;
 	private HorizontalLayout hlResetAndProgress;
 	private boolean removeDuplicates = false;
 	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -93,6 +93,7 @@ public class MainView extends CustomComponent implements View{
 	private List<CssLayout> allLangs = new ArrayList<CssLayout>();
 	private List<Locale> allLocales = new ArrayList<Locale>();
 	private boolean autoRefresh = false;
+	private Label lblEntryCount;
 
 	public MainView() {
 		this.messages = new JadeBSMessages("JADEBSMessages", currentLocale);
@@ -113,9 +114,9 @@ public class MainView extends CustomComponent implements View{
 	}
 	
 	private void runFilter(final JadeFilesHistoryFilter filter){
-    	progressStart = new Date();
-    	new SleeperThreadMedium().start();
-    	new SleeperThreadLong().start();
+//    	progressStart = new Date();
+//    	new SleeperThreadMedium().start();
+//    	new SleeperThreadLong().start();
     	new FilterThread(filter, true).start();
 	}
 	
@@ -149,13 +150,13 @@ public class MainView extends CustomComponent implements View{
 		hlMenuBar.setComponentAlignment(lblUK, Alignment.BOTTOM_RIGHT);
 		hlMenuBar.setComponentAlignment(lblES, Alignment.BOTTOM_RIGHT);
 		setLanguageIconClickHandlers();
-		
         vRest = new VerticalLayout();
         vRest.setSizeFull();
         vLayout.addComponent(vRest);
         vLayout.setExpandRatio(vRest, 1);
         createResetAndProgressLayout();
         createTablesLayout();
+        vRest.setExpandRatio(splitter, 1);
 	}
 	
 	private ProgressBar initProgressBar(){
@@ -318,7 +319,13 @@ public class MainView extends CustomComponent implements View{
 		}
 		VaadinSession.getCurrent().setLocale(locale);
 		messages.setLocale(locale);
+		currentLocale = locale;
 		lblTitle.setValue(messages.getValue("MainView.title", locale));
+		if(historyItems == null || (historyItems != null && historyItems.size() == 0)){
+			lblEntryCount.setValue(messages.getValue("MainView.noEntries", locale));
+		}else{
+			lblEntryCount.setValue(messages.getValue("MainView.entryCount", locale) + " " + historyItems.size());
+		}
 		jmb.refreshCaptions(locale);
 		tblFileHistory.refreshColumnHeaders(locale);
 		tblDetails.refreshColumnHeaders(locale);
@@ -393,9 +400,19 @@ public class MainView extends CustomComponent implements View{
 		});
 		progress = initProgressBar();
 		hlResetAndProgress.addComponent(progress);
-		hlResetAndProgress.setComponentAlignment(progress, Alignment.TOP_CENTER);
+		hlResetAndProgress.setComponentAlignment(progress, Alignment.MIDDLE_CENTER);
 		hlResetAndProgress.setExpandRatio(progress, 1);
 		progress.setVisible(false);
+		lblEntryCount = new Label();
+		lblEntryCount.addStyleName("jadeEntryCountLabel");
+		if(historyItems == null || (historyItems != null && historyItems.size() == 0)){
+			lblEntryCount.setValue(messages.getValue("MainView.noEntries", currentLocale));
+		}else{
+			lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());
+		}
+		hlResetAndProgress.addComponent(lblEntryCount);
+		hlResetAndProgress.setComponentAlignment(lblEntryCount, Alignment.MIDDLE_CENTER);
+		
  	}
 	
 	private void createTablesLayout(){
@@ -475,28 +492,28 @@ public class MainView extends CustomComponent implements View{
 	 * @author SP
 	 *
 	 */
-	public class SleeperThreadMedium extends Thread{
-		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
-		Date actual = null;
-		@Override
-		public void run() {
-			log.debug("SleeperThreadMedium started at " + sdf.format(new Date()) + "!");
-			progress.setPrimaryStyleName("jadeProgressBar");
-			if(progressStart == null){
-				progressStart = new Date();
-			}
-			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_MEDIUM){
-				continue;
-			}
-			UI.getCurrent().access(new Runnable() {
-				@Override
-				public void run() {
-					progress.setPrimaryStyleName("jadeProgressBarMedium");
-					log.debug("SleeperThreadMedium ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
-				}
-			});
-		}
-	}
+//	public class SleeperThreadMedium extends Thread{
+//		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+//		Date actual = null;
+//		@Override
+//		public void run() {
+//			log.debug("SleeperThreadMedium started at " + sdf.format(new Date()) + "!");
+//			progress.setPrimaryStyleName("jadeProgressBar");
+//			if(progressStart == null){
+//				progressStart = new Date();
+//			}
+//			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_MEDIUM){
+//				continue;
+//			}
+//			UI.getCurrent().access(new Runnable() {
+//				@Override
+//				public void run() {
+//					progress.setPrimaryStyleName("jadeProgressBarMedium");
+//					log.debug("SleeperThreadMedium ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
+//				}
+//			});
+//		}
+//	}
 	
 	/**
 	 * Timed Thread, to update the Progress Indicator after a long delay with a red background
@@ -504,25 +521,25 @@ public class MainView extends CustomComponent implements View{
 	 * @author SP
 	 *
 	 */
-	public class SleeperThreadLong extends Thread{
-		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
-		Date actual = null;
-		@Override
-		public void run() {
-			log.debug("SleeperThreadLong started at " + sdf.format(new Date()) + "!");
-			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_LONG){
-				continue;
-			}
-			UI.getCurrent().access(new Runnable() {
-				@Override
-				public void run() {
-					progress.setPrimaryStyleName("jadeProgressBarSlow");
-					log.debug("SleeperThreadLong ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
-				}
-			});
-		}
-	}
-
+//	public class SleeperThreadLong extends Thread{
+//		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+//		Date actual = null;
+//		@Override
+//		public void run() {
+//			log.debug("SleeperThreadLong started at " + sdf.format(new Date()) + "!");
+//			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_LONG){
+//				continue;
+//			}
+//			UI.getCurrent().access(new Runnable() {
+//				@Override
+//				public void run() {
+//					progress.setPrimaryStyleName("jadeProgressBarSlow");
+//					log.debug("SleeperThreadLong ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
+//				}
+//			});
+//		}
+//	}
+//
 	/**
 	 * Timed Thread, to automatically update Table with new Data
 	 * 
@@ -602,7 +619,8 @@ public class MainView extends CustomComponent implements View{
 			UI.getCurrent().access(new Runnable() {
 				@Override
 				public void run() {
-					refreshButtonVisibility();
+					lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());
+ 					refreshButtonVisibility();
 					disableCurrentLocaleIcon();
 					markAsDirty();
 				}
@@ -732,10 +750,10 @@ public class MainView extends CustomComponent implements View{
 		return progress;
 	}
 	
-	public Date getProgressStart() {
-		return progressStart;
-	}
-
+//	public Date getProgressStart() {
+//		return progressStart;
+//	}
+//
 	public JadeMenuBar getJmb() {
 		return jmb;
 	}
@@ -769,6 +787,14 @@ public class MainView extends CustomComponent implements View{
 		if(this.autoRefresh){
 			new AutoRefreshThread().start();
 		}
+	}
+
+	public Label getLblEntryCount() {
+		return lblEntryCount;
+	}
+
+	public void setLblEntryCount(Label lblEntryCount) {
+		this.lblEntryCount = lblEntryCount;
 	}
 
 	@Override
