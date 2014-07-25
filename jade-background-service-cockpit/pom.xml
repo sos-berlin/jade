@@ -7,7 +7,9 @@
 	    <artifactId>jade</artifactId>
     	<version>1.8-SNAPSHOT</version>
   	</parent>
-  	
+  	<!-- Build as 'skinny war', means all needed dependencies should not be build into WEB-INF/lib 
+  	     in the war file, instead should be provided in lib of the jobscheduler installation path 
+  	     standard war build ~64 MiB, 'skinny war build ~420KiB -->
 	<groupId>com.sos-berlin.jade</groupId>
 	<artifactId>jade-background-service-cockpit</artifactId>
 	<packaging>war</packaging>
@@ -67,15 +69,18 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-<!--
--->
+					<!-- some cascaded dependencies still get into war file,
+					configure <packagingExcludes/> to remove them after compile -->
 			        <packagingExcludes>
+<!-- 
 						WEB-INF/lib/dom4j*.jar, 
 						WEB-INF/lib/guava*.jar, 
 						WEB-INF/lib/joda-time*.jar,
 						WEB-INF/lib/log4j*.jar, 
 						WEB-INF/lib/slf4j*.jar,
 						WEB-INF/lib/x*.jar 
+ -->
+						WEB-INF/lib/*.jar 
 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
@@ -117,6 +122,31 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- needed for compiling the css styles in production mode -->
+<!-- 
+			<plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>exec-maven-plugin</artifactId>
+			    <version>1.2.1</version>
+			    <executions>
+			        <execution>
+			            <phase>generate-sources</phase>
+			            <goals>
+			                <goal>java</goal>
+			            </goals>
+			            <configuration>
+			                <classpathScope>compile</classpathScope>
+			                <mainClass>com.vaadin.sass.SassCompiler</mainClass>
+			                <arguments>
+			                    <argument>src/main/webapp/VAADIN/themes/bs/bs.scss</argument>
+			                    <argument>src/main/webapp/VAADIN/themes/bs/styles.scss</argument>
+			                    <argument>src/main/webapp/VAADIN/themes/bs/styles.css</argument>
+			                </arguments>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+-->
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
@@ -176,6 +206,9 @@
 		</pluginManagement>
 	</build>
 
+		<!-- All dependencies on vaadin are set to be provided at runtime.
+		     In order to keep the war files slim, all deployed Vaadin WebApps 
+		     should use the runtime jars and shouldn`t deliver them in the war file. -->
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -223,6 +256,9 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- scope provided exludes the dependency from the war build,
+		     unfortunately the cascading dependencies will still be build 
+		     into the war file. Therefore exclusions have to be configured -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
@@ -286,15 +322,17 @@
 		            <artifactId>ojdbc6</artifactId>
 		        </exclusion>
 			</exclusions>
-<!-- 
- -->
  		</dependency>
 
+		<!-- scope provided exludes the dependency from the war build,
+		     unfortunately the cascading dependencies will still be build 
+		     into the war file. Therefore exclusions have to be configured -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
             <version>${project.version}</version>
 			<scope>provided</scope>
+ <!-- 
 			<exclusions>
 		        <exclusion>
 		            <groupId>com.sos-berlin.jobscheduler</groupId>
@@ -345,10 +383,20 @@
 		            <artifactId>joda-time</artifactId>
 		        </exclusion>
 			</exclusions>
- <!-- 
  -->
  		</dependency>
 
+		<!-- Scope provided exludes the dependency from the war build
+		     unfortunately the cascading dependencies will still be build 
+		     into the war file. Therefore exclusions have to be configured.
+		     
+		     In this case it is a dependency from one (or both) of the dependencies
+		     above. Per default there is no need to configure this, but to exclude
+		     the cascading dependencies, we have to configure it in this pom file, too! 
+		     
+		     For a standard build, only the dependencies for ftp-history and sos-security 
+		     have to be configured! -->
+<!-- 
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>jobscheduler-helper</artifactId>
@@ -385,9 +433,19 @@
 		        </exclusion>
 			</exclusions>
  		</dependency>
-<!-- 
  -->
 
+		<!-- Scope provided exludes the dependency from the war build
+		     unfortunately the cascading dependencies will still be build 
+		     into the war file. Therefore exclusions have to be configured.
+		     
+		     In this case it is a dependency from one (or both) of the dependencies
+		     above. Per default there is no need to configure this, but to exclude
+		     the cascading dependencies, we have to configure it in this pom file, too! 
+		     
+		     For a standard build, only the dependencies for ftp-history and sos-security 
+		     have to be configured! -->
+<!--  
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>hibernate-commons</artifactId>
@@ -448,7 +506,6 @@
 		        </exclusion>      
 			</exclusions>
 		</dependency>
-<!--  
  -->
 		<dependency>
 			<groupId>mysql</groupId>

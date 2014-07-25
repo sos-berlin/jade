@@ -6,7 +6,8 @@ package com.sos.jade.backgroundservice.listeners.impl;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 
@@ -20,7 +21,7 @@ import com.sos.jade.backgroundservice.view.MainView;
 public class JadeFileListenerProxy extends JadeFileListenerImpl implements IJadeFileListener {
 
 	private final String				conClassName	= this.getClass().getSimpleName();
-	private final Logger				logger			= Logger.getLogger(this.getClass());
+	private final Logger				logger			= LoggerFactory.getLogger(this.getClass());
 	@SuppressWarnings("unused")
 	private static final String			conSVNVersion	= "$Id: JadeFileListenerProxy.java 24550 2014-06-30 18:52:08Z sp $";
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");

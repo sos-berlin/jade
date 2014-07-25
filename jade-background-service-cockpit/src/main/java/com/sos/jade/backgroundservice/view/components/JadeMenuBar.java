@@ -9,7 +9,8 @@ import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.jade.backgroundservice.BackgroundserviceUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
@@ -39,7 +40,7 @@ public class JadeMenuBar extends MenuBar {
 	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
 	private static final String MESSAGE_RESOURCE_HELP = "help.";
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
-	private Logger log = Logger.getLogger(JadeMenuBar.class);
+	private Logger log = LoggerFactory.getLogger(JadeMenuBar.class);
 	private MenuItem mFile;
 	private MenuItem mFilter;
 	private MenuItem mPreferences;

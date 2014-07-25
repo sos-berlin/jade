@@ -1,7 +1,8 @@
 package com.sos.jade.backgroundservice.options;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,7 +42,7 @@ public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
 	@SuppressWarnings("unused")
 	private final String			conClassName	= "JadeBackgroundServiceOptionsJUnitTest";						//$NON-NLS-1$
 	@SuppressWarnings("unused")
-	private static Logger			logger			= Logger.getLogger(JadeBackgroundServiceOptionsJUnitTest.class);
+	private static Logger			logger			= LoggerFactory.getLogger(JadeBackgroundServiceOptionsJUnitTest.class);
 	protected JadeBackgroundServiceOptions	objOptions		= null;
 
 	public JadeBackgroundServiceOptionsJUnitTest() {

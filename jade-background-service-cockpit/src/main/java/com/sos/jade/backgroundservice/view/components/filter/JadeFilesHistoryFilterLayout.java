@@ -11,7 +11,8 @@ import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 
@@ -83,7 +84,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
 	@SuppressWarnings("unused")
 	private JadeFilesHistoryFilter lastFilter;
-	private Logger log = Logger.getLogger(JadeFilesHistoryFilterLayout.class);
+	private Logger log = LoggerFactory.getLogger(JadeFilesHistoryFilterLayout.class);
 	
 	private JadeBSMessages messages;
 
