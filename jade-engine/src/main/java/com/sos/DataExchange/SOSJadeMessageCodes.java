@@ -23,6 +23,7 @@ public class SOSJadeMessageCodes extends JSToolBox {
 	public static final SOSMsgJade SOSJADE_T_0013 = new SOSMsgJade("SOSJADE_T_0013");	// 
 	
 	public static final SOSMsgJade 	SOSJADE_E_0100					= new SOSMsgJade("SOSJADE_E_0100");													// "No file name found which match the regular expression criteria '1$s'";
+	public static final SOSMsgJade 	SOSJADE_E_0099					= new SOSMsgJade("SOSJADE_E_0099");													// "No file name found which match the regular expression criteria '1$s'";
 
 	/*!
 	 * \var TRANSACTION_ABORTED

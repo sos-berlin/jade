@@ -1,6 +1,7 @@
 package com.sos.DataExchange;
 import static com.sos.DataExchange.SOSJadeMessageCodes.EXCEPTION_RAISED;
 import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_D_0200;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0099;
 import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0100;
 import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0101;
 import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0100;
@@ -611,8 +612,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return objOptions;
 	}
 
-	@Override
-	public JADEOptions freshInstanceOfOptions() { 
+	@Override public JADEOptions freshInstanceOfOptions() {
 		objOptions = new JADEOptions();
 		return objOptions;
 	}
@@ -624,16 +624,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private boolean printState(boolean rc) throws Exception {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::printState";
 		String state = "processing successful ended";
+		String strMsg = "";
 		try {
 			int intNoOfFilesTransferred = (int) getSuccessfulTransfers();
-			String strMsg = SOSJADE_E_0100.params(objOptions.file_spec.Value());
+			if (objOptions.file_path.isDirty()) {
+				strMsg = SOSJADE_E_0099.params(objOptions.file_path.Value());
+			}
+			else {
+				strMsg = SOSJADE_E_0100.params(objOptions.file_spec.Value());
+			}
 			int zeroByteCount = objSourceFileList.getZeroByteCount();
 			switch (intNoOfFilesTransferred) {
 				case 0:
 					if (zeroByteCount > 0 && objOptions.TransferZeroByteFilesRelaxed()) {
 						state = strMsg;
 					}
-					else
+					else {
 						if (zeroByteCount > 0 && objOptions.TransferZeroByteFilesRelaxed()) {
 							throw new JobSchedulerException(SOSJADE_I_0104.get());
 						}
@@ -643,11 +649,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 									objJadeReportLogger.info(strMsg);
 									throw new JobSchedulerException(strMsg);
 								}
-							}
-							else {
-								state = strMsg;
+								else {
+									state = strMsg;
+								}
 							}
 						}
+					}
 					rc = objOptions.force_files.value() == false ? true : !objOptions.TransferZeroByteFilesRelaxed();
 					break;
 				case 1:
@@ -903,7 +910,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							String strM = "";
 							if (objOptions.NeedTargetClient() == true) {
 								strM = "source directory/file: " + strSourceDir + ", target directory: " + strRemoteDir + ", file regexp: "
-										+ objOptions.file_spec;
+										+ objOptions.file_spec.Value();
 							}
 							else {
 								strM = SOSJADE_D_0200.params(strSourceDir, objOptions.file_spec.Value());

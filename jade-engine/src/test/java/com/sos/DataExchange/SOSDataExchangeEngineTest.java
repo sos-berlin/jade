@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -46,7 +47,7 @@ import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 public class SOSDataExchangeEngineTest extends JSToolBox {
 	private static final String	conHostNameWILMA_SOS	= "wilma.sos";
 	private static final String	conHostName8OF9_SOS		= "8of9.sos";
-	private final String		conClassName			= "SOSFTPCommandSendTest";
+	private final String		conClassName			= "SOSDataExchangeEngineTest";
 	private final static Logger		logger					= Logger.getLogger(SOSDataExchangeEngineTest.class);
 	private JADEOptions		objOptions				= null;
 	private final String		strSettingsFileName		= "./scripts/sosdex_settings.ini";
@@ -1230,12 +1231,17 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 
 	@Test public void testCopy() throws Exception {
 		final String conMethodName = conClassName + "::testCopy";
+		
+		new File(strTestPathName + strTestFileName).delete();
 		logMethodName(conMethodName);
+		logger.setLevel(Level.DEBUG);
 		SOSConnection2OptionsAlternate objS = objOptions.getConnectionOptions().Source();
+		objS.ProtocolCommandListener.setTrue();
+		objOptions.verbose.value(9);
 		objS.host.Value(conHostNameWILMA_SOS);
 		objS.protocol.Value("ftp");
-		objS.user.Value("kb");
-		objS.password.Value("kb");
+		objS.user.Value("test");
+		objS.password.Value("12345");
 		objOptions.file_path.Value(strTestFileName);
 		// TODO Alias "targetdir" erlauben. Da es nicht immer remote ist :-)
 		/*
@@ -1254,8 +1260,10 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.remote_dir.Value(strTestPathName);
 		objOptions.operation.Value(SOSOptionJadeOperation.enuJadeOperations.copy);
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
+		System.out.println(objOptions.DirtyString());
 		objJadeEngine.Execute();
 		objJadeEngine.Logout();
+		assertTrue(new File(strTestPathName + strTestFileName).exists());
 	}
 
 	@Test public void testReceive2() throws Exception {
