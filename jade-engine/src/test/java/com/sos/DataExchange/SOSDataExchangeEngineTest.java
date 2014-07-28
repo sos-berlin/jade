@@ -1236,7 +1236,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		logMethodName(conMethodName);
 		logger.setLevel(Level.DEBUG);
 		SOSConnection2OptionsAlternate objS = objOptions.getConnectionOptions().Source();
-//		objS.ProtocolCommandListener.setTrue();
+		objS.ProtocolCommandListener.setTrue();
 		objOptions.verbose.value(9);
 		objS.host.Value(conHostNameWILMA_SOS);
 		objS.protocol.Value("ftp");
@@ -1258,6 +1258,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objT.protocol.Value("local");
 		objOptions.TargetDir.Value(strTestPathName);
 		objOptions.remote_dir.Value(strTestPathName);
+		objOptions.force_files.setFalse();
 		objOptions.operation.Value(SOSOptionJadeOperation.enuJadeOperations.copy);
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		System.out.println(objOptions.DirtyString());
