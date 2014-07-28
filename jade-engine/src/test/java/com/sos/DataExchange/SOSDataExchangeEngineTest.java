@@ -1236,7 +1236,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		logMethodName(conMethodName);
 		logger.setLevel(Level.DEBUG);
 		SOSConnection2OptionsAlternate objS = objOptions.getConnectionOptions().Source();
-		objS.ProtocolCommandListener.setTrue();
+//		objS.ProtocolCommandListener.setTrue();
 		objOptions.verbose.value(9);
 		objS.host.Value(conHostNameWILMA_SOS);
 		objS.protocol.Value("ftp");
