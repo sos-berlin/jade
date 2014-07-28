@@ -35,9 +35,9 @@ public class BackgroundserviceUI extends UI {
     private String jsSessionId;
     private String securityServer;
 
-
 	@WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = BackgroundserviceUI.class)
+    /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
+    @VaadinServletConfiguration(productionMode = true, ui = BackgroundserviceUI.class)
     public static class Servlet extends VaadinServlet {
 		private static final long serialVersionUID = 1L;
     }
