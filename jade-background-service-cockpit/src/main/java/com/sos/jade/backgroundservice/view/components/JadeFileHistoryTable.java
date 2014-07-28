@@ -33,9 +33,6 @@ public class JadeFileHistoryTable extends Table{
 	private JadeFilesHistoryContainer container;
 	private static final int PAGE_LENGTH = 20;
 	private JadeBSMessages messages;
-//	private Map<String, Integer> defaultColumnWidths;
-//	private String lastColOrder;
-//	private String sessionsLastColOrder;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
 	private final Logger log = LoggerFactory.getLogger(JadeFileHistoryTable.class);
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";

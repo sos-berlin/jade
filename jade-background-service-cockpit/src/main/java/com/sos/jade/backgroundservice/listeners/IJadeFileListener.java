@@ -5,12 +5,6 @@ import sos.ftphistory.JadeFilesHistoryFilter;
 public interface IJadeFileListener {
 
 	/**
-	 * filters the JadeFilesDBItems with the given JadeFileFilter
-	 * @param filter the JadeFileFilter
-	 */
-//	void filterJadeFiles(JadeFilesFilter filter);
-	
-	/**
 	 * gets the JadeFilesHistoryDBItems with the given JadeFileDBItem.id
 	 * @param id the JadeFileDBItem id
 	 */

@@ -15,7 +15,6 @@ public class AboutWindow extends Window {
 		setWidth(WIDTH_FL, Unit.PIXELS);
 		setPositionX(Page.getCurrent().getBrowserWindowWidth() - WIDTH);
 		setPositionY(0);
-//		addStyleName("jadeAboutWindow");
 		setContent(new AboutLayout());
 	}
 

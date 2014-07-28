@@ -31,7 +31,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -65,7 +64,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private DateField dfTimestampFrom;
 	private DateField dfTimestampTo;
 	private String mandator;
-	private String protocol;
 	private String sourceFile;
 	private String sourceHost;
 	private String targetFile;
@@ -116,17 +114,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	}
 	
 	/**
-	 * helper method to create an empty {@link com.vaadin.ui.Label Label}
-	 * 
-	 * @return the created {@link com.vaadin.ui.Label Label}
-	 */
-	private Label initDummyLabel(){
-		Label lbl = new Label();
-		lbl.setSizeFull();
-		return lbl;
-	}
-	
-	/**
 	 * helper method to create a pre configured {@link com.vaadin.ui.DateField DateField}
 	 * 
 	 * @return the created {@link com.vaadin.ui.DateField DateField}
@@ -161,9 +148,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		if("".equals(mandator)){
 			mandator = null;
 		}
-//		if("".equals(protocol)){
-//			protocol = null;
-//		}
 		if("".equals(sourceFile)){
 			sourceFile = null;
 		}
@@ -241,7 +225,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		dfTimestampFrom = initDateField(messages.getValue("FilterLayout.from"), timestampFrom);
 		dfTimestampTo = initDateField(messages.getValue("FilterLayout.to"), timestampTo);
 		tfMandator = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()), mandator);
-//		tfProtocol = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()), protocol);
 		tfSourceFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName()), sourceFile);
 		tfSourceHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()), sourceHost);
 		tfTargetFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName()), targetFile);
@@ -294,10 +277,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				mainView.setDetailViewVisible(false);
 				mainView.toggleTableVisiblity(null);
 				mainView.getProgress().setVisible(true);
-//				mainView.getProgressStart().setTime(new Date().getTime());
 				mainView.getJmb().getSmDuplicatesFilter().setChecked(false);
-//				mainView.new SleeperThreadMedium().start();
-//				mainView.new SleeperThreadLong().start();
 				checkTextFieldValues();
 				saveFilterPreferences();
 				((FilterLayoutWindow)JadeFilesHistoryFilterLayout.this.getParent()).close();
@@ -317,7 +297,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
 		filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
 		filter.setTransferTimestampTo(dfTimestampTo.getValue());
-//		filter.setProtocol(tfProtocol.getValue());
 		if(nsProtocol.getValue() != null && !"".equals(nsProtocol.getValue()))
 			filter.setProtocol(nsProtocol.getValue().toString());
 		if(nsStatus.getValue() != null && !"".equals(nsStatus.getValue()))
@@ -447,7 +426,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		tfMandator.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
 		tfMandator.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
 		nsProtocol.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
-//		tfProtocol.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
 		tfSourceFile.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName(), locale));
 		tfSourceFile.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName(), locale));
 		tfSourceHost.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName(), locale));

@@ -1,34 +1,21 @@
 package com.sos.jade.backgroundservice;
 
-import java.net.URL;
 import java.util.prefs.Preferences;
 
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-
-import com.sos.auth.SOSJaxbSubject;
-import com.sos.auth.rest.SOSWebserviceAuthenticationRecord;
-import com.sos.auth.rest.client.SOSRestShiroClient;
-import com.sos.auth.rest.permission.model.SOSPermissionShiro;
 import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.sos.jade.backgroundservice.view.components.AboutWindow;
-import com.sos.jade.backgroundservice.view.components.LoginView;
 import com.sos.jade.backgroundservice.view.components.filter.FilterLayoutWindow;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.server.VaadinSession;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
 @Theme("bs")
@@ -37,7 +24,6 @@ import com.vaadin.ui.UI;
 public class BackgroundserviceUI extends UI {
 	private static final long serialVersionUID = 1L;
 	public static final JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
-//	public static Cookie cookie;
 	public static final Preferences prefs = jadeBsOptions.getPreferenceStore();
 	public static String parentNodeName;
 	private MainView mainView;

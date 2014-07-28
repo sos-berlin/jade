@@ -10,6 +10,13 @@ import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 
+/**
+ * This is a Vaadin filter, to remove duplicates from the history table, which is used when all date is already received. 
+ * No DB roundtrip needed. Because of that, it is faster then calling hibernate with a filter.
+ * 
+ * @author SP
+ *
+ */
 public class DuplicatesFilter implements Container.Filter{
 	private static final long serialVersionUID = 1L;
 	private List<JadeFilesHistoryDBItem> historyItems;

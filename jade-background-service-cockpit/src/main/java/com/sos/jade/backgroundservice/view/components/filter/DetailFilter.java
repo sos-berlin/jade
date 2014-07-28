@@ -6,6 +6,13 @@ import com.sos.jade.backgroundservice.data.JadeHistoryDetailItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 
+/**
+ * This is a Vaadin filter for the details table, which is used when all date is already received. 
+ * No extra call to the DB is needed, because the data is received by the history table. 
+ * 
+ * @author SP
+ *
+ */
 public class DetailFilter implements Container.Filter{
 	private static final long serialVersionUID = 1L;
 	private List<String> messageKeys;
