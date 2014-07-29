@@ -26,7 +26,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private JadeFilesDBLayer jadeFilesDBLayer;
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	public MainView ui;
-	private Logger log = LoggerFactory.getLogger(JadeFilesHistoryDBItem.class);
+	private Logger log = LoggerFactory.getLogger(JadeFileListenerImpl.class);
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
 	
 	public JadeFileListenerImpl(MainView ui){
