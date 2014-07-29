@@ -1,5 +1,7 @@
 package com.sos.DataExchange;
 
+import org.apache.log4j.Logger;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.JSHelper.Basics.VersionInfo;
@@ -8,7 +10,6 @@ import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import org.apache.log4j.Logger;
 
 /**
  * \class 		SOSDataExchangeEngineMain - Main-Class for "Transfer files by FTP/SFTP and execute commands by SSH"
@@ -73,8 +74,8 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			
 			SOSDataExchangeEngine objM = new SOSDataExchangeEngine();
 			JADEOptions objO = objM.Options();
-			objO.ApplicationName.Value("JADE");
-			objO.ApplicationDocuUrl.Value("http://www.sos-berlin.com/doc/en/jade/JADE Parameter Reference.pdf");
+			objO.ApplicationName.Value(new SOSMsgJade("SOSJADE_T_0020").get());
+			objO.ApplicationDocuUrl.Value(new SOSMsgJade("SOSJADE_T_0021").get());
 			objO.AllowEmptyParameterList.setFalse();
 			String strLog4jPropertyFileName = objO.log4jPropertyFileName.Value();
 			for (String strParam : pstrArgs) {
@@ -84,9 +85,14 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 				}
 			}
 
+			logger = objO.log4jPropertyFileName.getLoggerInstance(conClassName);
 			objM.setJSJobUtilites(this);
 			objO.SendTransferHistory.value(true);
 			objO.CommandLineArgs(pstrArgs);
+
+			if (objO.log4jPropertyFileName.isDirty()) {
+				logger = objO.log4jPropertyFileName.getLoggerInstance(conClassName);
+			}
 
 			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
 			logger.debug(conSVNVersion);

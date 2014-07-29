@@ -1240,9 +1240,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.verbose.value(9);
 		objS.host.Value(conHostNameWILMA_SOS);
 		objS.protocol.Value("ftp");
-		objS.user.Value("test");
-		objS.password.Value("12345");
+//		objS.user.Value("test");
+//		objS.password.Value("12345");
+		objS.user.Value("kb");
+		objS.password.Value("kb");
 		objOptions.file_path.Value(strTestFileName);
+//		objOptions.FileNameRegExp.Value("^.*\\.sh$");
 		// TODO Alias "targetdir" erlauben. Da es nicht immer remote ist :-)
 		/*
 		 * bei receive,nach der bisherigen semantik, ist das local_dir praktisch
