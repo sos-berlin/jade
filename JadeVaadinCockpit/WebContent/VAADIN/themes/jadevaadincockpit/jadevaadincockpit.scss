@@ -1,0 +1,59 @@
+/* Import the reindeer theme.*/
+/* This only allows us to use the mixins defined in it and does not add any styles by itself. */
+@import "../reindeer/reindeer.scss";
+
+/* This contains all of your theme.*/
+/* If somebody wants to extend the theme she will include this mixin. */
+@mixin jadevaadincockpit {
+  /* Include all the styles from the reindeer theme */
+  @include reindeer;
+
+  /* Insert your theme rules here */
+ 
+ .v-loading-indicator,  
+ .v-loading-indicator-delay,  
+ .v-loading-indicator-wait {
+   width: 100%;  
+   height: 100%;  
+   margin: 0;  
+   background-position: 50%;  
+   background-color: gray;  
+   background-repeat: no-repeat;  
+   background-attachment: fixed;   
+   opacity: .8;  
+   -ms-filter: alpha(opacity=80);  
+   filter: alpha(opacity=80);
+   background-image: url("job_scheduler_logo.jpg");
+ }
+ 
+ /* .v-formlayout-captioncell { text-align: left;} */
+ 
+ .default-option-value { background-color: #add8e6;}
+ 
+ .v-table-cell-content { 
+ 	-khtml-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    }
+    
+ .drop-area {
+    border: 4px dashed #a4a4a2;
+    border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	-ms-border-radius: 20px;
+	-o-border-radius: 20px;
+	
+	color: #a4a4a2;
+	font-weight: bold;
+	font-size: 16px;
+	
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+
+	user-select: none;
+ }
+}
