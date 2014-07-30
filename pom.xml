@@ -21,6 +21,7 @@
 	  <!-- z.Zt. nicht in der Auslieferung -->
 	  <module>jade-file-watcher</module>
 	  <module>jade-cockpit</module>
+	  <module>jade-vaadin-cockpit</module>
   </modules>
 
 </project>
