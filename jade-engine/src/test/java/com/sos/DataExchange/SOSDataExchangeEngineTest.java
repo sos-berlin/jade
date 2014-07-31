@@ -50,7 +50,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	private final String		conClassName			= "SOSDataExchangeEngineTest";
 	private final static Logger		logger					= Logger.getLogger(SOSDataExchangeEngineTest.class);
 	private JADEOptions		objOptions				= null;
-	private final String		strSettingsFileName		= "./scripts/sosdex_settings.ini";
+//	private final String		strSettingsFileName		= "./scripts/sosdex_settings.ini";
 //	protected String			strSettingsFile			= "R:/backup/sos/java/development/SOSDataExchange/examples/jade_settings.ini";
 	protected String			strSettingsFile			= "R:/java.sources/trunk/products/jade/jade-engine/src/test/resources/examples/jade_settings.ini";
 	private ISOSVFSHandler		objVFS					= null;
@@ -1538,7 +1538,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	@Test public void testDeleteZipFile() throws Exception {
 		final String conMethodName = conClassName + "::testDeleteZipFile";
 		logger.info("*********************************************** " + conMethodName + "******************");
-		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=zip_local_files" };
+		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files" };
 		objOptions.CommandLineArgs(strCmdLineParameters);
 		File fleFile = new File(objOptions.remote_dir.Value());
 		fleFile.delete();
@@ -1547,7 +1547,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	@Test public void testParameterPriority() throws Exception {
 		final String conMethodName = conClassName + "::testParameterPriority";
 		logger.info("*********************************************** " + conMethodName + "******************");
-		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=zip_local_files_2", "-operation=receive" };
+		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files_2", "-operation=receive" };
 		objOptions.CommandLineArgs(strCmdLineParameters);
 		String strOperation = objOptions.operation.Value();
 		assertEquals("Operation not overwritten", "receive", strOperation);
@@ -1559,7 +1559,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	@Test public void testParameterPriority2() throws Exception {
 		final String conMethodName = conClassName + "::testParameterPriority";
 		logger.info("*********************************************** " + conMethodName + "******************");
-		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=zip_local_files", "-operation=getFileList" };
+		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files", "-operation=getFileList" };
 		objOptions.CommandLineArgs(strCmdLineParameters);
 		String strOperation = objOptions.operation.Value();
 		assertEquals("Precedence test failed", "getFileList", strOperation);
@@ -1568,7 +1568,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	@Test public void testZipOperation() throws Exception {
 		final String conMethodName = conClassName + "::testZipOperation";
 		logger.info("*********************************************** " + conMethodName + "******************");
-		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=zip_local_files" };
+		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files" };
 		objOptions.CommandLineArgs(strCmdLineParameters);
 		objOptions.SendTransferHistory.value(false);
 		boolean flgOK = new JSFile(objOptions.TargetDir.Value()).delete();
@@ -1581,7 +1581,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	@Test public void testZipExtraction() throws Exception {
 		final String conMethodName = conClassName + "::testZipExtraction";
 		logger.info("*********************************************** " + conMethodName + "******************");
-		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=zip_extract_2_local_files" };
+		String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_extract_2_local_files" };
 		objOptions.CommandLineArgs(strCmdLineParameters);
 		objOptions.SendTransferHistory.value(false);
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -1700,7 +1700,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::CreateIniFile";
 		logger.info("*********************************************** " + conMethodName + "******************");
 		//		CreateIniFile();
-		objOptions.settings.Value("R:/backup/sos/java/development/JADEUserInterface/TestData/jade_settings.ini");
+		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("Copy_Local2SFTP_recursive");
 		objOptions.ReadSettingsFile();
 		Assert.assertEquals("User ID", "test", objOptions.Target().user.Value());
