@@ -305,6 +305,34 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 		objJadeEngine.Execute();
 		objJadeEngine.Logout();
 	}
+	
+	
+	@Test
+	public void testSendWithMail() throws Exception {
+		objOptions.mail_on_success.isTrue();
+		objOptions.getMailOptions().FileNotificationTo.Value("oh@sos-berlin.com");
+		objOptions.getMailOptions().SMTPHost.Value("smtp.sos");
+		super.testSend();
+	}
+	
+	
+	@Test
+	public void testSendWithOutAccessToOneFileInSourceFolder() throws Exception {
+		final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
+		objTestOptions.SourceDir.Value("/home/test/noaccess");
+		objTestOptions.file_spec.Value("\\.txt$");
+		objOptions.force_files.value(false);
+		super.testCopyMultipleFiles();
+	}
+	
+	@Test
+	public void testSendWithOutAccessToSourceFolder() throws Exception {
+		final String conMethodName = conClassName + "::testSendWithOutAccessToSourceFolder";
+		objTestOptions.SourceDir.Value("/root");
+		objTestOptions.file_spec.Value("\\.txt$");
+		objOptions.force_files.value(false);
+		super.testCopyMultipleFiles();
+	}
 
 
 }

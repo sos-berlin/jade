@@ -657,18 +657,28 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.CheckServerFeatures.setTrue();
 		//		objOptions.settings.Value("Junit-Test");
 	}
+	
+	private void authenticate() throws Exception {
+		logger.info(objOptions.Target().dirtyString());
+		objVFS.Connect(objOptions.Target());
+		objVFS.Authenticate(objOptions.Target());
+		
+	}
 
 	private void startTransfer(final JADEOptions pobjOptions) throws Exception {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::startTransfer";
 		pobjOptions.verbose.value(9);
-		pobjOptions.force_files.setTrue();
 		if (objJadeEngine == null) {
 			objJadeEngine = new JadeEngine(pobjOptions);
 		}
 		logger.info(objOptions.dirtyString());
+		//authenticate();
+		//ftpClient.rmdir(objOptions.TargetDir.Value());
+		//ftpClient.disconnect();
 		objJadeEngine.Execute();
 		objOptions.Options2ClipBoard();
 	} // private void startTransfer
+	
 
 	/**
 	 * \brief tearDown
@@ -1569,7 +1579,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		logger.info("******************************************\n***** " + conMethodName + "\n******************");
 		setSourceAndTarget();
 		CreateTestFile();
-		objOptions.file_path.Value(strTestFileName);
+		objOptions.file_path.Value(strTestFileName.replaceAll("/", "\\\\"));
 		objOptions.operation.Value(enuJadeOperations.copy);
 		objOptions.log_filename.Value(objOptions.TempDir() + "test.log");
 		objOptions.profile.Value(conMethodName);
@@ -1720,7 +1730,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.user.Value("kb");                                                                                                         
 		objOptions.password.Value("kb");                                                                                                     
 		objOptions.file_path.Value(strTestFileName);                                                                                         
-		objOptions.local_dir.Value(strTestPathName);                                                                                         
+		objOptions.local_dir.Value(strTestPathName);
 		objOptions.remote_dir.Value(strKBHome);                                                                                              
 		objOptions.operation.Value(enuJadeOperations.send);                                                                                  
 		objOptions.Target().setloadClassName("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");                                             
@@ -1729,7 +1739,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);                                                                 
 		objOptions.Target().replacing.Value(".*");                                                                                           
 		objOptions.Target().replacement.Value("[filename:uppercase]_[date:yyyMMddHHmmss]");                                                  
-		objOptions.Source().PreTransferCommands.Value("echo PreTransferCommands on Source; echo ${source_dir}");                             
+		objOptions.Source().PreTransferCommands.Value("echo /PreTransferCommands on Source; echo ${source_dir}");                             
 		objOptions.Source().PostTransferCommands.Value("echo PostTransferCommands on Source; echo ${source_dir}");                           
 		objOptions.Source().Pre_Command.Value("echo SourcePreCommand: $SourceTransferFileName + $SourceFileName");                           
 		objOptions.Source().Post_Command.Value("echo SourcePostCommand: $SourceTransferFileName + $SourceFileName");                         
