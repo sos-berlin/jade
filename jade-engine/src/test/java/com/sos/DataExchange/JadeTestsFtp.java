@@ -209,4 +209,26 @@ public class JadeTestsFtp extends JadeTestBase {
 //		super.testSend();
 //	}
 	
+	@Test
+	public void testSendWithMail() throws Exception {
+		objOptions.mail_on_success.value(true);
+		objOptions.getMailOptions().FileNotificationTo.Value("oh@sos-berlin.com");
+		objOptions.getMailOptions().SMTPHost.Value("smtp.sos");
+		objOptions.ResultSetFileName.Value(objOptions.TempDir() + "resultList.txt");
+		objOptions.CreateResultSet.value(true);
+		super.testSend();
+	}
+	
+	
+	@Test
+	public void testLocal2sftpWithNotEnoughSpaceOnTarget() throws Exception {
+		final String conMethodName = conClassName + "::testLocal2sftpWithNotEnoughSpaceOnTarget";
+		objTestOptions.TargetDir.Value("/media/ramdisk");
+		objTestOptions.SourceDir.Value("R:/nobackup/junittests/testdata/JADE/testLocal2sftpWithNotEnoughSpaceOnTarget");
+		objOptions.force_files.value(false);
+		super.testCopyMultipleFiles();
+	}
+	
+	
+	
 }
