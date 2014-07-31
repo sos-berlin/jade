@@ -644,7 +644,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							throw new JobSchedulerException(SOSJADE_I_0104.get());
 						}
 						else {
-							if (objOptions.force_files.isTrue()) {
+							if (objOptions.ErrorOnNoDataFound.isTrue()) {
 								if (intNoOfFilesTransferred <= 0 && lngNoOfPollingServerFiles <= 0) {
 									objJadeReportLogger.info(strMsg);
 									throw new JobSchedulerException(strMsg);
@@ -655,7 +655,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							}
 						}
 					}
-					rc = objOptions.force_files.value() == false ? true : !objOptions.TransferZeroByteFilesRelaxed();
+					rc = objOptions.ErrorOnNoDataFound.isFalse() ? true : !objOptions.TransferZeroByteFilesRelaxed();
 					break;
 				case 1:
 					state = SOSJADE_I_0100.get();
@@ -934,7 +934,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							logger.info(strM);
 							objJadeReportLogger.info(strM);
 							objOptions.remove_files.setFalse();
-							objOptions.force_files.setFalse();
+							objOptions.ErrorOnNoDataFound.setFalse();
 							objSourceFileList.CreateResultSetFile();
 						}
 						else {
