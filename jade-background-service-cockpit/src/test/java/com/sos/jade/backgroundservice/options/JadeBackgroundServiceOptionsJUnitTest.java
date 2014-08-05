@@ -42,7 +42,7 @@ public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
 	@SuppressWarnings("unused")
 	private final String			conClassName	= "JadeBackgroundServiceOptionsJUnitTest";						//$NON-NLS-1$
 	@SuppressWarnings("unused")
-	private static Logger			logger			= LoggerFactory.getLogger(JadeBackgroundServiceOptionsJUnitTest.class);
+//	private static Logger			logger			= LoggerFactory.getLogger(JadeBackgroundServiceOptionsJUnitTest.class);
 	protected JadeBackgroundServiceOptions	objOptions		= null;
 
 	public JadeBackgroundServiceOptionsJUnitTest() {
