@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    xmlns="http://java.sun.com/xml/ns/j2ee"
+    version="2.4"
+>
+<!-- comment this complete configuration to run on Tomcat from the IDE while developing,
+	 uncomment for release build to run on embedded Jetty [SP] -->
+    <display-name>Vaadin configuration (web.xml)</display-name>
+	<servlet>
+		<servlet-name>vaadinservlet</servlet-name>
+		<servlet-class>
+			com.vaadin.server.VaadinServlet
+		</servlet-class>
+
+		<init-param>
+			<param-name>UI</param-name>
+			<param-value>com.sos.jade.backgroundservice.BackgroundserviceUI</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>vaadinservlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		<param-name>productionMode</param-name>
+		<param-value>true</param-value>
+		<description>Vaadin production mode</description>
+	</context-param>
+	<listener>
+		<listener-class>org.atmosphere.cpr.SessionSupport</listener-class>
+	</listener>
+	<context-param>
+		<param-name>org.atmosphere.cpr.sessionSupport</param-name>
+		<param-value>true</param-value>
+	</context-param>		
+</web-app>

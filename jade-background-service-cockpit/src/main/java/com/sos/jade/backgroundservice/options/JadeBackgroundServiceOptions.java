@@ -4,8 +4,7 @@ package com.sos.jade.backgroundservice.options;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.sos.JSHelper.Annotations.JSOptionClass;
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
@@ -37,7 +36,7 @@ public class JadeBackgroundServiceOptions extends JadeBackgroundServiceOptionsSu
 	@SuppressWarnings("unused")
 	private final String					conClassName						= "JadeBackgroundServiceOptions";
 	@SuppressWarnings("unused")
-	private static Logger		logger			= LoggerFactory.getLogger(JadeBackgroundServiceOptions.class);
+	private static Logger		logger			= Logger.getLogger(JadeBackgroundServiceOptions.class);
 
     /**
     * constructors

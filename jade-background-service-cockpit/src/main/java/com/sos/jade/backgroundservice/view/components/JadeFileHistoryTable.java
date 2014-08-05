@@ -12,8 +12,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
@@ -34,7 +33,7 @@ public class JadeFileHistoryTable extends Table{
 	private static final int PAGE_LENGTH = 20;
 	private JadeBSMessages messages;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
-	private final Logger log = LoggerFactory.getLogger(JadeFileHistoryTable.class);
+	private final Logger log = Logger.getLogger(JadeFileHistoryTable.class);
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
 	
 	private static final Object[] visibleColumns = new String[] {
@@ -203,6 +202,9 @@ public class JadeFileHistoryTable extends Table{
 					} else if ("error".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
 						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusErrorLabel");
 						return "jadeStatusErrorLabel";
+					} else if ("transferring".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
+						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusTransferLabel");
+						return "jadeStatusTransferLabel";
 					}
 				}
 			}

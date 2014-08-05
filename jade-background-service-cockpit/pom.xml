@@ -72,15 +72,10 @@
 					<!-- some cascaded dependencies still get into war file,
 					configure <packagingExcludes/> to remove them after compile -->
 			        <packagingExcludes>
-<!-- 
-						WEB-INF/lib/dom4j*.jar, 
-						WEB-INF/lib/guava*.jar, 
-						WEB-INF/lib/joda-time*.jar,
-						WEB-INF/lib/log4j*.jar, 
-						WEB-INF/lib/slf4j*.jar,
-						WEB-INF/lib/x*.jar 
- -->
-						WEB-INF/lib/*.jar 
+					<!-- the regex will remove all dependencies except for vaadin-server-<version>.jar,
+						 because it is needed for the servlets class loader to function correctly. Otherwise
+						 classes from WEB-INF/classes won´t be found -->        
+						%regex[WEB-INF/lib/(?!vaadin-server).*.jar]
 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
@@ -213,7 +208,6 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -264,6 +258,7 @@
 			<artifactId>ftp-history</artifactId>
             <version>${project.version}</version>
 			<scope>provided</scope>
+<!--  
 			<exclusions>
 		        <exclusion>
 		            <groupId>com.sos-berlin.jobscheduler</groupId>
@@ -322,6 +317,7 @@
 		            <artifactId>ojdbc6</artifactId>
 		        </exclusion>
 			</exclusions>
+-->
  		</dependency>
 
 		<!-- scope provided exludes the dependency from the war build,

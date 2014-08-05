@@ -3,6 +3,7 @@ package com.sos.jade.backgroundservice;
 import java.util.prefs.Preferences;
 
 import javax.servlet.annotation.WebServlet;
+
 import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
@@ -44,7 +45,7 @@ public class BackgroundserviceUI extends UI {
 
     @Override
     protected void init(final VaadinRequest request) {
-		try {
+    	  try {
 			VaadinSession.getCurrent().getLockInstance().lock();
 			if (VaadinSession.getCurrent().getAttribute(SessionAttributes.SESSION_ID.name()) == null) {
 				VaadinSession.getCurrent().setAttribute(SessionAttributes.SESSION_ID.name(), SessionAttributes.SESSION_ID);

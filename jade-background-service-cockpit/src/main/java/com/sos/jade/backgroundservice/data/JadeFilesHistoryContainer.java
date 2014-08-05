@@ -34,6 +34,8 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 					status.setValue(new StatusSuccessLabel());
 				}else if("error".equals(historyItem.getStatus())){
 					status.setValue(new StatusErrorLabel());
+				}else if("transferring".equals(historyItem.getStatus())){
+					status.setValue(new StatusTransferLabel());
 				}
 				Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
 				mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
@@ -105,6 +107,14 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 		}
 	}
 	
+	private class StatusTransferLabel extends Label{
+		private static final long serialVersionUID = 1L;
+		public StatusTransferLabel() {
+			setWidth(16.0f, Unit.PIXELS);
+			setHeight(16.0f, Unit.PIXELS);
+			setStyleName("jadeStatusTransferLabel");
+		}
+	}
 	
     public void updateItem(Object itemId){
         if (this.containsId(itemId)){

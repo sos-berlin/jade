@@ -171,6 +171,17 @@
   	background-color: #FA3816;  
   }
   
+  .jadeStatusTransferLabel{
+  	width: 16px;
+  	height: 16px;
+  	border: 1px solid black;
+  	border-radius: $round-corners-radius;
+	-webkit-border-radius: $round-corners-radius;
+	-moz-border-radius: $round-corners-radius;
+	-o-border-radius: $round-corners-radius;
+  	background-color: #ECEC00;  
+  }
+  
   /************ styles for Country Flag Labels **************/
   .jadeGermanyLabel{
   	width: 20px;
