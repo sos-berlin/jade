@@ -18,29 +18,29 @@
 	<dependencies>
 
        <dependency>
-            <groupId>com.sos-berlin.products.jobscheduler</groupId>
+            <groupId>com.sos-berlin.jobscheduler</groupId>
             <artifactId>jobscheduler-helper</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.sos-berlin.products.jade</groupId>
+            <groupId>com.sos-berlin.jade</groupId>
             <artifactId>jade-engine</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.sos-berlin.products.jobscheduler</groupId>
+            <groupId>com.sos-berlin.jobscheduler</groupId>
             <artifactId>virtual-file-system</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+<!--  
        <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <scope>test</scope>
         </dependency>
-
+-->
 
 		<dependency>
 			<groupId>log4j</groupId>
