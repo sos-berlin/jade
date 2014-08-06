@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd"
     xmlns="http://java.sun.com/xml/ns/j2ee"
-    version="2.4"
+    version="3.0"
 >
 <!-- comment this complete configuration to run on Tomcat from the IDE while developing,
-	 uncomment for release build to run on embedded Jetty [SP] -->
+	 uncomment for release build to run on embedded Jetty [SP] 
     <display-name>Vaadin configuration (web.xml)</display-name>
 	<servlet>
 		<servlet-name>vaadinservlet</servlet-name>
@@ -34,4 +34,5 @@
 		<param-name>org.atmosphere.cpr.sessionSupport</param-name>
 		<param-value>true</param-value>
 	</context-param>		
+-->
 </web-app>
