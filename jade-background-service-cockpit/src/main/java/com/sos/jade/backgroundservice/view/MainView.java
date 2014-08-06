@@ -11,7 +11,8 @@ import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
@@ -79,7 +80,7 @@ public class MainView extends CustomComponent implements View{
     private Label lblTitle;
     private VerticalLayout vRest;
 	private Preferences prefs = jadeBsOptions.getPreferenceStore();
-	private final Logger log = Logger.getLogger(MainView.class);
+	private final Logger log = LoggerFactory.getLogger(MainView.class);
 	private ProgressBar progress;
 	private JadeBSMessages messages;
 //	private Date progressStart;
@@ -101,6 +102,7 @@ public class MainView extends CustomComponent implements View{
 		setSizeFull();
 		setImmediate(true);
 		initView();
+		log.info("****************************MainView started!******************************");
 	}
 	
 	public void initView(){

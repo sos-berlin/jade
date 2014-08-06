@@ -4,6 +4,8 @@ import java.util.prefs.Preferences;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
@@ -23,6 +25,9 @@ import com.vaadin.ui.UI;
 @Title("Jade Background Service")
 @Push
 public class BackgroundserviceUI extends UI {
+    static {
+        SLF4JBridgeHandler.install();
+    }
 	private static final long serialVersionUID = 1L;
 	public static final JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
 	public static final Preferences prefs = jadeBsOptions.getPreferenceStore();
@@ -36,6 +41,7 @@ public class BackgroundserviceUI extends UI {
     private String jsSessionId;
     private String securityServer;
 
+    
 	@WebServlet(value = "/*", asyncSupported = true)
     /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
     @VaadinServletConfiguration(productionMode = true, ui = BackgroundserviceUI.class)

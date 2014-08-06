@@ -8,7 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 import sos.ftphistory.db.JadeFilesDBLayer;
@@ -25,7 +26,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private JadeFilesDBLayer jadeFilesDBLayer;
 	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	public MainView ui;
-	private Logger log = Logger.getLogger(JadeFileListenerImpl.class);
+	private Logger log = LoggerFactory.getLogger(JadeFileListenerImpl.class);
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
 	
 	public JadeFileListenerImpl(MainView ui){

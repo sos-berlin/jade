@@ -1,7 +1,8 @@
 package com.sos.jade.backgroundservice.options;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Annotations.JSOptionClass;
 import com.sos.JSHelper.Annotations.JSOptionDefinition;
@@ -64,7 +65,7 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 	private static final long	serialVersionUID	= 338878527661019237L;
 	private final String		conClassName		= "JadeBackgroundServiceOptionsSuperClass";
 	@SuppressWarnings("unused")
-	private static Logger		logger				= Logger.getLogger(JadeBackgroundServiceOptionsSuperClass.class);
+	private static Logger		logger				= LoggerFactory.getLogger(JadeBackgroundServiceOptionsSuperClass.class);
 
 	/**
 	 * \var hibernateConfigurationFileName : 

@@ -7,14 +7,14 @@
 	    <artifactId>jade</artifactId>
     	<version>1.8-SNAPSHOT</version>
   	</parent>
-  	<!-- Build as 'skinny war', means all needed dependencies should not be build into WEB-INF/lib 
-  	     in the war file, instead should be provided in lib of the jobscheduler installation path 
-  	     standard war build ~64 MiB, 'skinny war build ~420KiB -->
 	<groupId>com.sos-berlin.jade</groupId>
 	<artifactId>jade-background-service-cockpit</artifactId>
-	<packaging>war</packaging>
 	<name>${project.artifactId}</name>
+	<packaging>war</packaging>
 
+  	<!-- Build as 'skinny war', means all needed dependencies should not be build into WEB-INF/lib 
+  	     in the war file, instead should be provided in lib of the jobscheduler installation path 
+  	     standard war build ~64 MiB, 'skinny war build ~420KiB (with vaadin-server-xxx.jar) ~3.067KiB -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
@@ -508,5 +508,13 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+        </dependency>
 	</dependencies>
 </project>
