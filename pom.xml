@@ -23,6 +23,6 @@
 	  <module>jade-cockpit</module>
 	  <module>jade-cli</module>
 	  <module>jade-vaadin-cockpit</module>
-  </modules>
+    </modules>
 
 </project>
