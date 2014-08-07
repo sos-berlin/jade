@@ -36,6 +36,7 @@ import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Options.SOSConnection2Options;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.VirtualFileSystem.exceptions.JADEException;
 
 public abstract class JadeTestBase extends JSToolBox {
 	class WriteFile4Polling implements Runnable {
@@ -171,7 +172,7 @@ public abstract class JadeTestBase extends JSToolBox {
 	 */
 	@BeforeClass public static void setUpBeforeClass() throws Exception {
 	}
-	private JadeEngine				objJadeEngine	= null;
+	protected JadeEngine				objJadeEngine	= null;
 	protected final String			conClassName	= "JadeTestBase";
 	protected static final Logger	logger			= Logger.getLogger(JadeTestBase.class);
 
@@ -675,7 +676,15 @@ public abstract class JadeTestBase extends JSToolBox {
 		//authenticate();
 		//ftpClient.rmdir(objOptions.TargetDir.Value());
 		//ftpClient.disconnect();
-		objJadeEngine.Execute();
+		
+		try {
+			objJadeEngine.Execute();
+		}
+		catch (JADEException e) {
+			System.out.println("Exit code must me not equal to zero = " + e.getExitCode().ExitCode);
+			e.printStackTrace();
+		}
+
 		objOptions.Options2ClipBoard();
 	} // private void startTransfer
 	

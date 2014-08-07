@@ -46,6 +46,7 @@ import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer2;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVirtualFile;
+import com.sos.VirtualFileSystem.exceptions.JADEException;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
@@ -73,8 +74,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private final boolean			testmode						= false;
 	private SOSVfsConnectionFactory	objConFactory					= null;
 	private long					lngNoOfPollingServerFiles		= 0;
+	public boolean					flgGlobalError					= false;																// set, if the transfer is aborted due to an serious error
 
-	public SOSDataExchangeEngine() throws Exception {
+	public SOSDataExchangeEngine()  {
 		init();
 	}
 
@@ -269,68 +271,77 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	/* (non-Javadoc)
 	 * @see com.sos.DataExchange.IJadeEngine#Execute()
 	 */
-	@Override public boolean Execute() throws Exception {
+	@Override public boolean Execute() {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::execute";
-		long startTime = System.currentTimeMillis();
-		//		long startTime = System.nanoTime();
-		VFSFactory.setParentLogger(strLoggerName);
-		int intVerbose = objOptions.verbose.value();
-		if (intVerbose <= 1) {
-			Logger.getRootLogger().setLevel(Level.INFO);
-		}
-		else {
-			if (intVerbose == 9) {
-				Logger.getRootLogger().setLevel(Level.TRACE);
-				logger.setLevel(Level.TRACE);
-				logger.debug("set loglevel to TRACE due to option verbose = " + intVerbose);
-			}
-			else {
-				Logger.getRootLogger().setLevel(Level.DEBUG);
-				logger.debug("set loglevel to DEBUG due to option verbose = " + intVerbose);
-			}
-		}
-		String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
-		logger.info(strV);
-		objOptions.getTextProperties().put("version", strV);
-		objOptions.log_filename.setLogger(objJadeReportLogger);
-		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
-		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
-		objOptions.host.SetIfNotDirty(objOptions.Target().host);
-		String strT = "";
-		if (objOptions.banner_header.isDirty()) {
-			strT = objOptions.banner_header.JSFile().getContent();
-		}
-		else {
-			strT = SOSJADE_T_0010.get(); // LogFile Header
-		}
-		strT = objOptions.replaceVars(strT);
-		objJadeReportLogger.info(strT + "");
-		boolean flgOK = false;
+		boolean flgOK;
 		try {
-			flgOK = this.transfer();
-		}
-		catch (Exception e) {
-			throw new JobSchedulerException(e.getLocalizedMessage(), e);
-		}
-		finally {
-			long stopTime = System.currentTimeMillis();
-			long elapsedTime = stopTime - startTime;
-			long intNoOfFilesTransferred = getSuccessfulTransfers();
-			if (intNoOfFilesTransferred <= 0) {
-				intNoOfFilesTransferred = 1;
-			}
-			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
-					+ getSuccessfulTransfers());
-			if (objOptions.banner_footer.isDirty()) {
-				objOptions.banner_footer.JSFile().getContent();
+			long startTime = System.currentTimeMillis();
+			//		long startTime = System.nanoTime();
+			VFSFactory.setParentLogger(strLoggerName);
+			int intVerbose = objOptions.verbose.value();
+			if (intVerbose <= 1) {
+				Logger.getRootLogger().setLevel(Level.INFO);
 			}
 			else {
-				strT = SOSJadeMessageCodes.SOSJADE_T_0011.get(); // LogFile Footer
+				if (intVerbose == 9) {
+					Logger.getRootLogger().setLevel(Level.TRACE);
+					logger.setLevel(Level.TRACE);
+					logger.debug("set loglevel to TRACE due to option verbose = " + intVerbose);
+				}
+				else {
+					Logger.getRootLogger().setLevel(Level.DEBUG);
+					logger.debug("set loglevel to DEBUG due to option verbose = " + intVerbose);
+				}
 			}
-			setTextProperties();
+			String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
+			logger.info(strV);
+			objOptions.getTextProperties().put("version", strV);
+			objOptions.log_filename.setLogger(objJadeReportLogger);
+			objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
+			objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
+			objOptions.host.SetIfNotDirty(objOptions.Target().host);
+			String strT = "";
+			if (objOptions.banner_header.isDirty()) {
+				strT = objOptions.banner_header.JSFile().getContent();
+			}
+			else {
+				strT = SOSJADE_T_0010.get(); // LogFile Header
+			}
 			strT = objOptions.replaceVars(strT);
-			objJadeReportLogger.info(strT);
-			sendNotifications();
+			objJadeReportLogger.info(strT + "");
+			flgOK = false;
+			try {
+				flgOK = this.transfer();
+			}
+			catch (JADEException e) {
+				throw e;
+			}
+			catch (Exception e) {
+				throw new JADEException(e.getLocalizedMessage(), e);
+			}
+			finally {
+				long stopTime = System.currentTimeMillis();
+				long elapsedTime = stopTime - startTime;
+				long intNoOfFilesTransferred = getSuccessfulTransfers();
+				if (intNoOfFilesTransferred <= 0) {
+					intNoOfFilesTransferred = 1;
+				}
+				logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
+						+ getSuccessfulTransfers());
+				if (objOptions.banner_footer.isDirty()) {
+					strT = objOptions.banner_footer.JSFile().getContent();
+				}
+				else {
+					strT = SOSJadeMessageCodes.SOSJADE_T_0011.get(); // LogFile Footer
+				}
+				setTextProperties();
+				strT = objOptions.replaceVars(strT);
+				objJadeReportLogger.info(strT);
+				sendNotifications();
+			}
+		}
+		catch (JADEException e) {
+			throw e;
 		}
 		return flgOK;
 	}
@@ -627,7 +638,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		String strMsg = "";
 		try {
 			int intNoOfFilesTransferred = (int) getSuccessfulTransfers();
-			if (objOptions.file_path.isDirty()) {
+			if (objOptions.file_path.IsNotEmpty()) {
 				strMsg = SOSJADE_E_0099.params(objOptions.file_path.Value());
 			}
 			else {
@@ -647,7 +658,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							if (objOptions.ErrorOnNoDataFound.isTrue()) {
 								if (intNoOfFilesTransferred <= 0 && lngNoOfPollingServerFiles <= 0) {
 									objJadeReportLogger.info(strMsg);
-									throw new JobSchedulerException(strMsg);
+									throw new JADEException(strMsg);
 								}
 								else {
 									state = strMsg;
@@ -668,6 +679,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 			if (zeroByteCount > 0) {
 				state += " " + SOSJADE_I_0102.params(zeroByteCount);
+			}
+			if (flgGlobalError == true) {
+				state = "processing ended with errors";
 			}
 			logger.debug(state);
 			objJadeReportLogger.info(state);
@@ -947,17 +961,31 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 									objSourceFileList.objDataTargetClient = objDataTargetClient;
 									makeDirs();
 								}
-								sendFiles(objSourceFileList);
-								// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
-								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
-								objSourceFileList.renameAtomicTransferFiles();
-								executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
-								executePostTransferCommands(objDataTargetClient, objOptions.Target().PostTransferCommands);
-								executePostTransferCommands(objDataSourceClient, objOptions.Source().PostTransferCommands);
-								objSourceFileList.DeleteSourceFiles();
-								if (objOptions.TransactionMode.isTrue()) {
-									objSourceFileList.EndTransaction();
-									sendTransferHistory();
+								try {
+									sendFiles(objSourceFileList);
+								}
+								catch (Exception e) { // Fehler bei der Übertragung. Jetzt erstmal irgendwie aufräumen.
+									flgGlobalError = true;  // Exception nicht durchreichen, wegen hous keeping und transactional
+									// Evtl. die bereits übertragenen Dateien sogar löschen
+									// auf keinen Fall die Datein in der Source löschen.
+									String strM = TRANSACTION_ABORTED.get(e);
+									logger.error(strM, e);
+								}
+								if (flgGlobalError == false) {
+									// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
+									// http://www.sos-berlin.com/jira/browse/SOSFTP-186
+									objSourceFileList.renameAtomicTransferFiles();
+									executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
+									executePostTransferCommands(objDataTargetClient, objOptions.Target().PostTransferCommands);
+									executePostTransferCommands(objDataSourceClient, objOptions.Source().PostTransferCommands);
+									objSourceFileList.DeleteSourceFiles();
+									if (objOptions.TransactionMode.isTrue()) {
+										objSourceFileList.EndTransaction();
+										sendTransferHistory();
+									}
+								}
+								else {
+									break PollingServerLoop;
 								}
 							}
 						}
@@ -995,6 +1023,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					}
 				} // end while (true)
 				flgReturnCode = printState(flgReturnCode);
+				if (flgGlobalError == true) {
+					flgReturnCode = false;
+				}
 				return flgReturnCode;
 			}
 			catch (Exception e) {
@@ -1026,20 +1057,26 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	private void selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
 			final SOSOptionBoolean poptRecurseFolders) throws Exception {
-		if (objLocFile.isDirectory() == true) {
-			if (objDataSourceClient instanceof ISOSVfsFileTransfer2) {
-				ISOSVfsFileTransfer2 objF = (ISOSVfsFileTransfer2) objDataSourceClient;
-				objF.clearFileListEntries();
-				objSourceFileList = objF.getFileListEntries(objSourceFileList, pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), poptRecurseFolders.value());
+		try {
+			if (objLocFile.isDirectory() == true) {
+				if (objDataSourceClient instanceof ISOSVfsFileTransfer2) {
+					ISOSVfsFileTransfer2 objF = (ISOSVfsFileTransfer2) objDataSourceClient;
+					objF.clearFileListEntries();
+					objSourceFileList = objF.getFileListEntries(objSourceFileList, pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), poptRecurseFolders.value());
+				}
+				else {
+					String[] strFileList = objDataSourceClient.getFilelist(pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), 0, poptRecurseFolders.value());
+					fillFileList(strFileList, pobjSourceDir.Value());
+				}
+				setInfo(String.format("%1$d file(s) found for regexp '%2$s'.", objSourceFileList.size(), pobjRegExp4FileNames.Value()));
 			}
-			else {
-				String[] strFileList = objDataSourceClient.getFilelist(pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), 0, poptRecurseFolders.value());
-				fillFileList(strFileList, pobjSourceDir.Value());
+			else { // not a directory, seems to be a filename
+				objSourceFileList.add(pobjSourceDir.Value());
 			}
-			setInfo(String.format("%1$d files found for regexp '%2$s'.", objSourceFileList.size(), pobjRegExp4FileNames.Value()));
 		}
-		else { // not a directory, seems to be a filename
-			objSourceFileList.add(pobjSourceDir.Value());
+		catch (Exception e) {
+			flgGlobalError = true;
+			throw e;
 		}
 	}
 	@SuppressWarnings("unused")

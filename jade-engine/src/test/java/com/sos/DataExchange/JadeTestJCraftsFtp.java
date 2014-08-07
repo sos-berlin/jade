@@ -3,6 +3,8 @@
  */
 package com.sos.DataExchange;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -145,8 +147,10 @@ public class JadeTestJCraftsFtp extends JadeTestBase {
 		final String conMethodName = conClassName + "::testLocal2sftpWithNotEnoughSpaceOnTarget";
 		objTestOptions.TargetDir.Value("/media/ramdisk");
 		objTestOptions.SourceDir.Value("R:/nobackup/junittests/testdata/JADE/testLocal2sftpWithNotEnoughSpaceOnTarget");
-		objOptions.force_files.value(false);
+		objTestOptions.force_files.value(false);
 		super.testCopyMultipleFiles();
+		assertTrue("error expected", objJadeEngine.flgGlobalError);
+
 	}
 
 }

@@ -12,6 +12,7 @@ import com.sos.JSHelper.Options.SOSOptionJadeOperation.enuJadeOperations;
 import com.sos.JSHelper.Options.SOSOptionPortNumber;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.JSHelper.io.Files.JSCsvFile;
+import com.sos.VirtualFileSystem.exceptions.JADEException;
 
 
 public class JadeTestsFtpAsSource extends JadeTestBase {
@@ -315,23 +316,70 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 		super.testSend();
 	}
 	
-	
+	/**
+	 * 
+	*
+	* \brief testSendWithOutAccessToOneFileInSourceFolder
+	*
+	* \details
+	* Test zu https://sourceforge.net/p/sosftp/bug-reports/5/
+    * "Im Source Verzeichnis kann gelesen werden, aber nicht alle Dateien sind lesbar."
+    * 
+    * Obwohl keine Dateien übertragen werden muß ein Fehler ausgelöst werden, trotz force_files=false.
+    * 
+	* \return void
+	*
+	 */
 	@Test
 	public void testSendWithOutAccessToOneFileInSourceFolder() throws Exception {
 		final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
 		objTestOptions.SourceDir.Value("/home/test/noaccess");
 		objTestOptions.file_spec.Value("\\.txt$");
-		objOptions.force_files.value(false);
+		objTestOptions.force_files.value(false);
 		super.testCopyMultipleFiles();
+		assertTrue("error expected", objJadeEngine.flgGlobalError);
 	}
 	
+ @Test
+	public void testSendWithOutAccessToOneFileInSourceFolder2() throws Exception {
+		final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
+		objTestOptions.SourceDir.Value("/home/test/noaccess");
+		objTestOptions.file_spec.Value("\\.txt$");
+		objTestOptions.force_files.value(true);
+		super.testCopyMultipleFiles();
+		assertTrue("error expected", objJadeEngine.flgGlobalError);
+	}
+	
+
+ /**
+  * 
+ *
+ * \brief testSendWithOutAccessToSourceFolder
+ *
+ * \details
+ * Test zu https://sourceforge.net/p/sosftp/bug-reports/4/
+ * "Kein Zugriff auf Source Verzeichnis."
+ *
+ * Hier werden keine Dateien gefunden, was auch verständlich ist, da in dem Verzeichnis keine Lese-Rechte bestehen.
+ * Es gibt aber keine Exception (siehe SOSVfsSFtpJCraft.listNames) und damit ist auch der Exit-Code=0.
+
+ * \return void
+ *
+  */
 	@Test
 	public void testSendWithOutAccessToSourceFolder() throws Exception {
 		final String conMethodName = conClassName + "::testSendWithOutAccessToSourceFolder";
 		objTestOptions.SourceDir.Value("/root");
 		objTestOptions.file_spec.Value("\\.txt$");
-		objOptions.force_files.value(false);
-		super.testCopyMultipleFiles();
+		objTestOptions.force_files.value(false);
+		try {
+			super.testCopyMultipleFiles();
+		}
+		catch (JADEException e) {
+			System.out.println("Exit code must me not equal to zero = " + e.getExitCode().ExitCode);
+			e.printStackTrace();
+		}
+		assertTrue("error expected (could not access folder)", objJadeEngine.flgGlobalError);
 	}
 
 
