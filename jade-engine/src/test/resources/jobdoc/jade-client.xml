@@ -3,7 +3,7 @@
 <description xmlns="http://www.sos-berlin.com/schema/scheduler_job_documentation_v1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xi="http://www.w3.org/2001/XInclude"
     xsi:schemaLocation="http://www.sos-berlin.com/schema/scheduler_job_documentation_v1.1 
-  http://www.sos-berlin.com/schema/scheduler_job_documentation_v1.1.xsd">
+  http://www.sos-berlin.com/schema/scheduler_job_documentation_v1.2.xsd">
 
     <job name="JADE-Client" title="Client for JobScheduler Advanced Data Exchange" order="yes" category="ftp;MFT;FileTransfer">
         <script language="java" java_class="com.sos.DataExchange.SOSDataExchangeEngineMain" resource="1" />
