@@ -4,7 +4,7 @@
     version="3.0"
 >
 <!-- comment this complete configuration to run on Tomcat from the IDE while developing,
-	 uncomment for release build to run on embedded Jetty [SP] 
+	 uncomment for release build to run on embedded Jetty [SP] -->
     <display-name>Vaadin configuration (web.xml)</display-name>
 	<servlet>
 		<servlet-name>vaadinservlet</servlet-name>
@@ -34,5 +34,5 @@
 		<param-name>org.atmosphere.cpr.sessionSupport</param-name>
 		<param-value>true</param-value>
 	</context-param>		
--->
+
 </web-app>

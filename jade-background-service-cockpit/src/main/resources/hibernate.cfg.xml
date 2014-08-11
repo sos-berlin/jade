@@ -3,20 +3,21 @@
                                          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
  <session-factory>
-  <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+  <property name="hibernate.connection.driver_class">org.mariadb.jdbc.Driver</property>
   <property name="hibernate.connection.password">scheduler</property>
   <property name="hibernate.connection.url">jdbc:mysql://wilma:3305/scheduler</property>
   <property name="hibernate.connection.username">scheduler</property>
   <property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
-  <property name="hibernate.show_sql">true</property>
+  <property name="hibernate.show_sql">false</property>
   <property name="hibernate.connection.autocommit">false</property>
   <property name="hibernate.format_sql">true</property>
   <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
+<!--  
   <property name="javax.persistence.validation.mode">none</property>
   <property name="hibernate.timeout">30</property>
+-->
   <mapping class="sos.ftphistory.db.JadeFilesDBItem"/>
   <mapping class="sos.ftphistory.db.JadeFilesHistoryDBItem"/>
-  
  </session-factory>
 </hibernate-configuration>
  

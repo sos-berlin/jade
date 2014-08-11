@@ -75,9 +75,12 @@
 					<!-- the regex will remove all dependencies except for vaadin-server-<version>.jar,
 						 because it is needed for the servlets class loader to function correctly. Otherwise
 						 classes from WEB-INF/classes won´t be found -->        
-						%regex[WEB-INF/lib/(?!vaadin-server).*.jar]
+						%regex[WEB-INF/lib/(?!vaadin-server).*.jar],
+						WEB-INF/classes/hibernate.cfg.xml,
+						WEB-INF/classes/log4j.properties
 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -203,7 +206,8 @@
 
 		<!-- All dependencies on vaadin are set to be provided at runtime.
 		     In order to keep the war files slim, all deployed Vaadin WebApps 
-		     should use the runtime jars and shouldn`t deliver them in the war file. -->
+		     should use the runtime jars and shouldn`t deliver them in the war file except for 
+		     the vaadin-server dependency, because this had to start the servlet in the correct ClassLoader. -->
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -250,264 +254,34 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<!-- scope provided exludes the dependency from the war build,
-		     unfortunately the cascading dependencies will still be build 
-		     into the war file. Therefore exclusions have to be configured -->
+		<!-- scope provided exludes the dependency from the war build -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
             <version>${project.version}</version>
 			<scope>provided</scope>
-<!--  
-			<exclusions>
-		        <exclusion>
-		            <groupId>com.sos-berlin.jobscheduler</groupId>
-		            <artifactId>jobscheduler-helper</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sos-berlin.commons</groupId>
-		            <artifactId>sos-util</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sos-berlin.commons</groupId>
-		            <artifactId>sos-connection</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sos-berlin.commons</groupId>
-		            <artifactId>sos-settings</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sos-berlin.jobscheduler</groupId>
-		            <artifactId>hibernate-commons</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sos-berlin.jobscheduler</groupId>
-		            <artifactId>sos-scheduler</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>sos</groupId>
-		            <artifactId>hostware</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>junit</groupId>
-		            <artifactId>junit</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>javassist</groupId>
-		            <artifactId>javassist</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>javax.transaction</groupId>
-		            <artifactId>jta</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>antlr</groupId>
-		            <artifactId>antlr</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>joda-time</groupId>
-		            <artifactId>joda-time</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>commons-collections</groupId>
-		            <artifactId>commons-collections</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.oracle</groupId>
-		            <artifactId>ojdbc6</artifactId>
-		        </exclusion>
-			</exclusions>
--->
  		</dependency>
 
-		<!-- scope provided exludes the dependency from the war build,
-		     unfortunately the cascading dependencies will still be build 
-		     into the war file. Therefore exclusions have to be configured -->
+		<!-- scope provided exludes the dependency from the war build -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
             <version>${project.version}</version>
 			<scope>provided</scope>
- <!-- 
-			<exclusions>
-		        <exclusion>
-		            <groupId>com.sos-berlin.jobscheduler</groupId>
-		            <artifactId>hibernate-commons</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sos-berlin.jobscheduler</groupId>
-		            <artifactId>jobscheduler-helper</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>javassist</groupId>
-		            <artifactId>javassist</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sun.jersey</groupId>
-		            <artifactId>jersey-client</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.sun.jersey</groupId>
-		            <artifactId>jersey-server</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.oracle</groupId>
-		            <artifactId>ojdbc6</artifactId>
-		        </exclusion>
-				<exclusion>
-					<groupId>org.apache.shiro</groupId>
-					<artifactId>shiro-all</artifactId>
-				</exclusion>
-		        <exclusion>
-		            <groupId>com.fasterxml.jackson.core</groupId>
-		            <artifactId>jackson-core</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>com.fasterxml.jackson.core</groupId>
-		            <artifactId>jackson-annotations</artifactId>
-		        </exclusion>
-				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sos-berlin.jobscheduler</groupId>
-					<artifactId>jobscheduler-web-services-globals</artifactId>
-				</exclusion>
-		        <exclusion>
-		            <groupId>joda-time</groupId>
-		            <artifactId>joda-time</artifactId>
-		        </exclusion>
-			</exclusions>
- -->
  		</dependency>
 
-		<!-- Scope provided exludes the dependency from the war build
-		     unfortunately the cascading dependencies will still be build 
-		     into the war file. Therefore exclusions have to be configured.
-		     
-		     In this case it is a dependency from one (or both) of the dependencies
-		     above. Per default there is no need to configure this, but to exclude
-		     the cascading dependencies, we have to configure it in this pom file, too! 
-		     
-		     For a standard build, only the dependencies for ftp-history and sos-security 
-		     have to be configured! -->
-<!-- 
-		<dependency>
-			<groupId>com.sos-berlin.jobscheduler</groupId>
-			<artifactId>jobscheduler-helper</artifactId>
-            <version>${project.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-		        <exclusion>
-		            <groupId>com.sos-berlin.commons</groupId>
-		            <artifactId>sos-util</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>commons-codec</groupId>
-		            <artifactId>commons-codec</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>commons-logging</groupId>
-		            <artifactId>commons-logging</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>xalan</groupId>
-		            <artifactId>xalan</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>xerces</groupId>
-		            <artifactId>xercesImpl</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>net.sf.saxon</groupId>
-		            <artifactId>Saxon-HE</artifactId>
-		        </exclusion>
-		        <exclusion>
-		            <groupId>joda-time</groupId>
-		            <artifactId>joda-time</artifactId>
-		        </exclusion>
-			</exclusions>
- 		</dependency>
- -->
-
-		<!-- Scope provided exludes the dependency from the war build
-		     unfortunately the cascading dependencies will still be build 
-		     into the war file. Therefore exclusions have to be configured.
-		     
-		     In this case it is a dependency from one (or both) of the dependencies
-		     above. Per default there is no need to configure this, but to exclude
-		     the cascading dependencies, we have to configure it in this pom file, too! 
-		     
-		     For a standard build, only the dependencies for ftp-history and sos-security 
-		     have to be configured! -->
-<!--  
-		<dependency>
-			<groupId>com.sos-berlin.jobscheduler</groupId>
-			<artifactId>hibernate-commons</artifactId>
-            <version>${project.version}</version>
-			<scope>provided</scope>
- 			<exclusions>
-				<exclusion>
-				    <groupId>com.sos-berlin.jobscheduler</groupId>
-		            <artifactId>jobscheduler-helper</artifactId>
-				</exclusion>
-				<exclusion>
-               		<groupId>org.hibernate</groupId>
-	                <artifactId>hibernate-core</artifactId>
-			        </exclusion>
-				<exclusion>
-	                <groupId>org.hibernate.javax.persistence</groupId>
-	                <artifactId>hibernate-jpa-2.0-api</artifactId>
-				</exclusion>
-				<exclusion>
-		            <groupId>commons-collections</groupId>
-		            <artifactId>commons-collections</artifactId>
-				</exclusion>
-				<exclusion>
-				    <groupId>org.hibernate</groupId>
-				    <artifactId>hibernate-commons-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-		            <groupId>joda-time</groupId>
-		            <artifactId>joda-time</artifactId>
-				</exclusion>
-				<exclusion>
-		            <groupId>joda-time</groupId>
-		            <artifactId>joda-time-hibernate</artifactId>
-				</exclusion>
-				<exclusion>
-		            <groupId>com.fasterxml.jackson.core</groupId>
-		            <artifactId>jackson-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-				     <groupId>com.google.guava</groupId>
-				     <artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
-				     <groupId>javassist</groupId>
-				     <artifactId>javassist</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.swt</groupId>
-					<artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
-				</exclusion>
-				<exclusion>
-		           <groupId>net.sourceforge.jtds</groupId>
-		           <artifactId>jtds</artifactId>
-		        </exclusion>
-		        <exclusion>
-			     <groupId>org.postgresql</groupId>
-			     <artifactId>postgresql</artifactId>
-		        </exclusion>      
-			</exclusions>
-		</dependency>
- -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>

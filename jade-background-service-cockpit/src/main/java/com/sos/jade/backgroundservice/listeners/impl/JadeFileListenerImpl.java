@@ -1,5 +1,6 @@
 package com.sos.jade.backgroundservice.listeners.impl;
 
+import static com.sos.jade.backgroundservice.BackgroundserviceUI.hibernateConfigFile;
 import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
 
 import java.io.Serializable;
@@ -32,15 +33,18 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
 		String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		if(jadeBsOptions.getDevel().isDevelopment()){
-			// webserver runs in development environment
-			if(jadeBsOptions.getWebserverType().isJetty()){
-				//run on mvn jetty:run with envirmonment variables to the config file
-				jadeBsOptions.hibernateConfigurationFileName.Value(jadeBsOptions.hibernateConfigurationFileName.Value());
-			}else if(jadeBsOptions.getWebserverType().isTomcat()){
-				//run on tomcat with the config file from the webapp folder
-				jadeBsOptions.hibernateConfigurationFileName.Value(absolutePath + jadeBsOptions.hibernateConfigurationFileName.Value());
-			}
+//		if(jadeBsOptions.getDevel().isDevelopment()){
+//			// webserver runs in development environment
+//			if(jadeBsOptions.getWebserverType().isJetty()){
+//				//run on mvn jetty:run with envirmonment variables to the config file
+//				jadeBsOptions.hibernateConfigurationFileName.Value(jadeBsOptions.hibernateConfigurationFileName.Value());
+//			}else if(jadeBsOptions.getWebserverType().isTomcat()){
+//				//run on tomcat with the config file from the webapp folder
+//				jadeBsOptions.hibernateConfigurationFileName.Value(absolutePath + jadeBsOptions.hibernateConfigurationFileName.Value());
+//			}
+//		}
+		if(hibernateConfigFile != null && hibernateConfigFile.length() != 0){
+			jadeBsOptions.hibernateConfigurationFileName.Value(hibernateConfigFile);
 		}
  		jadeBsOptions.hibernateConfigurationFileName.CheckMandatory();
 		this.jadeFilesDBLayer = new JadeFilesDBLayer(jadeBsOptions.hibernateConfigurationFileName.JSFile());

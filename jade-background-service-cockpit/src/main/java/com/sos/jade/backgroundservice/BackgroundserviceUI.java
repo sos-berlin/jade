@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebServlet;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
@@ -16,6 +17,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.server.VaadinSession;
@@ -40,7 +42,8 @@ public class BackgroundserviceUI extends UI {
     private static final String SECURITY_SERVER = "security_server";
     private String jsSessionId;
     private String securityServer;
-
+    public static String hibernateConfigFile;
+    public static String log4jPropertiesFile;
     
 	@WebServlet(value = "/*", asyncSupported = true)
     /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
@@ -64,6 +67,10 @@ public class BackgroundserviceUI extends UI {
 		} finally {
 			VaadinSession.getCurrent().getLockInstance().unlock();
 		}
+    	String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+    	JSIniFile jsConfig = new JSIniFile(absolutePath + "/WEB-INF/classes/jsconfig.ini");
+    	hibernateConfigFile = jsConfig.getPropertyString("Configuration", "hibernateConfigFile", absolutePath + "/WEB-INF/classes/hibernate.cfg.xml");
+    	log4jPropertiesFile = jsConfig.getPropertyString("Configuration", "logConfigFile", absolutePath + "/WEB-INF/classes/log4j.properties");
     	mainView = new MainView();
     	aboutWindow = new AboutWindow();
 		modalWindow = new FilterLayoutWindow();
