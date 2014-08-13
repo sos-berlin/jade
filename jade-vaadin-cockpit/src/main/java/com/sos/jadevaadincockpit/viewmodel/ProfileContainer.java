@@ -8,7 +8,7 @@ import java.util.UUID;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.io.Files.JSIniFile;
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.HierarchicalContainer;
@@ -33,7 +33,7 @@ public class ProfileContainer extends HierarchicalContainer {
 		OPTIONS(HashMap.class, null), 
 		OPTIONSFROMSETTINGSFILE(HashMap.class, null), 
 		JADESETTINGSFILE(JSIniFile.class, null), 
-		ICON(Resource.class, new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Profile.gif")));
+		ICON(Resource.class, new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Profile.gif")));
 
 		private Class<?> type;
 		private Object defaultValue;
@@ -85,7 +85,7 @@ public class ProfileContainer extends HierarchicalContainer {
 	 *            ProfileTreeContainer.PROPERTY.JADESETTINGSFILE
 	 */
 	@SuppressWarnings("unchecked")
-	private void setAllProperties(Object itemId, Object id, String name, // TODO an geänderte Properties anpassen
+	private void setAllProperties(Object itemId, Object id, String name, // TODO an geï¿½nderte Properties anpassen
 			String oldName, NODETYPE nodeType, JADEOptions jadeOptions,
 			HashMap<String, SOSOptionElement> options,
 			JSIniFile jadeSettingsFile) {
@@ -125,31 +125,40 @@ public class ProfileContainer extends HierarchicalContainer {
 	}
 
 	/**
-	 * Creates a new profileItem with the given profileName.
-	 * 
-	 * @param profileName
+	 * Creates a new profileItem.
+	 * @param profileName the name of the new profile
+	 * @param parentId the id of the parent item (a settings file)
 	 * @return The created profileItem id or null, if the container does not
 	 *         contain a rootItem (-> no settings file has been loaded yet)
 	 */
 	public Object addProfileItem(String profileName, Object parentId) {
+		
 		Object profileId = null;
+		/**
+		 * If the container does not contain any items at this point, there is
+		 * no settings file loaded to which the profile could be added.
+		 * 
+		 */
 		if (getItemIds().size() > 0) {
+			
 			profileId = UUID.randomUUID();
 			addItem(profileId);
+			setParent(profileId, parentId);
+			setChildrenAllowed(profileId, false);
+			
+			 // TODO globals profil muss aufgelÃ¶st werden
+			
 			JSIniFile jadeSettingsFile = (JSIniFile) getItem(parentId).getItemProperty(PROPERTY.JADESETTINGSFILE).getValue();
 
 			JADEOptions jadeOptions = new JADEOptions();
 			jadeOptions.gflgSubsituteVariables = false;
 			jadeOptions.settings.Value(jadeSettingsFile.getAbsolutePath());
 			jadeOptions.profile.Value(profileName);
-			jadeOptions.ReadSettingsFile(); // TODO this takes quite some time
+//			jadeOptions.ReadSettingsFile(); // TODO this takes quite some time
 
 			setAllProperties(profileId, profileId, profileName, profileName,
 					NODETYPE.PROFILE, jadeOptions,
 					new HashMap<String, SOSOptionElement>(), jadeSettingsFile);
-
-			setParent(profileId, parentId);
-			setChildrenAllowed(profileId, false);
 		}
 		return profileId;
 	}
@@ -172,7 +181,7 @@ public class ProfileContainer extends HierarchicalContainer {
 		
 		if (rootItem != null) {
 			
-			rootItem.getItemProperty(PROPERTY.ICON).setValue(new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Document_small.gif")));
+			rootItem.getItemProperty(PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Document_small.gif")));
 			
 			Iterator<?> childrenIterator = getChildren(rootId).iterator();
 			
@@ -186,7 +195,7 @@ public class ProfileContainer extends HierarchicalContainer {
 					
 					if (optionsFromSettingsFile.get("is_fragment").equalsIgnoreCase("true")) {
 						
-						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
+						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
 						
 					}
 					
@@ -194,7 +203,7 @@ public class ProfileContainer extends HierarchicalContainer {
 					
 					if (optionsFromSettingsFile.get("isFragment").equalsIgnoreCase("true")) {
 						
-						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
+						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
 						
 					}
 					

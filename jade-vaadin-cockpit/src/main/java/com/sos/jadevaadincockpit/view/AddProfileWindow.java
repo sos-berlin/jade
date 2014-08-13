@@ -1,6 +1,10 @@
 package com.sos.jadevaadincockpit.view;
 
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.globals.SessionAttributes;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -21,6 +25,7 @@ public class AddProfileWindow extends Window {
 	private CheckBox isFragmentCheckBox;
 	private Button okButton;
 	private Button cancelButton;
+	private Notification nameNotValidNotification = new Notification("The entered name is not valid!", Notification.Type.ERROR_MESSAGE);
 	
 	public AddProfileWindow() {
 		
@@ -45,10 +50,10 @@ public class AddProfileWindow extends Window {
 				String profileName = nameTextField.getValue();
 				Boolean isFragment = isFragmentCheckBox.getValue();
 
-				if (Globals.getJadeDataProvider().addProfile(profileName, isFragment)) {
+				if (SessionAttributes.getJadeSettingsFile().addProfile(profileName)) {
 					close();
 				} else {
-					Notification.show("The entered name is not valid!", Notification.Type.ERROR_MESSAGE);
+					nameNotValidNotification.show(Page.getCurrent());
 				}
 			}
 		});

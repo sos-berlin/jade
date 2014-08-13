@@ -8,7 +8,9 @@ import java.util.List;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.adapters.JadeVaadinAdapter;
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
+import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.view.AddProfileWindow;
 import com.sos.jadevaadincockpit.view.ProfileTree;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
@@ -89,11 +91,11 @@ public class ProfileTreeActionHandler implements Handler {
 			
 			if (action == SAVE_FILE) {
 				
-				Globals.getJadeDataProvider().saveSettingsFile(target);
+				SessionAttributes.getJadeSettingsFile().saveSettingsFile(target);
 				
 			} else if (action == CLOSE_FILE) {
 				
-				Globals.getJadeDataProvider().closeSettingsFile(target);
+				SessionAttributes.getJadeSettingsFile().closeSettingsFile(target);
 				
 			} else if (action == ADD_PROFILE) {
 				
@@ -109,7 +111,7 @@ public class ProfileTreeActionHandler implements Handler {
 			if (action == EXECUTE_PROFILE) {
 				
 				// TODO profile has to be saved before execution as checkMandatory() will read from the file (not from the options-Object)
-				Globals.getJadeDataProvider().saveSettingsFile(target);
+				SessionAttributes.getJadeSettingsFile().saveSettingsFile(target);
 				
 				JadeVaadinAdapter jadeAdapter = new JadeVaadinAdapter();
 				jadeAdapter.execute(profileTree.getItem(target));
@@ -146,8 +148,8 @@ public class ProfileTreeActionHandler implements Handler {
 			}
 			
 		} else if (action == DEBUG_PRINT_MISSING_OPTIONS) {
-			for (String s : Globals.missingOptions.keySet()) {
-				System.out.println("MISSING OPTION:          " + s + " = " + Globals.missingOptions.get(s));
+			for (String s : ApplicationAttributes.missingOptions.keySet()) {
+				System.out.println("MISSING OPTION:          " + s + " = " + ApplicationAttributes.missingOptions.get(s));
 			}
 		}
 	}

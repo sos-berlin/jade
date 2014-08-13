@@ -1,6 +1,8 @@
 package com.sos.jadevaadincockpit.view;
 
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
+import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.util.FileReceiver;
 import com.sos.jadevaadincockpit.util.FileUploadDragAndDropWrapper;
@@ -76,7 +78,7 @@ public class FileUploadDialog extends Window {
 			public void uploadSucceeded(SucceededEvent event) {
 				String filePath = receiver.getOutputFilePath();
 				window.close();
-				Globals.getJadeDataProvider().loadSettingsFile(filePath);
+				SessionAttributes.getJadeSettingsFile().loadSettingsFile(filePath);
 				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0002").label(), Notification.Type.TRAY_NOTIFICATION); // Upload Successful
 			}
 		});

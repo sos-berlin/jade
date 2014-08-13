@@ -21,6 +21,11 @@ public class BaseForm extends CustomComponent {
 	protected FormLayout layout;
 	
 	public BaseForm(final Item profile) {
+		this("", profile);
+	}
+	
+	public BaseForm(String caption, final Item profile) {
+		setCaption(caption);
 		this.profile = profile;
 		jadeOptions = (JADEOptions) profile.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
 		componentCreator = new UiComponentCreator(profile);

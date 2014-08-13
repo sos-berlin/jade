@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload.Receiver;
 
@@ -23,7 +23,7 @@ public class FileReceiver implements Receiver {
         FileOutputStream fos = null;
         try {
         	// check if uploads-directory exists
-        	File uploadsDir = new File(Globals.getUploadPath());
+        	File uploadsDir = new File(ApplicationAttributes.getUploadPath());
         	if (!uploadsDir.exists()) {
         		uploadsDir.mkdir();
         	}

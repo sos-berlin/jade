@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
+import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
@@ -57,7 +59,7 @@ public class FileUploadDragAndDropWrapper extends DragAndDropWrapper implements 
 					
 					@Override
 					public void streamingFinished(StreamingEndEvent event) {
-						Globals.getJadeDataProvider().loadSettingsFile(Globals.getUploadPath() + html5File.getFileName());
+						SessionAttributes.getJadeSettingsFile().loadSettingsFile(ApplicationAttributes.getUploadPath() + html5File.getFileName());
 					}
 					
 					@Override
@@ -93,7 +95,7 @@ public class FileUploadDragAndDropWrapper extends DragAndDropWrapper implements 
 				        
 				        try {
 				        	// check if uploads-directory exists
-				        	File uploadsDir = new File(Globals.getUploadPath());
+				        	File uploadsDir = new File(ApplicationAttributes.getUploadPath());
 				        	if (!uploadsDir.exists()) {
 				        		uploadsDir.mkdir();
 				        	}

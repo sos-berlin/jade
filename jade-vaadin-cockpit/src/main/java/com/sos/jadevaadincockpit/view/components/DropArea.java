@@ -1,5 +1,8 @@
 package com.sos.jadevaadincockpit.view.components;
 
+import java.util.Locale;
+
+import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.util.FileUploadDragAndDropWrapper;
 import com.vaadin.event.dd.DropHandler;
@@ -14,7 +17,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author JS
  *
  */
-public class DropArea extends CustomComponent {
+public class DropArea extends CustomComponent implements I18NComponent {
 	private static final long serialVersionUID = -4958415043511144354L;
 	
 	private String message = "";
@@ -77,5 +80,10 @@ public class DropArea extends CustomComponent {
 	 */
 	public String getMessage() {
 		return this.message;
+	}
+
+	public void refreshLocale(Locale newLocale) {
+		// TODO Auto-generated method stub
+		
 	}
 }

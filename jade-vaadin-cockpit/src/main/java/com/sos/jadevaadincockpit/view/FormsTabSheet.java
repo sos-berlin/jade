@@ -1,10 +1,13 @@
 package com.sos.jadevaadincockpit.view;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.sos.JSHelper.Options.SOSOptionElement;
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.i18n.I18NComponent;
+import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.forms.BackgroundServiceForm;
 import com.sos.jadevaadincockpit.view.forms.ConnectionForm;
 import com.sos.jadevaadincockpit.view.forms.FileSelectionForm;
@@ -24,7 +27,7 @@ import com.vaadin.ui.themes.Reindeer;
  * @author JS
  *
  */
-public class FormsTabSheet extends TabSheet {
+public class FormsTabSheet extends TabSheet implements I18NComponent {
 	private static final long serialVersionUID = -8505566611584654428L;
 	
 	private static Map<Item, FormsTabSheet> instances = new HashMap<Item, FormsTabSheet>();
@@ -54,25 +57,25 @@ public class FormsTabSheet extends TabSheet {
 	
 	private void init() {
 		
-		operationForm = new OperationForm("Operation", profileItem);
-		sourceConnectionForm = new ConnectionForm("Source", profileItem, ConnectionForm.ConnectionType.SOURCE);
-		fileSelectionForm = new FileSelectionForm("Objects", profileItem);
-		targetConnectionForm = new ConnectionForm("Target", profileItem, ConnectionForm.ConnectionType.TARGET);
-		miscForm = new MiscForm("Misc", profileItem);
-		loggingForm = new LoggingForm("Logging", profileItem);
-		notificationForm = new NotificationForm("Notification", profileItem);	
-		backgroundServiceForm = new BackgroundServiceForm("BackgroundService", profileItem);
-		jitlForm = new JitlForm("JITL", profileItem);
-		pollEngineForm = new PollEngineForm("PollEngine", profileItem);
-		overviewForm = new OverviewForm("Overview", profileItem);
+		operationForm = new OperationForm(new JadeCockpitMsg("JADE_Tab_OperationForm").label(), profileItem); // Operation
+		sourceConnectionForm = new ConnectionForm(new JadeCockpitMsg("JADE_Tab_ConnectionForm_Source").label(), profileItem, ConnectionForm.ConnectionType.SOURCE); // Source
+		fileSelectionForm = new FileSelectionForm(new JadeCockpitMsg("JADE_Tab_FileSelectionForm").label(), profileItem); // Objects
+		targetConnectionForm = new ConnectionForm(new JadeCockpitMsg("JADE_Tab_ConnectionForm_Target").label(), profileItem, ConnectionForm.ConnectionType.TARGET); // Target
+		miscForm = new MiscForm(new JadeCockpitMsg("JADE_Tab_MiscForm").label(), profileItem); // Misc
+		loggingForm = new LoggingForm(new JadeCockpitMsg("JADE_Tab_LoggingForm").label(), profileItem); // Logging
+		notificationForm = new NotificationForm(new JadeCockpitMsg("JADE_Tab_NotificationForm").label(), profileItem); // Notification	
+		backgroundServiceForm = new BackgroundServiceForm(new JadeCockpitMsg("JADE_Tab_BackgroundServiceForm").label(), profileItem); // BackgroundService
+		jitlForm = new JitlForm(new JadeCockpitMsg("JADE_Tab_JitlForm").label(), profileItem); // JITL
+		pollEngineForm = new PollEngineForm(new JadeCockpitMsg("JADE_Tab_PollEngineForm").label(), profileItem); // PollEnginge
+		overviewForm = new OverviewForm(new JadeCockpitMsg("JADE_Tab_OverviewForm").label(), profileItem); // Overview
 		
 		addComponents(operationForm, sourceConnectionForm, fileSelectionForm, targetConnectionForm, miscForm, loggingForm, notificationForm, backgroundServiceForm, jitlForm, pollEngineForm, overviewForm);
 
 		// --------------------
 		HashMap<String, SOSOptionElement> optionElements = (HashMap<String, SOSOptionElement>) profileItem.getItemProperty(ProfileContainer.PROPERTY.OPTIONS).getValue();
-		for (String s : Globals.allOptionsFromSettingsFile.keySet()) {
+		for (String s : ApplicationAttributes.allOptionsFromSettingsFile.keySet()) {
 			if (!optionElements.containsKey(s)) {
-				Globals.missingOptions.put(s, Globals.allOptionsFromSettingsFile.get(s));
+				ApplicationAttributes.missingOptions.put(s, ApplicationAttributes.allOptionsFromSettingsFile.get(s));
 			}
 		}
 		// --------------------
@@ -170,6 +173,21 @@ public class FormsTabSheet extends TabSheet {
 	 */
 	public OverviewForm getOverviewForm() {
 		return overviewForm;
+	}
+
+	public void refreshLocale(Locale newLocale) {
+		 getTab(operationForm).setCaption(new JadeCockpitMsg("JADE_Tab_OperationForm").label());
+		 getTab(sourceConnectionForm).setCaption(new JadeCockpitMsg("JADE_Tab_ConnectionForm_Source").label());
+		 getTab(fileSelectionForm).setCaption(new JadeCockpitMsg("JADE_Tab_FileSelectionForm").label());
+		 getTab(targetConnectionForm).setCaption(new JadeCockpitMsg("JADE_Tab_ConnectionForm_Target").label());
+		 getTab(miscForm).setCaption(new JadeCockpitMsg("JADE_Tab_MiscForm").label());
+		 getTab(loggingForm).setCaption(new JadeCockpitMsg("JADE_Tab_LoggingForm").label());
+		 getTab(notificationForm).setCaption(new JadeCockpitMsg("JADE_Tab_NotificationForm").label());
+		 getTab(backgroundServiceForm).setCaption(new JadeCockpitMsg("JADE_Tab_BackgroundServiceForm").label());
+		 getTab(jitlForm).setCaption(new JadeCockpitMsg("JADE_Tab_JitlForm").label());
+		 getTab(pollEngineForm).setCaption(new JadeCockpitMsg("JADE_Tab_PollEngineForm").label());
+		 getTab(overviewForm).setCaption(new JadeCockpitMsg("JADE_Tab_OverviewForm").label());
+		
 	}
 	
 	

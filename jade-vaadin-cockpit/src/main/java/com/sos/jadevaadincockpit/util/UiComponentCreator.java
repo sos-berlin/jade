@@ -1,19 +1,21 @@
 package com.sos.jadevaadincockpit.util;
 
-import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import com.sos.JSHelper.Options.IValueChangedListener;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.Options.SOSValidationError;
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.components.JadeComboBox;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.server.FileResource;
+import com.vaadin.event.EventRouter;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
@@ -25,7 +27,8 @@ import com.vaadin.ui.TextField;
  * @author JS
  *
  */
-public class UiComponentCreator {
+public class UiComponentCreator implements Serializable {
+	private static final long serialVersionUID = 752895948467492333L;
 	
 	private HashMap<String, SOSOptionElement> options;
 	
@@ -41,21 +44,28 @@ public class UiComponentCreator {
 	 */
 	public AbstractField<?> getComponentWithCaption(final SOSOptionElement optionElement) {
 
-		AbstractField<?> comp = getComponent(optionElement);
+		final AbstractField<?> comp = getComponent(optionElement);
 		
-		String shortKey = optionElement.getShortKey();
+		final String shortKey = optionElement.getShortKey();
 		
-//		VaadinMsg msg = Globals.vaadinMessages.getNewVaadinMsg("jade_l_" + shortKey);
-//		comp.setCaption(msg.label());
-//		comp.setDescription(msg.tooltip() + " - " + shortKey);
+		if (!(comp instanceof com.sos.jadevaadincockpit.view.components.JadeTextField)) {
+			JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
+			comp.setCaption(msg.label());
+			comp.setDescription(msg.tooltip() + " - " + shortKey);
+		}
 		
-//		JadeCockpitMessages messages = Globals.getMessages();
-//		comp.setCaption(messages.getLabel(shortKey));
-//		comp.setDescription(messages.getTooltip(shortKey));
+
 		
-		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
-		comp.setCaption(msg.label());
-		comp.setDescription(msg.tooltip() + " - " + shortKey);
+//		JadevaadincockpitUI.getCurrent().addLocaleChangeListener(new LocaleChangeListener() {
+//			private static final long serialVersionUID = 9095070668248222572L;
+//
+//			@Override
+//			public void onLocaleChange(LocaleChangeEvent event) {
+//				JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
+//				comp.setCaption(msg.label());
+//				comp.setDescription(msg.tooltip() + " - " + shortKey);
+//			}
+//		});
 		
 		return comp;
 	}
@@ -79,8 +89,6 @@ public class UiComponentCreator {
 			comp.setImmediate(true);
 			
 			addToOptionsMap(optionElement);
-
-//			new UiComponentHelper(comp, optionElement);
 		}
 		
 		return comp;
@@ -121,8 +129,8 @@ public class UiComponentCreator {
 		} else { // component types which are not covered by the previous checks
 			
 			TextField textField = getTextField(optionElement);
-			FileResource resource = new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Delete.gif"));
-			textField.setIcon(resource);
+//			FileResource resource = new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Delete.gif"));
+//			textField.setIcon(resource);
 			comp = textField;
 		}
 		
@@ -248,9 +256,13 @@ public class UiComponentCreator {
 	 * @param optionElement
 	 * @return The TextField
 	 */
-	private TextField getTextField(final SOSOptionElement optionElement) {
+	private com.sos.jadevaadincockpit.view.components.JadeTextField getTextField(final SOSOptionElement optionElement) {
 		
-		final TextField textField = new TextField();
+		final String shortKey = optionElement.getShortKey();
+		
+		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
+		
+		final com.sos.jadevaadincockpit.view.components.JadeTextField textField = new com.sos.jadevaadincockpit.view.components.JadeTextField(msg);
 		
 		textField.setValue(optionElement.Value());
 		

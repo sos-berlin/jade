@@ -10,7 +10,7 @@ import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.util.VaadinLogAppender;
 import com.sos.jadevaadincockpit.view.LogPanel;
 import com.sos.jadevaadincockpit.view.LogTabSheet;
@@ -27,8 +27,8 @@ public class JadeVaadinAdapter {
 	}
 
 	public void execute(Item profile) {
-		FileResource logErrorIconResource = new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/log_error.gif"));
-		FileResource logIconResource = new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/log.gif"));
+		FileResource logErrorIconResource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log_error.gif"));
+		FileResource logIconResource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log.gif"));
 		
 		if (profile != null) {
 			if (!profile

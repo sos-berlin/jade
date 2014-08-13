@@ -1,7 +1,9 @@
 package com.sos.jadevaadincockpit.view;
 
 import java.util.Iterator;
+import java.util.Locale;
 
+import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.view.event.ProfileTabSheetCloseHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTabSheetSelectedTabChangeListener;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
@@ -14,7 +16,7 @@ import com.vaadin.ui.TabSheet;
  * @author JS
  *
  */
-public class ProfileTabSheet extends TabSheet {
+public class ProfileTabSheet extends TabSheet implements I18NComponent {
 	private static final long serialVersionUID = -6793015617334665605L;
 	
 	public ProfileTabSheet() {
@@ -70,6 +72,16 @@ public class ProfileTabSheet extends TabSheet {
 		getTab(tab).setClosable(true);
 		tab.setSizeFull();
 		return tab;
+	}
+
+	public void refreshLocale(Locale newLocale) {
+		
+		Iterator<Component> iterator = iterator();
+		while (iterator.hasNext()) {
+			FormsTabSheet formsTabSheet = (FormsTabSheet) iterator.next();
+			formsTabSheet.refreshLocale(newLocale);
+		}
+		
 	}
 
 }

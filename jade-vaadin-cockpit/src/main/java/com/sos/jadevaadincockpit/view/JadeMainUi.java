@@ -1,7 +1,14 @@
 package com.sos.jadevaadincockpit.view;
 
+import java.util.Locale;
+
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.i18n.I18NComponent;
+import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.util.FileUploadDragAndDropWrapper;
 import com.sos.jadevaadincockpit.view.components.DropArea;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
@@ -12,7 +19,7 @@ import com.vaadin.ui.VerticalSplitPanel;
  * @author JS
  *
  */
-public class JadeMainUi extends CustomComponent {
+public class JadeMainUi extends CustomComponent implements I18NComponent {
 	private static final long serialVersionUID = 727271516807040138L;
 	
 	// ui-components
@@ -33,10 +40,9 @@ public class JadeMainUi extends CustomComponent {
 	public JadeMainUi() {
 		
 		profileTree = new ProfileTree();
-//		entryTable = entryTableControl.getEntryTable();
 		profileTabSheet = new ProfileTabSheet();
 		logTabSheet = new LogTabSheet();
-		dropArea = new DropArea("Drag files here");
+		dropArea = new DropArea(new JadeCockpitMsg("JADE_L_MainUi_DropArea").label()); // Drag files here
 		dropArea.setSizeFull();
 		dropArea.setDragAndDropUploadEnabled(false);
 		
@@ -46,20 +52,6 @@ public class JadeMainUi extends CustomComponent {
 		hSplitPanel1 = new HorizontalSplitPanel();
 		vLayout1 = new VerticalLayout();
 		hSplitPanel2 = new HorizontalSplitPanel();
-		
-		/*
-		 * ui layers:
-		 * 
-		 *  vLayout
-		 *   |--menuBar
-		 *   `--vSplitPanel
-		 *     `--hSplitPanel1
-		 *       `--vLayout1
-		 *         |--tree
-		 *       `--hSplitPanel2
-		 *         |--tabPanel
-		 *         |--table
-		 */
 		
 		vLayout.setSizeFull();
 		
@@ -76,8 +68,11 @@ public class JadeMainUi extends CustomComponent {
 		
 		vLayout1.setSizeFull();
 		FileUploadDragAndDropWrapper wrapper = new FileUploadDragAndDropWrapper(vLayout1);
-//		vLayout1.addComponent(profileTree);
-		vLayout1.addComponent(dropArea);
+		if (profileTree.getContainerDataSource().size() > 0) {
+			vLayout1.addComponent(profileTree);
+		} else {
+			vLayout1.addComponent(dropArea);			
+		}
 		
 //		DropArea dropArea = new DropArea("Drag files here");
 //		dropArea.setSizeFull();
@@ -99,10 +94,7 @@ public class JadeMainUi extends CustomComponent {
 		logTabSheet.setSizeFull();
 		
 		// TODO for test purpose
-//		final VaadinJadeSettingsFile sf = new VaadinJadeSettingsFile(Globals.getUploadPath() + "js_jade_settings.ini");
-//		final VaadinJadeSettingsFile sf2 = new VaadinJadeSettingsFile(Globals.getUploadPath() + "einzeiler.ini");
-		
-//		Button debugButton = new Button("debug_open");
+//		Button debugButton = new Button("debug");
 //		vLayout1.addComponent(debugButton);
 //		debugButton.setEnabled(true);
 //		debugButton.addClickListener(new ClickListener() {
@@ -110,8 +102,8 @@ public class JadeMainUi extends CustomComponent {
 //
 //			@Override
 //			public void buttonClick(ClickEvent event) {
-//				sf.readSettingsFile();
-//				sf.displaySettingsFile();
+//				Object itemId = Globals.container.addItem();
+//				Globals.container.getItem(itemId).getItemProperty(ProfileContainer.PROPERTY.NAME).setValue("NEW ITEM");
 //			}
 //		});
 //		
@@ -187,4 +179,12 @@ public class JadeMainUi extends CustomComponent {
 		return vSplitPanel;
 	}
 
+	@Override
+	public void refreshLocale(Locale newLocale) {
+		profileTree.refreshLocale(newLocale);
+		jadeMenuBar.refreshLocale(newLocale);
+		profileTabSheet.refreshLocale(newLocale);
+		logTabSheet.refreshLocale(newLocale);
+		dropArea.refreshLocale(newLocale);
+	}
 }

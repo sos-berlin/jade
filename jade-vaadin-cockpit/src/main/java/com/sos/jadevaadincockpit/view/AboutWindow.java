@@ -1,5 +1,8 @@
 package com.sos.jadevaadincockpit.view;
 
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -11,9 +14,12 @@ import com.vaadin.ui.Window;
 public class AboutWindow extends Window {
 	private static final long serialVersionUID = 8483356724115172870L;
 	
+	private AboutWindow() {
+		init();
+	}
+	
 	public static void show() {
 		AboutWindow aboutWindow = new AboutWindow();
-		aboutWindow.init();
 		UI.getCurrent().addWindow(aboutWindow);
 	}
 	
@@ -34,6 +40,7 @@ public class AboutWindow extends Window {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				close();
+				
 			}
 		});
 		
@@ -42,5 +49,4 @@ public class AboutWindow extends Window {
 		setModal(true);
 		
 	}
-	
 }

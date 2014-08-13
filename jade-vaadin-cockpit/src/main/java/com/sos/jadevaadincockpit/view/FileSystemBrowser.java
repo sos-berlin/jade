@@ -2,7 +2,9 @@ package com.sos.jadevaadincockpit.view;
 
 import java.io.File;
 
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
+import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.FilesystemContainer;
@@ -44,7 +46,7 @@ public class FileSystemBrowser extends Window {
 	}
 	
 	private void createForm() {
-		this.filesystemContainer = new FilesystemContainer(new File(Globals.getBasePath() + "/WEB-INF/uploads"), true);
+		this.filesystemContainer = new FilesystemContainer(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/uploads"), true);
 		setContent(vLayout);
 		filesTable = new Table(null, filesystemContainer);
 		filesTable.setVisibleColumns(FilesystemContainer.PROPERTY_NAME, FilesystemContainer.PROPERTY_SIZE, FilesystemContainer.PROPERTY_LASTMODIFIED);
@@ -52,7 +54,7 @@ public class FileSystemBrowser extends Window {
 			if (filesystemContainer.areChildrenAllowed(id)) { // folders shall not be displayed
 				filesystemContainer.removeItem(id);
 			} else {
-				filesTable.setItemIcon(id, new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Document.gif")));
+				filesTable.setItemIcon(id, new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Document.gif")));
 			}
 		}
 		filesTable.setRowHeaderMode(RowHeaderMode.ICON_ONLY);
@@ -88,7 +90,7 @@ public class FileSystemBrowser extends Window {
 					@Override
 					public void buttonClick(ClickEvent event) {
 						if (selectedFile != null) {
-							Globals.getJadeDataProvider().loadSettingsFile(selectedFile.getAbsolutePath());
+							SessionAttributes.getJadeSettingsFile().loadSettingsFile(selectedFile.getAbsolutePath());
 							close();
 						}
 					}
@@ -108,7 +110,7 @@ public class FileSystemBrowser extends Window {
 					public void itemClick(ItemClickEvent event) {
 						if (event.isDoubleClick()) {
 							if (selectedFile != null) {
-								Globals.getJadeDataProvider().loadSettingsFile(selectedFile.getAbsolutePath());
+								SessionAttributes.getJadeSettingsFile().loadSettingsFile(selectedFile.getAbsolutePath());
 								close();
 							}
 						}

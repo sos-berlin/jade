@@ -15,8 +15,7 @@ public class OperationForm extends BaseForm {
 	private AbstractComponent reuseConnectionComponent;
 	
 	public OperationForm(String caption, Item profile) {
-		super(profile);
-		setCaption(caption);
+		super(caption, profile);
 		
 		createForm();
 	}

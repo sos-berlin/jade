@@ -1,9 +1,11 @@
 package com.sos.jadevaadincockpit.view;
 
 import java.io.File;
+import java.util.Locale;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.globals.Globals;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.server.FileResource;
@@ -15,10 +17,11 @@ import com.vaadin.ui.TabSheet;
  * @author JS
  *
  */
-public class LogTabSheet extends TabSheet {
+public class LogTabSheet extends TabSheet implements I18NComponent {
 	private static final long serialVersionUID = -2393436049375232423L;
 	
 	public LogTabSheet() {
+		
 		setCloseHandler(new CloseHandler() {
 			private static final long serialVersionUID = 2682636091439645661L;
 
@@ -49,7 +52,7 @@ public class LogTabSheet extends TabSheet {
 		
 		setSelectedTab(logPanel);
 		
-		FileResource resource = new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/log.gif"));
+		FileResource resource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log.gif"));
 		logPanel.setIconResource(resource);
 		getTab(logPanel).setIcon(resource);
 		
@@ -86,6 +89,10 @@ public class LogTabSheet extends TabSheet {
 	 */
 	public void maximize() {
 		JadevaadincockpitUI.getCurrent().getJadeMainUi().getVSplitPanel().setSplitPosition(0f, Unit.PERCENTAGE);
+	}
+
+	public void refreshLocale(Locale newLocale) {
+		// TODO Auto-generated method stub
 	}
 	
 }

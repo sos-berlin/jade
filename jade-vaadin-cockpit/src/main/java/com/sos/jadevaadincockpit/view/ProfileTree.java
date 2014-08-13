@@ -1,6 +1,11 @@
 package com.sos.jadevaadincockpit.view;
 
+import java.util.Locale;
+
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
+import com.sos.jadevaadincockpit.globals.SessionAttributes;
+import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeActionHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeValueChangeListener;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
@@ -12,10 +17,8 @@ import com.vaadin.ui.Tree;
  * @author JS
  * 
  */
-public class ProfileTree extends Tree {
+public class ProfileTree extends Tree implements I18NComponent {
 	private static final long serialVersionUID = 8381787778049298221L;
-
-	private ProfileContainer profileContainer;
 
 	public ProfileTree() {
 		init();
@@ -23,9 +26,8 @@ public class ProfileTree extends Tree {
 
 	private void init() {
 		
-		getProfileContainer();
 		setItemCaptionPropertyId(ProfileContainer.PROPERTY.NAME);
-		setContainerDataSource(profileContainer);
+		setContainerDataSource(SessionAttributes.getJadeSettingsFile().getProfileContainer());
 		setItemIconPropertyId(ProfileContainer.PROPERTY.ICON);
 		setImmediate(true);
 		setNullSelectionAllowed(false);
@@ -51,14 +53,17 @@ public class ProfileTree extends Tree {
 	}
 	
 	public ProfileContainer getProfileContainer() {
-		if (profileContainer == null) {
-			profileContainer = new ProfileContainer();
-		}
-		return profileContainer;
+		return (ProfileContainer) getContainerDataSource();
+	}
+
+	@Override
+	public void refreshLocale(Locale newLocale) {
+		// TODO Auto-generated method stub
+		
 	}
 	
-	public void setProfileContainer(ProfileContainer profileContainer) {
-		this.profileContainer = profileContainer;
-		setContainerDataSource(profileContainer);
-	}
+//	public void setProfileContainer(ProfileContainer profileContainer) {
+//		this.profileContainer = profileContainer;
+//		setContainerDataSource(profileContainer);
+//	}
 }
