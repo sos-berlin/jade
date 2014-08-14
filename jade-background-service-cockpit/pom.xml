@@ -77,8 +77,7 @@
 						 because it is needed for the servlets class loader to function correctly. Otherwise
 						 classes from WEB-INF/classes won´t be found -->        
 						%regex[WEB-INF/lib/(?!vaadin-server).*.jar],
-						WEB-INF/classes/hibernate.cfg.xml,
-						WEB-INF/classes/log4j.properties
+						WEB-INF/classes/hibernate.cfg.xml
 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					

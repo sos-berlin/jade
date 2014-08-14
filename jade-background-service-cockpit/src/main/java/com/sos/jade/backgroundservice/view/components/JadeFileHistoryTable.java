@@ -80,10 +80,10 @@ public class JadeFileHistoryTable extends Table{
 //					cookie.getValue().indexOf(ENTRY_DELIMITER, cookie.getValue().indexOf(COLUMN_ORDER)) + 1);
 //			String val = lastColOrder.substring(cookie.getValue().indexOf(EQUAL_CHAR) + 1);
 //			val = val.substring(0, val.indexOf(ENTRY_DELIMITER));
-//			log.debug("ColumnOrder before setting visible columns: " + val);
+//			log.debug("ColumnOrder before setting visible columns: {}",  val);
 //			Object[] visibleColsFromCookie = val.split(DELIMITER_REGEX);
 //			this.setVisibleColumns(visibleColsFromCookie);
-//			log.debug("VisibleColumnsOrder after setting from cookie value: " + this.getVisibleColumns());
+//			log.debug("VisibleColumnsOrder after setting from cookie value: {}", this.getVisibleColumns());
 //			this.refreshRowCache();
 //			this.markAsDirty();
 //		}
@@ -105,7 +105,7 @@ public class JadeFileHistoryTable extends Table{
 			this.setVisibleColumns((Object[])strVc.split(JadeBSConstants.DELIMITER_REGEX));
 			this.refreshRowCache();
 			this.markAsDirty();
-			log.debug("VisibleColumnsOrder after setting from Preferences: " + createOrderedColumnsString(this.getVisibleColumns()));
+			log.debug("VisibleColumnsOrder after setting from Preferences: {}", createOrderedColumnsString(this.getVisibleColumns()));
 		}else if (container != null){
 			this.setVisibleColumns(visibleColumns);
 		}
@@ -116,7 +116,7 @@ public class JadeFileHistoryTable extends Table{
 			int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
 			if (width != 0){
 				setColumnWidth(key.toString(), width);
-				log.debug("setting width of column " + key.toString() + " to " + String.valueOf(width));
+//				log.debug("setting width of column {} to {}", key.toString(), String.valueOf(width));
 			}
 		}
 	}
@@ -245,13 +245,13 @@ public class JadeFileHistoryTable extends Table{
 		        // than before changing width of the others.
 		        for(Object col : visibleColumns){
 			        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(col.toString(), getColumnWidth(col));
-		        	log.debug("actual width of " + col.toString() + " = " + String.valueOf(getColumnWidth(col)));
+		        	log.debug("actual width of {} = {}", col.toString(), String.valueOf(getColumnWidth(col)));
 		        }
 				try {
 					prefs.flush();
 				} catch (BackingStoreException e) {
 					e.printStackTrace();
-					log.error("error while flushing Preferences for Column widths: ", e);
+					log.error("error while flushing Preferences for Column widths: {}", e);
 				}
 			}
 		});
@@ -307,7 +307,7 @@ public class JadeFileHistoryTable extends Table{
 			prefs.flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
-			log.error("error while flushing Preferences for Column Order: ", e);
+			log.error("error while flushing Preferences for Column Order: {}", e);
 		}
 	}
 	

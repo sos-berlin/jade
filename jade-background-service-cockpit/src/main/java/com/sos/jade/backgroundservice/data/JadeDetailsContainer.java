@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
@@ -24,6 +27,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
 	private static final String MESSAGE_RESOURCE_FILE = "file.";
 	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
+	private Logger log = LoggerFactory.getLogger(JadeDetailsContainer.class);
 
 	public JadeDetailsContainer(JadeFilesHistoryDBItem historyItem, JadeBSMessages messages) {
 		this.historyItem = historyItem;
@@ -53,6 +57,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName(), 
 					messages.getValue("DetailLayout.none"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName());
 		}
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.SOURCE_HOST.getName(), 
@@ -136,6 +141,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.LOG_FILENAME.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LOG_FILENAME.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.LOG_FILENAME.getName());
 		}
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeFileColumns.MANDATOR.getName(), 
@@ -151,6 +157,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.JUMP_HOST.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.JUMP_HOST.getName());
 		}
 		if (historyItem.getJumpHostIp() != null && !"NULL".equals(historyItem.getJumpHostIp())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
@@ -162,6 +169,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.JUMP_HOST_IP.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST_IP.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.JUMP_HOST_IP.getName());
 		}
 		if (historyItem.getJumpUser() != null && !"NULL".equals(historyItem.getJumpUser())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
@@ -173,6 +181,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.JUMP_USER.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_USER.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.JUMP_USER.getName());
 		}
 		if(historyItem.getJumpProtocol() != null && !"NULL".equals(historyItem.getJumpProtocol())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
@@ -184,6 +193,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.JUMP_PROTOCOL.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PROTOCOL.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.JUMP_PROTOCOL.getName());
 		}
 		if(historyItem.getJumpPort() != null && !"NULL".equals(historyItem.getJumpPort())){
 			detailItems.add(new JadeHistoryDetailItem(this.messages,
@@ -195,6 +205,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					JadeHistoryFileColumns.JUMP_PORT.getName(), 
 					messages.getValue("DetailLayout.notSet"), 
 					MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PORT.getName()));
+			log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.JUMP_PORT.getName());
 		}
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.CREATED.getName(), 
@@ -270,6 +281,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 						(Date)((JadeHistoryDetailItem)itemId).getValue(), String.class, locale));
 			}else if((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName()).equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getLastErrorMessage())){
 				item.getItemProperty("value").setValue(messages.getValue("DetailLayout.none", locale));
+				log.debug("Received value of {} is null, setting default value", JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName());
 			}else if(((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST.getName())
 					.equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getJumpHost())) ||
 					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_HOST_IP.getName())
@@ -283,6 +295,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 					((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.JUMP_PORT.getName())
 							.equalsIgnoreCase(messageKey) && this.historyItem.getJumpPort() != null)){
 				item.getItemProperty("value").setValue(messages.getValue("DetailLayout.notSet", locale));
+				log.debug("Received value of {} is null, setting default value!", messageKey.replace(MESSAGE_RESOURCE_BASE, ""));
 			}
 		}
 		

@@ -4,6 +4,9 @@ import java.util.prefs.Preferences;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.sos.JSHelper.io.Files.JSIniFile;
@@ -44,6 +47,8 @@ public class BackgroundserviceUI extends UI {
     private String securityServer;
     public static String hibernateConfigFile;
     public static String log4jPropertiesFile;
+    public static String log4jFileOutputPath;
+    public static Logger log = LoggerFactory.getLogger(BackgroundserviceUI.class);
     
 	@WebServlet(value = "/*", asyncSupported = true)
     /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
@@ -70,11 +75,13 @@ public class BackgroundserviceUI extends UI {
     	String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
     	JSIniFile jsConfig = new JSIniFile(absolutePath + "/WEB-INF/classes/jsconfig.ini");
     	hibernateConfigFile = jsConfig.getPropertyString("Configuration", "hibernateConfigFile", absolutePath + "/WEB-INF/classes/hibernate.cfg.xml");
-    	log4jPropertiesFile = jsConfig.getPropertyString("Configuration", "logConfigFile", absolutePath + "/WEB-INF/classes/log4j.properties");
+    	
+    	PropertyConfigurator.configure(absolutePath + "/WEB-INF/classes/log4j.properties");
     	mainView = new MainView();
     	aboutWindow = new AboutWindow();
 		modalWindow = new FilterLayoutWindow();
     	setContent(mainView);
+    	log.debug("****************** BackgroundServiceUI initialized! ******************");
 //    	// for the future
 //    	// no content for this view, the navigator does the trick
 //		// Create a new instance of the navigator. The navigator will attach itself automatically to this view. 

@@ -66,7 +66,7 @@ public class JadeDetailTable extends Table {
 				setDefaultColumnsWidth();
 			}
 		} catch (BackingStoreException e) {
-			log.debug("[ERROR] reading from PreferenceStore, setting default widths instead!");
+			log.error("error reading from PreferenceStore, setting default widths instead! {}", e);
 			setDefaultColumnsWidth();
 			saveDefaultColumnsWidthToPreferences();
 		}
@@ -130,7 +130,7 @@ public class JadeDetailTable extends Table {
 					prefs.flush();
 				} catch (BackingStoreException e) {
 					e.printStackTrace();
-					log.error("error while flushing Preferences for Column widths: ", e);
+					log.error("error while flushing Preferences for Column widths: {}", e);
 				}
 			}
 		});

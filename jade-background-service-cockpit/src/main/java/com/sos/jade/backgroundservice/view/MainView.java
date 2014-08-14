@@ -102,7 +102,7 @@ public class MainView extends CustomComponent implements View{
 		setSizeFull();
 		setImmediate(true);
 		initView();
-		log.info("****************************MainView started!******************************");
+		log.debug("****************************MainView started!******************************");
 	}
 	
 	public void initView(){
@@ -499,7 +499,7 @@ public class MainView extends CustomComponent implements View{
 //		Date actual = null;
 //		@Override
 //		public void run() {
-//			log.debug("SleeperThreadMedium started at " + sdf.format(new Date()) + "!");
+//			log.debug("SleeperThreadMedium started at {}!", sdf.format(new Date()));
 //			progress.setPrimaryStyleName("jadeProgressBar");
 //			if(progressStart == null){
 //				progressStart = new Date();
@@ -511,7 +511,7 @@ public class MainView extends CustomComponent implements View{
 //				@Override
 //				public void run() {
 //					progress.setPrimaryStyleName("jadeProgressBarMedium");
-//					log.debug("SleeperThreadMedium ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
+//					log.debug("SleeperThreadMedium ended after {}ms at {}!", (actual.getTime() - progressStart.getTime()), sdf.format(actual));
 //				}
 //			});
 //		}
@@ -528,7 +528,7 @@ public class MainView extends CustomComponent implements View{
 //		Date actual = null;
 //		@Override
 //		public void run() {
-//			log.debug("SleeperThreadLong started at " + sdf.format(new Date()) + "!");
+//			log.debug("SleeperThreadLong started at {}!", sdf.format(new Date()));
 //			while((actual = new Date()).getTime() - progressStart.getTime() < DELAY_LONG){
 //				continue;
 //			}
@@ -536,7 +536,7 @@ public class MainView extends CustomComponent implements View{
 //				@Override
 //				public void run() {
 //					progress.setPrimaryStyleName("jadeProgressBarSlow");
-//					log.debug("SleeperThreadLong ended after " + (actual.getTime() - progressStart.getTime()) + "ms at " + sdf.format(actual) + "!");
+//					log.debug("SleeperThreadLong ended after {}ms at {}!", (actual.getTime() - progressStart.getTime()), sdf.format(actual));
 //				}
 //			});
 //		}
@@ -604,7 +604,7 @@ public class MainView extends CustomComponent implements View{
 						duplicatesFilter.setHistoryItems(historyItems);
 						((IndexedContainer)tblFileHistory.getContainerDataSource()).removeContainerFilter(duplicatesFilter);
 					}
-					log.debug("feedback received from proxy about Hibernate SESSION close at " + sdf.format(new Date()) + "!");
+					log.debug("feedback received from proxy about Hibernate SESSION close at {}!", sdf.format(new Date()));
 				}
 			});
 			UI.getCurrent().access(new Runnable() {
