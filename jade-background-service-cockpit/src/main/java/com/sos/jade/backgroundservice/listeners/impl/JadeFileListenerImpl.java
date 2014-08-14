@@ -135,23 +135,23 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	@Override
 	public void closeJadeFilesHistoryDbSession(){
 		// let some time pass before closing the actual hibernate session
-		new Thread(){
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(10000L);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				UI.getCurrent().access(new Runnable() {
-					@Override
-					public void run() {
+//		new Thread(){
+//			@Override
+//			public void run() {
+//				try {
+//					Thread.sleep(10000L);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				UI.getCurrent().access(new Runnable() {
+//					@Override
+//					public void run() {
 				        jadeFilesHistoryDBLayer.closeSession();
-						log.debug("Hibernate SESSION finally closed at " + sdf.format(new Date()) + "!");
-					}
-				});
-			};
-		}.start();
+//						log.debug("Hibernate SESSION finally closed at " + sdf.format(new Date()) + "!");
+//					}
+//				});
+//			};
+//		}.start();
 	}
 
 }
