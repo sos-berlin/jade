@@ -6,19 +6,18 @@ import java.util.HashMap;
 import com.sos.JSHelper.Options.IValueChangedListener;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.Options.SOSValidationError;
-import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
+import com.sos.jadevaadincockpit.view.components.JadeCheckBox;
 import com.sos.jadevaadincockpit.view.components.JadeComboBox;
-import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
-import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
+import com.sos.jadevaadincockpit.view.components.JadeTextField;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.event.EventRouter;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
@@ -144,9 +143,13 @@ public class UiComponentCreator implements Serializable {
 	 * @return The ComboBox
 	 */
 	@SuppressWarnings("unchecked")
-	private ComboBox getComboBox(final SOSOptionElement optionElement) {
+	private JadeComboBox getComboBox(final SOSOptionElement optionElement) {
 		
-		final JadeComboBox comboBox = new JadeComboBox();
+		String shortKey = optionElement.getShortKey();
+		
+		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
+		
+		final JadeComboBox comboBox = new JadeComboBox(msg);
 		
 		for (String value : optionElement.getValueList()) {
 			Item item = comboBox.addItem(value);
@@ -207,9 +210,13 @@ public class UiComponentCreator implements Serializable {
 	 * @param optionElement
 	 * @return The CheckBox
 	 */
-	private CheckBox getCheckBox(final SOSOptionElement optionElement) {
+	private JadeCheckBox getCheckBox(final SOSOptionElement optionElement) {
 		
-		final CheckBox checkBox = new CheckBox();
+		String shortKey = optionElement.getShortKey();
+		
+		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
+		
+		final JadeCheckBox checkBox = new JadeCheckBox(msg);
 		
 		checkBox.setValue(optionElement.String2Bool(optionElement.Value()));
 		
@@ -256,13 +263,13 @@ public class UiComponentCreator implements Serializable {
 	 * @param optionElement
 	 * @return The TextField
 	 */
-	private com.sos.jadevaadincockpit.view.components.JadeTextField getTextField(final SOSOptionElement optionElement) {
+	private JadeTextField getTextField(final SOSOptionElement optionElement) {
 		
 		final String shortKey = optionElement.getShortKey();
 		
 		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
 		
-		final com.sos.jadevaadincockpit.view.components.JadeTextField textField = new com.sos.jadevaadincockpit.view.components.JadeTextField(msg);
+		final JadeTextField textField = new JadeTextField(msg);
 		
 		textField.setValue(optionElement.Value());
 		

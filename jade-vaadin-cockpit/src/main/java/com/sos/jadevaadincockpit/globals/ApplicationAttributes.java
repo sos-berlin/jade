@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import com.google.common.eventbus.EventBus;
-import com.sos.jadevaadincockpit.util.JadeDataProvider;
 import com.sos.localization.Messages;
 import com.vaadin.server.VaadinService;
 
@@ -15,7 +14,9 @@ import com.vaadin.server.VaadinService;
  */
 public class ApplicationAttributes {
 	
-	private static Messages messages;
+	private Messages messages;
+	
+	private JadeSettingsFile jadeSettingsFile = new JadeSettingsFile();
 
 	public static HashMap<String, String> allOptionsFromSettingsFile = new HashMap<String, String>();
 	
@@ -23,10 +24,8 @@ public class ApplicationAttributes {
 	
 	private static EventBus bus = new EventBus();
 	
-	private Locale applicationLocale;
-	
 	/**
-	 * Returns the pathname string of the context base directory.Typically an
+	 * Returns the pathname string of the context base directory. Typically an
 	 * application is deployed in a such way that is has an application
 	 * directory. For web applications this directory is the root directory of
 	 * the web applications. In some cases applications might not have an
@@ -49,14 +48,6 @@ public class ApplicationAttributes {
 	}
 	
 	/**
-	 * Get the message resources for this application.
-	 * @return the Messages
-	 */
-	public static Messages getMessages() {
-		return messages;
-	}
-	
-	/**
 	 * Set the message resources for this application. Should be called in the UI class before creating any GUI elements.
 	 * <p>Example: 
 	 * <blockquote>
@@ -70,7 +61,32 @@ public class ApplicationAttributes {
 		messages = new Messages(bundleName, locale, loader);
 	}
 	
-	public static EventBus getEventBus() { // Is this session-scoped or ui-scoped? -> should be ui-scoped
+	/**
+	 * Get the message resources for this application.
+	 * @return the Messages
+	 */
+	public Messages getMessages() {
+		return messages;
+	}
+	
+	/**
+	 * 
+	 * @param newValue
+	 */
+	public void setJadeSettingsFile(JadeSettingsFile newValue) {
+		jadeSettingsFile = newValue;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public JadeSettingsFile getJadeSettingsFile() {
+		return jadeSettingsFile;
+	}
+
+	// TODO
+	public static EventBus getEventBus() { // Is this session-scoped or ui-scoped? -> should be session-scoped
 		return bus;
 	}
 	

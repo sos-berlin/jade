@@ -1,6 +1,6 @@
 package com.sos.jadevaadincockpit.i18n;
 
-import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.localization.SOSMsg;
 
 /**
@@ -19,7 +19,7 @@ public class JadeCockpitMsg extends SOSMsg {
 		 */
 		
 		if (Messages == null) {
-			Messages = ApplicationAttributes.getMessages();
+			Messages = JadevaadincockpitUI.getCurrent().getApplicationAttributes().getMessages();
 		}
 	}
 	

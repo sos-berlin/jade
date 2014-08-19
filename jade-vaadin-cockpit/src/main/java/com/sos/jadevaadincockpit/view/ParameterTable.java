@@ -52,7 +52,7 @@ public class ParameterTable extends Table {
 			@Override
 			public Field<?> createField(Container container, final Object itemId, final Object propertyId, Component uiContext) {
 
-				ProfileTree tree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+				ProfileTree tree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 				
 				Field<?> f = null;
 

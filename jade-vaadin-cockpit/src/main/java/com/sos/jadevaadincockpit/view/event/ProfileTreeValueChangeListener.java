@@ -13,7 +13,7 @@ public class ProfileTreeValueChangeListener implements ValueChangeListener {
 	@Override
 	public void valueChange(ValueChangeEvent event) {
 		
-		ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+		ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 		Object selectedItemId = profileTree.getValue();
 		Item selectedItem = profileTree.getItem(selectedItemId);
 		
@@ -29,7 +29,7 @@ public class ProfileTreeValueChangeListener implements ValueChangeListener {
 					.getValue().equals(ProfileContainer.NODETYPE.PROFILE)) {
 				
 				// create forms for the selected profile
-				JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTabSheet().getTab(selectedItem);
+				JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet().getTab(selectedItem);
 
 				// // load parameters from config file to container
 				// ParameterContainer entryTableContainer = Constants

@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
-import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
@@ -59,7 +59,7 @@ public class FileUploadDragAndDropWrapper extends DragAndDropWrapper implements 
 					
 					@Override
 					public void streamingFinished(StreamingEndEvent event) {
-						SessionAttributes.getJadeSettingsFile().loadSettingsFile(ApplicationAttributes.getUploadPath() + html5File.getFileName());
+						JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().loadSettingsFile(ApplicationAttributes.getUploadPath() + html5File.getFileName());
 					}
 					
 					@Override

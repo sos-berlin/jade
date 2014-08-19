@@ -2,6 +2,8 @@ package com.sos.jadevaadincockpit.view;
 
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
@@ -10,8 +12,10 @@ import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.FileSystemBrowser.BrowserType;
+import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.Notification;
@@ -26,6 +30,8 @@ import com.vaadin.ui.UI;
  */
 public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent {
 	private static final long serialVersionUID = 6566031330304886129L;
+	
+	private Logger logger = Logger.getLogger(JadeMenuBar.class.getName());
 	
 	private MenuBar.Command newCommand;
 	private MenuBar.Command uploadCommand;
@@ -62,6 +68,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 	@SuppressWarnings("unused")
 	private void init() {
 		
+		logger.setLevel(Level.ALL);
+		
 		this.setWidth(100, Unit.PERCENTAGE);
 		
 		getCommands();
@@ -90,6 +98,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		helpMenu = this.addItem(new JadeCockpitMsg("JADE_L_HelpMenu").label(), null, null); // Help
 		documentationMenu = helpMenu.addItem(new JadeCockpitMsg("JADE_L_DocumentationMenu").label(), null, documentationCommand); // Documentation
 		aboutMenu = helpMenu.addItem(new JadeCockpitMsg("JADE_L_AboutMenu").label(), null, aboutCommand); // About
+		
+		setImmediate(true);
 	}
 	
 	private void getCommands() {
@@ -145,7 +155,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				Locale enLocale = new Locale("en", "US");
-				JadevaadincockpitUI.getCurrent().changeLocale(enLocale);
+				Locale oldLocale = getSession().getLocale();
+				JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().post(new LocaleChangeEvent(oldLocale, enLocale));
 			}
 		};
 	}
@@ -158,7 +169,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO repaint
 				Locale deLocale = new Locale("de", "DE");
-				JadevaadincockpitUI.getCurrent().changeLocale(deLocale);
+				Locale oldLocale = getSession().getLocale();
+				JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().post(new LocaleChangeEvent(oldLocale, deLocale));
 			}
 		};
 	}
@@ -181,8 +193,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
-				SessionAttributes.getJadeSettingsFile().saveSettingsFile(profileTree.getValue());
+				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
+				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(profileTree.getValue());
 			}
 		};
 	}
@@ -220,6 +232,7 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO stub
 				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label()); // Sorry, not available yet.
+				JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().post(new ClickEvent(JadevaadincockpitUI.getCurrent()));
 			}
 		};
 	}
@@ -247,7 +260,7 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				LogTabSheet logTabSheet = JadevaadincockpitUI.getCurrent().getJadeMainUi().getLogTabSheet();
+				LogTabSheet logTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getLogTabSheet();
 				if (logTabSheet.getComponentCount() == 0) {
 					logTabSheet.restore();
 				}
@@ -295,6 +308,14 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		helpMenu.setText(new JadeCockpitMsg("JADE_L_HelpMenu").label());
 		documentationMenu.setText(new JadeCockpitMsg("JADE_L_DocumentationMenu").label());
 		aboutMenu.setText(new JadeCockpitMsg("JADE_L_AboutMenu").label());
+	}
+	
+	/**
+	 * TODO test
+	 */
+	public void doSomething(String text) {
+		getItems().get(0).setText(text);
+		JadeMenuBar.this.markAsDirty();
 	}
 
 }

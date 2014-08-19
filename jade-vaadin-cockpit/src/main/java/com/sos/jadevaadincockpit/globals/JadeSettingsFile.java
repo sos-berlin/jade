@@ -84,7 +84,7 @@ public class JadeSettingsFile implements Serializable {
 			// sort items
 			profileContainer.sortByName();
 			
-			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 			// expand added items
 			profileTree.expandItemsRecursively(rootId);
 			// set tree's selection on first section
@@ -93,7 +93,7 @@ public class JadeSettingsFile implements Serializable {
 				profileTree.setValue(it.next());
 			}
 			
-			JadevaadincockpitUI.getCurrent().getJadeMainUi().getJadeMenuBar().setSaveItemsEnabled(true);
+			JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(true);
 		}
 	}
 	
@@ -107,11 +107,11 @@ public class JadeSettingsFile implements Serializable {
 		profileContainer.removeItemRecursively(itemId);
 		
 		// remove all tabs
-		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTabSheet();
+		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
 		profileTabSheet.removeAllComponents(); // TODO do not close ALL tabs
 		
 		// disable save-functions
-		JadevaadincockpitUI.getCurrent().getJadeMainUi().getJadeMenuBar().setSaveItemsEnabled(false);
+		JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(false);
 	}
 	
 	/**
@@ -190,7 +190,7 @@ public class JadeSettingsFile implements Serializable {
 		boolean returnValue = false;
 		if (name != null) {
 			if (!name.trim().isEmpty()) {
-				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 				boolean isNew = true;
 				for (Object id : profileContainer.getItemIds()) {
 					if (((String) profileContainer.getItem(id).getItemProperty(ProfileContainer.PROPERTY.NAME).getValue()).equalsIgnoreCase(name)) {

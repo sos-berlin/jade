@@ -10,7 +10,6 @@ import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.adapters.JadeVaadinAdapter;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
-import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.view.AddProfileWindow;
 import com.sos.jadevaadincockpit.view.ProfileTree;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
@@ -52,7 +51,7 @@ public class ProfileTreeActionHandler implements Handler {
 		
 		if (target != null) {
 			
-			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 			
 			ProfileContainer profileContainer = profileTree.getProfileContainer();
 			
@@ -84,18 +83,18 @@ public class ProfileTreeActionHandler implements Handler {
 	@Override
 	public void handleAction(Action action, Object sender, Object target) {
 		
-		ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+		ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 		ProfileContainer profileContainer = profileTree.getProfileContainer();
 		
 		if (profileContainer.isRoot(target)) { // item which received the right click is a settings file; check settingsFileActions
 			
 			if (action == SAVE_FILE) {
 				
-				SessionAttributes.getJadeSettingsFile().saveSettingsFile(target);
+				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(target);
 				
 			} else if (action == CLOSE_FILE) {
 				
-				SessionAttributes.getJadeSettingsFile().closeSettingsFile(target);
+				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().closeSettingsFile(target);
 				
 			} else if (action == ADD_PROFILE) {
 				
@@ -111,7 +110,7 @@ public class ProfileTreeActionHandler implements Handler {
 			if (action == EXECUTE_PROFILE) {
 				
 				// TODO profile has to be saved before execution as checkMandatory() will read from the file (not from the options-Object)
-				SessionAttributes.getJadeSettingsFile().saveSettingsFile(target);
+				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(target);
 				
 				JadeVaadinAdapter jadeAdapter = new JadeVaadinAdapter();
 				jadeAdapter.execute(profileTree.getItem(target));

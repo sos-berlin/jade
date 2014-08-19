@@ -1,5 +1,7 @@
 package com.sos.jadevaadincockpit.globals;
 
+import com.google.common.eventbus.EventBus;
+import com.sos.jadevaadincockpit.view.event.EventHelper;
 import com.vaadin.server.VaadinSession;
 
 /**
@@ -10,7 +12,7 @@ import com.vaadin.server.VaadinSession;
 public class SessionAttributes {
 
 	public enum Attributes {
-		SESSION_ID, JADESETTINGSFILE;
+		EVENTBUS; // USER
 
 		private Attributes() {
 		}
@@ -36,19 +38,19 @@ public class SessionAttributes {
 		}
 	}
 	
-	public static Object getSessionId() {
-		return (Object) Attributes.SESSION_ID.getValue();
+	/**
+	 * 
+	 * @return
+	 */
+	public EventBus getEventBus() {
+		return (EventBus) Attributes.EVENTBUS.getValue();
 	}
 	
-	public static void setSessionId(Object newValue) {
-		Attributes.SESSION_ID.setValue(newValue);
-	}
-	
-	public static JadeSettingsFile getJadeSettingsFile() {
-		return (JadeSettingsFile) Attributes.JADESETTINGSFILE.getValue();
-	}
-	
-	public static void setJadeSettingsFile(JadeSettingsFile newValue) {
-		Attributes.JADESETTINGSFILE.setValue(newValue);
+	/**
+	 * 
+	 * @param newValue
+	 */
+	public void setEventBus(EventBus newValue) {
+		Attributes.EVENTBUS.setValue(newValue);
 	}
 }

@@ -2,9 +2,9 @@ package com.sos.jadevaadincockpit.view;
 
 import java.io.File;
 
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
-import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.FilesystemContainer;
@@ -90,7 +90,7 @@ public class FileSystemBrowser extends Window {
 					@Override
 					public void buttonClick(ClickEvent event) {
 						if (selectedFile != null) {
-							SessionAttributes.getJadeSettingsFile().loadSettingsFile(selectedFile.getAbsolutePath());
+							JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().loadSettingsFile(selectedFile.getAbsolutePath());
 							close();
 						}
 					}
@@ -110,7 +110,7 @@ public class FileSystemBrowser extends Window {
 					public void itemClick(ItemClickEvent event) {
 						if (event.isDoubleClick()) {
 							if (selectedFile != null) {
-								SessionAttributes.getJadeSettingsFile().loadSettingsFile(selectedFile.getAbsolutePath());
+								JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().loadSettingsFile(selectedFile.getAbsolutePath());
 								close();
 							}
 						}

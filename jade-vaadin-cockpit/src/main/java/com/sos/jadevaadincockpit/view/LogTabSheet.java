@@ -28,7 +28,7 @@ public class LogTabSheet extends TabSheet implements I18NComponent {
 			@Override
 			public void onTabClose(TabSheet tabsheet, Component tabContent) {
 				Tab tab = tabsheet.getTab(tabContent);
-				JadevaadincockpitUI.getCurrent().getJadeMainUi().getJadeMenuBar().addLogMenu(tabContent, tab.getCaption());
+				JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().addLogMenu(tabContent, tab.getCaption());
 				tabsheet.removeTab(tab);
 				
 				if (tabsheet.getComponentCount() == 0) {
@@ -74,21 +74,21 @@ public class LogTabSheet extends TabSheet implements I18NComponent {
 	 * Minimizes/hides the LogTabSheet.
 	 */
 	public void minimize() {
-		JadevaadincockpitUI.getCurrent().getJadeMainUi().getVSplitPanel().setSplitPosition(100f, Unit.PERCENTAGE);
+		JadevaadincockpitUI.getCurrent().getMainView().getVSplitPanel().setSplitPosition(100f, Unit.PERCENTAGE);
 	}
 	
 	/**
 	 * Restores the LogTabSheet to default size.
 	 */
 	public void restore() {
-		JadevaadincockpitUI.getCurrent().getJadeMainUi().getVSplitPanel().setSplitPosition(70f, Unit.PERCENTAGE);
+		JadevaadincockpitUI.getCurrent().getMainView().getVSplitPanel().setSplitPosition(70f, Unit.PERCENTAGE);
 	}
 	
 	/**
 	 * Maximizes the LogTabSheet to full size.
 	 */
 	public void maximize() {
-		JadevaadincockpitUI.getCurrent().getJadeMainUi().getVSplitPanel().setSplitPosition(0f, Unit.PERCENTAGE);
+		JadevaadincockpitUI.getCurrent().getMainView().getVSplitPanel().setSplitPosition(0f, Unit.PERCENTAGE);
 	}
 
 	public void refreshLocale(Locale newLocale) {

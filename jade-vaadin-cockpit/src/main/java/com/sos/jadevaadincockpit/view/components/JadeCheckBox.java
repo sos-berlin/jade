@@ -4,29 +4,23 @@ import com.google.common.eventbus.Subscribe;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.CheckBox;
 
-/**
- * 
- * @author JS
- *
- */
-public class JadeTextField extends TextField {
-	private static final long serialVersionUID = -7967998186821025196L;
+public class JadeCheckBox extends CheckBox {
 	
 	private JadeCockpitMsg msg;
 	
-	public JadeTextField() {
+	public JadeCheckBox() {
 		super();
 		JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().register(this);
 	}
 	
-	public JadeTextField(String caption) {
+	public JadeCheckBox(String caption) {
 		super(caption);
 		JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().register(this);
 	}
 	
-	public JadeTextField(JadeCockpitMsg msg) {
+	public JadeCheckBox(JadeCockpitMsg msg) {
 		super();
 		this.msg = msg;
 		
@@ -57,6 +51,10 @@ public class JadeTextField extends TextField {
 		setDescription(msg.tooltip());
 	}
 	
+	/**
+	 * 
+	 * @param newMsg
+	 */
 	public void setJadeCockpitMsg(JadeCockpitMsg newMsg) {
 		msg = newMsg;
 		updateLocalizedStrings();

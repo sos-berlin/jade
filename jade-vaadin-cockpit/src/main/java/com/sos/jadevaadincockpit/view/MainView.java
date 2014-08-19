@@ -2,6 +2,7 @@ package com.sos.jadevaadincockpit.view;
 
 import java.util.Locale;
 
+import com.google.common.eventbus.Subscribe;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
@@ -11,15 +12,17 @@ import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.Button.ClickEvent;
 
 /**
  * 
  * @author JS
  *
  */
-public class JadeMainUi extends CustomComponent implements I18NComponent {
+public class MainView extends CustomComponent implements I18NComponent {
 	private static final long serialVersionUID = 727271516807040138L;
 	
 	// ui-components
@@ -37,7 +40,7 @@ public class JadeMainUi extends CustomComponent implements I18NComponent {
 	private VerticalLayout vLayout1;
 	private HorizontalSplitPanel hSplitPanel2;
 	
-	public JadeMainUi() {
+	public MainView() {
 		
 		profileTree = new ProfileTree();
 		profileTabSheet = new ProfileTabSheet();

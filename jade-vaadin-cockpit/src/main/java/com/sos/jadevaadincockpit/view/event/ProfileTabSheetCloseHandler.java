@@ -23,7 +23,7 @@ public class ProfileTabSheetCloseHandler implements CloseHandler {
 			FormsTabSheet removedContent = (FormsTabSheet) tabContent;
 			Object removedItemId = removedContent.getProfileItem().getItemProperty(ProfileContainer.PROPERTY.ID).getValue();
 			
-			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 			
 			Object parentId = profileTree.getParent(removedItemId);
 			

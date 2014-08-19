@@ -1,7 +1,5 @@
 package com.sos.jadevaadincockpit;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,20 +8,25 @@ import javax.servlet.annotation.WebServlet;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
 import com.sos.jadevaadincockpit.globals.SessionAttributes;
-import com.sos.jadevaadincockpit.view.JadeMainUi;
+import com.sos.jadevaadincockpit.view.MainView;
+import com.sos.jadevaadincockpit.view.event.EventHelper;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
-import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
 @Theme("jadevaadincockpit")
+@Push
 /**
  * 
  * @author JS
@@ -32,8 +35,9 @@ import com.vaadin.ui.UI;
 public class JadevaadincockpitUI extends UI {
 	private static final long serialVersionUID = -7272363253057365783L;
 	
-	private JadeMainUi mainUi;
+	private MainView mainView;
 	private ApplicationAttributes applicationAttributes;
+	private SessionAttributes sessionAttributes;
 	
 	private static final Logger logger = Logger.getLogger(JadevaadincockpitUI.class.getName());
 	
@@ -45,57 +49,75 @@ public class JadevaadincockpitUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-
+		
 		initializeLogging();
 		
 		initializeLocale();
 		
+		initializeSessionAttributes();
+		
 		initializeApplicationAttributes();
 		
-		// set some session specific attributes
-		SessionAttributes.setJadeSettingsFile(new JadeSettingsFile());
+		new EventHelper();
 		
-		// create the applications main UI
-		mainUi = new JadeMainUi();			
-		setContent(mainUi);
-		mainUi.setSizeFull();
+		// Create the applications main UI. TODO eigene Methode
+		mainView = new MainView();			
+		setContent(mainView);
+		mainView.setSizeFull();
 		
 		Page.getCurrent().setTitle("JADE Cockpit");
 	}
 	
 	/**
-	 * 
+	 * Initialize the logging framework.
 	 */
 	private void initializeLogging() {
-		// set "basePath" system property to make it available in the log4j.properties file
+		// Set "basePath" system property to make it available in the log4j.properties file.
 		System.setProperty("basePath", ApplicationAttributes.getBasePath());
 		
-		// initialize the slf4j logging bridge
-		SLF4JBridgeHandler.install();
+		// Might have been installed in another UI.
+		if (!SLF4JBridgeHandler.isInstalled()) {
+			// Initialize the slf4j logging bridge.
+			SLF4JBridgeHandler.install();			
+		}
 		logger.setLevel(Level.ALL);
-		logger.log(Level.FINEST, "SLF4J logging bridge installed."); // TODO
+		logger.log(Level.FINEST, "SLF4J logging bridge installed in UI '" + this.getUIId() +"'."); // TODO
 	}
 	
 	/**
-	 * Initializes the locale with the current value of the default locale for this session.
+	 * Initialize the locale with the current value of the default locale for this session.
 	 * This affects only this current UI.
 	 */
 	private void initializeLocale() {
-		// Get the default locale for this session
+		// Get the default locale for this session.
 		Locale locale = getSession().getLocale();
-		// Call to affect this current UI
+		// Call to affect this current UI.
 		setLocale(locale);
 		
 		logger.log(Level.FINEST, String.format("Locale set to %1$s, %2$s", locale.getLanguage(), locale.getCountry()));
 	}
 	
 	/**
-	 * JadeSettingsFile
+	 * Check and set various session-scoped attributes.
+	 */
+	private void initializeSessionAttributes() {
+		sessionAttributes = new SessionAttributes();
+		// Check if the EventBus had been initialized. Create a new one if thats not the case.
+		if (sessionAttributes.getEventBus() == null) {
+			sessionAttributes.setEventBus(new EventBus("SessionEventBus"));
+		}
+		sessionAttributes.getEventBus().register(this);
+	}
+	
+	/**
+	 * Check and set various application-scoped wide attributes.
 	 */
 	private void initializeApplicationAttributes() {
 		applicationAttributes = new ApplicationAttributes();
-		
+		// Set the message resources for this application.
 		applicationAttributes.setMessages("com.sos.jadevaadincockpit.i18n.JadeCockpitMessages", getSession().getLocale(), getClass().getClassLoader());
+		// Create a new settings file for this application.
+		applicationAttributes.setJadeSettingsFile(new JadeSettingsFile());
 	}
 	
 	/**
@@ -106,31 +128,55 @@ public class JadevaadincockpitUI extends UI {
 		return (JadevaadincockpitUI) UI.getCurrent();
 	}
 	
-	/** TODO This is going to be replaced by listeners and the event bus
-	 * Changes the applications locale and refreshes all components
-	 * @param newLocale
+	/**
+	 * Get the session specific attributes.
+	 * @return the session attributes
 	 */
-	@Deprecated
+	public SessionAttributes getSessionAttributes() {
+		return sessionAttributes;
+	}
+	
+	/**
+	 * Get the UI specific attributes.
+	 * @return the application attributes
+	 */
+	public ApplicationAttributes getApplicationAttributes() {
+		return applicationAttributes;
+	}
+	
+	/** FIXME
+	 * 
+	 * @param newLocale
+	 */@Deprecated
 	public void changeLocale(Locale newLocale) {
 		Locale oldLocale = getSession().getLocale();
 		
 		setLocale(newLocale);
 		getSession().setLocale(newLocale);
+		// TODO andere UIs beachten. bisher werden nur die aktuelle und alle zukünftigen UIs aktualisiert
+		
 		logger.log(Level.FINEST, String.format("Locale set to %1$s, %2$s", newLocale.getLanguage(), newLocale.getCountry()));
-		applicationAttributes.setMessages("com.sos.jadevaadincockpit.i18n.JadeCockpitMessages", getSession().getLocale(), getClass().getClassLoader());
+		applicationAttributes.setMessages("com.sos.jadevaadincockpit.i18n.JadeCockpitMessages", newLocale, getClass().getClassLoader());
 		
-//		fireLocaleChangeEvent(new LocaleChangeEvent(oldLocale, newLocale));
+		sessionAttributes.getEventBus().post(new LocaleChangeEvent(oldLocale, newLocale));
 		
-		ApplicationAttributes.getEventBus().post(new LocaleChangeEvent(oldLocale, newLocale));
-		
-		mainUi.refreshLocale(newLocale);
+//		mainView.refreshLocale(newLocale);
 	}
 	
 	/**
-	 * Gets the applications mainUi class.
-	 * @return the mainUi class
+	 * Get the application's main view class.
+	 * @return the main view
 	 */
-	public JadeMainUi getJadeMainUi() {
-		return mainUi;
+	public MainView getMainView() {
+		return mainView;
 	}
+	
+	
+	@Subscribe // TODO test
+	public void receiveSomeRandomEvent(ClickEvent event) {
+		int id = this.getUIId();
+		this.getMainView().getJadeMenuBar().doSomething("UUID " + id);
+	}
+
+	
 }

@@ -39,7 +39,7 @@ public class JadeDataProvider implements Serializable {
 	
 	public void loadSettingsFile(final String filePath) {
 		
-		ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+		ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 		
 		ProfileContainer profileContainer = profileTree.getProfileContainer();
 		
@@ -91,7 +91,7 @@ public class JadeDataProvider implements Serializable {
 				profileTree.setValue(it.next());
 			}
 			
-			JadevaadincockpitUI.getCurrent().getJadeMainUi().getJadeMenuBar().setSaveItemsEnabled(true);
+			JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(true);
 		}
 	}
 	
@@ -102,15 +102,15 @@ public class JadeDataProvider implements Serializable {
 	public void closeSettingsFile(Object itemId) {
 		
 		// clear the container
-		ProfileContainer container = (ProfileContainer) JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree().getContainerDataSource();
+		ProfileContainer container = (ProfileContainer) JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().getContainerDataSource();
 		container.removeItemRecursively(itemId);
 		
 		// remove all tabs
-		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTabSheet();
+		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
 		profileTabSheet.removeAllComponents(); // TODO do not close ALL tabs
 		
 		// disable save-functions
-		JadevaadincockpitUI.getCurrent().getJadeMainUi().getJadeMenuBar().setSaveItemsEnabled(false);
+		JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(false);
 	}
 	
 //	public ParameterContainer loadParameters(Item profileItem) {
@@ -211,7 +211,7 @@ public class JadeDataProvider implements Serializable {
 	 */
 	public void saveSettingsFile(Object itemId) {
 		
-		ProfileContainer profileContainer = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree().getProfileContainer();
+		ProfileContainer profileContainer = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().getProfileContainer();
 		
 		String filename = "";
 		JSIniFile newJadeSettingsFile = null;
@@ -282,7 +282,7 @@ public class JadeDataProvider implements Serializable {
 		boolean returnValue = false;
 		if (name != null) {
 			if (!name.trim().isEmpty()) {
-				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree();
+				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 				ProfileContainer container = profileTree.getProfileContainer();
 				boolean isNew = true;
 				for (Object id : container.getItemIds()) {

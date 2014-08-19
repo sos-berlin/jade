@@ -1,7 +1,7 @@
 package com.sos.jadevaadincockpit.view;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.globals.SessionAttributes;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
 import com.vaadin.server.Page;
@@ -50,7 +50,7 @@ public class AddProfileWindow extends Window {
 				String profileName = nameTextField.getValue();
 				Boolean isFragment = isFragmentCheckBox.getValue();
 
-				if (SessionAttributes.getJadeSettingsFile().addProfile(profileName)) {
+				if (JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().addProfile(profileName)) {
 					close();
 				} else {
 					nameNotValidNotification.show(Page.getCurrent());

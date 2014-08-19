@@ -3,8 +3,8 @@ package com.sos.jadevaadincockpit.view;
 import java.util.Locale;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
-import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeActionHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeValueChangeListener;
@@ -27,7 +27,7 @@ public class ProfileTree extends Tree implements I18NComponent {
 	private void init() {
 		
 		setItemCaptionPropertyId(ProfileContainer.PROPERTY.NAME);
-		setContainerDataSource(SessionAttributes.getJadeSettingsFile().getProfileContainer());
+		setContainerDataSource(JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().getProfileContainer());
 		setItemIconPropertyId(ProfileContainer.PROPERTY.ICON);
 		setImmediate(true);
 		setNullSelectionAllowed(false);
@@ -41,9 +41,9 @@ public class ProfileTree extends Tree implements I18NComponent {
 			@Override
 			public void containerItemSetChange(ItemSetChangeEvent event) {
 				if (event.getContainer().getItemIds().size() == 0) {
-					JadevaadincockpitUI.getCurrent().getJadeMainUi().hideProfileTree(true);
+					JadevaadincockpitUI.getCurrent().getMainView().hideProfileTree(true);
 				} else {
-					JadevaadincockpitUI.getCurrent().getJadeMainUi().hideProfileTree(false);
+					JadevaadincockpitUI.getCurrent().getMainView().hideProfileTree(false);
 				}
 				
 			}

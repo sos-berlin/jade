@@ -36,7 +36,7 @@ public class JadeVaadinAdapter {
 					.equals(ProfileContainer.NODETYPE.FILE)) {
 
 				LogTabSheet logTabSheet = JadevaadincockpitUI.getCurrent()
-						.getJadeMainUi().getLogTabSheet();
+						.getMainView().getLogTabSheet();
 				LogPanel logPanel = logTabSheet.createLogTab(profile);
 
 				PatternLayout layout = new PatternLayout(

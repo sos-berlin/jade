@@ -16,7 +16,7 @@ public class ProfileTabSheetSelectedTabChangeListener implements SelectedTabChan
 				.getSelectedTab()).getProfileItem();
 		Object selectedProfileItemId = selectedProfileItem.getItemProperty(ProfileContainer.PROPERTY.ID).getValue();
 //		Constants.getJadeDataProvider().loadParameters(selectedItem);
-		JadevaadincockpitUI.getCurrent().getJadeMainUi().getProfileTree().setValue(selectedProfileItemId);
+		JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().setValue(selectedProfileItemId);
 	}
 
 }
