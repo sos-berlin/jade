@@ -1083,7 +1083,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 
 	private void setMailOptions() {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::setMailOptions";
-		objOptions.getMailOptions().to.Value("kb@sos-berlin.com");
+		objOptions.getMailOptions().to.Value("jade_test@sos-berlin.com");
 		objOptions.getMailOptions().SMTPHost.Value("smtp.sos");
 	} // private void setMailOptions
 
