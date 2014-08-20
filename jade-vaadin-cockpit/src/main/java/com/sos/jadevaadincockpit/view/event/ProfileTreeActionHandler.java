@@ -9,6 +9,7 @@ import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.adapters.JadeVaadinAdapter;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.NewProfileWindow;
 import com.sos.jadevaadincockpit.view.ProfileTree;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
@@ -29,19 +30,19 @@ public class ProfileTreeActionHandler implements Handler {
 	private static final Action SAVE_FILE = new Action("Save");
 	private static final Action CLOSE_FILE = new Action("Close");
 	private static final Action ADD_PROFILE = new Action("Add profile");
-	private static final Action RENAME_FILE = new Action("Rename file");
+	private static final Action RENAME_FILE = new Action("Rename");
 	
-    private static final Action DELETE_PROFILE = new Action("Delete profile");
-    private static final Action RENAME_PROFILE = new Action("Rename profile");
-    private static final Action EXECUTE_PROFILE = new Action("Execute profile");
+    private static final Action DELETE_PROFILE = new Action("Delete");
+    private static final Action RENAME_PROFILE = new Action("Rename");
+    private static final Action EXECUTE_PROFILE = new Action("Execute");
     
-    private static final Action DEBUG_PRINT_OPTIONS = new Action("DEBUG: print dirty options");
-    private static final Action DEBUG_PRINT_MISSING_OPTIONS = new Action("DEBUG: print missig options");
+    private static final Action DEBUG_PRINT_OPTIONS = new Action("DEBUG: print dirty options"); // dbg
+    private static final Action DEBUG_PRINT_MISSING_OPTIONS = new Action("DEBUG: print missig options"); // dbg
     
     private static final Action[] settingsFileActions = new Action[] { SAVE_FILE, CLOSE_FILE, ADD_PROFILE, RENAME_FILE };
     private static final Action[] profileActions = new Action[] { EXECUTE_PROFILE, RENAME_PROFILE, DELETE_PROFILE };
     
-    private static final Action[] debugActions = new Action[] { DEBUG_PRINT_OPTIONS, DEBUG_PRINT_MISSING_OPTIONS };
+    private static final Action[] debugActions = new Action[] { DEBUG_PRINT_OPTIONS, DEBUG_PRINT_MISSING_OPTIONS }; // dbg
 
 	@Override
 	public Action[] getActions(Object target, Object sender) {
@@ -69,10 +70,12 @@ public class ProfileTreeActionHandler implements Handler {
 			}
 		}
 		
+		/* dbg
 		for (Action a : debugActions) {
 			
 			actionsList.add(a);
 		}
+		*/
 		
 		Action[] actions = actionsList.toArray(new Action[actionsList.size()]);
 		
@@ -102,7 +105,7 @@ public class ProfileTreeActionHandler implements Handler {
 
 			} else if (action == RENAME_FILE) {
 				
-				Notification.show("Sorry, not available yet.");
+				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
 			}
 		} else { // item which received the right click is a profile; check profileActions
 			
@@ -116,7 +119,7 @@ public class ProfileTreeActionHandler implements Handler {
 
 			} else if (action == RENAME_PROFILE) {
 				
-				Notification.show("Sorry, not available yet.");
+				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
 				
 			} else if (action == DELETE_PROFILE) {
 				
@@ -125,7 +128,7 @@ public class ProfileTreeActionHandler implements Handler {
 			}
 		}
 		
-		if (action == DEBUG_PRINT_OPTIONS) { // TODO
+		if (action == DEBUG_PRINT_OPTIONS) { // dbg
 			
 			System.out.println("DIRTY OPTIONS");
 			Item targetItem = profileTree.getItem(target);
