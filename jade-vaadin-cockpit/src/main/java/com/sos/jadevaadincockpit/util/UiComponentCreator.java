@@ -183,7 +183,7 @@ public class UiComponentCreator implements Serializable {
 					optionElement.setNull(); // TODO was passiert dann?
 				}
 				
-				changeStyleName(comboBox, optionElement.isDefault());
+//				changeStyleName(comboBox, optionElement.isDefault());
 			}
 		});
 		
@@ -200,7 +200,7 @@ public class UiComponentCreator implements Serializable {
 			}
 		});
 		
-		changeStyleName(comboBox, optionElement.isDefault());
+//		changeStyleName(comboBox, optionElement.isDefault());
 		
 		return comboBox;
 	}
@@ -235,7 +235,7 @@ public class UiComponentCreator implements Serializable {
 					optionElement.setNull();
 				}
 				
-				changeStyleName(checkBox, optionElement.isDefault());
+//				changeStyleName(checkBox, optionElement.isDefault());
 			}
 		});
 		
@@ -253,7 +253,7 @@ public class UiComponentCreator implements Serializable {
 			}
 		});
 		
-		changeStyleName(checkBox, optionElement.isDefault());
+//		changeStyleName(checkBox, optionElement.isDefault());
 		
 		return checkBox;
 	}
@@ -288,7 +288,7 @@ public class UiComponentCreator implements Serializable {
 					optionElement.setNull();
 				}
 				
-				changeStyleName(textField, optionElement.isDefault());
+//				changeStyleName(textField, optionElement.isDefault());
 			}
 		});
 		
@@ -308,7 +308,7 @@ public class UiComponentCreator implements Serializable {
 			}
 		});
 		
-		changeStyleName(textField, optionElement.isDefault());
+//		changeStyleName(textField, optionElement.isDefault());
 		
 		return textField;
 	}
@@ -318,13 +318,13 @@ public class UiComponentCreator implements Serializable {
 	 * @param component
 	 * @param isDefault
 	 */
-	private void changeStyleName(AbstractField<?> component, boolean isDefault) {
-		if (!isDefault) {
-			component.addStyleName("default-option-value");
-		} else {
-			component.removeStyleName("default-option-value");
-		}
-	}
+//	private void changeStyleName(AbstractField<?> component, boolean isDefault) {
+//		if (!isDefault) {
+//			component.addStyleName("default-option-value");
+//		} else {
+//			component.removeStyleName("default-option-value");
+//		}
+//	}
 	
 }
 

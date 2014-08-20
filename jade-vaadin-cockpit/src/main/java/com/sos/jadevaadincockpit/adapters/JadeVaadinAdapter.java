@@ -1,7 +1,5 @@
 package com.sos.jadevaadincockpit.adapters;
 
-import java.io.File;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -10,14 +8,13 @@ import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.util.VaadinLogAppender;
 import com.sos.jadevaadincockpit.view.LogPanel;
 import com.sos.jadevaadincockpit.view.LogTabSheet;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.server.FileResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 
 public class JadeVaadinAdapter {
@@ -27,8 +24,9 @@ public class JadeVaadinAdapter {
 	}
 
 	public void execute(Item profile) {
-		FileResource logErrorIconResource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log_error.gif"));
-		FileResource logIconResource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log.gif"));
+		ThemeResource logErrorIconResource = new ThemeResource("icons/16-circle-orange.png");
+		ThemeResource logIconResource = new ThemeResource("icons/16-circle-green.png");
+//		FileResource logIconResource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log.gif"));
 		
 		if (profile != null) {
 			if (!profile
@@ -38,6 +36,13 @@ public class JadeVaadinAdapter {
 				LogTabSheet logTabSheet = JadevaadincockpitUI.getCurrent()
 						.getMainView().getLogTabSheet();
 				LogPanel logPanel = logTabSheet.createLogTab(profile);
+				
+				/* TODO Log nicht im Panel anzeigen sondern in SubWindow
+				Window window = new Window();
+				window.setContent(logTabSheet);
+				window.setClosable(true);
+				JadevaadincockpitUI.getCurrent().addWindow(window);
+				*/
 
 				PatternLayout layout = new PatternLayout(
 						"%5p [%t] (%F:%L) - %m%n");

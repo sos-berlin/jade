@@ -3,7 +3,6 @@ package com.sos.jadevaadincockpit.globals;
 import java.util.HashMap;
 import java.util.Locale;
 
-import com.google.common.eventbus.EventBus;
 import com.sos.localization.Messages;
 import com.vaadin.server.VaadinService;
 
@@ -14,15 +13,13 @@ import com.vaadin.server.VaadinService;
  */
 public class ApplicationAttributes {
 	
-	private Messages messages;
+	private Messages messages; // why is this not session scoped (in SessionAttributes)?
 	
 	private JadeSettingsFile jadeSettingsFile = new JadeSettingsFile();
 
 	public static HashMap<String, String> allOptionsFromSettingsFile = new HashMap<String, String>();
 	
 	public static HashMap<String, String> missingOptions = new HashMap<String, String>();
-	
-	private static EventBus bus = new EventBus();
 	
 	/**
 	 * Returns the pathname string of the context base directory. Typically an
@@ -84,10 +81,4 @@ public class ApplicationAttributes {
 	public JadeSettingsFile getJadeSettingsFile() {
 		return jadeSettingsFile;
 	}
-
-	// TODO
-	public static EventBus getEventBus() { // Is this session-scoped or ui-scoped? -> should be session-scoped
-		return bus;
-	}
-	
 }

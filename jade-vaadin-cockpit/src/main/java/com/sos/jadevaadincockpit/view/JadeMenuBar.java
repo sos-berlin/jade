@@ -157,6 +157,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 				Locale enLocale = new Locale("en", "US");
 				Locale oldLocale = getSession().getLocale();
 				JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().post(new LocaleChangeEvent(oldLocale, enLocale));
+//				VaadinSession.getCurrent().setLocale(enLocale);
+//				JadevaadincockpitUI.getCurrent().getPage().reload(); // TODO does not reload components
 			}
 		};
 	}
@@ -167,10 +169,11 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				// TODO repaint
 				Locale deLocale = new Locale("de", "DE");
 				Locale oldLocale = getSession().getLocale();
 				JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().post(new LocaleChangeEvent(oldLocale, deLocale));
+//				VaadinSession.getCurrent().setLocale(deLocale);
+//				JadevaadincockpitUI.getCurrent().getPage().reload(); // TODO does not reload components
 			}
 		};
 	}
@@ -232,7 +235,6 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO stub
 				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label()); // Sorry, not available yet.
-				JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().post(new ClickEvent(JadevaadincockpitUI.getCurrent()));
 			}
 		};
 	}
@@ -309,14 +311,5 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		documentationMenu.setText(new JadeCockpitMsg("JADE_L_DocumentationMenu").label());
 		aboutMenu.setText(new JadeCockpitMsg("JADE_L_AboutMenu").label());
 	}
-	
-	/**
-	 * TODO test
-	 */
-	public void doSomething(String text) {
-		getItems().get(0).setText(text);
-		JadeMenuBar.this.markAsDirty();
-	}
-
 }
 

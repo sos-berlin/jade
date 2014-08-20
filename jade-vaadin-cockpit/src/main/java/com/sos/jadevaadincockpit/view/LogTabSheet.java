@@ -9,6 +9,7 @@ import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 
@@ -52,7 +53,7 @@ public class LogTabSheet extends TabSheet implements I18NComponent {
 		
 		setSelectedTab(logPanel);
 		
-		FileResource resource = new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/log.gif"));
+		ThemeResource resource = new ThemeResource("icons/16-circle-green.png");
 		logPanel.setIconResource(resource);
 		getTab(logPanel).setIcon(resource);
 		

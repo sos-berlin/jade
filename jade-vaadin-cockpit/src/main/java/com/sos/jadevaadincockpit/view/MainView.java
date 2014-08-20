@@ -77,21 +77,12 @@ public class MainView extends CustomComponent implements I18NComponent {
 			vLayout1.addComponent(dropArea);			
 		}
 		
-//		DropArea dropArea = new DropArea("Drag files here");
-//		dropArea.setSizeFull();
-//		dropArea.setDragAndDropUploadEnabled(false);
-//		vLayout1.addComponent(dropArea); // TODO replace with tree on file load
-		
 		hSplitPanel1.setFirstComponent(wrapper);
 		wrapper.setSizeFull();
 		
 		hSplitPanel2.setSplitPosition(70, Unit.PERCENTAGE);
-//		hSplitPanel1.setSecondComponent(hSplitPanel2);
 		hSplitPanel1.setSecondComponent(profileTabSheet);
 		profileTabSheet.setSizeFull();
-		
-//		hSplitPanel2.setFirstComponent(profileTabSheet);
-//		profileTabSheet.setSizeFull();
 		
 		vSplitPanel.setSecondComponent(logTabSheet);
 		logTabSheet.setSizeFull();

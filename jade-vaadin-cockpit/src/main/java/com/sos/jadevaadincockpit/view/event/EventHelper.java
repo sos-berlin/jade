@@ -1,5 +1,6 @@
 package com.sos.jadevaadincockpit.view.event;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,12 +10,13 @@ import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
-public class EventHelper {
-	
+public class EventHelper implements Serializable {
+	private static final long serialVersionUID = -6752587063767423734L;
 	Logger logger = Logger.getLogger(EventHelper.class.getName());
 	
 	public EventHelper() {
 		JadevaadincockpitUI.getCurrent().getSessionAttributes().getEventBus().register(this);
+		logger.setLevel(Level.ALL);
 	}
 	
 	@Subscribe

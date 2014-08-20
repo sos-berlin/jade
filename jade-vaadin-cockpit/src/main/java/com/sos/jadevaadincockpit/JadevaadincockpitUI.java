@@ -16,6 +16,7 @@ import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.view.MainView;
 import com.sos.jadevaadincockpit.view.event.EventHelper;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -27,6 +28,7 @@ import com.vaadin.ui.UI;
 
 @Theme("jadevaadincockpit")
 @Push
+@PreserveOnRefresh
 /**
  * 
  * @author JS
@@ -170,13 +172,4 @@ public class JadevaadincockpitUI extends UI {
 	public MainView getMainView() {
 		return mainView;
 	}
-	
-	
-	@Subscribe // TODO test
-	public void receiveSomeRandomEvent(ClickEvent event) {
-		int id = this.getUIId();
-		this.getMainView().getJadeMenuBar().doSomething("UUID " + id);
-	}
-
-	
 }
