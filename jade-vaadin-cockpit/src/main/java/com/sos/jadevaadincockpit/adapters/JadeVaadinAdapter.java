@@ -1,7 +1,9 @@
 package com.sos.jadevaadincockpit.adapters;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.log4j.PatternLayout;
 
 import com.sos.DataExchange.JadeEngine;
@@ -17,7 +19,10 @@ import com.vaadin.data.Property;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 
-public class JadeVaadinAdapter {
+public class JadeVaadinAdapter implements Serializable {
+	private static final long serialVersionUID = 7600792068708750918L;
+	
+	private Logger logger = Logger.getLogger(JadeVaadinAdapter.class.getName());
 
 	public JadeVaadinAdapter() {
 
@@ -44,13 +49,14 @@ public class JadeVaadinAdapter {
 				JadevaadincockpitUI.getCurrent().addWindow(window);
 				*/
 
+				// TODO This uses a log4j-Logger. Is this a problem?
 				PatternLayout layout = new PatternLayout(
 						"%5p [%t] (%F:%L) - %m%n");
 				VaadinLogAppender logAppender = new VaadinLogAppender(layout);
 				logAppender.setLogAppenderComponent(logPanel);
 
-				Logger rootLogger = Logger.getRootLogger();
-				rootLogger.setLevel(Level.DEBUG);
+				org.apache.log4j.Logger rootLogger = org.apache.log4j.Logger.getRootLogger(); 
+				rootLogger.setLevel(org.apache.log4j.Level.DEBUG);
 				rootLogger.addAppender(logAppender);
 
 				Property<?> optionsProperty = profile
@@ -62,9 +68,7 @@ public class JadeVaadinAdapter {
 					try {
 						engine = new JadeEngine(options);
 					} catch (Exception e) {
-						rootLogger.error(e.getLocalizedMessage()); // TODO this should be another logger
-//						Notification.show("Some Exception escaped",
-//								Notification.Type.ERROR_MESSAGE);
+						logger.log(Level.SEVERE, e.getLocalizedMessage());
 					}
 					try {
 						options.CheckMandatory();
@@ -76,16 +80,16 @@ public class JadeVaadinAdapter {
 								Notification.Type.TRAY_NOTIFICATION);
 
 					} catch (JSExceptionMandatoryOptionMissing e) {
-						rootLogger.error(e.ExceptionText()); // TODO this should be another logger
+						logger.log(Level.SEVERE, e.ExceptionText());
 						logTabSheet.getTab(logPanel).setIcon(logErrorIconResource);
 						logPanel.setIconResource(logErrorIconResource);
-						Notification.show("Execution ended with errors!",
+						Notification.show("Execution ended with errors! See log for details.",
 								Notification.Type.ERROR_MESSAGE);
 					} catch (Exception e) {
-						rootLogger.error(e.getLocalizedMessage()); // TODO this should be another logger
+						logger.log(Level.SEVERE, e.getLocalizedMessage());
 						logTabSheet.getTab(logPanel).setIcon(logErrorIconResource);
 						logPanel.setIconResource(logErrorIconResource);
-						Notification.show("Execution ended with errors!",
+						Notification.show("Execution ended with errors! See log for details.",
 								Notification.Type.ERROR_MESSAGE);
 					}
 					 // engine may be null in some (exceptional) cases

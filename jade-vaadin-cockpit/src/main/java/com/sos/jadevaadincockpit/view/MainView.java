@@ -22,7 +22,7 @@ import com.vaadin.ui.Button.ClickEvent;
  * @author JS
  *
  */
-public class MainView extends CustomComponent implements I18NComponent {
+public class MainView extends CustomComponent {
 	private static final long serialVersionUID = 727271516807040138L;
 	
 	// ui-components
@@ -173,12 +173,10 @@ public class MainView extends CustomComponent implements I18NComponent {
 		return vSplitPanel;
 	}
 
-	@Override
 	public void refreshLocale(Locale newLocale) {
 		profileTree.refreshLocale(newLocale);
 		jadeMenuBar.refreshLocale(newLocale);
 		profileTabSheet.refreshLocale(newLocale);
-		logTabSheet.refreshLocale(newLocale);
 		dropArea.refreshLocale(newLocale);
 	}
 }

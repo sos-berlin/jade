@@ -199,9 +199,9 @@ public class JadeSettingsFile implements Serializable {
 				}
 				if (isNew) {
 					Object parentId;
-					if (profileContainer.hasChildren(profileTree.getValue())) { // is file
+					if (profileContainer.hasChildren(profileTree.getValue())) { // current selection is file
 						parentId = profileTree.getValue();
-					} else { // is profile
+					} else { // current selection is profile
 						parentId = profileContainer.getParent(profileTree.getValue());
 					}
 					

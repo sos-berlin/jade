@@ -9,8 +9,7 @@ import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.adapters.JadeVaadinAdapter;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
-import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
-import com.sos.jadevaadincockpit.view.AddProfileWindow;
+import com.sos.jadevaadincockpit.view.NewProfileWindow;
 import com.sos.jadevaadincockpit.view.ProfileTree;
 import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
@@ -29,7 +28,7 @@ public class ProfileTreeActionHandler implements Handler {
 
 	private static final Action SAVE_FILE = new Action("Save");
 	private static final Action CLOSE_FILE = new Action("Close");
-	private static final Action ADD_PROFILE = new Action("Add new profile");
+	private static final Action ADD_PROFILE = new Action("Add profile");
 	private static final Action RENAME_FILE = new Action("Rename file");
 	
     private static final Action DELETE_PROFILE = new Action("Delete profile");
@@ -98,7 +97,7 @@ public class ProfileTreeActionHandler implements Handler {
 				
 			} else if (action == ADD_PROFILE) {
 				
-				AddProfileWindow window = new AddProfileWindow();
+				NewProfileWindow window = new NewProfileWindow();
 				UI.getCurrent().addWindow(window);
 
 			} else if (action == RENAME_FILE) {
@@ -152,5 +151,4 @@ public class ProfileTreeActionHandler implements Handler {
 			}
 		}
 	}
-
 }
