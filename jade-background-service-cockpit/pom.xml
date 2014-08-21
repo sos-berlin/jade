@@ -70,8 +70,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<!-- some cascaded dependencies still get into war file,
-					configure <packagingExcludes/> to remove them after compile -->
+					<!-- some cascaded dependencies still get into war file, configure <packagingExcludes/> to remove them after compile -->
 			        <packagingExcludes>
 					<!-- the regex will remove all dependencies except for vaadin-server-<version>.jar,
 						 because it is needed for the servlets class loader to function correctly. Otherwise
@@ -258,7 +257,7 @@
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
-            <version>${project.version}</version>
+      <version>${project.version}</version>
 			<scope>provided</scope>
  		</dependency>
 
@@ -266,7 +265,7 @@
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
-            <version>${project.version}</version>
+      <version>${project.version}</version>
 			<scope>provided</scope>
  		</dependency>
 
@@ -282,13 +281,32 @@
 			<scope>provided</scope>
 		</dependency>
 
+<!-- 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
+			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+			<scope>provided</scope>      
+    </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>      
+		</dependency>
+-->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>provided</scope>      
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<scope>provided</scope>      
+		</dependency>
 	</dependencies>
 </project>
