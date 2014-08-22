@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="jade-background-service-frontend">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="ftp-history-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ftp-history/ftp-history">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jobscheduler-helper-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jobscheduler-helper/jobscheduler-helper">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-util-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-util/sos-util">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-connection-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-connection/sos-connection">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-settings-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-settings/sos-settings">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-xml-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-xml/sos-xml">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="hibernate-commons-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/hibernate-commons/hibernate-commons">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-scheduler-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-scheduler/sos-scheduler">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="credentialstore-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/credentialstore/credentialstore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-marshalling-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-marshalling/sos-marshalling">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-configuration-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-configuration/sos-configuration">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-mail-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-mail/sos-mail">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="sos-textprocessor-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/sos-textprocessor/sos-textprocessor">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jobscheduler-object-model-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jobscheduler-object-model/jobscheduler-object-model">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="virtual-file-system-1.8-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/virtual-file-system/virtual-file-system">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="jade-background-service-frontend"/>
+        <property name="java-output-path" value="/jade-background-service-frontend/target/classes"/>
+    </wb-module>
+</project-modules>
