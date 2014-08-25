@@ -6,12 +6,11 @@ import javax.servlet.ServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExternalConfigLoaderContextListener implements ServletContextListener {
-	private static final Logger logger = LoggerFactory.getLogger(ExternalConfigLoaderContextListener.class);
+public class ExternalLogbackConfigLoaderContextListener implements ServletContextListener {
+	private static final Logger logger = LoggerFactory.getLogger(ExternalLogbackConfigLoaderContextListener.class);
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-//		String configLocation = sce.getServletContext().getInitParameter("CONFIGDIR");
 		String configLocation = sce.getServletContext().getRealPath("/") + "/WEB-INF/classes/";
 		if(configLocation == null){
 			configLocation = System.getenv("CONFIGDIR"); 
