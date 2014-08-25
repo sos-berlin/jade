@@ -1,6 +1,6 @@
 <configuration debug="true">
 
-  <property name="SCHEDULER_DATA" value="C:/sp/jobscheduler_1_8_4216-SNAPSHOT/sp_4216/logs" />
+  <property name="SCHEDULER_DATA" value="C:/sp/jobscheduler_1_8_4236-SNAPSHOT/sp_4236" />
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -9,10 +9,10 @@
   </appender>
   
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	<file>${SCHEDULER_DATA}/JadeBSCockpit.log</file>
+	<file>${SCHEDULER_DATA}/logs/JadeBSCockpit.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- daily rollover -->
-      <fileNamePattern>${SCHEDULER_DATA}/JadeBsCockpit.%d.log</fileNamePattern>
+      <fileNamePattern>${SCHEDULER_DATA}/logs/JadeBsCockpit.%d.log</fileNamePattern>
       <!-- keep 7 days' worth of history -->
       <maxHistory>7</maxHistory>
     </rollingPolicy>

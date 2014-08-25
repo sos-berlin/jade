@@ -24,13 +24,14 @@
 
 	<context-param>
 		<param-name>productionMode</param-name>
-		<param-value>false</param-value>
+		<param-value>true</param-value>
 		<description>Vaadin production mode</description>
 	</context-param>
-	<!-- loading config file for logback logging -->
+	<!-- loading config file for logback logging 
 	<listener>
 		<listener-class>com.sos.jade.backgroundservice.logging.ExternalConfigLoaderContextListener</listener-class>
 	</listener>
+	-->
 	<listener>
 		<listener-class>org.atmosphere.cpr.SessionSupport</listener-class>
 	</listener>

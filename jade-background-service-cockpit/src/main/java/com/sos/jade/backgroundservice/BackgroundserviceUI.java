@@ -76,41 +76,41 @@ public class BackgroundserviceUI extends UI {
 			} finally {
 				VaadinSession.getCurrent().getLockInstance().unlock();
 			}
-  	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-  	  ClassLoader parentClassLoader = classLoader.getParent();
-  	  ClassLoader systemClassLoader = classLoader.getSystemClassLoader();
-  	  try {
-				Enumeration<URL> resources = classLoader.getResources("logback.xml");
-				Enumeration<URL> parentResources = parentClassLoader.getResources("logback.xml");
-				Enumeration<URL> systemResources = systemClassLoader.getResources("logback.xml");
-				Integer count = 0;
-				Integer parentCount = 0;
-				Integer systemCount = 0;
-				log.debug("actual ClassLoaders are:\n\tcurrent: {}\n\tparent: {}\n\tsystem: {}", new String[]{classLoader.toString(), parentClassLoader.toString(), systemClassLoader.toString()});
-				while(resources.hasMoreElements()){
-					count++;
-					String urlPath = resources.nextElement().getPath();
-					log.debug("*** Path found for logback.xml through current class loader {} : {}", classLoader.toString(), urlPath);
-					System.out.println("*** Path found for logback.xml through current class loader " + classLoader.toString() + ": " + urlPath);
-				}
-				while(parentResources.hasMoreElements()){
-					parentCount++;
-					String urlPath = parentResources.nextElement().getPath();
-					log.debug("*** Path found for logback.xml through parent class loader {} : {}", parentClassLoader.toString(), urlPath);
-					System.out.println("*** Path found for logback.xml through parent class loader " + parentClassLoader.toString() + ": " + urlPath);
-				}
-				while(systemResources.hasMoreElements()){
-					systemCount++;
-					String urlPath = systemResources.nextElement().getPath();
-					log.debug("*** Path found for logback.xml through system class loader {} : {}", systemClassLoader.toString(), urlPath);
-					System.out.println("*** Path found for logback.xml through system class loader " + systemClassLoader.toString() + ": " + urlPath);
-				}
-				log.debug("logback.xml found ({}) time(s) in current ClassLoader, ({}) time(s) in parent ClassLoader and ({}) time(s) in system ClassLoader!", new Integer[] {count, parentCount, systemCount});
-				System.out.println("logback.xml found (" + count + ") times in current ClassLoader, (" + parentCount + ") time(s) in parent ClassLoader and (" + systemCount + ") time(s) in system ClassLoader!");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//  	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//  	  ClassLoader parentClassLoader = classLoader.getParent();
+//  	  ClassLoader systemClassLoader = classLoader.getSystemClassLoader();
+//  	  try {
+//				Enumeration<URL> resources = classLoader.getResources("logback.xml");
+//				Enumeration<URL> parentResources = parentClassLoader.getResources("logback.xml");
+//				Enumeration<URL> systemResources = systemClassLoader.getResources("logback.xml");
+//				Integer count = 0;
+//				Integer parentCount = 0;
+//				Integer systemCount = 0;
+//				log.debug("actual ClassLoaders are:\r\n\tcurrent: {}\r\n\tparent: {}\r\n\tsystem: {}", new String[]{classLoader.toString(), parentClassLoader.toString(), systemClassLoader.toString()});
+//				while(resources.hasMoreElements()){
+//					count++;
+//					String urlPath = resources.nextElement().getPath();
+//					log.debug("*** Path found for logback.xml through current class loader {} : {}", classLoader.toString(), urlPath);
+//					System.out.println("*** Path found for logback.xml through current class loader " + classLoader.toString() + ": " + urlPath);
+//				}
+//				while(parentResources.hasMoreElements()){
+//					parentCount++;
+//					String urlPath = parentResources.nextElement().getPath();
+//					log.debug("*** Path found for logback.xml through parent class loader {} : {}", parentClassLoader.toString(), urlPath);
+//					System.out.println("*** Path found for logback.xml through parent class loader " + parentClassLoader.toString() + ": " + urlPath);
+//				}
+//				while(systemResources.hasMoreElements()){
+//					systemCount++;
+//					String urlPath = systemResources.nextElement().getPath();
+//					log.debug("*** Path found for logback.xml through system class loader {} : {}", systemClassLoader.toString(), urlPath);
+//					System.out.println("*** Path found for logback.xml through system class loader " + systemClassLoader.toString() + ": " + urlPath);
+//				}
+//				log.debug("logback.xml found ({}) time(s) in current ClassLoader, ({}) time(s) in parent ClassLoader and ({}) time(s) in system ClassLoader!", new Integer[] {count, parentCount, systemCount});
+//				System.out.println("logback.xml found (" + count + ") times in current ClassLoader, (" + parentCount + ") time(s) in parent ClassLoader and (" + systemCount + ") time(s) in system ClassLoader!");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
     	String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
     	JSIniFile jsConfig = new JSIniFile(absolutePath + "/WEB-INF/classes/jsconfig.ini");
     	if(jsConfig != null){
