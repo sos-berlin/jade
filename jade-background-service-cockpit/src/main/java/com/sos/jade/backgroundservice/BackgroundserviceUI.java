@@ -34,7 +34,7 @@ import com.vaadin.ui.UI;
 @Push
 public class BackgroundserviceUI extends UI {
   static {
-		LogManager.getLogManager().reset();
+//		LogManager.getLogManager().reset();
     SLF4JBridgeHandler.install();
   }
 	private static final long serialVersionUID = 1L;
@@ -44,15 +44,15 @@ public class BackgroundserviceUI extends UI {
 	private MainView mainView;
 	private FilterLayoutWindow modalWindow;
 	private AboutWindow aboutWindow;
-    private static final String COMMAND_PERMISSIONS = "/jobscheduler/rest/sosPermission/permissions?session_id=%s";
-    private static final String SESSION_ID = "session_id";
-    private static final String SECURITY_SERVER = "security_server";
-    private String jsSessionId;
-    private String securityServer;
-    public static String hibernateConfigFile;
-    public static String log4jPropertiesFile;
-    public static String log4jFileOutputPath;
-    public static Logger log = LoggerFactory.getLogger(BackgroundserviceUI.class);
+  private static final String COMMAND_PERMISSIONS = "/jobscheduler/rest/sosPermission/permissions?session_id=%s";
+  private static final String SESSION_ID = "session_id";
+  private static final String SECURITY_SERVER = "security_server";
+  private String jsSessionId;
+  private String securityServer;
+  public static String hibernateConfigFile;
+  public static String log4jPropertiesFile;
+  public static String log4jFileOutputPath;
+  public static Logger log = LoggerFactory.getLogger(BackgroundserviceUI.class);
     
 	@WebServlet(value = "/*", asyncSupported = true)
     /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
@@ -76,41 +76,67 @@ public class BackgroundserviceUI extends UI {
 			} finally {
 				VaadinSession.getCurrent().getLockInstance().unlock();
 			}
-//  	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//  	  ClassLoader parentClassLoader = classLoader.getParent();
-//  	  ClassLoader systemClassLoader = classLoader.getSystemClassLoader();
-//  	  try {
-//				Enumeration<URL> resources = classLoader.getResources("logback.xml");
-//				Enumeration<URL> parentResources = parentClassLoader.getResources("logback.xml");
-//				Enumeration<URL> systemResources = systemClassLoader.getResources("logback.xml");
-//				Integer count = 0;
-//				Integer parentCount = 0;
-//				Integer systemCount = 0;
-//				log.debug("actual ClassLoaders are:\r\n\tcurrent: {}\r\n\tparent: {}\r\n\tsystem: {}", new String[]{classLoader.toString(), parentClassLoader.toString(), systemClassLoader.toString()});
-//				while(resources.hasMoreElements()){
-//					count++;
-//					String urlPath = resources.nextElement().getPath();
-//					log.debug("*** Path found for logback.xml through current class loader {} : {}", classLoader.toString(), urlPath);
-//					System.out.println("*** Path found for logback.xml through current class loader " + classLoader.toString() + ": " + urlPath);
-//				}
-//				while(parentResources.hasMoreElements()){
-//					parentCount++;
-//					String urlPath = parentResources.nextElement().getPath();
-//					log.debug("*** Path found for logback.xml through parent class loader {} : {}", parentClassLoader.toString(), urlPath);
-//					System.out.println("*** Path found for logback.xml through parent class loader " + parentClassLoader.toString() + ": " + urlPath);
-//				}
-//				while(systemResources.hasMoreElements()){
-//					systemCount++;
-//					String urlPath = systemResources.nextElement().getPath();
-//					log.debug("*** Path found for logback.xml through system class loader {} : {}", systemClassLoader.toString(), urlPath);
-//					System.out.println("*** Path found for logback.xml through system class loader " + systemClassLoader.toString() + ": " + urlPath);
-//				}
-//				log.debug("logback.xml found ({}) time(s) in current ClassLoader, ({}) time(s) in parent ClassLoader and ({}) time(s) in system ClassLoader!", new Integer[] {count, parentCount, systemCount});
-//				System.out.println("logback.xml found (" + count + ") times in current ClassLoader, (" + parentCount + ") time(s) in parent ClassLoader and (" + systemCount + ") time(s) in system ClassLoader!");
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+  	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+  	  ClassLoader parentClassLoader = classLoader.getParent();
+  	  ClassLoader systemClassLoader = classLoader.getSystemClassLoader();
+  	  try {
+				Enumeration<URL> resourcesLogback = classLoader.getResources("logback.xml");
+				Enumeration<URL> parentResourcesLogback = parentClassLoader.getResources("logback.xml");
+				Enumeration<URL> systemResourcesLogback = systemClassLoader.getResources("logback.xml");
+				Enumeration<URL> resourcesLog4j = classLoader.getResources("log4j.properties");
+				Enumeration<URL> parentResourcesLog4j = parentClassLoader.getResources("log4j.properties");
+				Enumeration<URL> systemResourcesLog4j = systemClassLoader.getResources("log4j.properties");
+				Integer count = 0;
+				Integer parentCount = 0;
+				Integer systemCount = 0;
+				log.debug("actual ClassLoaders are:\r\n\tcurrent: {}\r\n\tparent: {}\r\n\tsystem: {}", new String[]{classLoader.toString(), parentClassLoader.toString(), systemClassLoader.toString()});
+				while(resourcesLogback.hasMoreElements()){
+					count++;
+					String urlPath = resourcesLogback.nextElement().getPath();
+					log.debug("*** Path found for logback.xml through current class loader {} : {}", classLoader.toString(), urlPath);
+					System.out.println("*** Path found for logback.xml through current class loader " + classLoader.toString() + ": " + urlPath);
+				}
+				while(parentResourcesLogback.hasMoreElements()){
+					parentCount++;
+					String urlPath = parentResourcesLogback.nextElement().getPath();
+					log.debug("*** Path found for logback.xml through parent class loader {} : {}", parentClassLoader.toString(), urlPath);
+					System.out.println("*** Path found for logback.xml through parent class loader " + parentClassLoader.toString() + ": " + urlPath);
+				}
+				while(systemResourcesLogback.hasMoreElements()){
+					systemCount++;
+					String urlPath = systemResourcesLogback.nextElement().getPath();
+					log.debug("*** Path found for logback.xml through system class loader {} : {}", systemClassLoader.toString(), urlPath);
+					System.out.println("*** Path found for logback.xml through system class loader " + systemClassLoader.toString() + ": " + urlPath);
+				}
+				log.debug("logback.xml found ({}) time(s) in current ClassLoader, ({}) time(s) in parent ClassLoader and ({}) time(s) in system ClassLoader!", new Integer[] {count, parentCount, systemCount});
+				System.out.println("logback.xml found (" + count + ") times in current ClassLoader, (" + parentCount + ") time(s) in parent ClassLoader and (" + systemCount + ") time(s) in system ClassLoader!");
+				count = 0;
+				parentCount = 0;
+				systemCount = 0;
+				while(resourcesLog4j.hasMoreElements()){
+					count++;
+					String urlPath = resourcesLog4j.nextElement().getPath();
+					log.debug("*** Path found for log4j.properties through current class loader {} : {}", classLoader.toString(), urlPath);
+					System.out.println("*** Path found for log4j.properties through current class loader " + classLoader.toString() + ": " + urlPath);
+				}
+				while(parentResourcesLog4j.hasMoreElements()){
+					parentCount++;
+					String urlPath = parentResourcesLog4j.nextElement().getPath();
+					log.debug("*** Path found for log4j.properties through parent class loader {} : {}", parentClassLoader.toString(), urlPath);
+					System.out.println("*** Path found for log4j.properties through parent class loader " + parentClassLoader.toString() + ": " + urlPath);
+				}
+				while(systemResourcesLogback.hasMoreElements()){
+					systemCount++;
+					String urlPath = systemResourcesLog4j.nextElement().getPath();
+					log.debug("*** Path found for log4j.properties through system class loader {} : {}", systemClassLoader.toString(), urlPath);
+					System.out.println("*** Path found for log4j.properties through system class loader " + systemClassLoader.toString() + ": " + urlPath);
+				}
+				log.debug("log4j.properties found ({}) time(s) in current ClassLoader, ({}) time(s) in parent ClassLoader and ({}) time(s) in system ClassLoader!", new Integer[] {count, parentCount, systemCount});
+				System.out.println("log4j.properties found (" + count + ") times in current ClassLoader, (" + parentCount + ") time(s) in parent ClassLoader and (" + systemCount + ") time(s) in system ClassLoader!");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
     	JSIniFile jsConfig = new JSIniFile(absolutePath + "/WEB-INF/classes/jsconfig.ini");
     	if(jsConfig != null){
