@@ -5,7 +5,7 @@
 >
 <!-- comment this complete configuration to run on Tomcat from the IDE while developing,
 	 uncomment for release build to run on embedded Jetty [SP] -->
-  <display-name>Vaadin configuration (web.xml)</display-name>
+  <display-name>Vaadin JADE BS History configuration (web.xml)</display-name>
 	<servlet>
 		<servlet-name>vaadinservlet</servlet-name>
 		<servlet-class>
