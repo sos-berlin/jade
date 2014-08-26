@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd"
-    xmlns="http://java.sun.com/xml/ns/j2ee"
-    version="3.0"
->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	xmlns="http://java.sun.com/xml/ns/javaee" version="3.0">
 <!-- comment this complete configuration to run on Tomcat from the IDE while developing,
 	 uncomment for release build to run on embedded Jetty [SP] -->
   <display-name>Vaadin JADE BS History configuration (web.xml)</display-name>
@@ -23,9 +23,9 @@
 	</servlet-mapping>
 
 	<context-param>
+		<description>Vaadin production mode</description>
 		<param-name>productionMode</param-name>
 		<param-value>true</param-value>
-		<description>Vaadin production mode</description>
 	</context-param>
 	<!-- A Servlet for log4j logging (default) and a listener for logback logging 
 	     simply comment the configuration you don't want to use and uncomment the one you want to use -->
