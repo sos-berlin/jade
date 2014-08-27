@@ -1,4 +1,4 @@
-package com.sos.jadevaadincockpit.viewmodel;
+package com.sos.jadevaadincockpit.data;
 
 import java.util.HashMap;
 

@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.sos.JSHelper.Options.SOSOptionElement;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
@@ -17,7 +18,6 @@ import com.sos.jadevaadincockpit.view.forms.MiscForm;
 import com.sos.jadevaadincockpit.view.forms.NotificationForm;
 import com.sos.jadevaadincockpit.view.forms.OperationForm;
 import com.sos.jadevaadincockpit.view.forms.PollEngineForm;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.themes.Reindeer;

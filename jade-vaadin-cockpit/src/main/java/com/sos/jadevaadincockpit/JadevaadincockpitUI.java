@@ -10,8 +10,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.sos.jadevaadincockpit.data.JadeSettingsFile;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
-import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
 import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.view.MainView;
 import com.sos.jadevaadincockpit.view.event.EventHelper;
@@ -91,6 +91,7 @@ public class JadevaadincockpitUI extends UI {
 	 * This affects only this current UI.
 	 */
 	private void initializeLocale() {
+		getSession().setLocale(new Locale("en", "us"));
 		// Get the default locale for this session.
 		Locale locale = getSession().getLocale();
 		// Call to affect this current UI.

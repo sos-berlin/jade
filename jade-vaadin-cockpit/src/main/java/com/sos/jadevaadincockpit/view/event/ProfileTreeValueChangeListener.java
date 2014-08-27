@@ -1,8 +1,8 @@
 package com.sos.jadevaadincockpit.view.event;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.ProfileTree;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;

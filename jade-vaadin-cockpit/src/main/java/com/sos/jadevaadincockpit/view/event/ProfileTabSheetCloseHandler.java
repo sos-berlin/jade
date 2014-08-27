@@ -1,9 +1,9 @@
 package com.sos.jadevaadincockpit.view.event;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.FormsTabSheet;
 import com.sos.jadevaadincockpit.view.ProfileTree;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.CloseHandler;

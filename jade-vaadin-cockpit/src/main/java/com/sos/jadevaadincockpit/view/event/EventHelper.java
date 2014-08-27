@@ -31,7 +31,7 @@ public class EventHelper implements Serializable {
 			JadevaadincockpitUI ui = (JadevaadincockpitUI) iterator.next();
 			ui.setLocale(event.getNewLocale());
 			ui.getApplicationAttributes().setMessages("com.sos.jadevaadincockpit.i18n.JadeCockpitMessages", event.getNewLocale(), ui.getClass().getClassLoader());
-			ui.getMainView().refreshLocale(event.getNewLocale()); // TODO
+//			ui.getMainView().refreshLocale(event.getNewLocale()); // TODO
 		}
 		logger.log(Level.FINEST, String.format("Locale changed to %1$s from %2$s", event.getNewLocale().getLanguage(), event.getOldLocale().getLanguage()));
 	}

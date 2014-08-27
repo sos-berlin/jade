@@ -1,15 +1,9 @@
 package com.sos.jadevaadincockpit.view;
 
-import java.util.Locale;
-
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
-import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
-import com.sos.jadevaadincockpit.i18n.I18NComponent;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeActionHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeValueChangeListener;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
-import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.ui.Tree;
 
 /**
@@ -17,7 +11,7 @@ import com.vaadin.ui.Tree;
  * @author JS
  * 
  */
-public class ProfileTree extends Tree implements I18NComponent {
+public class ProfileTree extends Tree {
 	private static final long serialVersionUID = 8381787778049298221L;
 
 	public ProfileTree() {
@@ -55,15 +49,24 @@ public class ProfileTree extends Tree implements I18NComponent {
 	public ProfileContainer getProfileContainer() {
 		return (ProfileContainer) getContainerDataSource();
 	}
-
-	@Override
-	public void refreshLocale(Locale newLocale) {
-		// TODO Auto-generated method stub
-		
-	}
 	
-//	public void setProfileContainer(ProfileContainer profileContainer) {
-//		this.profileContainer = profileContainer;
-//		setContainerDataSource(profileContainer);
-//	}
+	/**
+	 * Get the ID of the currently selected settings file item. If a profile is selected, get the ID of its parent item (which in turn is a settings file item).
+	 * @return The ID of the currently selected settings file item.
+	 */
+	public Object getSelectedSettingsFileItemId() {
+		
+		Object selectedSettingsFileItemId;
+		
+		Object currentSelectionId = getValue();
+		
+		if(areChildrenAllowed(currentSelectionId)) {
+			selectedSettingsFileItemId = currentSelectionId;
+		} else {
+			selectedSettingsFileItemId = getParent(currentSelectionId);
+		}
+
+		return selectedSettingsFileItemId;
+	}
+
 }

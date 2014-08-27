@@ -3,10 +3,10 @@ package com.sos.jadevaadincockpit.view;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.view.event.ProfileTabSheetCloseHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTabSheetSelectedTabChangeListener;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;

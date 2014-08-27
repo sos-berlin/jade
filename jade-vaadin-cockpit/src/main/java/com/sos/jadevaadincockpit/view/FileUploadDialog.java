@@ -1,8 +1,8 @@
 package com.sos.jadevaadincockpit.view;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.JadeSettingsFile;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
-import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.util.FileReceiver;
 import com.sos.jadevaadincockpit.util.FileUploadDragAndDropWrapper;
@@ -88,7 +88,7 @@ public class FileUploadDialog extends Window {
 			@Override
 			public void uploadStarted(StartedEvent event) {
 //				window.setVisible(false);
-				Notification.show("Hallo", Notification.Type.ERROR_MESSAGE);
+				// TODO
 			}
 		});
 		

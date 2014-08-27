@@ -3,8 +3,8 @@ package com.sos.jadevaadincockpit.view;
 import java.io.File;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.JadeSettingsFile;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
-import com.sos.jadevaadincockpit.globals.JadeSettingsFile;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.FilesystemContainer;

@@ -1,4 +1,4 @@
-package com.sos.jadevaadincockpit.viewmodel;
+package com.sos.jadevaadincockpit.data;
 
 import java.io.File;
 import java.util.HashMap;
@@ -9,7 +9,6 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
-import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.server.FileResource;
@@ -28,7 +27,7 @@ public class ProfileContainer extends HierarchicalContainer {
 		NAME(String.class, ""), 
 		OLDNAME(String.class, ""), 
 		NODETYPE(ProfileContainer.NODETYPE.class, ProfileContainer.NODETYPE.PROFILE), 
-		ENTRIES(Container.class, null), 
+//		ENTRIES(Container.class, null), 
 		JADEOPTIONS(JADEOptions.class, null), 
 		OPTIONS(HashMap.class, null), 
 		OPTIONSFROMSETTINGSFILE(HashMap.class, null), 
@@ -75,20 +74,23 @@ public class ProfileContainer extends HierarchicalContainer {
 	 *            ProfileTreeContainer.PROPERTY.OLDNAME
 	 * @param nodeType
 	 *            ProfileTreeContainer.PROPERTY.NODETYPE
-	 * @param entries
-	 *            ProfileTreeContainer.PROPERTY.ENTRIES
 	 * @param jadeOptions
 	 *            ProfileTreeContainer.PROPERTY.JADEOPTIONS
 	 * @param options
 	 *            ProfileTreeContainer.PROPERTY.OPTIONS
+	 * @param optionsFromSettingsFile
+	 *            ProfileTreeContainer.PROPERTY.OPTIONSFROMSETTINGSFILE
 	 * @param jadeSettingsFile
 	 *            ProfileTreeContainer.PROPERTY.JADESETTINGSFILE
+	 * @param iconResource
+	 *            ProfileTreeContainer.PROPERTY.ICON
 	 */
-	@SuppressWarnings("unchecked")
-	private void setAllProperties(Object itemId, Object id, String name, // TODO an ge�nderte Properties anpassen
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void setAllProperties(Object itemId, Object id, String name,
 			String oldName, NODETYPE nodeType, JADEOptions jadeOptions,
 			HashMap<String, SOSOptionElement> options,
-			JSIniFile jadeSettingsFile) {
+			HashMap optionsFromSettingsFile, JSIniFile jadeSettingsFile,
+			Resource iconResource) {
 		Item item = getItem(itemId);
 		item.getItemProperty(PROPERTY.ID).setValue(id);
 		item.getItemProperty(PROPERTY.NAME).setValue(name);
@@ -96,8 +98,11 @@ public class ProfileContainer extends HierarchicalContainer {
 		item.getItemProperty(PROPERTY.NODETYPE).setValue(nodeType);
 		item.getItemProperty(PROPERTY.JADEOPTIONS).setValue(jadeOptions);
 		item.getItemProperty(PROPERTY.OPTIONS).setValue(options);
+		item.getItemProperty(PROPERTY.OPTIONSFROMSETTINGSFILE).setValue(
+				optionsFromSettingsFile);
 		item.getItemProperty(PROPERTY.JADESETTINGSFILE).setValue(
 				jadeSettingsFile);
+		item.getItemProperty(PROPERTY.ICON).setValue(iconResource);
 	}
 
 	/**
@@ -112,12 +117,9 @@ public class ProfileContainer extends HierarchicalContainer {
 		
 		Item rootItem = addItem(rootId);
 
-		setAllProperties(rootId, rootId, jadeSettingsFile.getName(),
-				jadeSettingsFile.getName(), NODETYPE.FILE,
-				(JADEOptions) PROPERTY.JADEOPTIONS.getDefaultValue(),
-				new HashMap<String, SOSOptionElement>(), jadeSettingsFile);
-		rootItem.getItemProperty(PROPERTY.ICON).setValue(null);
-			
+		setAllProperties(rootId, rootItem, jadeSettingsFile.getName(), jadeSettingsFile.getName(), NODETYPE.FILE, (JADEOptions) PROPERTY.JADEOPTIONS.getDefaultValue(),
+				null, null, jadeSettingsFile, null);
+		
 		setParent(rootId, null);
 		setChildrenAllowed(rootId, true);
 
@@ -137,7 +139,6 @@ public class ProfileContainer extends HierarchicalContainer {
 		/**
 		 * If the container does not contain any items at this point, there is
 		 * no settings file loaded to which the profile could be added.
-		 * 
 		 */
 		if (getItemIds().size() > 0) {
 			
@@ -152,13 +153,15 @@ public class ProfileContainer extends HierarchicalContainer {
 
 			JADEOptions jadeOptions = new JADEOptions();
 			jadeOptions.gflgSubsituteVariables = false;
+			
+			HashMap<String, String> map = new HashMap<String, String>();
+			jadeOptions.setAllOptions(map);
+			
 			jadeOptions.settings.Value(jadeSettingsFile.getAbsolutePath());
 			jadeOptions.profile.Value(profileName);
-//			jadeOptions.ReadSettingsFile(); // TODO this takes quite some time
 
-			setAllProperties(profileId, profileId, profileName, profileName,
-					NODETYPE.PROFILE, jadeOptions,
-					new HashMap<String, SOSOptionElement>(), jadeSettingsFile);
+			setAllProperties(profileId, profileId, profileName, profileName, NODETYPE.PROFILE, jadeOptions, new HashMap<String, SOSOptionElement>(), map, jadeSettingsFile, (Resource) PROPERTY.ICON.getDefaultValue());
+					
 		}
 		return profileId;
 	}
@@ -218,5 +221,4 @@ public class ProfileContainer extends HierarchicalContainer {
 		
 		
 	}
-
 }

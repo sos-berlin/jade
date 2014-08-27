@@ -3,6 +3,7 @@ package com.sos.jadevaadincockpit.globals;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.sos.jadevaadincockpit.data.JadeSettingsFile;
 import com.sos.localization.Messages;
 import com.vaadin.server.VaadinService;
 
@@ -13,9 +14,9 @@ import com.vaadin.server.VaadinService;
  */
 public class ApplicationAttributes {
 	
-	private Messages messages; // why is this not session scoped (in SessionAttributes)?
+	private Messages messages; // TODO why is this not session scoped (in SessionAttributes)?
 	
-	private JadeSettingsFile jadeSettingsFile = new JadeSettingsFile();
+	private JadeSettingsFile jadeSettingsFile;
 
 	public static HashMap<String, String> allOptionsFromSettingsFile = new HashMap<String, String>();
 	

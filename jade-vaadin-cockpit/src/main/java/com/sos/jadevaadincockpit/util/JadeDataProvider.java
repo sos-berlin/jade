@@ -15,10 +15,10 @@ import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileEntry;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.view.ProfileTabSheet;
 import com.sos.jadevaadincockpit.view.ProfileTree;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 
 /**

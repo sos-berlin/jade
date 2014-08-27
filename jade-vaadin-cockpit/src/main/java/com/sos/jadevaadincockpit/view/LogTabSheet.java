@@ -1,7 +1,7 @@
 package com.sos.jadevaadincockpit.view;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Component;

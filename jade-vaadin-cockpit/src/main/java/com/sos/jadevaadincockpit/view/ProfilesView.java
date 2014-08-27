@@ -1,8 +1,8 @@
 package com.sos.jadevaadincockpit.view;
 
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeActionHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeValueChangeListener;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.event.Transferable;
 import com.vaadin.event.dd.DragAndDropEvent;
@@ -89,6 +89,25 @@ public class ProfilesView extends CustomComponent {
 				
 			}
 		});
+	}
+	
+	/**
+	 * Get the ID of the currently selected settings file item. If a profile is selected, get the ID of its parent item (which in turn is a settings file item).
+	 * @return The ID of the currently selected settings file item.
+	 */
+	public Object getSelectedSettingsFileItemId() {
+		
+		Object selectedSettingsFileItemId;
+		
+		Object currentSelectionId = getSelectedItemId();
+		
+		if(tree.areChildrenAllowed(currentSelectionId)) {
+			selectedSettingsFileItemId = currentSelectionId;
+		} else {
+			selectedSettingsFileItemId = tree.getParent(currentSelectionId);
+		}
+
+		return selectedSettingsFileItemId;
 	}
 	
 	/**

@@ -2,22 +2,23 @@ package com.sos.jadevaadincockpit.util;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sos.JSHelper.Options.IValueChangedListener;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.Options.SOSValidationError;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.components.JadeCheckBox;
 import com.sos.jadevaadincockpit.view.components.JadeComboBox;
 import com.sos.jadevaadincockpit.view.components.JadeTextField;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
@@ -87,6 +88,11 @@ public class UiComponentCreator implements Serializable {
 			comp.setWidth("80%");
 			comp.setImmediate(true);
 			
+			// options from includes are protected
+//			if (optionElement.isProtected()) {
+//				comp.setReadOnly(true);
+//			}
+			
 			addToOptionsMap(optionElement);
 		}
 		
@@ -145,16 +151,21 @@ public class UiComponentCreator implements Serializable {
 	@SuppressWarnings("unchecked")
 	private JadeComboBox getComboBox(final SOSOptionElement optionElement) {
 		
+		Logger logger = Logger.getLogger("THIS");
 		String shortKey = optionElement.getShortKey();
 		
 		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
 		
 		final JadeComboBox comboBox = new JadeComboBox(msg);
 		
-		for (String value : optionElement.getValueList()) {
+		String s = shortKey + ": ";
+		for (String value : optionElement.getValueList()) { // TODO valueList scheint teilweise leer zu sein!
 			Item item = comboBox.addItem(value);
 			item.getItemProperty(JadeComboBox.PROPERTY.VALUE).setValue(value);
+			s += value + "; ";
 		}
+		s+= "value=" + optionElement.Value();
+		logger.log(Level.SEVERE, s);
 		
 		comboBox.setValue(optionElement.Value());
 		

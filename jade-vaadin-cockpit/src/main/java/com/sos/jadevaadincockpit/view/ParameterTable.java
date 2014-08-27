@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.ParameterContainer;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.util.UiComponentCreator;
-import com.sos.jadevaadincockpit.viewmodel.ParameterContainer;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.ui.AbstractField;

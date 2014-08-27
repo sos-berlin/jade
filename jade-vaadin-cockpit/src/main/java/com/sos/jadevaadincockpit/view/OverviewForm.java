@@ -3,8 +3,8 @@ package com.sos.jadevaadincockpit.view;
 import java.util.HashMap;
 
 import com.sos.JSHelper.Options.SOSOptionElement;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.forms.BaseForm;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.ui.AbstractComponent;
 

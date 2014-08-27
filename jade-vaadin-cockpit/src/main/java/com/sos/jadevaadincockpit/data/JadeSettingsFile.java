@@ -1,11 +1,10 @@
-package com.sos.jadevaadincockpit.globals;
+package com.sos.jadevaadincockpit.data;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,9 +14,9 @@ import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileEntry;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.view.ProfileTabSheet;
 import com.sos.jadevaadincockpit.view.ProfileTree;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 
 /**
@@ -27,6 +26,7 @@ import com.vaadin.data.Item;
  */
 public class JadeSettingsFile implements Serializable {
 	private static final long serialVersionUID = -3274869174865461105L;
+	
 	private static final Logger logger = Logger.getLogger(JadeSettingsFile.class.getName());
 	
 	private ProfileContainer profileContainer;
@@ -38,8 +38,8 @@ public class JadeSettingsFile implements Serializable {
 	}
 	
 	/**
-	 * 
-	 * @param filepath
+	 * Load a settings file (e.g. ini, xml) and migrate the content to a container.
+	 * @param filepath The path of the settings file.
 	 */
 	public void loadSettingsFile(String filepath) {
 		
@@ -68,7 +68,7 @@ public class JadeSettingsFile implements Serializable {
 				}
 				profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.OPTIONSFROMSETTINGSFILE).setValue(optionsFromSettingsFile);
 				
-				// -------------------- TODO nur zum debuggen
+				// -------------------- dbg
 				for (SOSProfileEntry entry : section.Entries().values()) {
 					if (!ApplicationAttributes.allOptionsFromSettingsFile.containsKey(entry.Name())) {
 						ApplicationAttributes.allOptionsFromSettingsFile.put(entry.Name(), entry.Value());
@@ -87,7 +87,7 @@ public class JadeSettingsFile implements Serializable {
 			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 			// expand added items
 			profileTree.expandItemsRecursively(rootId);
-			// set tree's selection on first section
+			// set tree's selection on the first profile of the new settings file
 			Iterator<?> it = profileTree.getChildren(rootId).iterator();
 			if (it.hasNext()) {
 				profileTree.setValue(it.next());
@@ -98,25 +98,25 @@ public class JadeSettingsFile implements Serializable {
 	}
 	
 	/**
-	 * 
+	 * Close a settings file. 
 	 * @param itemId
 	 */
 	public void closeSettingsFile(Object itemId) {
 		
-		// clear the container
+		// remove the item and all its children from the container.
 		profileContainer.removeItemRecursively(itemId);
 		
-		// remove all tabs
+		// remove all tabs // FIXME remove only the tabs related to the closed file
 		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
-		profileTabSheet.removeAllComponents(); // TODO do not close ALL tabs
+		profileTabSheet.removeAllComponents();
 		
-		// disable save-functions
+		// disable save-functions // FIXME only if there are no further files opened
 		JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(false);
 	}
 	
 	/**
-	 * 
-	 * @param itemId
+	 * Save a settings file. The itemId may either identify a settings file itself or a profile belonging to the settings file.
+	 * @param itemId The ID of the file itself or a profile belonging to the settings file.
 	 */
 	public void saveSettingsFile(Object itemId) {
 		
@@ -150,13 +150,15 @@ public class JadeSettingsFile implements Serializable {
 			
 			HashMap<String, String> optionsFromSettingsFile = (HashMap<String, String>) profileItem.getItemProperty(ProfileContainer.PROPERTY.OPTIONSFROMSETTINGSFILE).getValue();
 			
+			// TODO wenn alle options auf einem profil gelöscht wurden, sodass es beim schreiben leer ist, darf es nicht geschrieben werden
+			
 			while (optionsIterator.hasNext()) {
 
 				String optionName = optionsIterator.next();
 				SOSOptionElement option = options.get(optionName);
 				String optionValue = option.Value();
 				if (option.isDirty() && optionValue != null
-						&& !optionValue.trim().isEmpty()) {
+						&& !optionValue.trim().isEmpty() && !option.isProtected()) {
 					profile.addEntry(optionName, optionValue);
 				}
 				if (optionsFromSettingsFile.containsKey(optionName)) {
@@ -181,66 +183,49 @@ public class JadeSettingsFile implements Serializable {
 	}
 	
 	/**
-	 * 
-	 * @param name
-	 * @return
+	 * Add a new profile with the given <code>name</code> to the settings file identified by the <code>parentId</code>
+	 * @param name The name of the new profile.
+	 * @param parentId The ID of the settings file to add the new profile to.
+	 * @return True if the add was successful, false otherwise.
 	 */
-	public boolean addProfile(String name) {
-		// TODO check validity, add profile
+	public boolean addProfile(String name, Object parentId) {
+		
 		boolean returnValue = false;
-		if (name != null) {
-			if (!name.trim().isEmpty()) {
-				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
+		
+		if (name != null && parentId != null) {
+			// check for empty String and whether the parent item really is a settings file
+			if (!name.trim().isEmpty() && profileContainer.hasChildren(parentId)) {
+				
+				// check if a profile with the given name already exists as a child of the given parent item
 				boolean isNew = true;
-				for (Object id : profileContainer.getItemIds()) {
+				for (Object id : profileContainer.getChildren(parentId)) {
 					if (((String) profileContainer.getItem(id).getItemProperty(ProfileContainer.PROPERTY.NAME).getValue()).equalsIgnoreCase(name)) {
 						isNew = false;
 					}
 				}
+				
+				// only proceed if no profile with the given name exists
 				if (isNew) {
-					Object parentId;
-					if (profileContainer.hasChildren(profileTree.getValue())) { // current selection is file
-						parentId = profileTree.getValue();
-					} else { // current selection is profile
-						parentId = profileContainer.getParent(profileTree.getValue());
-					}
 					
-					UUID profileId = UUID.randomUUID();
-					Item item = profileContainer.addItem(profileId);
-					profileContainer.setParent(profileId, parentId);
-					profileContainer.setChildrenAllowed(profileId, false);
+					Object profileId = profileContainer.addProfileItem(name, parentId);
 					
-					item.getItemProperty(ProfileContainer.PROPERTY.ID).setValue(profileId);
-					item.getItemProperty(ProfileContainer.PROPERTY.NAME).setValue(name);
-					item.getItemProperty(ProfileContainer.PROPERTY.OLDNAME).setValue(name);
-					item.getItemProperty(ProfileContainer.PROPERTY.NODETYPE).setValue(ProfileContainer.NODETYPE.PROFILE);
+					/* FIXME this seems weird. what is "jadeConfigurationFile.SectionName(name)" good for?
 					JSIniFile jadeConfigurationFile = (JSIniFile) profileContainer.getItem(parentId).getItemProperty(ProfileContainer.PROPERTY.JADESETTINGSFILE).getValue();
 					jadeConfigurationFile.SectionName(name);
 					item.getItemProperty(ProfileContainer.PROPERTY.JADESETTINGSFILE).setValue(jadeConfigurationFile);
-					item.getItemProperty(ProfileContainer.PROPERTY.OPTIONS).setValue(new HashMap<String, SOSOptionElement>());
-					
-					JADEOptions options = new JADEOptions();
-					options.gflgSubsituteVariables = false;
-					
-					HashMap<String, String> map = new HashMap<String, String>();
-					options.setAllOptions(map);
-					
-					options.settings.Value(jadeConfigurationFile.getAbsolutePath());
-					options.profile.Value(name);
-					
-					item.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).setValue(options);
-					item.getItemProperty(ProfileContainer.PROPERTY.OPTIONSFROMSETTINGSFILE).setValue(map);
-					
+					*/
 					returnValue = true;
 				}
 			}
 		}
+		
 		return returnValue;
 	}
 	
+	
 	/**
-	 * 
-	 * @return
+	 * Get the container holding all loaded settings files.
+	 * @return The ProfileContainer containing the settings files.
 	 */
 	public ProfileContainer getProfileContainer() {
 		return profileContainer;

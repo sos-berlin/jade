@@ -1,8 +1,8 @@
 package com.sos.jadevaadincockpit.view.forms;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.util.UiComponentCreator;
-import com.sos.jadevaadincockpit.viewmodel.ProfileContainer;
 import com.vaadin.data.Item;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;

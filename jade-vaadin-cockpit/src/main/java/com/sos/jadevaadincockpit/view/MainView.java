@@ -173,10 +173,4 @@ public class MainView extends CustomComponent {
 		return vSplitPanel;
 	}
 
-	public void refreshLocale(Locale newLocale) {
-		profileTree.refreshLocale(newLocale);
-		jadeMenuBar.refreshLocale(newLocale);
-		profileTabSheet.refreshLocale(newLocale);
-		dropArea.refreshLocale(newLocale);
-	}
 }
