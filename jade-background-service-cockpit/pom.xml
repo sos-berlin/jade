@@ -79,7 +79,6 @@
 						WEB-INF/classes/hibernate.cfg.xml
 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					
 				</configuration>
 			</plugin>
 			<plugin>
