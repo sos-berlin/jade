@@ -10,7 +10,7 @@
 
     <groupId>com.sos-berlin.products</groupId>
     <artifactId>jade</artifactId>
-  <version>1.9-SNAPSHOT</version>
+  <version>1.7-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
