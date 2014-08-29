@@ -180,7 +180,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		}
 	}
 	class WriteFiles4Polling implements Runnable {
-		@Override public void run() {
+		@Override
+		public void run() {
 			JSFile objFile = null;
 			for (int i = 0; i < 15; i++) {
 				logger.debug(i);
