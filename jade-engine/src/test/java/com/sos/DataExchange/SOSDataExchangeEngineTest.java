@@ -214,6 +214,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	}
 	private boolean	flgUseFilePath	= false;
 
+	
 	private void sendWithPolling(final boolean flgForceFiles, final boolean flgCreateFiles) throws Exception {
 		final String conMethodName = conClassName + "::sendWithPolling";
 		objOptions = new JADEOptions();
@@ -246,11 +247,78 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 			Thread thread = new Thread(new WriteFiles4Polling()); // Create and start the thread
 			thread.start();
 		}
-		JadeEngine objJadeEngine = new JadeEngine(objOptions);
-		objJadeEngine.Execute();
-		objJadeEngine.Logout();
+		startTransfer();
 	} // private void sendWithPolling
 
+	@Test public void testUrlFile () {
+		String strReplaceWhat = "^([^\\.]{8})\\.([0-9]{5})(\\.000)$";
+		objOptions.operation.Value(enuJadeOperations.rename);
+		objOptions.Source().url.Value("file:///R:/backup/projects/anubex-dws/JCLs");
+		objOptions.ReplaceWhat.Value(strReplaceWhat);
+		objOptions.ReplaceWith.Value("\\1.jcl;;;");
+		objOptions.FileNameRegExp.Value(strReplaceWhat);
+		objOptions.MaxFiles.value(10);
+		objOptions.VerbosityLevel.value(-1);
+		objOptions.verbose.value(-1);
+		startTransfer();
+	}
+	
+	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class) 
+	public void testWrongUrl () {
+		String strReplaceWhat = "^([^\\.]{8})\\.([0-9]{5})(\\.000)$";
+		objOptions.operation.Value(enuJadeOperations.rename);
+		objOptions.Source().url.Value("filse:///R:/backup/projects/anubex-dws/JCLs");
+		objOptions.ReplaceWhat.Value(strReplaceWhat);
+		objOptions.ReplaceWith.Value("\\1.jcl;;;");
+		objOptions.FileNameRegExp.Value(strReplaceWhat);
+		objOptions.MaxFiles.value(10);
+		objOptions.VerbosityLevel.value(-1);
+		objOptions.verbose.value(-1);
+		startTransfer();
+	}
+	
+	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class) 
+	public void testWrongUrl2 () {
+		String strReplaceWhat = "^([^\\.]{8})\\.([0-9]{5})(\\.000)$";
+		objOptions.operation.Value(enuJadeOperations.rename);
+		objOptions.Source().protocol.Value("filse");
+		objOptions.Source().Directory.Value("R:/backup/projects/anubex-dws/JCLs");
+		objOptions.ReplaceWhat.Value(strReplaceWhat);
+		objOptions.ReplaceWith.Value("\\1.jcl;;;");
+		objOptions.FileNameRegExp.Value(strReplaceWhat);
+		objOptions.MaxFiles.value(10);
+		objOptions.VerbosityLevel.value(-1);
+		objOptions.verbose.value(-1);
+		startTransfer();
+	}
+	
+	@Test 
+	public void testUrlFile2 () {
+		String strReplaceWhat = "^([^\\.]{8})\\.([0-9]{5})(\\.000)$";
+		objOptions.operation.Value(enuJadeOperations.rename);
+		objOptions.Source().protocol.Value("file");
+		objOptions.SourceDir.Value("R:/backup/projects/anubex-dws/JCLs");
+		objOptions.ReplaceWhat.Value(strReplaceWhat);
+		objOptions.ReplaceWith.Value("\\1.jcl;;;");
+		objOptions.FileNameRegExp.Value(strReplaceWhat);
+		objOptions.MaxFiles.value(10);
+		objOptions.VerbosityLevel.value(-1);
+		objOptions.verbose.value(-1);
+		startTransfer();
+	}
+	
+	private void startTransfer() {
+		JadeEngine objJadeEngine;
+		try {
+			objJadeEngine = new JadeEngine(objOptions);
+			objJadeEngine.Execute();
+			objJadeEngine.Logout();
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class) 
 	public void testEmptyCommandLineParameter () throws Exception {
 		try {
