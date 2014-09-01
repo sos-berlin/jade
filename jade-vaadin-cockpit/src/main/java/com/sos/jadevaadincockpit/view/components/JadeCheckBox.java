@@ -7,7 +7,7 @@ import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
 import com.vaadin.ui.CheckBox;
 
 public class JadeCheckBox extends CheckBox {
-	
+	private static final long serialVersionUID = 1L;
 	private JadeCockpitMsg msg;
 	
 	public JadeCheckBox() {
