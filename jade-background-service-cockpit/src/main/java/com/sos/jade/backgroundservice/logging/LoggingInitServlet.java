@@ -36,7 +36,7 @@ public class LoggingInitServlet extends HttpServlet{
 		
 	}
 	
-	// Doesn´t work, ClassNotFoundException on validation phase before start
+	// Doesn´t work, ClassNotFoundException on validation phase before start, therefore catching the exception is too late
 //	private void initLogbackLogging(ClassLoader classLoader){
 //		URL loggingLogbackUrl = classLoader.getResource("logback.xml");
 //		File logbackProperties;
