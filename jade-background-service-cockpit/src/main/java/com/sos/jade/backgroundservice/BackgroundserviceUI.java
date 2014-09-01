@@ -1,16 +1,12 @@
 package com.sos.jade.backgroundservice;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.logging.LogManager;
 import java.util.prefs.Preferences;
 
 import javax.servlet.annotation.WebServlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+
 
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.jade.backgroundservice.data.SessionAttributes;
@@ -33,12 +29,8 @@ import com.vaadin.ui.UI;
 @Title("Jade Background Service")
 @Push
 public class BackgroundserviceUI extends UI {
-  static {
-//		LogManager.getLogManager().reset();
-    SLF4JBridgeHandler.install();
-  }
 	private static final long serialVersionUID = 1L;
-	public static final JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
+	public static JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
 	public static final Preferences prefs = jadeBsOptions.getPreferenceStore();
 	public static String parentNodeName;
 	private MainView mainView;
@@ -80,16 +72,17 @@ public class BackgroundserviceUI extends UI {
     	JSIniFile jsConfig = new JSIniFile(absolutePath + "/WEB-INF/classes/jsconfig.ini");
     	if(jsConfig != null){
       	hibernateConfigFile = jsConfig.getPropertyString("Configuration", "hibernateConfigFile", absolutePath + "/WEB-INF/classes/hibernate.cfg.xml");
+      	log.debug("path to hibernate config file: {}", hibernateConfigFile);
     	}
     	/*Only for developement*/else{
       	hibernateConfigFile = absolutePath + "/WEB-INF/classes/hibernate.cfg.xml";
     	}
     	
-//    	PropertyConfigurator.configure(absolutePath + "/WEB-INF/classes/log4j.properties");
     	mainView = new MainView();
     	aboutWindow = new AboutWindow();
     	modalWindow = new FilterLayoutWindow();
     	setContent(mainView);
+    	
     	log.debug("****************** BackgroundServiceUI initialized! ******************");
 //    	// for the future
 //    	// no content for this view, the navigator does the trick
@@ -211,5 +204,5 @@ public class BackgroundserviceUI extends UI {
 	public AboutWindow getAboutWindow() {
 		return aboutWindow;
 	}
-
+	
 }

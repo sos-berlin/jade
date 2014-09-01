@@ -31,16 +31,12 @@
 	     simply comment the configuration you don't want to use and uncomment the one you want to use -->
 	<!-- loading config file for log4j logging 	-->
 	<servlet>
-		<servlet-name>Log4jInitServlet</servlet-name>
-		<servlet-class>com.sos.jade.backgroundservice.logging.Log4jInitServlet</servlet-class>
-		<init-param>
-			<param-name>log4j-properties-location</param-name>
-			<param-value>/WEB-INF/classes/log4j.properties</param-value>
-		</init-param>
+		<servlet-name>LoggingInitServlet</servlet-name>
+		<servlet-class>com.sos.jade.backgroundservice.logging.LoggingInitServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Log4jInitServlet</servlet-name>
+		<servlet-name>LoggingInitServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
