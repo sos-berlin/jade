@@ -34,7 +34,19 @@ public class SOSOptionUrlTest {
 		assertEquals("userid = ", "", objSF.getUser().Value());
 		assertEquals("password = ", "", objSF.getPassword().Value());
 		assertEquals("host = ", "", objSF.getHost().Value());
-//		assertEquals("filePath = ", "/home/test/test.txt", objSF.getfile_path().Value());
+		assertEquals("filePath = ", "./JCLs", objU.getFolderName());
+	}
+
+	@Test public void testValue4File3() {
+		
+		objU.Value("file:///./JCLs");
+		ISOSDataProviderOptions objSF = new SOSConnection2Options();
+		objU.getOptions(objSF);
+		assertEquals("Protocol = ", "file", objSF.getprotocol().Value());
+		assertEquals("userid = ", "", objSF.getUser().Value());
+		assertEquals("password = ", "", objSF.getPassword().Value());
+		assertEquals("host = ", "", objSF.getHost().Value());
+		assertEquals("filePath = ", "./JCLs", objU.getFolderName());
 	}
 
 	@Test public void testValue4File2() {
