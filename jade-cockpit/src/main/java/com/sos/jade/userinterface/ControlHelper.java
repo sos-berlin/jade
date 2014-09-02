@@ -73,9 +73,9 @@ public class ControlHelper implements IValueChangedListener {
 		objOptionElement.addValueChangedListener(this);
 		objControl.setData(objOptionElement);
 		objControl.setFont(Globals.stFontRegistry.get(conColor4TEXT));
-		objLabel.setBackground(Globals.stColorRegistry.get("CompositeBackGround"));
+		objLabel.setBackground(Globals.getCompositeBackground());
 		if (objOptionElement.isMandatory() == true) {
-			objLabel.setForeground(Globals.stColorRegistry.get(conMANDATORY_FIELD_COLOR));
+			objLabel.setForeground(Globals.getMandatoryFieldColor());
 		}
 		else {
 			objLabel.setForeground(null);
@@ -83,12 +83,12 @@ public class ControlHelper implements IValueChangedListener {
 		GridData objGD = new GridData(SWT.LEFT, SWT.BOTTOM, false, false, horizontalSpan, verticalSpan);
 		objLabel.setLayoutData(objGD);
 		objLabel.setFont(Globals.stFontRegistry.get(conColor4TEXT));
-		objLabel.setBackground(Globals.stColorRegistry.get("CompositeBackGround"));
+		objLabel.setBackground(Globals.getCompositeBackground());
 		if (objOptionElement.isProtected() == true) {
-			objControl.setBackground(Globals.stColorRegistry.get(conColor4INCLUDED_OPTION));
+			objControl.setBackground(Globals.getProtectedFieldColor());
 		}
 		else {
-			objControl.setBackground(Globals.stColorRegistry.get("FieldBackGround"));
+			objControl.setBackground(Globals.getFieldBackground());
 		}
 		objControl.setToolTipText(getToolTip());
 		if (objControl instanceof Text) {
@@ -125,7 +125,7 @@ public class ControlHelper implements IValueChangedListener {
 			objCombo.setText(objOptionElement.Value());
 			if (objOptionElement.isProtected() == true) {
 				objCombo.setEditable(false);
-				objCombo.setBackground(Globals.stColorRegistry.get(conColor4INCLUDED_OPTION));
+				objCombo.setBackground(Globals.getProtectedFieldColor());
 			}
 			if (pobjOptionElement instanceof SOSOptionStringValueList) {
 				SOSOptionStringValueList objValueList = (SOSOptionStringValueList) pobjOptionElement;
@@ -147,7 +147,7 @@ public class ControlHelper implements IValueChangedListener {
 			}
 			if (objControl instanceof SOSCheckBox) {
 				objControl.addTraverseListener(changeReturn2Tab());
-				objControl.setBackground(Globals.stColorRegistry.get("CompositeBackGround"));
+				objControl.setBackground(Globals.getCompositeBackground());
 			}
 		}
 		objControl.addDisposeListener(new DisposeListener() {
@@ -227,6 +227,7 @@ public class ControlHelper implements IValueChangedListener {
 	private void removeListeners(final Control pobjControl) {
 		SOSOptionElement lobjOptionElement = (SOSOptionElement) pobjControl.getData("option");
 		pobjControl.setData("option", null);
+		pobjControl.setData(null);
 		Listener[] objL = pobjControl.getListeners(SWT.ALL);
 		for (Listener listener : objL) {
 			pobjControl.removeListener(SWT.ALL, listener);
@@ -251,7 +252,7 @@ public class ControlHelper implements IValueChangedListener {
 		if (objControl instanceof Button) {
 		}
 		else {
-			objControl.setBackground(Globals.stColorRegistry.get(conCOLOR4_FIELD_HAS_FOCUS));
+			objControl.setBackground(Globals.getFieldHasFocusBackground());
 		}
 		if (objControl instanceof Text) {
 			((Text) objControl).setSelection(0);
@@ -271,7 +272,7 @@ public class ControlHelper implements IValueChangedListener {
 	public void setNoFocusColor(final Control objControl) {
 		SOSOptionElement objOptionElement1 = (SOSOptionElement) objControl.getData();
 		if (objOptionElement1.isProtected() == true || objControl.isEnabled() == false) {
-			objControl.setBackground(Globals.stColorRegistry.get(conColor4INCLUDED_OPTION));
+			objControl.setBackground(Globals.getProtectedFieldColor());
 		}
 		else {
 			objControl.setBackground(Globals.getFieldBackground());
@@ -320,6 +321,7 @@ public class ControlHelper implements IValueChangedListener {
 	boolean	flgControlValueInError	= false;
 
 	// IValueChangedListener from SOSOptionElement (every time an option is validated and is in error this listener is called)
+	@Override
 	public void ValidationError(final SOSValidationError pobjVE) {
 		flgControlValueInError = true;
 		MessageDialog.openError(Display.getCurrent().getActiveShell(), "Error", pobjVE.getErrorMessage());

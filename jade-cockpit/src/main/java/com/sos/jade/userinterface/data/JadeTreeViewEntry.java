@@ -21,9 +21,10 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 
 	private JADEOptions	objOptions	= null;
 
-	public enuTreeItemType getType () {
+	public enuTreeItemType getType() {
 		return enuType;
 	}
+
 	//	private final SectionsHandler	group;
 	public JadeTreeViewEntry(final enuTreeItemType iType) {
 		enuType = iType;
@@ -33,7 +34,8 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 		objSection = pobjSection;
 		objIniFile = pobjIniFile;
 		enuType = enuTreeItemType.profiles;
-		getOptions();
+		// Layzy ??
+				getOptions();
 	}
 
 	public void setSession(final Session pobjSession) {
@@ -54,7 +56,7 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 		switch (enuType) {
 			case IsRoot:
 				strR = "JADE config file";
-//				strR = objIniFile.getName();
+				//				strR = objIniFile.getName();
 				break;
 			case fragments_root:
 				strR = "Fragments";
@@ -74,28 +76,34 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 		return objIniFile;
 	}
 
-	public void setOptions (final JADEOptions pobjOptions) {
+	public void setOptions(final JADEOptions pobjOptions) {
 		objOptions = pobjOptions;
 	}
-	private boolean flgIsFragment = false;
-	private boolean flgIsProfile = false;
+	private boolean	flgIsFragment	= false;
+	private boolean	flgIsProfile	= false;
 
-	public boolean isFragment () {
+	public boolean isFragment() {
 		return flgIsFragment;
 	}
-	public boolean isProfile () {
+
+	public boolean isProfile() {
 		return flgIsProfile;
 	}
+
 	public JADEOptions getOptions() {
 		if (objOptions == null) {
 			objOptions = new JADEOptions();
-			objOptions.gflgSubsituteVariables = false;  //
-			objOptions.settings.Value(objIniFile.getAbsolutePath()); 
-			objOptions.profile.Value(getName());
-			objOptions.ReadSettingsFile();
-			flgIsFragment = objOptions.isFragment.isTrue();
-			logger.trace("is Fragment = " + flgIsFragment);
-			flgIsProfile = objOptions.isFragment.isFalse();
+			objOptions.gflgSubsituteVariables = false; //
+			if (objIniFile != null) {
+				objOptions.settings.Value(objIniFile.getAbsolutePath());
+				objOptions.profile.Value(getName());
+				objOptions.settings.setProtected(true);
+				objOptions.profile.setProtected(true);
+				objOptions.ReadSettingsFile();
+				flgIsFragment = objOptions.isFragment.isTrue();
+				logger.trace("is Fragment = " + flgIsFragment);
+				flgIsProfile = objOptions.isFragment.isFalse();
+			}
 		}
 		return objOptions;
 	}
@@ -104,13 +112,14 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 	public String getTitle() {
 
 		String strT = this.getName();
-		String strT2 = getOptions().title.Value();
-		if (strT2.length() > 0) {
-			strT = strT + " - " + strT2;
-		}
+//		String strT2 = getOptions().title.Value();
+//		if (strT2.length() > 0) {
+//			strT = strT + " - " + strT2;
+//		}
 
 		return strT;
 	}
+
 	@Override
 	public void selectChild() {
 		if (objTreeItem != null) {
@@ -118,14 +127,17 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 		}
 	}
 
-	TreeItem objTreeItem = null;
-	public void setTreeItem (final TreeItem pobjTreeItem) {
+	TreeItem	objTreeItem	= null;
+
+	public void setTreeItem(final TreeItem pobjTreeItem) {
 		objTreeItem = pobjTreeItem;
 	}
+
 	public boolean isExecutable() {
 		boolean flgIsExec = flgIsProfile == true;
 		return flgIsExec;
 	}
+
 	public boolean isSourceGen() {
 		boolean flgIsExec = flgIsProfile == true;
 		return flgIsExec;

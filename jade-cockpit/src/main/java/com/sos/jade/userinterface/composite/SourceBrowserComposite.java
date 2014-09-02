@@ -76,7 +76,7 @@ public class SourceBrowserComposite extends Composite  {
 	}
 
 @Override public void dispose() {
-//		doClose();
+	super.dispose();
 	}
 	
 }

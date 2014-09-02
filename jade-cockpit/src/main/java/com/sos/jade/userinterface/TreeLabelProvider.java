@@ -63,7 +63,7 @@ public class TreeLabelProvider extends LabelProvider implements ILabelProvider, 
 	public Color getForeground(final Object element) {
 		if (element instanceof JadeTreeViewEntry) {
 			JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
-			return Globals.stColorRegistry.get("MandatoryFieldColor");
+			return Globals.getMandatoryFieldColor();
 		}
 		return null;
 	}

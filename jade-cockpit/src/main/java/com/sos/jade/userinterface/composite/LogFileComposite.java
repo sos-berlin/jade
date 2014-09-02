@@ -14,7 +14,6 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.Globals;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
-import com.sos.dialog.classes.SOSComposite;
 import com.sos.dialog.components.TextArea;
 import com.sos.dialog.layouts.Gridlayout;
 import com.sos.jade.userinterface.adapters.ISOSSWTAppenderUI;
@@ -48,7 +47,8 @@ public class LogFileComposite extends Composite implements ISOSSWTAppenderUI {
 			tbtLogView.setData(objTreeViewEntry);
 			tbtLogView.setFont(Globals.stFontRegistry.get("text"));
 			{
-				SOSComposite composite = new SOSComposite(tabFolder, SWT.NONE);
+//				SOSComposite composite = new SOSComposite(tabFolder, SWT.NONE);
+				Composite composite = new Composite(tabFolder, SWT.NONE);
 				objTextArea = new TextArea(composite, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL);
 				objTextArea.createContextMenue();
 				tbtLogView.setControl(composite);
@@ -123,19 +123,19 @@ public class LogFileComposite extends Composite implements ISOSSWTAppenderUI {
 	}
 
 	@Override public ISOSSWTAppenderUI doClose() {
-//		if (objTextArea != null && objTextArea.isDisposed() == false) {
-//			objTextArea.getParent().dispose();
-//			objTextArea.setParent(null);
-//			objTextArea.dispose();
-//		}
-//		objTextArea = null;
-//		objJadeOptions = null;
-//		this.setData(null);
+		if (objTextArea != null && objTextArea.isDisposed() == false) {
+			objTextArea.getParent().dispose();
+			objTextArea.setParent(null);
+			objTextArea.dispose();
+		}
+		objTextArea = null;
+		objJadeOptions = null;
+		this.setData(null);
 		return this;
 	}
 
 	@Override public void dispose() {
-//		doClose();
+		doClose();
 	}
 	
 	  @Override
