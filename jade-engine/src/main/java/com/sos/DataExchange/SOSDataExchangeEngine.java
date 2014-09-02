@@ -20,7 +20,6 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sos.net.SOSMail;
@@ -270,6 +269,30 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		} // wait some seconds
 	} // private void doSleep
 
+	private void createHeadingBanner () {
+		Properties objTxtProps = objOptions.getTextProperties(); 
+		String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
+		logger.info(strV);
+		objTxtProps.put("version", strV);
+		objOptions.log_filename.setLogger(objJadeReportLogger);
+		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
+		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
+		objOptions.host.SetIfNotDirty(objOptions.Target().host);
+		String strT = "";
+		if (objOptions.banner_header.isDirty()) {
+			strT = objOptions.banner_header.JSFile().getContent();
+		}
+		else {
+			strT = SOSJADE_T_0010.get(); // LogFile Header
+		}
+
+		objTxtProps.put("source_dir", objOptions.SourceDir.Value());
+		objTxtProps.put("target_dir", objOptions.TargetDir.Value());
+
+		strT = objOptions.replaceVars(strT);
+		objJadeReportLogger.info(strT + "");
+		
+	}
 	/* (non-Javadoc)
 	 * @see com.sos.DataExchange.IJadeEngine#Execute()
 	 */
@@ -282,41 +305,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			long startTime = System.currentTimeMillis();
 			//		long startTime = System.nanoTime();
 			VFSFactory.setParentLogger(strLoggerName);
-			int intVerbose = objOptions.verbose.value();
-			switch (intVerbose) {
-				case -1:
-					Logger.getRootLogger().setLevel(Level.ERROR);
-					break;
-				case 0:
-				case 1:
-					Logger.getRootLogger().setLevel(Level.INFO);
-					break;
-				case 9:
-					Logger.getRootLogger().setLevel(Level.TRACE);
-					logger.setLevel(Level.TRACE);
-					logger.debug("set loglevel to TRACE due to option verbose = " + intVerbose);
-					break;
-				default:
-					Logger.getRootLogger().setLevel(Level.DEBUG);
-					logger.debug("set loglevel to DEBUG due to option verbose = " + intVerbose);
-					break;
-			}
-			String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
-			logger.info(strV);
-			objOptions.getTextProperties().put("version", strV);
-			objOptions.log_filename.setLogger(objJadeReportLogger);
-			objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
-			objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
-			objOptions.host.SetIfNotDirty(objOptions.Target().host);
-			String strT = "";
-			if (objOptions.banner_header.isDirty()) {
-				strT = objOptions.banner_header.JSFile().getContent();
-			}
-			else {
-				strT = SOSJADE_T_0010.get(); // LogFile Header
-			}
-			strT = objOptions.replaceVars(strT);
-			objJadeReportLogger.info(strT + "");
+			
 			flgOK = false;
 			try {
 				flgOK = this.transfer();
@@ -334,6 +323,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				if (intNoOfFilesTransferred <= 0) {
 					intNoOfFilesTransferred = 1;
 				}
+				String strT;
 				logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
 						+ getSuccessfulTransfers());
 				if (objOptions.banner_footer.isDirty()) {
@@ -908,6 +898,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		boolean flgReturnCode = false;
 		try { // to connect, authenticate and execute commands
 			Options().CheckMandatory();
+			createHeadingBanner();
 			logger.debug(Options().dirtyString());
 			logger.debug("Source : " + Options().Source().dirtyString());
 			logger.debug("Target : " + Options().Target().dirtyString());
