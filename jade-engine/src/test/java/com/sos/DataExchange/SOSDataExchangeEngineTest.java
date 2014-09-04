@@ -259,7 +259,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.ReplaceWith.Value("\\1.jcl;;;");
 		objOptions.FileNameRegExp.Value(strReplaceWhat);
 		objOptions.MaxFiles.value(10);
-		objOptions.VerbosityLevel.value(-1);
 		objOptions.verbose.value(-1);
 		startTransfer();
 	}

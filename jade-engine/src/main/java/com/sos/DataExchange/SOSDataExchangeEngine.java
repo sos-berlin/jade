@@ -269,8 +269,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		} // wait some seconds
 	} // private void doSleep
 
-	private void createHeadingBanner () {
-		Properties objTxtProps = objOptions.getTextProperties(); 
+	private void createHeadingBanner() {
+		Properties objTxtProps = objOptions.getTextProperties();
 		String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
 		logger.info(strV);
 		objTxtProps.put("version", strV);
@@ -286,13 +286,35 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			strT = SOSJADE_T_0010.get(); // LogFile Header
 		}
 
+		if (objOptions.file_spec.isNotDirty()) {
+			objTxtProps.put("file_path", "n.a.");
+		}
+		else {
+			objTxtProps.put("file_spec", "n.a.");
+		}
+		objTxtProps.put("source_host", objOptions.Source().host.Value());
 		objTxtProps.put("source_dir", objOptions.SourceDir.Value());
-		objTxtProps.put("target_dir", objOptions.TargetDir.Value());
-
+		objTxtProps.put("protocol", objOptions.Source().protocol.Value());
+		if (objOptions.Source().protocol.needPortNumber() == true) {
+			objTxtProps.put("port", objOptions.Source().port.Value());
+		}
+		else {
+			objTxtProps.put("port", "n.a.");
+		}
+		objTxtProps.put("source_dir", objOptions.SourceDir.Value());
+		if (objOptions.NeedTargetClient() == true) {
+			objTxtProps.put("target_dir", objOptions.TargetDir.Value());
+			objTxtProps.put("target_host", objOptions.Target().host.Value());
+		}
+		else {
+			objTxtProps.put("target_dir", "n.a.");
+			objTxtProps.put("target_host", "n.a.");
+		}
 		strT = objOptions.replaceVars(strT);
 		objJadeReportLogger.info(strT + "");
-		
+
 	}
+
 	/* (non-Javadoc)
 	 * @see com.sos.DataExchange.IJadeEngine#Execute()
 	 */
@@ -305,7 +327,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			long startTime = System.currentTimeMillis();
 			//		long startTime = System.nanoTime();
 			VFSFactory.setParentLogger(strLoggerName);
-			
+
 			flgOK = false;
 			try {
 				flgOK = this.transfer();
@@ -898,6 +920,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		boolean flgReturnCode = false;
 		try { // to connect, authenticate and execute commands
 			Options().CheckMandatory();
+			Options().verbose.initializeLog4jLevels();
 			createHeadingBanner();
 			logger.debug(Options().dirtyString());
 			logger.debug("Source : " + Options().Source().dirtyString());
