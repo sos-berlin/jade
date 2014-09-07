@@ -312,7 +312,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 		strT = objOptions.replaceVars(strT);
 		objJadeReportLogger.info(strT + "");
-
 	}
 
 	/* (non-Javadoc)
