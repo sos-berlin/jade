@@ -464,42 +464,22 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	private void createTabFolder(final JadeTreeViewEntry objS) {
 		try {
 			if (CompositeBaseClass.gflgCreateControlsImmediate == true) {
-				// if (tabFolder.getChildren().length > 0) {
-				// try {
-				// CTabItem[] lstI = tabFolder.getItems();
-				// if (lstI.length > 0) {
-				// CTabItem objI = tabFolder.getItem(0);
-				// if (objI != null) {
-				// objI.dispose();
-				// }
-				// }
-				// }
-				// catch (Exception IllegalArgumentException) {
-				// System.out.println("Illegal Argument");
-				// }
-				// for (Control objControl : tabFolder.getChildren()) {
-				// objControl.dispose();
-				// }
-				// }
-				if (tbtmProfileTab == null) {
+//				if (tbtmProfileTab == null) {
 					tbtmProfileTab = tabFolder.getTabItem(objS.getName());
-					// Composite composite = new SOSComposite(tabFolder,
-					// SWT.NONE);
-					// tbtmProfileTab.setControl(composite);
-				}
-				else {
-					if (tbtmProfileTab.getControl() != null) {
-						tbtmProfileTab.getControl().dispose();
-						tbtmProfileTab.setControl(null);
-						tbtmProfileTab.setData(null);
-						tbtmProfileTab.setComposite(null);
-						tbtmProfileTab.dispose();
-					}
-					tbtmProfileTab = tabFolder.getTabItem(objS.getTitle());
-					// Composite composite = new SOSComposite(tabFolder,
-					// SWT.NONE);
-					// tbtmProfileTab.setControl(composite);
-				}
+//				}
+//				else {
+//					if (tbtmProfileTab.getControl() != null) {
+//						tbtmProfileTab.getControl().dispose();
+//						tbtmProfileTab.setControl(null);
+//						tbtmProfileTab.setData(null);
+//						tbtmProfileTab.setComposite(null);
+//						tbtmProfileTab.dispose();
+//					}
+//					tbtmProfileTab = tabFolder.getTabItem(objS.getTitle());
+//					// Composite composite = new SOSComposite(tabFolder,
+//					// SWT.NONE);
+//					// tbtmProfileTab.setControl(composite);
+//				}
 				tbtmProfileTab.setText(objS.getTitle());
 				tbtmProfileTab.setData(objS);
 
