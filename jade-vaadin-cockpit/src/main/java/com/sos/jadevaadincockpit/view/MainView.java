@@ -45,7 +45,7 @@ public class MainView extends CustomComponent {
 		profileTree = new ProfileTree();
 		profileTabSheet = new ProfileTabSheet();
 		logTabSheet = new LogTabSheet();
-		dropArea = new DropArea(new JadeCockpitMsg("JADE_L_MainUi_DropArea").label()); // Drag files here
+		dropArea = new DropArea(new JadeCockpitMsg("jade_l_MainUi_DropArea").label()); // Drag files here
 		dropArea.setSizeFull();
 		dropArea.setDragAndDropUploadEnabled(false);
 		

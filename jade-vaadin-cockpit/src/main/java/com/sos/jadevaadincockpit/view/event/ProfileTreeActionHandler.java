@@ -105,7 +105,7 @@ public class ProfileTreeActionHandler implements Handler {
 
 			} else if (action == RENAME_FILE) {
 				
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
 			}
 		} else { // item which received the right click is a profile; check profileActions
 			
@@ -119,7 +119,7 @@ public class ProfileTreeActionHandler implements Handler {
 
 			} else if (action == RENAME_PROFILE) {
 				
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
 				
 			} else if (action == DELETE_PROFILE) {
 				

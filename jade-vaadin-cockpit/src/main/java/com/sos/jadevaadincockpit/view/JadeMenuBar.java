@@ -74,30 +74,30 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		
 		getCommands();
 		
-		fileMenu = this.addItem(new JadeCockpitMsg("JADE_L_FileMenu").label(), null, null); // File
-		newMenu = fileMenu.addItem(new JadeCockpitMsg("JADE_L_NewMenu").label(), null, newCommand); // New
+		fileMenu = this.addItem(new JadeCockpitMsg("jade_l_FileMenu").label(), null, null); // File
+		newMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_NewMenu").label(), null, newCommand); // New
 		fileMenu.addSeparator();
-		uploadMenu = fileMenu.addItem(new JadeCockpitMsg("JADE_L_UploadMenu").label(), null, uploadCommand); // Upload
-		downloadMenu = fileMenu.addItem(new JadeCockpitMsg("JADE_L_DownloadMenu").label(), null, downloadCommand); // Download
+		uploadMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_UploadMenu").label(), null, uploadCommand); // Upload
+		downloadMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_DownloadMenu").label(), null, downloadCommand); // Download
 		fileMenu.addSeparator();
-		openMenu = fileMenu.addItem(new JadeCockpitMsg("JADE_L_OpenMenu").label(), null, openCommand); // Open
-		saveMenu = fileMenu.addItem(new JadeCockpitMsg("JADE_L_SaveMenu").label(), null, saveCommand); // Save
-		saveAsMenu = fileMenu.addItem(new JadeCockpitMsg("JADE_L_SaveAsMenu").label(), null, saveAsCommand); // Save As
+		openMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_OpenMenu").label(), null, openCommand); // Open
+		saveMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_SaveMenu").label(), null, saveCommand); // Save
+		saveAsMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_SaveAsMenu").label(), null, saveAsCommand); // Save As
 
 		setSaveItemsEnabled(false);
 		
-		settingsMenu = this.addItem(new JadeCockpitMsg("JADE_L_SettingsMenu").label(), null);
-		languageMenu = settingsMenu.addItem(new JadeCockpitMsg("JADE_L_LanguageMenu").label(), null);
-		language_EN_Menu = languageMenu.addItem(new JadeCockpitMsg("JADE_L_Language_EN_Menu").label(), language_EN_Command);
-		language_DE_Menu = languageMenu.addItem(new JadeCockpitMsg("JADE_L_Language_DE_Menu").label(), language_DE_Command);
+		settingsMenu = this.addItem(new JadeCockpitMsg("jade_l_SettingsMenu").label(), null);
+		languageMenu = settingsMenu.addItem(new JadeCockpitMsg("jade_l_LanguageMenu").label(), null);
+		language_EN_Menu = languageMenu.addItem(new JadeCockpitMsg("jade_l_Language_EN_Menu").label(), language_EN_Command);
+		language_DE_Menu = languageMenu.addItem(new JadeCockpitMsg("jade_l_Language_DE_Menu").label(), language_DE_Command);
 		
-		toolsMenu = this.addItem(new JadeCockpitMsg("JADE_L_ToolsMenu").label(), null); // Tools
-		logsMenu = toolsMenu.addItem(new JadeCockpitMsg("JADE_L_LogsMenu").label(), null); // Logs
+		toolsMenu = this.addItem(new JadeCockpitMsg("jade_l_ToolsMenu").label(), null); // Tools
+		logsMenu = toolsMenu.addItem(new JadeCockpitMsg("jade_l_LogsMenu").label(), null); // Logs
 		logsMenu.setEnabled(logsMenu.hasChildren());
 		
-		helpMenu = this.addItem(new JadeCockpitMsg("JADE_L_HelpMenu").label(), null, null); // Help
-		documentationMenu = helpMenu.addItem(new JadeCockpitMsg("JADE_L_DocumentationMenu").label(), null, documentationCommand); // Documentation
-		aboutMenu = helpMenu.addItem(new JadeCockpitMsg("JADE_L_AboutMenu").label(), null, aboutCommand); // About
+		helpMenu = this.addItem(new JadeCockpitMsg("jade_l_HelpMenu").label(), null, null); // Help
+		documentationMenu = helpMenu.addItem(new JadeCockpitMsg("jade_l_DocumentationMenu").label(), null, documentationCommand); // Documentation
+		aboutMenu = helpMenu.addItem(new JadeCockpitMsg("jade_l_AboutMenu").label(), null, aboutCommand); // About
 		
 		setImmediate(true);
 	}
@@ -143,7 +143,7 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO stub
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
 			}
 		};
 	}
@@ -185,7 +185,7 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO stub
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
 			}
 		};
 	}
@@ -234,7 +234,7 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO stub
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label()); // Sorry, not available yet.
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label()); // Sorry, not available yet.
 			}
 		};
 	}
@@ -246,7 +246,7 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				
-				FileUploadDialog uploadDialog = new FileUploadDialog(new JadeCockpitMsg("JADE_L_FileUploadDialogCaption").label()); // Upload File
+				FileUploadDialog uploadDialog = new FileUploadDialog(new JadeCockpitMsg("jade_l_FileUploadDialogCaption").label()); // Upload File
 				UI.getCurrent().addWindow(uploadDialog);
 			}
 		};
@@ -294,22 +294,22 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 
 		getCommands();
 
-		saveMenu.setText(new JadeCockpitMsg("JADE_L_SaveMenu").label());
-		saveAsMenu.setText(new JadeCockpitMsg("JADE_L_SaveAsMenu").label());
-		fileMenu.setText(new JadeCockpitMsg("JADE_L_FileMenu").label());
-		newMenu.setText(new JadeCockpitMsg("JADE_L_NewMenu").label());
-		uploadMenu.setText(new JadeCockpitMsg("JADE_L_UploadMenu").label());
-		downloadMenu.setText(new JadeCockpitMsg("JADE_L_DownloadMenu").label());
-		openMenu.setText(new JadeCockpitMsg("JADE_L_OpenMenu").label());
-		settingsMenu.setText(new JadeCockpitMsg("JADE_L_SettingsMenu").label());
-		languageMenu.setText(new JadeCockpitMsg("JADE_L_LanguageMenu").label());
-		language_EN_Menu.setText(new JadeCockpitMsg("JADE_L_Language_EN_Menu").label());
-		language_DE_Menu.setText(new JadeCockpitMsg("JADE_L_Language_DE_Menu").label());
-		toolsMenu.setText(new JadeCockpitMsg("JADE_L_ToolsMenu").label());
-		logsMenu.setText(new JadeCockpitMsg("JADE_L_LogsMenu").label());
-		helpMenu.setText(new JadeCockpitMsg("JADE_L_HelpMenu").label());
-		documentationMenu.setText(new JadeCockpitMsg("JADE_L_DocumentationMenu").label());
-		aboutMenu.setText(new JadeCockpitMsg("JADE_L_AboutMenu").label());
+		saveMenu.setText(new JadeCockpitMsg("jade_l_SaveMenu").label());
+		saveAsMenu.setText(new JadeCockpitMsg("jade_l_SaveAsMenu").label());
+		fileMenu.setText(new JadeCockpitMsg("jade_l_FileMenu").label());
+		newMenu.setText(new JadeCockpitMsg("jade_l_NewMenu").label());
+		uploadMenu.setText(new JadeCockpitMsg("jade_l_UploadMenu").label());
+		downloadMenu.setText(new JadeCockpitMsg("jade_l_DownloadMenu").label());
+		openMenu.setText(new JadeCockpitMsg("jade_l_OpenMenu").label());
+		settingsMenu.setText(new JadeCockpitMsg("jade_l_SettingsMenu").label());
+		languageMenu.setText(new JadeCockpitMsg("jade_l_LanguageMenu").label());
+		language_EN_Menu.setText(new JadeCockpitMsg("jade_l_Language_EN_Menu").label());
+		language_DE_Menu.setText(new JadeCockpitMsg("jade_l_Language_DE_Menu").label());
+		toolsMenu.setText(new JadeCockpitMsg("jade_l_ToolsMenu").label());
+		logsMenu.setText(new JadeCockpitMsg("jade_l_LogsMenu").label());
+		helpMenu.setText(new JadeCockpitMsg("jade_l_HelpMenu").label());
+		documentationMenu.setText(new JadeCockpitMsg("jade_l_DocumentationMenu").label());
+		aboutMenu.setText(new JadeCockpitMsg("jade_l_AboutMenu").label());
 	}
 }
 

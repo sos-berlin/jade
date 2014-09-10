@@ -1,6 +1,5 @@
 package com.sos.jadevaadincockpit.data;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,6 +9,7 @@ import java.util.logging.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionElement;
+import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileEntry;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
@@ -24,7 +24,7 @@ import com.vaadin.data.Item;
  * @author JS
  *
  */
-public class JadeSettingsFile implements Serializable {
+public class JadeSettingsFile extends ProfileContainer {
 	private static final long serialVersionUID = -3274869174865461105L;
 	
 	private static final Logger logger = Logger.getLogger(JadeSettingsFile.class.getName());
@@ -34,7 +34,7 @@ public class JadeSettingsFile implements Serializable {
 	public JadeSettingsFile() {
 		logger.setLevel(Level.ALL);
 		
-		profileContainer = new ProfileContainer();
+		profileContainer = this;
 	}
 	
 	/**
@@ -56,6 +56,10 @@ public class JadeSettingsFile implements Serializable {
 			for (SOSProfileSection section : sections.values()) {
 				Object profileItemId = profileContainer.addProfileItem(section.Name(), rootId);
 				((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue()).ReadSettingsFile();
+				
+				JADEOptions options = ((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue());
+				SOSOptionTransferType h = options.Target().protocol;
+				
 				
 				/**
 				 * fill a map with all the profile's options read from the settings file

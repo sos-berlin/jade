@@ -42,7 +42,7 @@ public class FileUploadDialog extends Window {
 		layout.setMargin(true);
 		
 		Component uploadComponent = getUploadComponent();
-		DropArea dropArea = new DropArea(new JadeCockpitMsg("JADE_L_FileUploadDialogDescription").label());
+		DropArea dropArea = new DropArea(new JadeCockpitMsg("jade_l_FileUploadDialogDescription").label());
 		dropArea.setHeight("100px");
 		dropArea.setWidth("100%");
 		
@@ -79,7 +79,7 @@ public class FileUploadDialog extends Window {
 				String filePath = receiver.getOutputFilePath();
 				window.close();
 				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().loadSettingsFile(filePath);
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0002").label(), Notification.Type.TRAY_NOTIFICATION); // Upload Successful
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0002").label(), Notification.Type.TRAY_NOTIFICATION); // Upload Successful
 			}
 		});
 		upload.addStartedListener(new StartedListener() {
@@ -97,7 +97,7 @@ public class FileUploadDialog extends Window {
 
 			@Override
 			public void uploadFailed(FailedEvent event) {
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0003").label(), Notification.Type.ERROR_MESSAGE); // Upload failed!
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0003").label(), Notification.Type.ERROR_MESSAGE); // Upload failed!
 			}
 		});
 		

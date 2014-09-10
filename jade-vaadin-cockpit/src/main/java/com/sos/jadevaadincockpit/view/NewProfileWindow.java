@@ -36,7 +36,7 @@ public class NewProfileWindow extends Window {
 	private Button okButton;
 	private Button cancelButton;
 	private OptionGroup typeOptionGroup;
-	private Notification nameNotValidNotification = new Notification(new JadeCockpitMsg("jade_n_nameNotValid").label(), Notification.Type.ERROR_MESSAGE);
+	private Notification nameNotValidNotification = new Notification(new JadeCockpitMsg("jade_msg_nameNotValid").label(), Notification.Type.ERROR_MESSAGE);
 	
 	private ClickListener addProfileListener;
 	private ClickListener addSettingsFileListener;
@@ -134,7 +134,7 @@ public class NewProfileWindow extends Window {
 				String profileName = nameTextField.getValue();
 				
 				// TODO add a new settings file
-				Notification.show(new JadeCockpitMsg("JADE_MSG_I_0001").label());
+				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
 			}
 		};
 		
