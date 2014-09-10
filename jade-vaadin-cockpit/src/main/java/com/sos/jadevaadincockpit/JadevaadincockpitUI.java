@@ -44,7 +44,7 @@ public class JadevaadincockpitUI extends UI {
 	private static final Logger logger = Logger.getLogger(JadevaadincockpitUI.class.getName());
 	
 	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = JadevaadincockpitUI.class)
+	@VaadinServletConfiguration(productionMode = false, ui = JadevaadincockpitUI.class, widgetset = "com.sos.jadevaadincockpit.AppWidgetSet")
 	public static class Servlet extends VaadinServlet {
 		private static final long serialVersionUID = 3426748071296101789L;
 	}
@@ -91,7 +91,7 @@ public class JadevaadincockpitUI extends UI {
 	 * This affects only this current UI.
 	 */
 	private void initializeLocale() {
-		getSession().setLocale(new Locale("en", "us"));
+		getSession().setLocale(new Locale("de", "de"));
 		// Get the default locale for this session.
 		Locale locale = getSession().getLocale();
 		// Call to affect this current UI.

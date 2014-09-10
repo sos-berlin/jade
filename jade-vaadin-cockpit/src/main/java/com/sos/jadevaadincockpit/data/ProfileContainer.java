@@ -159,7 +159,8 @@ public class ProfileContainer extends HierarchicalContainer {
 			
 			jadeOptions.settings.Value(jadeSettingsFile.getAbsolutePath());
 			jadeOptions.profile.Value(profileName);
-
+			jadeOptions.title.Value(profileName); // Eine Option muss gesetzt werden, damit keine leeren Profile erzeugt werden können. Leere Profile werfen beim Laden eine Exception.
+			
 			setAllProperties(profileId, profileId, profileName, profileName, NODETYPE.PROFILE, jadeOptions, new HashMap<String, SOSOptionElement>(), map, jadeSettingsFile, (Resource) PROPERTY.ICON.getDefaultValue());
 					
 		}

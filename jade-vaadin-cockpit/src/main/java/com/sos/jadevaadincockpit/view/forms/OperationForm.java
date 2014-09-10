@@ -1,9 +1,15 @@
 package com.sos.jadevaadincockpit.view.forms;
 
+import com.sos.jadevaadincockpit.JadevaadincockpitUI;
+import com.sos.jadevaadincockpit.data.ProfileContainer;
+import com.sos.jadevaadincockpit.view.components.JadeTextField;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 
 public class OperationForm extends BaseForm {
@@ -13,6 +19,10 @@ public class OperationForm extends BaseForm {
 	private CheckBox concurrentTransferComponents;
 	private AbstractComponent maxConcurrentTransfersComponent;
 	private AbstractComponent reuseConnectionComponent;
+	private AbstractComponent preTransferCommandsComponent;
+	private AbstractComponent postTransferCommandsComponent;
+	private JadeTextField includeComponent;
+	private Button resolveIncludesButton;
 	
 	public OperationForm(String caption, Item profile) {
 		super(caption, profile);
@@ -49,17 +59,41 @@ public class OperationForm extends BaseForm {
 		reuseConnectionComponent = componentCreator.getComponentWithCaption(jadeOptions.reuseConnection);
 		layout.addComponent(reuseConnectionComponent);
 		
-		AbstractComponent preTransferCommandsComponent = componentCreator.getComponentWithCaption(jadeOptions.PreTransferCommands);
+		preTransferCommandsComponent = componentCreator.getComponentWithCaption(jadeOptions.PreTransferCommands);
 		layout.addComponent(preTransferCommandsComponent);
 		
-		AbstractComponent postTransferCommandsComponent = componentCreator.getComponentWithCaption(jadeOptions.PostTransferCommands);
+		postTransferCommandsComponent = componentCreator.getComponentWithCaption(jadeOptions.PostTransferCommands);
 		layout.addComponent(postTransferCommandsComponent);
 		
-		AbstractComponent includeComponent = componentCreator.getComponentWithCaption(jadeOptions.include);
+		includeComponent = (JadeTextField) componentCreator.getComponentWithCaption(jadeOptions.include);
+		includeComponent.addValueChangeListener(new ValueChangeListener() {
+			private static final long serialVersionUID = 299132474135018944L;
+
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				// TODO
+			}
+		});
 		layout.addComponent(includeComponent);
 		
-		AbstractComponent verboseComponent = componentCreator.getComponentWithCaption(jadeOptions.verbose);
-		layout.addComponent(verboseComponent);
+		resolveIncludesButton = new Button("Resolve includes");
+		resolveIncludesButton.addClickListener(new ClickListener() {
+			private static final long serialVersionUID = 6324115208155007518L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				// TODO muss hier wirklich erst gespeichert werden?
+				Object profileId = profile.getItemProperty(ProfileContainer.PROPERTY.ID).getValue();
+				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(profileId);
+				jadeOptions.ReadSettingsFile();
+			}
+		});
+		
+		layout.addComponent(resolveIncludesButton);
+		
+		
+//		AbstractComponent verboseComponent = componentCreator.getComponentWithCaption(jadeOptions.verbose);
+//		layout.addComponent(verboseComponent);
 		
 		concurrentTransferComponents.addValueChangeListener(new ValueChangeListener() {
 			private static final long serialVersionUID = 299132474135018944L;

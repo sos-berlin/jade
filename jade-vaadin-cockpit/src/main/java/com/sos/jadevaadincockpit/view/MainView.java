@@ -2,6 +2,8 @@ package com.sos.jadevaadincockpit.view;
 
 import java.util.Locale;
 
+import org.vaadin.peter.contextmenu.ContextMenu;
+
 import com.google.common.eventbus.Subscribe;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;

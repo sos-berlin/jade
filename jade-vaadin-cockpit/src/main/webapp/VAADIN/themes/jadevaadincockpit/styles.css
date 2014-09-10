@@ -324,6 +324,68 @@
 	background: #f5f5f5;
 }
 
+.jadevaadincockpit .v-context-menu {
+	float: left;
+	font-family: Arial;
+	font-size: 12px;
+	background-color: #f0f0f0;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic, .jadevaadincockpit .v-context-menu .v-context-menu-item-basic-submenu {
+	float: left;
+	clear: left;
+	height: 26px;
+	color: #222;
+	cursor: pointer;
+	background-color: #f0f0f0;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic.v-context-menu-item-separator, .jadevaadincockpit .v-context-menu .v-context-menu-item-basic-submenu.v-context-menu-item-separator {
+	border-bottom: 1px solid #d0d0d0;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic-submenu {
+	background: transparent url(../../../VAADIN/themes/contextmenu/img/basic/arrow.png) no-repeat center right;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic:focus, .jadevaadincockpit .v-context-menu .v-context-menu-item-basic-submenu:focus, .jadevaadincockpit .v-context-menu .v-context-menu-item-basic-open {
+	background-color: #e0e0e0;
+	outline: none;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic.v-context-menu-item-disabled {
+	opacity: 0.3;
+	filter: alpha(opacity = 30);
+	zoom: 1;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic.v-context-menu-item-disabled:hover, .jadevaadincockpit .v-context-menu .v-context-menu-item-basic-submenu.v-context-menu-item-disabled:hover {
+	background-color: #f0f0f0;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic-icon-container {
+	float: left;
+	width: 26px;
+	height: 26px;
+	margin-right: 5px;
+	border-right: 1px solid #d0d0d0;
+	text-align: center;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic-icon-container .v-icon {
+	float: left;
+	width: 16px;
+	height: 16px;
+	padding: 5px;
+}
+
+.jadevaadincockpit .v-context-menu .v-context-menu-item-basic-text {
+	float: left;
+	height: 26px;
+	line-height: 26px;
+	padding: 0 20px 0 10px;
+}
+
 .jadevaadincockpit .v-widget {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;

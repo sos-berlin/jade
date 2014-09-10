@@ -16,6 +16,8 @@ public class JadeComboBox extends ComboBox {
 	
 	private JadeCockpitMsg msg;
 	
+	private boolean isFocused = false;
+	
 	public static enum PROPERTY {
 		VALUE(String.class, "");
 		
@@ -88,6 +90,20 @@ public class JadeComboBox extends ComboBox {
 	protected void updateLocalizedStrings() {
 		setCaption(msg.label());
 		setDescription(msg.tooltip());
+	}
+	
+	/**
+	 * @return the isFocused
+	 */
+	public boolean isFocused() {
+		return isFocused;
+	}
+
+	/**
+	 * @param isFocused the isFocused to set
+	 */
+	public void setFocused(boolean isFocused) {
+		this.isFocused = isFocused;
 	}
 
 }

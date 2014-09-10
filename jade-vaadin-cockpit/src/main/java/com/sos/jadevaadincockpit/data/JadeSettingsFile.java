@@ -57,9 +57,7 @@ public class JadeSettingsFile extends ProfileContainer {
 				Object profileItemId = profileContainer.addProfileItem(section.Name(), rootId);
 				((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue()).ReadSettingsFile();
 				
-				JADEOptions options = ((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue());
-				SOSOptionTransferType h = options.Target().protocol;
-				
+//				JADEOptions options = ((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue());
 				
 				/**
 				 * fill a map with all the profile's options read from the settings file

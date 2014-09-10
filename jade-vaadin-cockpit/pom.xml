@@ -55,11 +55,13 @@
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
-					<filesets>
+					
+					<!-- <filesets>
 						<fileset>
 							<directory>src/main/webapp/VAADIN/widgetsets</directory>
 						</fileset>
 					</filesets>
+					 -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -81,9 +83,10 @@
 						way compatible with Vaadin eclipse plugin. -->
 <!--  				Not needed, we don´t want any widgetset compile, using the DefaultWidgetSet from
 					vaadin.client.compiled -> com.vaadin.DefaultWidgetSet [SP]
+					-->
 					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
 					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
--->
+					
 					<!-- Most Vaadin apps don't need this stuff, guide that to target -->
 					<persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
 					<deploy>${project.build.directory}/gwt-deploy</deploy>
@@ -97,10 +100,11 @@
 				</configuration>
 				<executions>
 					<execution>
+					<!-- "clean" leert src/main/webapp/VAADIN/widgetsets/, compile kompiliert das custom widgetset -->
 						<goals>
-							<goal>clean</goal>
+							<!-- <goal>clean</goal> -->
 							<goal>resources</goal>
-							<goal>compile</goal>
+							<!-- <goal>compile</goal> -->
 							<goal>update-theme</goal>
 							<goal>compile-theme</goal>
 						</goals>
@@ -268,6 +272,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>contextmenu</artifactId>
+			<version>4.4.0</version>
 		</dependency>
 		
 	</dependencies>

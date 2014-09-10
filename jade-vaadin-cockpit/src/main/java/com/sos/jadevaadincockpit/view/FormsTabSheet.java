@@ -44,7 +44,7 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 	private BackgroundServiceForm backgroundServiceForm;
 	private JitlForm jitlForm;
 	private PollEngineForm pollEngineForm;
-	private OverviewForm overviewForm;
+//	private OverviewForm overviewForm;
 	
 	
 	public FormsTabSheet(final Item profileItem) {
@@ -66,10 +66,11 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 		notificationForm = new NotificationForm(new JadeCockpitMsg("jade_tab_NotificationForm").label(), profileItem); // Notification	
 		backgroundServiceForm = new BackgroundServiceForm(new JadeCockpitMsg("jade_tab_BackgroundServiceForm").label(), profileItem); // BackgroundService
 		jitlForm = new JitlForm(new JadeCockpitMsg("jade_tab_JitlForm").label(), profileItem); // JITL
-		pollEngineForm = new PollEngineForm(new JadeCockpitMsg("jade_tab_PollEngineForm").label(), profileItem); // PollEnginge
-		overviewForm = new OverviewForm(new JadeCockpitMsg("jade_tab_OverviewForm").label(), profileItem); // Overview
+		pollEngineForm = new PollEngineForm(new JadeCockpitMsg("jade_tab_PollEngineForm").label(), profileItem); // PollEngine
+//		overviewForm = new OverviewForm(new JadeCockpitMsg("jade_tab_OverviewForm").label(), profileItem); // Overview
 		
-		addComponents(operationForm, sourceConnectionForm, fileSelectionForm, targetConnectionForm, miscForm, loggingForm, notificationForm, backgroundServiceForm, jitlForm, pollEngineForm, overviewForm);
+//		addComponents(operationForm, sourceConnectionForm, fileSelectionForm, targetConnectionForm, miscForm, loggingForm, notificationForm, backgroundServiceForm, jitlForm, pollEngineForm, overviewForm);
+		addComponents(operationForm, sourceConnectionForm, fileSelectionForm, targetConnectionForm, miscForm, loggingForm, notificationForm, backgroundServiceForm, jitlForm, pollEngineForm);
 
 		// --------------------
 		HashMap<String, SOSOptionElement> optionElements = (HashMap<String, SOSOptionElement>) profileItem.getItemProperty(ProfileContainer.PROPERTY.OPTIONS).getValue();
@@ -168,12 +169,12 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 		return pollEngineForm;
 	}
 
-	/**
-	 * @return the overviewForm
-	 */
-	public OverviewForm getOverviewForm() {
-		return overviewForm;
-	}
+//	/**
+//	 * @return the overviewForm
+//	 */
+//	public OverviewForm getOverviewForm() {
+//		return overviewForm;
+//	}
 
 	public void refreshLocale(Locale newLocale) {
 		 getTab(operationForm).setCaption(new JadeCockpitMsg("jade_tab_OperationForm").label());
@@ -186,7 +187,7 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 		 getTab(backgroundServiceForm).setCaption(new JadeCockpitMsg("jade_tab_BackgroundServiceForm").label());
 		 getTab(jitlForm).setCaption(new JadeCockpitMsg("jade_tab_JitlForm").label());
 		 getTab(pollEngineForm).setCaption(new JadeCockpitMsg("jade_tab_PollEngineForm").label());
-		 getTab(overviewForm).setCaption(new JadeCockpitMsg("jade_tab_OverviewForm").label());
+//		 getTab(overviewForm).setCaption(new JadeCockpitMsg("jade_tab_OverviewForm").label());
 		
 	}
 	

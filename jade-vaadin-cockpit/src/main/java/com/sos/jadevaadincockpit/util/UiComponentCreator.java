@@ -2,8 +2,11 @@ package com.sos.jadevaadincockpit.util;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.vaadin.peter.contextmenu.ContextMenu;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItem;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickEvent;
+import org.vaadin.peter.contextmenu.ContextMenu.ContextMenuItemClickListener;
 
 import com.sos.JSHelper.Options.IValueChangedListener;
 import com.sos.JSHelper.Options.SOSOptionElement;
@@ -16,8 +19,8 @@ import com.sos.jadevaadincockpit.view.components.JadeTextField;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.event.FieldEvents.FocusEvent;
-import com.vaadin.event.FieldEvents.FocusListener;
+import com.vaadin.event.FieldEvents.BlurEvent;
+import com.vaadin.event.FieldEvents.BlurListener;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
@@ -51,21 +54,9 @@ public class UiComponentCreator implements Serializable {
 		if (!(comp instanceof com.sos.jadevaadincockpit.view.components.JadeTextField)) {
 			JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
 			comp.setCaption(msg.label());
-			comp.setDescription(msg.tooltip() + " - " + shortKey);
+//			comp.setDescription(msg.tooltip() + " - " + shortKey);
+			comp.setDescription(optionElement.getToolTip());
 		}
-		
-
-		
-//		JadevaadincockpitUI.getCurrent().addLocaleChangeListener(new LocaleChangeListener() {
-//			private static final long serialVersionUID = 9095070668248222572L;
-//
-//			@Override
-//			public void onLocaleChange(LocaleChangeEvent event) {
-//				JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
-//				comp.setCaption(msg.label());
-//				comp.setDescription(msg.tooltip() + " - " + shortKey);
-//			}
-//		});
 		
 		return comp;
 	}
@@ -88,17 +79,44 @@ public class UiComponentCreator implements Serializable {
 			comp.setWidth("80%");
 			comp.setImmediate(true);
 			
-			// options from includes are protected
-//			if (optionElement.isProtected()) {
-//				comp.setReadOnly(true);
-//			}
+			handleProtectedField(comp, optionElement.isProtected());
 			
 			addToOptionsMap(optionElement);
+			
 		}
 		
 		return comp;
 	}
 	
+	/**
+	 * 
+	 * @param comp
+	 * @param isProtected
+	 */
+	private void handleProtectedField(final AbstractField<?> comp, boolean isProtected) {
+		// options from includes are protected
+		if (isProtected) {
+			comp.setReadOnly(true);
+			
+			ContextMenu protectedFieldContextMenu = new ContextMenu();
+			ContextMenuItem editItem = protectedFieldContextMenu.addItem("Overwrite Include");
+			
+			
+			editItem.addItemClickListener(new ContextMenuItemClickListener() {
+				
+				@Override
+				public void contextMenuItemClicked(ContextMenuItemClickEvent event) {
+					comp.setReadOnly(false);
+					comp.focus();
+					((SOSOptionElement) comp.getData()).setProtected(false);
+				}
+			});
+
+			protectedFieldContextMenu.setAsContextMenuOf(comp);
+		}
+		
+	}
+
 	/**
 	 * Adds the optionElement to the map of all optionElements
 	 * @param optionElement
@@ -151,23 +169,23 @@ public class UiComponentCreator implements Serializable {
 	@SuppressWarnings("unchecked")
 	private JadeComboBox getComboBox(final SOSOptionElement optionElement) {
 		
-		Logger logger = Logger.getLogger("THIS");
 		String shortKey = optionElement.getShortKey();
 		
 		JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
 		
 		final JadeComboBox comboBox = new JadeComboBox(msg);
 		
-		String s = shortKey + ": ";
 		for (String value : optionElement.getValueList()) { // TODO valueList scheint teilweise leer zu sein!
 			Item item = comboBox.addItem(value);
 			item.getItemProperty(JadeComboBox.PROPERTY.VALUE).setValue(value);
-			s += value + "; ";
 		}
-		s+= "value=" + optionElement.Value();
-		logger.log(Level.SEVERE, s);
 		
 		comboBox.setValue(optionElement.Value());
+		
+		// Value(String value) will throw exception if option is mandatory and set to null. disable null selection
+		if (optionElement.isMandatory()) {
+			comboBox.setNullSelectionAllowed(false);
+		}
 		
 		comboBox.addValueChangeListener(new ValueChangeListener() {
 			private static final long serialVersionUID = 4494994397731811284L;
@@ -191,7 +209,10 @@ public class UiComponentCreator implements Serializable {
 					optionElement.Value(value);
 					
 				} else {
-					optionElement.setNull(); // TODO was passiert dann?
+//					optionElement.setNull(); // TODO was passiert dann?
+					if (!optionElement.isMandatory()) {
+						optionElement.Value(null);						
+					}
 				}
 				
 //				changeStyleName(comboBox, optionElement.isDefault());
