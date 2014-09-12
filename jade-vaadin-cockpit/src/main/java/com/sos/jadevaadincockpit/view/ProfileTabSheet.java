@@ -28,7 +28,7 @@ public class ProfileTabSheet extends TabSheet implements I18NComponent {
 	 * 
 	 * @param treeItem
 	 */
-	public void getTab(Item treeItem) {
+	public FormsTabSheet getTab(Item treeItem) {
 
 		Iterator<Component> tabIterator = iterator();
 		FormsTabSheet selectedTab = null;
@@ -52,7 +52,7 @@ public class ProfileTabSheet extends TabSheet implements I18NComponent {
 				selectedTab = createTab(treeItem);
 			}
 		}
-		setSelectedTab(selectedTab);
+		return selectedTab;
 	}
 	
 	/**

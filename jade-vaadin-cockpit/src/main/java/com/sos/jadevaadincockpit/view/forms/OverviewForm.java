@@ -1,10 +1,9 @@
-package com.sos.jadevaadincockpit.view;
+package com.sos.jadevaadincockpit.view.forms;
 
 import java.util.HashMap;
 
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.jadevaadincockpit.data.ProfileContainer;
-import com.sos.jadevaadincockpit.view.forms.BaseForm;
 import com.vaadin.data.Item;
 import com.vaadin.ui.AbstractComponent;
 

@@ -117,7 +117,7 @@ public class JadeSettingsFile extends ProfileContainer {
 	}
 	
 	/**
-	 * Save a settings file. The itemId may either identify a settings file itself or a profile belonging to the settings file.
+	 * Save a settings file. The itemId may either identify a settings file itself or a profile belonging to the settings file to save.
 	 * @param itemId The ID of the file itself or a profile belonging to the settings file.
 	 */
 	public void saveSettingsFile(Object itemId) {
@@ -125,11 +125,13 @@ public class JadeSettingsFile extends ProfileContainer {
 		String filename = "";
 		JSIniFile newJadeSettingsFile = null;
 		
+		// ID of the settings file
 		Object rootId;
-		
-		if (!profileContainer.hasChildren(itemId)) { // item is a profile
+		// item is a profile
+		if (!profileContainer.hasChildren(itemId)) {
 			rootId = profileContainer.getParent(itemId);
-		} else { // item is a settings file
+		// item is a settings file
+		} else {
 			rootId = itemId;
 		}
 		
@@ -159,9 +161,16 @@ public class JadeSettingsFile extends ProfileContainer {
 				String optionName = optionsIterator.next();
 				SOSOptionElement option = options.get(optionName);
 				String optionValue = option.Value();
-				if (option.isDirty() && optionValue != null
-						&& !optionValue.trim().isEmpty() && !option.isProtected()) {
-					profile.addEntry(optionName, optionValue);
+				
+				// options from includes are protected and will not be written to the including profile
+				if (!option.isProtected()) {
+					// only dirty options (with changed values) will be written
+					if (option.isDirty()) {
+						// ignore null and empty values
+						if (optionValue != null && !optionValue.trim().isEmpty()) {
+							profile.addEntry(optionName, optionValue);
+						}
+					}
 				}
 				if (optionsFromSettingsFile.containsKey(optionName)) {
 					optionsFromSettingsFile.remove(optionName);

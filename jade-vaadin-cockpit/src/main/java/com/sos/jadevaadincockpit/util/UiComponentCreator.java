@@ -19,9 +19,12 @@ import com.sos.jadevaadincockpit.view.components.JadeTextField;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.event.FieldEvents.BlurEvent;
-import com.vaadin.event.FieldEvents.BlurListener;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.DragAndDropWrapper;
+import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 
@@ -34,10 +37,12 @@ public class UiComponentCreator implements Serializable {
 	private static final long serialVersionUID = 752895948467492333L;
 	
 	private HashMap<String, SOSOptionElement> options;
+	private HashMap<String, AbstractField<?>> fields;
 	
 	@SuppressWarnings("unchecked")
 	public UiComponentCreator(Item profile) {
 		options = (HashMap<String, SOSOptionElement>) profile.getItemProperty(ProfileContainer.PROPERTY.OPTIONS).getValue();
+		fields = new HashMap<String, AbstractField<?>>(); // all fields of the form this ComponentCreator belongs to
 	}
 	
 	/**
@@ -54,9 +59,22 @@ public class UiComponentCreator implements Serializable {
 		if (!(comp instanceof com.sos.jadevaadincockpit.view.components.JadeTextField)) {
 			JadeCockpitMsg msg = new JadeCockpitMsg("jade_l_" + shortKey);
 			comp.setCaption(msg.label());
-//			comp.setDescription(msg.tooltip() + " - " + shortKey);
-			comp.setDescription(optionElement.getToolTip());
+			comp.setDescription(msg.tooltip() + " - " + shortKey);
+//			comp.setDescription(optionElement.getToolTip());
 		}
+		
+		comp.addValueChangeListener(new ValueChangeListener() {
+			
+			@Override
+			public void valueChange(ValueChangeEvent event) {
+				handleProtectedField(comp, optionElement.isProtected());
+			}
+		});
+		
+		// dbg
+		ContextMenu menu = new ContextMenu();
+		menu.addItem("Test");
+		menu.setAsContextMenuOf(comp);
 		
 		return comp;
 	}
@@ -66,7 +84,7 @@ public class UiComponentCreator implements Serializable {
 	 * @param optionElement
 	 * @return The component
 	 */
-	public AbstractField<?> getComponent(SOSOptionElement optionElement) {
+	public AbstractField<?> getComponent(final SOSOptionElement optionElement) {
 		
 		AbstractField<?> comp = null;
 		
@@ -83,6 +101,8 @@ public class UiComponentCreator implements Serializable {
 			
 			addToOptionsMap(optionElement);
 			
+			addToFieldsMap(comp);
+			
 		}
 		
 		return comp;
@@ -93,7 +113,7 @@ public class UiComponentCreator implements Serializable {
 	 * @param comp
 	 * @param isProtected
 	 */
-	private void handleProtectedField(final AbstractField<?> comp, boolean isProtected) {
+	public void handleProtectedField(final AbstractField<?> comp, boolean isProtected) {
 		// options from includes are protected
 		if (isProtected) {
 			comp.setReadOnly(true);
@@ -113,6 +133,8 @@ public class UiComponentCreator implements Serializable {
 			});
 
 			protectedFieldContextMenu.setAsContextMenuOf(comp);
+		} else {
+			comp.setReadOnly(false);
 		}
 		
 	}
@@ -127,6 +149,19 @@ public class UiComponentCreator implements Serializable {
 		
 		if (!options.containsKey(shortKey)) {
 			options.put(shortKey, optionElement);
+		}
+	}
+	
+	/**
+	 * Adds the component to the map of all components
+	 * @param comp
+	 */
+	private void addToFieldsMap(AbstractField<?> comp) {
+		
+		String shortKey = ((SOSOptionElement) comp.getData()).getShortKey();
+		
+		if (!fields.containsKey(shortKey)) {
+			fields.put(shortKey, comp);
 		}
 	}
 	
@@ -222,7 +257,16 @@ public class UiComponentCreator implements Serializable {
 		optionElement.addValueChangedListener(new IValueChangedListener() {
 			@Override
 			public void ValueHasChanged(String pstrNewValue) {
-				comboBox.setValue(pstrNewValue);
+				
+				// value of readOnly fields can not be changed
+				if (comboBox.isReadOnly()) {
+					comboBox.setReadOnly(false);
+					comboBox.setValue(pstrNewValue);
+					comboBox.setReadOnly(true);
+				} else {
+					comboBox.setValue(pstrNewValue);
+				}
+				handleProtectedField(comboBox, optionElement.isProtected());
 			}
 
 			@Override
@@ -275,7 +319,15 @@ public class UiComponentCreator implements Serializable {
 			@Override
 			public void ValueHasChanged(String pstrNewValue) {
 				
-				checkBox.setValue(optionElement.String2Bool(pstrNewValue));
+				// value of readOnly fields can not be changed
+				if (checkBox.isReadOnly()) {
+					checkBox.setReadOnly(false);
+					checkBox.setValue(optionElement.String2Bool(pstrNewValue));
+					checkBox.setReadOnly(true);
+				} else {
+					checkBox.setValue(optionElement.String2Bool(pstrNewValue));
+				}
+				handleProtectedField(checkBox, optionElement.isProtected());
 			}
 
 			@Override
@@ -324,13 +376,19 @@ public class UiComponentCreator implements Serializable {
 			}
 		});
 		
-		optionElement.addValueChangedListener(new IValueChangedListener() {
+		optionElement.addValueChangedListener(new IValueChangedListener() { // TODO valueHasChanged wird VOR setzen des Protected flag aufgerufen -> setProtected sollte auch listener benachrichtigen
 			@Override
 			public void ValueHasChanged(String pstrNewValue) {
 				
-				if (!textField.isReadOnly()) {
+				// value of readOnly fields can not be changed
+				if (textField.isReadOnly()) {
+					textField.setReadOnly(false);
+					textField.setValue(pstrNewValue);
+					textField.setReadOnly(true);
+				} else {
 					textField.setValue(pstrNewValue);
 				}
+				handleProtectedField(textField, optionElement.isProtected());
 			}
 
 			@Override
@@ -340,9 +398,19 @@ public class UiComponentCreator implements Serializable {
 			}
 		});
 		
-//		changeStyleName(textField, optionElement.isDefault());
+		textField.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focus(FocusEvent event) {
+				Notification.show("protected = " + optionElement.boolean2String(optionElement.isProtected()) + ", value = " + optionElement.Value());
+			}
+		});
 		
 		return textField;
+	}
+	
+	public HashMap<String, AbstractField<?>> getFields() {
+		return fields;
 	}
 	
 	/**

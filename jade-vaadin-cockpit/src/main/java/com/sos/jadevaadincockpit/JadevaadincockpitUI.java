@@ -91,7 +91,7 @@ public class JadevaadincockpitUI extends UI {
 	 * This affects only this current UI.
 	 */
 	private void initializeLocale() {
-		getSession().setLocale(new Locale("de", "de"));
+		getSession().setLocale(new Locale("en", "gb"));
 		// Get the default locale for this session.
 		Locale locale = getSession().getLocale();
 		// Call to affect this current UI.

@@ -30,6 +30,7 @@ public class BaseForm extends CustomComponent {
 		jadeOptions = (JADEOptions) profile.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
 		componentCreator = new UiComponentCreator(profile);
 		layout = new FormLayout();
+		layout.setMargin(true);
 		setCompositionRoot(layout);
 	}
 	
@@ -38,5 +39,9 @@ public class BaseForm extends CustomComponent {
 	 */
 	public Item getSection() {
 		return profile;
+	}
+	
+	public UiComponentCreator getUiComponentCreator() {
+		return componentCreator;
 	}
 }

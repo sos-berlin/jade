@@ -20,7 +20,7 @@ public class BackgroundServiceForm extends BaseForm {
 		setCaption(caption);
 		
 		
-		setCompositionRoot(layout);
+//		setCompositionRoot(layout);
 		createForm();
 	}
 

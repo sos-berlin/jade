@@ -1,6 +1,8 @@
 package com.sos.jadevaadincockpit.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.forms.BackgroundServiceForm;
+import com.sos.jadevaadincockpit.view.forms.BaseForm;
 import com.sos.jadevaadincockpit.view.forms.ConnectionForm;
 import com.sos.jadevaadincockpit.view.forms.FileSelectionForm;
 import com.sos.jadevaadincockpit.view.forms.JitlForm;
@@ -33,6 +36,8 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 	private static Map<Item, FormsTabSheet> instances = new HashMap<Item, FormsTabSheet>();
 	
 	private final Item profileItem;
+	
+	private List<BaseForm> forms = new ArrayList<BaseForm>();
 	
 	private OperationForm operationForm;
 	private ConnectionForm sourceConnectionForm;
@@ -71,7 +76,18 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 		
 //		addComponents(operationForm, sourceConnectionForm, fileSelectionForm, targetConnectionForm, miscForm, loggingForm, notificationForm, backgroundServiceForm, jitlForm, pollEngineForm, overviewForm);
 		addComponents(operationForm, sourceConnectionForm, fileSelectionForm, targetConnectionForm, miscForm, loggingForm, notificationForm, backgroundServiceForm, jitlForm, pollEngineForm);
-
+		
+		forms.add(operationForm);
+		forms.add(sourceConnectionForm);
+		forms.add(fileSelectionForm);
+		forms.add(targetConnectionForm);
+		forms.add(miscForm);
+		forms.add(loggingForm);
+		forms.add(notificationForm);
+		forms.add(backgroundServiceForm);
+		forms.add(jitlForm);
+		forms.add(pollEngineForm);
+		
 		// --------------------
 		HashMap<String, SOSOptionElement> optionElements = (HashMap<String, SOSOptionElement>) profileItem.getItemProperty(ProfileContainer.PROPERTY.OPTIONS).getValue();
 		for (String s : ApplicationAttributes.allOptionsFromSettingsFile.keySet()) {
@@ -167,6 +183,10 @@ public class FormsTabSheet extends TabSheet implements I18NComponent {
 	 */
 	public PollEngineForm getPollEngineForm() {
 		return pollEngineForm;
+	}
+	
+	public List<BaseForm> getForms() {
+		return forms;
 	}
 
 //	/**

@@ -2,6 +2,7 @@ package com.sos.jadevaadincockpit.view.event;
 
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.data.ProfileContainer;
+import com.sos.jadevaadincockpit.view.ProfileTabSheet;
 import com.sos.jadevaadincockpit.view.ProfileTree;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -29,7 +30,8 @@ public class ProfileTreeValueChangeListener implements ValueChangeListener {
 					.getValue().equals(ProfileContainer.NODETYPE.PROFILE)) {
 				
 				// create forms for the selected profile
-				JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet().getTab(selectedItem);
+				ProfileTabSheet tabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
+				tabSheet.setSelectedTab(tabSheet.getTab(selectedItem));
 
 				// // load parameters from config file to container
 				// ParameterContainer entryTableContainer = Constants
