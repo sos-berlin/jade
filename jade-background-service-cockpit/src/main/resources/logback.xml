@@ -1,34 +1,24 @@
 <configuration debug="true">
-
-  <property name="SCHEDULER_DATA" value="C:/sp/jobscheduler_1_8_4236-SNAPSHOT/sp_4236" />
-
+  <property name="PATH_FOR_LOGFILES" value="/opt/web/jetty_base/logs"/>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%-5level [%d{yyyy-MM-dd HH:mm:ss.SSS ZZZ}]: [%thread] %logger [%file:%line] - %msg%n</pattern>
     </encoder>
   </appender>
-  
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	<file>${SCHEDULER_DATA}/logs/JadeBSCockpit.log</file>
+	<file>${PATH_FOR_LOGFILES}/JadeHistory.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- daily rollover -->
-      <fileNamePattern>${SCHEDULER_DATA}/logs/JadeBsCockpit.%d.log</fileNamePattern>
+      <fileNamePattern>${PATH_FOR_LOGFILES}/JadeHistory.%d.log</fileNamePattern>
       <!-- keep 7 days' worth of history -->
       <maxHistory>7</maxHistory>
     </rollingPolicy>
     <encoder>
-      <pattern>
-				[%-5level] [%d{yyyy-MM-dd HH:mm:ss.SSS}]: [%thread] %logger [%file:%line] - %msg%n
-    	</pattern>
+      <pattern>[%-5level] [%d{yyyy-MM-dd HH:mm:ss.SSS}]: [%thread] %logger [%file:%line] - %msg%n</pattern>
    	</encoder>
   </appender>
-  <logger name="com.sos.jade.backgroundservice"  level="debug" additivity="false">
+  <root level="debug">
+    <appender-ref ref="STDOUT" />
   	<appender-ref ref="FILE"/>
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-
-  <root level="warn">
-    <appender-ref ref="STDOUT" />
   </root>
 </configuration>

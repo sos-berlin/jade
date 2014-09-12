@@ -21,6 +21,7 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 		addItems(historyItems);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addItems(List<JadeFilesHistoryDBItem> historyItems){
 		// for each JadeFilesHistoryDBItem add one item to the container with the given properties
 		for (JadeFilesHistoryDBItem historyItem : historyItems){
@@ -116,7 +117,8 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 		}
 	}
 	
-    public void updateItem(Object itemId){
+    @SuppressWarnings("unchecked")
+		public void updateItem(Object itemId){
         if (this.containsId(itemId)){
             Item newItem = (Item)itemId;
             Item oldItem = this.getItem(itemId);

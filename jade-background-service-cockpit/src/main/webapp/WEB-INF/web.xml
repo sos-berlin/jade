@@ -16,6 +16,7 @@
 			<param-name>UI</param-name>
 			<param-value>com.sos.jade.backgroundservice.BackgroundserviceUI</param-value>
 		</init-param>
+		<async-supported>true</async-supported>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>vaadinservlet</servlet-name>
@@ -27,26 +28,6 @@
 		<param-name>productionMode</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<!-- A Servlet for log4j logging (default) and a listener for logback logging 
-	     simply comment the configuration you don't want to use and uncomment the one you want to use -->
-	<!-- loading config file for log4j logging 	-->
-	<servlet>
-		<servlet-name>LoggingInitServlet</servlet-name>
-		<servlet-class>com.sos.jade.backgroundservice.logging.LoggingInitServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>LoggingInitServlet</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
-
-	<!-- loading config file for logback logging 	-->
-<!--  
-	<listener>
-		<listener-class>com.sos.jade.backgroundservice.logging.ExternalConfigLoaderContextListener</listener-class>
-	</listener>
--->
-	
 	<listener>
 		<listener-class>org.atmosphere.cpr.SessionSupport</listener-class>
 	</listener>
