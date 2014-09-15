@@ -6,10 +6,10 @@
     </encoder>
   </appender>
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	<file>${PATH_FOR_LOGFILES}/JadeHistory.log</file>
+	<file>${PATH_FOR_LOGFILES}/JadeHistoryViewer.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- daily rollover -->
-      <fileNamePattern>${PATH_FOR_LOGFILES}/JadeHistory.%d.log</fileNamePattern>
+      <fileNamePattern>${PATH_FOR_LOGFILES}/JadeHistoryViewer.%d.log</fileNamePattern>
       <!-- keep 7 days' worth of history -->
       <maxHistory>7</maxHistory>
     </rollingPolicy>

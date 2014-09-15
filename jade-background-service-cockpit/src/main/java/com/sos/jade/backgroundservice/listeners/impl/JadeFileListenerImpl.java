@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.listeners.impl;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.hibernateConfigFile;
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.hibernateConfigFile;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
 
 import java.io.Serializable;
 import java.text.ParseException;

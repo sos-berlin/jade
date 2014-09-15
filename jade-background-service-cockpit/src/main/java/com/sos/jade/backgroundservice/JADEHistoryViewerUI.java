@@ -26,9 +26,9 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
 @Theme("bs")
-@Title("Jade Background Service")
+@Title("Jade History Viewer")
 @Push
-public class BackgroundserviceUI extends UI {
+public class JADEHistoryViewerUI extends UI {
 	private static final long serialVersionUID = 1L;
 	public static JadeBackgroundServiceOptions jadeBsOptions = new JadeBackgroundServiceOptions();
 	public static final Preferences prefs = jadeBsOptions.getPreferenceStore();
@@ -44,11 +44,11 @@ public class BackgroundserviceUI extends UI {
   public static String hibernateConfigFile;
   public static String log4jPropertiesFile;
   public static String log4jFileOutputPath;
-  public static Logger log = LoggerFactory.getLogger(BackgroundserviceUI.class);
+  public static Logger log = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
     
 	@WebServlet(value = "/*", asyncSupported = true)
     /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
-    @VaadinServletConfiguration(productionMode = true, ui = BackgroundserviceUI.class)
+    @VaadinServletConfiguration(productionMode = true, ui = JADEHistoryViewerUI.class)
     public static class Servlet extends VaadinServlet {
 			private static final long serialVersionUID = 1L;
     }
@@ -83,7 +83,7 @@ public class BackgroundserviceUI extends UI {
     	modalWindow = new FilterLayoutWindow();
     	setContent(mainView);
     	
-    	log.debug("****************** BackgroundServiceUI initialized! ******************");
+    	log.debug("****************** JADEHistoryViewerUI initialized! ******************");
 //    	// for the future
 //    	// no content for this view, the navigator does the trick
 //		// Create a new instance of the navigator. The navigator will attach itself automatically to this view. 

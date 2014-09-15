@@ -72,13 +72,16 @@ public class DetailLayout extends VerticalLayout {
 	private Label lblSourceFilenameCaption; 
 	private Label lblSourceHostCaption; 
 	private Label lblSourceUserCaption; 
+	@SuppressWarnings("unused")
 	private Label lblSourceHostIpCaption;
 	private Label lblTargetDirCaption; 
 	private Label lblTargetFilenameCaption; 
 	private Label lblTargetHostCaption; 
+	@SuppressWarnings("unused")
 	private Label lblTargetHostIpCaption;
 	private Label lblTargetUserCaption; 
 	private Label lblJumpHostCaption; 
+	@SuppressWarnings("unused")
 	private Label lblJumpHostIpCaption;
 	private Label lblJumpPortCaption; 
 	private Label lblJumpProtocolCaption; 

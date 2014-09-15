@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.view.components;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.JADEHistoryViewerUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
@@ -153,7 +153,7 @@ public class JadeMenuBar extends MenuBar {
     			// "Logout" the user
     			getSession().setAttribute("user", null);
     			// Refresh this view, should redirect to login view
-    			((BackgroundserviceUI)getUI()).getNavigator().navigateTo(LoginView.NAME);
+    			((JADEHistoryViewerUI)getUI()).getNavigator().navigateTo(LoginView.NAME);
 			}
 		});
 	}
@@ -162,7 +162,7 @@ public class JadeMenuBar extends MenuBar {
 			private static final long serialVersionUID = 1L;
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				UI.getCurrent().addWindow(((BackgroundserviceUI)UI.getCurrent()).getModalWindow());
+				UI.getCurrent().addWindow(((JADEHistoryViewerUI)UI.getCurrent()).getModalWindow());
 		    }  
 		});
 		mFilter.addSeparator();
@@ -362,7 +362,7 @@ public class JadeMenuBar extends MenuBar {
 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
-				getUI().addWindow(((BackgroundserviceUI)getUI()).getAboutWindow());
+				getUI().addWindow(((JADEHistoryViewerUI)getUI()).getAboutWindow());
 			}
 		});
 		mHelp.addSeparator();
@@ -670,7 +670,7 @@ public class JadeMenuBar extends MenuBar {
 	}
 	
 	private MainView getMainViewFromCurrentUI(){
-		return ((BackgroundserviceUI)UI.getCurrent()).getMainView();
+		return ((JADEHistoryViewerUI)UI.getCurrent()).getMainView();
 	}
 	
 }

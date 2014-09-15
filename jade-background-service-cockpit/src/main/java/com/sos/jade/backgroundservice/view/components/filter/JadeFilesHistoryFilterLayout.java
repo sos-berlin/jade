@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.view.components.filter;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import sos.ftphistory.JadeFilesHistoryFilter;
 
-import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.JADEHistoryViewerUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
@@ -441,7 +441,7 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	}
 	
 	private MainView getMainViewFromCurrentUI(){
-		return ((BackgroundserviceUI)UI.getCurrent()).getMainView();
+		return ((JADEHistoryViewerUI)UI.getCurrent()).getMainView();
 	}
 	
 }

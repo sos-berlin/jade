@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.view.components;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;
 
 import java.util.Locale;
 import java.util.prefs.Preferences;
@@ -10,7 +10,7 @@ import com.sos.auth.SOSJaxbSubject;
 import com.sos.auth.rest.SOSWebserviceAuthenticationRecord;
 import com.sos.auth.rest.client.SOSRestShiroClient;
 import com.sos.auth.rest.permission.model.SOSPermissionShiro;
-import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.JADEHistoryViewerUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.sos.jade.backgroundservice.view.MainView;
@@ -86,12 +86,12 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
 		if(isValid){ 
 			//Store the current user in the session
 			getSession().setAttribute("user", getUser());
-			((BackgroundserviceUI)getUI()).parentNodeName = getUser();
+			((JADEHistoryViewerUI)getUI()).parentNodeName = getUser();
 			parentNodeName = getUser();
 			prefs.node(parentNodeName);
 			// Navigate to main view
-			((BackgroundserviceUI)getUI()).getMainView().initView();
-			((BackgroundserviceUI)getUI()).setModalWindow(new FilterLayoutWindow());
+			((JADEHistoryViewerUI)getUI()).getMainView().initView();
+			((JADEHistoryViewerUI)getUI()).setModalWindow(new FilterLayoutWindow());
 			getUI().getNavigator().navigateTo(MainView.NAME);
 		} else {
 			// Wrong password:

@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.view.components;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;
 
 import java.util.Locale;
 import java.util.prefs.BackingStoreException;

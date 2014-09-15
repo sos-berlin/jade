@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.view;
 
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.jadeBsOptions;
-import static com.sos.jade.backgroundservice.BackgroundserviceUI.parentNodeName;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import sos.ftphistory.JadeFilesHistoryFilter;
 import sos.ftphistory.db.JadeFilesHistoryDBItem;
 import sos.ftphistory.db.JadeFilesHistoryDBLayer;
 
-import com.sos.jade.backgroundservice.BackgroundserviceUI;
+import com.sos.jade.backgroundservice.JADEHistoryViewerUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.data.JadeDetailsContainer;
 import com.sos.jade.backgroundservice.enums.JadeCountry;
@@ -335,7 +335,7 @@ public class MainView extends CustomComponent implements View{
 				!tblDetails.getContainerDataSource().getItemIds().isEmpty()){
 			((JadeDetailsContainer)tblDetails.getContainerDataSource()).updateLocale(locale);
 		}
-		((JadeFilesHistoryFilterLayout)((BackgroundserviceUI)getUI()).
+		((JadeFilesHistoryFilterLayout)((JADEHistoryViewerUI)getUI()).
 				getModalWindow().getContent()).refreshCaptions(locale);
 		markAsDirtyRecursive();
 	}
