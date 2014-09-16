@@ -36,13 +36,7 @@ public class Session {
 
 	public void setSessionDescription(final String name, final String server) {
 		this.name = name;
-		//		this.server = server;
 	}
-
-	//	public String	strFileName	= "";
-	//			String strFileName = "C:/Users/KB/indigo-rcp/com.sos.rcp.jade/testdata/sosdex_settings.ini";
-	// R:/backup/sos/java/development/JADEUserInterface/TestData/jade_settings.ini
-	//			server = "localhost";
 
 	public SectionsHandler getSectionsHandler() {
 		return objSectionsHandler;
@@ -56,11 +50,8 @@ public class Session {
 		if (objJadeConfigurationFile == null) {
 			name = pstrFileName;
 			objJadeConfigurationFile = new JSIniFile(pstrFileName);
-			logger.debug("FileName = " + objJadeConfigurationFile.getAbsolutePath());
 			objSectionsHandler = new SectionsHandler(null, this.getName());
-			logger.debug("number of sections = " + objJadeConfigurationFile.Sections().size());
-			for (SOSProfileSection objSection : objJadeConfigurationFile.Sections().values()) {
-				logger.debug(String.format("initialize section '%1$s'", objSection.Name()));
+			for (SOSProfileSection objSection : objJadeConfigurationFile.getSections()) {
 				JadeTreeViewEntry objJ = new JadeTreeViewEntry(objJadeConfigurationFile, objSection);
 				objSectionsHandler.addEntry(objJ);
 				objJ.setSession(this);
@@ -72,7 +63,6 @@ public class Session {
 		return objSectionsHandler;
 	}
 
-	
 	public void saveConfigurationFile() {
 		objJadeConfigurationFile.CreateBackup();
 		try {
@@ -107,9 +97,4 @@ public class Session {
 
 	public void dispose() {
 	}
-	// Display display = new Display();
-	// Color red = display.getSystemColor(SWT.COLOR_RED);
-	// Color blue = display.getSystemColor(SWT.COLOR_BLUE);
-	// Color white = display.getSystemColor(SWT.COLOR_WHITE);
-	// Color gray = display.getSystemColor(SWT.COLOR_GRAY);
 }

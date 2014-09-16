@@ -42,7 +42,7 @@ public abstract class CompositeBaseClass<T> extends Composite implements ISOSTab
 	}
 
 	public CompositeBaseClass(final Composite parent, final T objOptions) {
-		super(parent, SWT.None);
+		super(parent, SWT.H_SCROLL + SWT.V_SCROLL);
 		objJadeOptions = objOptions;
 		getControlCreator(parent);
 	}

@@ -1,13 +1,20 @@
 package com.sos.jade.userinterface.data;
 import org.apache.log4j.Logger;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.Options.IValueChangedListener;
+import com.sos.JSHelper.Options.SOSValidationError;
+import com.sos.JSHelper.interfaces.IDirty;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
 import com.sos.dialog.interfaces.ISOSControlProperties;
 
-public class JadeTreeViewEntry implements ISOSControlProperties {
+public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedListener, IDirty {
 	@SuppressWarnings("unused")
 	private final Logger		logger			= Logger.getLogger(JadeTreeViewEntry.class);
 	public final String			conSVNVersion	= "$Id$";
@@ -35,7 +42,8 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 		objIniFile = pobjIniFile;
 		enuType = enuTreeItemType.profiles;
 		// Layzy ??
-				getOptions();
+		logger.debug(String.format("initialize section '%1$s'", objSection.Name()));
+		getOptions();
 	}
 
 	public void setSession(final Session pobjSession) {
@@ -79,6 +87,7 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 	public void setOptions(final JADEOptions pobjOptions) {
 		objOptions = pobjOptions;
 	}
+
 	private boolean	flgIsFragment	= false;
 	private boolean	flgIsProfile	= false;
 
@@ -112,10 +121,10 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 	public String getTitle() {
 
 		String strT = this.getName();
-//		String strT2 = getOptions().title.Value();
-//		if (strT2.length() > 0) {
-//			strT = strT + " - " + strT2;
-//		}
+		//		String strT2 = getOptions().title.Value();
+		//		if (strT2.length() > 0) {
+		//			strT = strT + " - " + strT2;
+		//		}
 
 		return strT;
 	}
@@ -141,5 +150,68 @@ public class JadeTreeViewEntry implements ISOSControlProperties {
 	public boolean isSourceGen() {
 		boolean flgIsExec = flgIsProfile == true;
 		return flgIsExec;
+	}
+
+	@Override
+	public void ValueHasChanged(String pstrNewValue) {
+		if (objTreeItem != null) {
+			String strT = objTreeItem.getText();
+			if (strT.startsWith("*") == false) {
+				strT = "*> " + strT;
+				objTreeItem.setText(strT);
+			}
+		}
+		if (objIniFile != null) {
+			objIniFile.setDirty();
+		}
+	}
+
+	@Override
+	public void ValidationError(SOSValidationError pobjVE) {
+
+	}
+
+	@Override
+	// IDirty
+	public boolean isDirty() {
+		return objIniFile.isDirty();
+	}
+
+	@Override
+	// IDirty
+	public void setDirty(boolean pflgIsDirty) {
+		objIniFile.setDirty();
+	}
+
+	@Override
+	// IDirty
+	public void setDirty() {
+		objIniFile.setDirty();
+	}
+
+	@Override
+	// IDirty
+	public int doSave(final boolean pflgAskForSave) {
+		int buttonID = 0;
+		if (pflgAskForSave) {
+			Display display = Display.getCurrent();
+			Shell shell = display.getActiveShell();
+
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO | SWT.CANCEL);
+
+			messageBox.setText("JADE Warning");
+			messageBox.setMessage("Save the changes before exiting?");
+			buttonID = messageBox.open();
+			switch (buttonID) {
+				case SWT.YES:
+					objSession.saveConfigurationFile();
+				case SWT.NO:
+					// exits here ...
+					break;
+				case SWT.CANCEL:
+					// does nothing ...
+			}
+		}
+		return buttonID;
 	}
 }

@@ -39,8 +39,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -52,7 +54,6 @@ import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSComposite;
 import com.sos.dialog.classes.WindowsSaver;
 import com.sos.dialog.interfaces.ISOSTabItem;
-import com.sos.dialog.layouts.Gridlayout;
 import com.sos.dialog.swtdesigner.SWTResourceManager;
 import com.sos.jade.userinterface.adapters.SOSDataExchangeAdapter;
 import com.sos.jade.userinterface.composite.CompositeBaseClass;
@@ -72,6 +73,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	private WindowsSaver		objPersistenceStore;
 	private SOSCTabFolder		tabFolder			= null;
 	private JadeTreeViewEntry	objSelectedSection	= null;
+	private TreeViewer			treeViewer			= null;
 
 	/**
 	 * Create the application window.
@@ -103,8 +105,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		assert display != null;
 		objPersistenceStore = new WindowsSaver(this.getClass(), this.getShell(), 940, 600);
 
-		objPersistenceStore.restoreWindowLocation();
-
 		Globals.stColorRegistry.put("IncludedOption", display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW).getRGB());
 		Globals.stColorRegistry.put("MandatoryFieldColor", display.getSystemColor(SWT.COLOR_BLUE).getRGB());
 		Globals.stColorRegistry.put("Color4FieldHasFocus", display.getSystemColor(SWT.COLOR_GREEN).getRGB());
@@ -112,20 +112,8 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		// Colorschema
 
 		Globals.stColorRegistry.put("FieldBackGround", new RGB(220, 249, 0)); // var.
-																				// 1
-																				// =
-																				// #DCF900
-																				// =
-																				// rgb(220,249,0)
 		Globals.stColorRegistry.put("Color4FieldHasFocus", new RGB(124, 231, 0)); // var. 1 =
-																					// #7CE700 =
-																					// rgb(124,231,0)
 		Globals.stColorRegistry.put("Color4FieldInError", new RGB(255, 225, 0)); // var.
-																					// 1
-																					// =
-																					// #FFE100
-																					// =
-																					// rgb(255,225,0)
 
 		// Globals.stColorRegistry.put("CompositeBackGround", new
 		// RGB(236,252,113)); // var. 5 = #ECFC71 = rgb(236,252,113)
@@ -172,189 +160,79 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 			gd_sashForm.widthHint = 422;
 			sashForm.setLayoutData(gd_sashForm);
 			{
-				final TreeViewer treeViewer = new TreeViewer(sashForm, SWT.BORDER + SWT.MULTI);
+				treeViewer = new TreeViewer(sashForm, SWT.BORDER + SWT.MULTI);
 				Tree tree = treeViewer.getTree();
 				tree.setSortDirection(SWT.DOWN);
 				tree.setBackground(Globals.getCompositeBackground());
 
-				final Action actExecute = new Action("") {
-					@Override
-					public void run() {
-						try {
-							IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-							Object item = selection.getFirstElement();
-							if (item instanceof JadeTreeViewEntry) {
-								objSelectedSection = (JadeTreeViewEntry) item;
-								setStatus("Execute ... " + objSelectedSection.getName());
-								LogFileComposite objLogFileComposite = new LogFileComposite(tabFolder, objSelectedSection);
-								objLogFileComposite.setData(objSelectedSection);
-								SOSDataExchangeAdapter objDEx = new SOSDataExchangeAdapter();
-								// TODO Open form for Protocol
-								objDEx.Execute(objSelectedSection, objLogFileComposite);
-							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-							// showMessage(e.getLocalizedMessage());
-						}
-					}
-				};
-
-				final Action actBrowseSource = new Action("") {
-					@Override
-					public void run() {
-						try {
-							IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-							Object item = selection.getFirstElement();
-							if (item instanceof JadeTreeViewEntry) {
-								objSelectedSection = (JadeTreeViewEntry) item;
-								setStatus("Browse Source ... " + objSelectedSection.getName());
-								SourceBrowserComposite objSourceBrowserComposite = new SourceBrowserComposite(tabFolder, objSelectedSection);
-								objSourceBrowserComposite.setData(objSelectedSection);
-							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-							// showMessage(e.getLocalizedMessage());
-						}
-					}
-				};
-
-				final Action actCopy = new Action("Copy") {
-					@Override
-					public void run() {
-						// showMessage("Copy");
-					}
-				};
-				final Action actDelete = new Action("Delete") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
-				final Action actRename = new Action("Rename") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
-				final Action actPaste = new Action("Paste") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
-				final Action actNew = new Action("New") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
-				final Action actCreateScript = new Action("Script") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
-				final Action actCreateJobChain = new Action("JobChain") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
-				@SuppressWarnings("unused")
-				final Action actSave = new Action("Save") {
-					@Override
-					public void run() {
-						try {
-							IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-							Object item = selection.getFirstElement();
-							if (item instanceof JadeTreeViewEntry) {
-								objSelectedSection = (JadeTreeViewEntry) item;
-								setStatus("Save Source ... " + objSelectedSection.getName());
-								objSelectedSection.getSession().saveConfigurationFile();
-							}
-						}
-						catch (Exception e) {
-							e.printStackTrace();
-							// showMessage(e.getLocalizedMessage());
-						}
-					}
-				};
-				final Action actSaveAs = new Action("SaveAs") {
-					@Override
-					public void run() {
-						// showMessage("Execute");
-					}
-				};
 				// Create the popup menu
-				final MenuManager menuMgr = new MenuManager("#PopupMenu");
-				Menu menu = menuMgr.createContextMenu(treeViewer.getControl());
+				final MenuManager menuPopUpMenueMgr = new MenuManager("#PopupMenu");
+				Menu menu = menuPopUpMenueMgr.createContextMenu(treeViewer.getControl());
 				// getSite().registerContextMenu(menuMgr, treeViewer);
-				menuMgr.addMenuListener(new IMenuListener() {
+				menuPopUpMenueMgr.addMenuListener(new IMenuListener() {
 					@Override
 					public void menuAboutToShow(final IMenuManager manager) {
 						if (treeViewer.getSelection().isEmpty()) {
 							return;
 						}
 						if (treeViewer.getSelection() instanceof ISelection) {
-							IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-							Object item = selection.getFirstElement();
-							if (item instanceof JadeTreeViewEntry) {
-								@SuppressWarnings("unused")
-								JadeTreeViewEntry objSelectedSection1 = (JadeTreeViewEntry) item;
+							JadeTreeViewEntry objSelectedSection1 = null;
+							if ((objSelectedSection1 = getTreeViewEntry()) != null) {
 								String strCaption = objSelectedSection1.getTitle();
 								if (objSelectedSection1.isExecutable()) {
 									actExecute.setText(MsgHandler.newMsg("treenode_menu_Execute").params(strCaption));
-									actExecute.setImageDescriptor(getImage("ExecuteProject.gif"));
-									menuMgr.add(actExecute);
+									menuPopUpMenueMgr.add(actExecute);
 								}
-								actBrowseSource.setText(MsgHandler.newMsg("treenode_menu_BrowseSource").params(strCaption));
-								actBrowseSource.setImageDescriptor(getImage("Document.gif"));
-								menuMgr.add(actBrowseSource);
-								menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+								actionBrowseSource.setText(MsgHandler.newMsg("treenode_menu_BrowseSource").params(strCaption));
+								menuPopUpMenueMgr.add(actionBrowseSource);
+
+								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
 								actCopy.setText(MsgHandler.newMsg("treenode_menu_Copy").params(strCaption));
 								actCopy.setImageDescriptor(getImage("Copy.gif"));
-								menuMgr.add(actCopy);
+								menuPopUpMenueMgr.add(actCopy);
 
-								actSave.setText(MsgHandler.newMsg("treenode_menu_Save").params(strCaption));
-								actSave.setImageDescriptor(getImage("Copy.gif"));
-								menuMgr.add(actSave);
+								actionSave.setText(MsgHandler.newMsg("treenode_menu_Save").params(strCaption));
+								menuPopUpMenueMgr.add(actionSave);
 
-								actSaveAs.setText(MsgHandler.newMsg("treenode_menu_Save").params(strCaption));
-								actSaveAs.setImageDescriptor(getImage("Copy.gif"));
-								menuMgr.add(actSaveAs);
+								actSaveAs.setText(MsgHandler.newMsg("treenode_menu_SaveAs").params(strCaption));
+								menuPopUpMenueMgr.add(actSaveAs);
 
 								actDelete.setText(MsgHandler.newMsg("treenode_menu_Delete").params(strCaption));
 								actDelete.setImageDescriptor(getImage("Delete.gif"));
-								menuMgr.add(actDelete);
+								menuPopUpMenueMgr.add(actDelete);
+
 								actRename.setText(MsgHandler.newMsg("treenode_menu_Rename").params(strCaption));
-								actRename.setImageDescriptor(getImage("Paste.gif"));
-								menuMgr.add(actRename);
+								actRename.setImageDescriptor(getImage("Rename.gif"));
+								menuPopUpMenueMgr.add(actRename);
+
 								actPaste.setText(MsgHandler.newMsg("treenode_menu_Paste").params(strCaption));
 								actPaste.setImageDescriptor(getImage("DocumentIn.gif"));
-								menuMgr.add(actPaste);
-								menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+								menuPopUpMenueMgr.add(actPaste);
+
+								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 								actNew.setText(MsgHandler.newMsg("treenode_menu_New").params(strCaption));
-								menuMgr.add(actNew);
+								menuPopUpMenueMgr.add(actNew);
 								actNew.setImageDescriptor(getImage("New.gif"));
 								if (objSelectedSection1.isSourceGen()) {
+									menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-									menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 									MenuManager subMenu = new MenuManager(MsgHandler.newMsg("treenode_menu_Create").label(), null);
 									actCreateJobChain.setText(MsgHandler.newMsg("treenode_menu_JobChain").params(strCaption));
 									actCreateJobChain.setImageDescriptor(getImage("Chain.gif"));
 									subMenu.add(actCreateJobChain);
+
 									actCreateScript.setText(MsgHandler.newMsg("treenode_menu_Script").params(strCaption));
 									actCreateScript.setImageDescriptor(getImage("Document.gif"));
 									subMenu.add(actCreateScript);
-									menuMgr.add(subMenu);
+
+									menuPopUpMenueMgr.add(subMenu);
 								}
 							}
 						}
 					}
 				});
-				menuMgr.setRemoveAllWhenShown(true);
+				menuPopUpMenueMgr.setRemoveAllWhenShown(true);
 				treeViewer.getControl().setMenu(menu);
 				treeViewer.addTreeListener(new ITreeViewerListener() {
 					@Override
@@ -396,37 +274,13 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				sashForm.setVisible(true);
 			}
 		}
+		createMenu();
+		objPersistenceStore.restoreWindow();
 
 		return container;
 	}
 
-	// @SuppressWarnings("unused")
-	// private void createCSSEngine () {
-	//
-	// CSSEngine engine = new CSSSWTEngineImpl(this.getShell().getDisplay());
-	// try {
-	// engine.parseStyleSheet (new StringReader ("Label {color: red} "));
-	// }
-	// catch (IOException e1) {
-	// // TODO Auto-generated catch block
-	// e1.printStackTrace();
-	// }
-	//
-	// engine.setErrorHandler (new CSSErrorHandler () {
-	// @Override
-	// public void error (final Exception e) {
-	// e.printStackTrace ();
-	// }
-	// });
-	// // applying styles to the child ; nodes means that the engine
-	// // should recurse downwards, in this example, the engine
-	// // should style the ; children of the Shell
-	// engine.applyStyles (this.getShell(), /* applyStylesToChildNodes */ true);
-	//
-	//
-	// }
 	private ImageDescriptor getImage(final String pstrFileName) {
-		// [SP] changed to get image resources dynamically at runtime
 		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
 		if (url != null) {
 			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
@@ -447,48 +301,26 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		else {
 			root = session.getSectionsHandler();
 		}
-		// SectionsHandler objSections = new SectionsHandler(root,
-		// session.getName());
-		// JSIniFile objIF = session.getJadeProperties();
-		// for (SOSProfileSection objSection : objIF.Sections().values()) {
-		// JadeTreeViewEntry objJ = new JadeTreeViewEntry(objIF, objSection);
-		// logger.debug(objJ.getName());
-		// objSections.addEntry(objJ);
-		// objJ.setSession(session);
-		// }
 		return root;
 	}
 
 	SOSCTabItem	tbtmProfileTab	= null;
 
-	private void createTabFolder(final JadeTreeViewEntry objS) {
+	private void createTabFolder(final JadeTreeViewEntry objTreeViewEntry) {
 		try {
 			if (CompositeBaseClass.gflgCreateControlsImmediate == true) {
-//				if (tbtmProfileTab == null) {
-					tbtmProfileTab = tabFolder.getTabItem(objS.getName());
-//				}
-//				else {
-//					if (tbtmProfileTab.getControl() != null) {
-//						tbtmProfileTab.getControl().dispose();
-//						tbtmProfileTab.setControl(null);
-//						tbtmProfileTab.setData(null);
-//						tbtmProfileTab.setComposite(null);
-//						tbtmProfileTab.dispose();
-//					}
-//					tbtmProfileTab = tabFolder.getTabItem(objS.getTitle());
-//					// Composite composite = new SOSComposite(tabFolder,
-//					// SWT.NONE);
-//					// tbtmProfileTab.setControl(composite);
-//				}
-				tbtmProfileTab.setText(objS.getTitle());
-				tbtmProfileTab.setData(objS);
+				//				if (tbtmProfileTab == null) {
+				tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getName());
+				tbtmProfileTab.setText(objTreeViewEntry.getTitle());
+				tbtmProfileTab.setData(objTreeViewEntry);
 
-				Composite composite = new SOSComposite(tabFolder, SWT.NONE);
-				tbtmProfileTab.setControl(composite);
-				// tbtmProfileTab.setData("composite", composite);
-				Gridlayout.set4ColumnLayout(composite);
+				ControlHelper.objValueChangedListener = objTreeViewEntry;
+//				Composite composite = new SOSComposite(tabFolder, SWT.H_SCROLL + SWT.V_SCROLL );
+//				tbtmProfileTab.setControl(composite);
+//				// tbtmProfileTab.setData("composite", composite);
+//				Gridlayout.set4ColumnLayout(composite);
 
-				ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objS);
+				ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objTreeViewEntry);
 				tbtmProfileTab.setImage(SWTResourceManager.getImage("Profil.gif"));
 				tbtmProfileTab.setComposite(objComposite);
 				objComposite.createTabItemComposite();
@@ -496,11 +328,11 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				tabFolder.setRedraw(true);
 			}
 			else {
-				if (tabFolder.setFocus(objS) == null) {
-					SOSCTabItem tbtmProfileTab = tabFolder.getTabItem(objS.getTitle());
-					tbtmProfileTab.setText(objS.getTitle());
-					tbtmProfileTab.setData(objS);
-					ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objS);
+				if (tabFolder.setFocus(objTreeViewEntry) == null) {
+					SOSCTabItem tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getTitle());
+					tbtmProfileTab.setText(objTreeViewEntry.getTitle());
+					tbtmProfileTab.setData(objTreeViewEntry);
+					ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objTreeViewEntry);
 					tbtmProfileTab.setComposite(objComposite);
 					objComposite.createTabItemComposite();
 					tabFolder.setSelection(tbtmProfileTab);
@@ -514,12 +346,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		}
 	}
 
-	// private LogFileComposite createLogFileFolder(final JadeTreeViewEntry
-	// objS) {
-	// LogFileComposite objLogFile = new LogFileComposite(tabFolder, objS);
-	// return objLogFile;
-	// }
-	//
 	/**
 	 * Create the actions.
 	 */
@@ -588,29 +414,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		// return new Point(947, 502);
 	}
 
-	// private ImageDescriptor getImageDescriptor(final String strSymbolicName)
-	// {
-	// ImageDescriptor folderImg =
-	// PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(strSymbolicName
-	// /* ISharedImages.IMG_OBJ_FOLDER */);
-	// return folderImg;
-	// }
-	//
-	// private void showMessage(final String pstrMsgText) {
-	// IWorkbench wb = PlatformUI.getWorkbench();
-	// IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-	// // session.writeToConsole(pstrMsgText);
-	// MessageDialog.openInformation(win.getShell(), "Jade -Information-",
-	// pstrMsgText);
-	// }
-	// private ImageDescriptor getImage(final String pstrImageFileName) {
-	//
-	// ImageDescriptor image =
-	// AbstractUIPlugin.imageDescriptorFromPlugin("com.sos.jade.userinterface",
-	// "icons/" + pstrImageFileName);
-	//
-	// return image;
-	// }
 	private static class Sorter extends ViewerSorter {
 		@Override
 		public int compare(final Viewer viewer, final Object e1, final Object e2) {
@@ -619,4 +422,207 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 			return item1.getName().toLowerCase().compareTo(item2.getName().toLowerCase());
 		}
 	}
+
+	//	private Menu				menuBar					= null;
+	private static Menu			mFile		= null;
+	private final Menu			submenu		= null;
+	private final Menu			submenu1	= null;
+	private final Composite		groupmain	= null;
+	/**  */
+	private final static String	EMPTY		= "";
+
+	private String getMenuText(final String pstrI18NKey, final String pstrAccelerator) {
+
+		String strRet = Globals.MsgHandler.newMsg(pstrI18NKey).get();
+		int intLen = pstrAccelerator.trim().length();
+		if (intLen > 0) {
+			if (intLen == 1) {
+				strRet += "\tCtrl+" + pstrAccelerator;
+			}
+			else {
+				strRet += "\t" + pstrAccelerator;
+			}
+		}
+		return strRet;
+	} // private String getMenuText
+
+	private MenuItem getMenuItem(Menu objMenu, String pstrI18NKey, int intStyle) {
+		MenuItem objMenuItem = new MenuItem(objMenu, intStyle);
+		objMenuItem.setEnabled(true);
+		objMenuItem.setText(getMenuText(pstrI18NKey, ""));
+		return objMenuItem;
+	}
+
+	Action			actionExit			= new Action("&Exit@Ctrl+X", getImage("exit.gif")) {
+											@Override
+											public void run() {
+												objPersistenceStore.saveWindowPosAndSize();
+												Shell sShell = Display.getCurrent().getActiveShell();
+												sShell.close();
+//												sShell.dispose();
+											}
+										};
+
+	Action			actionNew			= new Action("&New@Ctrl+N", getImage("new.gif")) {
+											@Override
+											public void run() {
+											}
+										};
+
+	Action			actionOpen			= new Action("&Open@Ctrl+O", getImage("open.gif")) {
+											@Override
+											public void run() {
+											}
+										};
+
+	final Action	actExecute			= new Action("", getImage("ExecuteProject.gif")) {
+											@Override
+											public void run() {
+												try {
+													if ((objSelectedSection = getTreeViewEntry()) != null) {
+														setStatus("Execute ... " + objSelectedSection.getName());
+														LogFileComposite objLogFileComposite = new LogFileComposite(tabFolder, objSelectedSection);
+														objLogFileComposite.setData(objSelectedSection);
+														SOSDataExchangeAdapter objDEx = new SOSDataExchangeAdapter();
+														objDEx.Execute(objSelectedSection, objLogFileComposite);
+													}
+												}
+												catch (Exception e) {
+													e.printStackTrace();
+												}
+											}
+										};
+
+	final Action	actionBrowseSource	= new Action("", getImage("Document.gif")) {
+											@Override
+											public void run() {
+												try {
+													if ((objSelectedSection = getTreeViewEntry()) != null) {
+														setStatus("Browse Source ... " + objSelectedSection.getName());
+														SourceBrowserComposite objSourceBrowserComposite = new SourceBrowserComposite(tabFolder,
+																objSelectedSection);
+														objSourceBrowserComposite.setData(objSelectedSection);
+													}
+												}
+												catch (Exception e) {
+													e.printStackTrace();
+												}
+											}
+										};
+
+	final Action	actCopy				= new Action("Copy") {
+											@Override
+											public void run() {
+												// showMessage("Copy");
+											}
+										};
+	final Action	actDelete			= new Action("Delete") {
+											@Override
+											public void run() {
+												// showMessage("Delete");
+											}
+										};
+	final Action	actRename			= new Action("Rename") {
+											@Override
+											public void run() {
+												// showMessage("Rename");
+											}
+										};
+	final Action	actPaste			= new Action("Paste") {
+											@Override
+											public void run() {
+												// showMessage("Paste");
+											}
+										};
+	final Action	actNew				= new Action("New") {
+											@Override
+											public void run() {
+												// showMessage("New");
+											}
+										};
+	final Action	actCreateScript		= new Action("Script") {
+											@Override
+											public void run() {
+												// showMessage("Script");
+											}
+										};
+	final Action	actCreateJobChain	= new Action("JobChain") {
+											@Override
+											public void run() {
+												// showMessage("JobChain");
+											}
+										};
+
+	final Action	actionSave			= new Action("&Save\tCtrl+S", getImage("save.gif")) {
+											@Override
+											public void run() {
+												try {
+													if ((objSelectedSection = getTreeViewEntry()) != null) {
+														setStatus("Save Source ... " + objSelectedSection.getName());
+														objSelectedSection.getSession().saveConfigurationFile();
+													}
+												}
+												catch (Exception e) {
+													e.printStackTrace();
+												}
+											}
+										};
+	final Action	actSaveAs			= new Action("SaveAs", getImage("SaveAs.gif")) {
+											@Override
+											public void run() {
+												try {
+													if ((objSelectedSection = getTreeViewEntry()) != null) {
+														setStatus("Save Source ... " + objSelectedSection.getName());
+														objSelectedSection.getSession().saveConfigurationFile();
+													}
+												}
+												catch (Exception e) {
+													e.printStackTrace();
+												}
+											}
+										};
+
+	private Shell	sShell;
+
+	private JadeTreeViewEntry getTreeViewEntry() {
+		JadeTreeViewEntry lobjSelectedSection = null;
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+		Object item = selection.getFirstElement();
+		if (item instanceof JadeTreeViewEntry) {
+			lobjSelectedSection = (JadeTreeViewEntry) item;
+		}
+		return lobjSelectedSection;
+	}
+
+	private void createMenu() {
+		final Shell sShell = this.getShell();
+
+		MenuManager barMenuManager = new MenuManager();
+
+		MenuManager fileMenuManager = new MenuManager("&File");
+
+		barMenuManager.add(fileMenuManager);
+
+		fileMenuManager.add(actionNew);
+		fileMenuManager.add(actionOpen);
+		fileMenuManager.add(actionSave);
+		fileMenuManager.add(new Separator());
+
+		fileMenuManager.add(actionExit);
+
+		MenuManager optionsMenuManager = new MenuManager("&Options");
+		barMenuManager.add(optionsMenuManager);
+		optionsMenuManager.add(actionSave);
+		optionsMenuManager.add(new Separator());
+
+		MenuManager helpMenuManager = new MenuManager("&Help");
+		barMenuManager.add(helpMenuManager);
+		helpMenuManager.add(actionSave);
+		helpMenuManager.add(new Separator());
+
+		barMenuManager.updateAll(true);
+		sShell.setMenuBar(barMenuManager.createMenuBar((Decorations) sShell));
+
+	}
+
 }

@@ -50,6 +50,9 @@ public class ControlHelper implements IValueChangedListener {
 	private Label				objLabel					= null;
 	private SOSOptionElement	objOptionElement			= null;
 
+	// a dirty hack
+	public static IValueChangedListener objValueChangedListener = null;
+	
 	// parent für callbacks fehlt ...
 	/**
 	 *
@@ -71,6 +74,9 @@ public class ControlHelper implements IValueChangedListener {
 		objLabel = plblLabel;
 		objOptionElement = pobjOptionElement;
 		objOptionElement.addValueChangedListener(this);
+		if (objValueChangedListener != null) {
+			objOptionElement.addValueChangedListener(objValueChangedListener);
+		}
 		objControl.setData(objOptionElement);
 		objControl.setFont(Globals.stFontRegistry.get(conColor4TEXT));
 		objLabel.setBackground(Globals.getCompositeBackground());
