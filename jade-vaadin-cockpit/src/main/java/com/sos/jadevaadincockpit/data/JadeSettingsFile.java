@@ -9,15 +9,17 @@ import java.util.logging.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionElement;
-import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileEntry;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.view.FormsTabSheet;
 import com.sos.jadevaadincockpit.view.ProfileTabSheet;
 import com.sos.jadevaadincockpit.view.ProfileTree;
+import com.sos.jadevaadincockpit.view.event.FileSavedCallback;
 import com.vaadin.data.Item;
+import com.vaadin.ui.Component;
 
 /**
  * 
@@ -60,9 +62,9 @@ public class JadeSettingsFile extends ProfileContainer {
 //				JADEOptions options = ((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue());
 				
 				/**
-				 * fill a map with all the profile's options read from the settings file
+				 * Fill a map with all the profile's options read from the settings file
 				 * and set it as a property for the profile; needed to make sure that options
-				 * which are not present in the UI forms will be written when saving.
+				 * which are not displayed in the UI forms will be written when saving.
 				 */
 				HashMap<String, String> optionsFromSettingsFile = new HashMap<String, String>();
 				for (SOSProfileEntry entry : section.Entries().values()) {
@@ -101,26 +103,44 @@ public class JadeSettingsFile extends ProfileContainer {
 	
 	/**
 	 * Close a settings file. 
-	 * @param itemId
+	 * @param itemId the id of the settings file item
 	 */
 	public void closeSettingsFile(Object itemId) {
+		
+		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
+		
+		/**
+		 * close all tabs belonging to the selected settings file TODO maybe move to ProfileTabSheet
+		 */
+		// iterate over the profiles belonging to this settings file
+		Iterator<?> childIterator = profileContainer.getChildren(itemId).iterator();
+		while (childIterator.hasNext()) {
+			Object childId = childIterator.next();
+			Item childItem = profileContainer.getItem(childId);
+			// iterate over the tabs and close the one belonging to the current profile
+			Iterator<Component> componentIterator = profileTabSheet.iterator();	
+			while (componentIterator.hasNext()) {
+				FormsTabSheet component = (FormsTabSheet) componentIterator.next(); // tab content
+				// if the tab belongs to the profile item -> close the tab
+				if (component.getProfileItem().equals(childItem)) {
+					profileTabSheet.removeComponent(component);
+					break;
+				}
+			}
+		}
 		
 		// remove the item and all its children from the container.
 		profileContainer.removeItemRecursively(itemId);
 		
-		// remove all tabs // FIXME remove only the tabs related to the closed file
-		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
-		profileTabSheet.removeAllComponents();
-		
-		// disable save-functions // FIXME only if there are no further files opened
-		JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(false);
+		// disable save-functions if no more settings files are opened
+		JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(!profileContainer.getItemIds().isEmpty());
 	}
 	
 	/**
 	 * Save a settings file. The itemId may either identify a settings file itself or a profile belonging to the settings file to save.
 	 * @param itemId The ID of the file itself or a profile belonging to the settings file.
 	 */
-	public void saveSettingsFile(Object itemId) {
+	public void saveSettingsFile(Object itemId) { // TODO Fehlerfälle?
 		
 		String filename = "";
 		JSIniFile newJadeSettingsFile = null;
@@ -194,6 +214,18 @@ public class JadeSettingsFile extends ProfileContainer {
 	}
 	
 	/**
+	 * Save a settings file. The itemId may either identify a settings file itself or a profile belonging to the settings file to save.
+	 * @param itemId The ID of the file itself or a profile belonging to the settings file.
+	 * @param callback
+	 */
+	public void saveSettingsFile(Object itemId, FileSavedCallback callback) {
+		
+		saveSettingsFile(itemId); // TODO Fehlerfälle?
+		
+		callback.onSuccess();
+	}
+	
+	/**
 	 * Add a new profile with the given <code>name</code> to the settings file identified by the <code>parentId</code>
 	 * @param name The name of the new profile.
 	 * @param parentId The ID of the settings file to add the new profile to.
@@ -225,12 +257,30 @@ public class JadeSettingsFile extends ProfileContainer {
 					jadeConfigurationFile.SectionName(name);
 					item.getItemProperty(ProfileContainer.PROPERTY.JADESETTINGSFILE).setValue(jadeConfigurationFile);
 					*/
+					JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().setValue(profileId);
 					returnValue = true;
 				}
 			}
 		}
 		
 		return returnValue;
+	}
+	
+	/**
+	 * 
+	 * @param target
+	 */
+	public void deleteProfile(Object target) {
+		
+		Item targetItem = profileContainer.getItem(target);
+		ProfileTabSheet profileTabSheet = JadevaadincockpitUI.getCurrent().getMainView().getProfileTabSheet();
+		Component targetTab = profileTabSheet.getTab(targetItem);
+
+		profileTabSheet.removeComponent(targetTab);
+		
+		// delete profile from container
+		profileContainer.removeItemRecursively(target);
+		
 	}
 	
 	

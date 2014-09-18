@@ -3,6 +3,7 @@ package com.sos.jadevaadincockpit.view;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeActionHandler;
+import com.sos.jadevaadincockpit.view.event.ProfileTreeItemSetChangeListener;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeValueChangeListener;
 import com.vaadin.ui.Tree;
 
@@ -27,6 +28,7 @@ public class ProfileTree extends Tree {
 		setNullSelectionAllowed(false);
 		
 		addValueChangeListener(new ProfileTreeValueChangeListener());
+		addItemSetChangeListener(new ProfileTreeItemSetChangeListener());
 		
 		// move to separate class
 		addItemSetChangeListener(new ItemSetChangeListener() {

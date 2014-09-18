@@ -147,12 +147,10 @@ public class ProfileContainer extends HierarchicalContainer {
 			setParent(profileId, parentId);
 			setChildrenAllowed(profileId, false);
 			
-			 // TODO globals profil muss aufgelöst werden
-			
 			JSIniFile jadeSettingsFile = (JSIniFile) getItem(parentId).getItemProperty(PROPERTY.JADESETTINGSFILE).getValue();
 
 			JADEOptions jadeOptions = new JADEOptions();
-			jadeOptions.gflgSubsituteVariables = false;
+			jadeOptions.gflgSubsituteVariables = false; // ?
 			
 			HashMap<String, String> map = new HashMap<String, String>();
 			jadeOptions.setAllOptions(map);

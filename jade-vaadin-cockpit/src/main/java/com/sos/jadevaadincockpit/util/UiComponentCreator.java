@@ -71,11 +71,6 @@ public class UiComponentCreator implements Serializable {
 			}
 		});
 		
-		// dbg
-		ContextMenu menu = new ContextMenu();
-		menu.addItem("Test");
-		menu.setAsContextMenuOf(comp);
-		
 		return comp;
 	}
 
@@ -186,10 +181,7 @@ public class UiComponentCreator implements Serializable {
 			
 		} else { // component types which are not covered by the previous checks
 			
-			TextField textField = getTextField(optionElement);
-//			FileResource resource = new FileResource(new File(Globals.getBasePath() + "/WEB-INF/icons/Delete.gif"));
-//			textField.setIcon(resource);
-			comp = textField;
+			comp = getTextField(optionElement);
 		}
 		
 		return comp;
@@ -395,14 +387,6 @@ public class UiComponentCreator implements Serializable {
 			public void ValidationError(
 					SOSValidationError pobjVE) {
 				// TODO Auto-generated method stub
-			}
-		});
-		
-		textField.addFocusListener(new FocusListener() {
-			
-			@Override
-			public void focus(FocusEvent event) {
-				Notification.show("protected = " + optionElement.boolean2String(optionElement.isProtected()) + ", value = " + optionElement.Value());
 			}
 		});
 		

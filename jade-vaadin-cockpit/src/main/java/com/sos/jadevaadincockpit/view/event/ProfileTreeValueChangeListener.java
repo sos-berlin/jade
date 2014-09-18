@@ -8,6 +8,11 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 
+/**
+ * 
+ * @author JS
+ *
+ */
 public class ProfileTreeValueChangeListener implements ValueChangeListener {
 	private static final long serialVersionUID = 427297849344867710L;
 
@@ -19,8 +24,8 @@ public class ProfileTreeValueChangeListener implements ValueChangeListener {
 		Item selectedItem = profileTree.getItem(selectedItemId);
 		
 		/**
-		 * load data to fill the entryTable and create the according tab in the
-		 * tabPanel (only if the selected item is a section, not a config file)
+		 * load data to create the according tab in the
+		 * tabPanel (only if the selected item is a profile, not a settings file)
 		 */
 		if (selectedItem != null) {
 			
@@ -56,7 +61,7 @@ public class ProfileTreeValueChangeListener implements ValueChangeListener {
 				// columnsList);
 			}
 		}
-
+		
 	}
 
 }

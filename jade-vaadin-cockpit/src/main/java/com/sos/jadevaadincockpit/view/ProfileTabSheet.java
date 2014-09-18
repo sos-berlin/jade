@@ -66,7 +66,7 @@ public class ProfileTabSheet extends TabSheet implements I18NComponent {
 		// set tab's caption
 		tab.setCaption((String) profileItem.getItemProperty(
 				ProfileContainer.PROPERTY.NAME).getValue());
-		// add tab to sectionsTabPanel
+		// add tab to profileTabSheet
 		addComponent(tab);
 		// set closable
 		getTab(tab).setClosable(true);

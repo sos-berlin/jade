@@ -13,6 +13,7 @@ import com.sos.jadevaadincockpit.globals.SessionAttributes;
 import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.FileSystemBrowser.BrowserType;
+import com.sos.jadevaadincockpit.view.components.TextInputDialog;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button.ClickEvent;
@@ -33,7 +34,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 	
 	private Logger logger = Logger.getLogger(JadeMenuBar.class.getName());
 	
-	private MenuBar.Command newCommand;
+	private MenuBar.Command newFileCommand;
+	private MenuBar.Command newProfileCommand;
 	private MenuBar.Command uploadCommand;
 	private MenuBar.Command downloadCommand;
 	private MenuBar.Command openCommand;
@@ -46,6 +48,8 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 	
 	private MenuItem fileMenu;
 	private MenuItem newMenu;
+	private MenuItem newFileMenu;
+	private MenuItem newProfileMenu;
 	private MenuItem uploadMenu;
 	private MenuItem downloadMenu;
 	private MenuItem openMenu;
@@ -75,7 +79,9 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		getCommands();
 		
 		fileMenu = this.addItem(new JadeCockpitMsg("jade_l_FileMenu").label(), null, null); // File
-		newMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_NewMenu").label(), null, newCommand); // New
+		newMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_NewMenu").label(), null, null); // New
+		newFileMenu = newMenu.addItem(new JadeCockpitMsg("jade_l_NewFileMenu").label(), null, newFileCommand); // New File
+		newProfileMenu = newMenu.addItem(new JadeCockpitMsg("jade_l_NewProfileMenu").label(), null, newProfileCommand); // New Profile
 		fileMenu.addSeparator();
 		uploadMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_UploadMenu").label(), null, uploadCommand); // Upload
 		downloadMenu = fileMenu.addItem(new JadeCockpitMsg("jade_l_DownloadMenu").label(), null, downloadCommand); // Download
@@ -100,11 +106,15 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		aboutMenu = helpMenu.addItem(new JadeCockpitMsg("jade_l_AboutMenu").label(), null, aboutCommand); // About
 		
 		setImmediate(true);
+		
+		initEnabledStates();
 	}
 	
 	private void getCommands() {
 		
-		newCommand = getNewCommand();
+		newFileCommand = getNewFileCommand();
+		
+		newProfileCommand = getNewProfileCommand();
 		
 		uploadCommand = getUploadCommand();
 		
@@ -227,14 +237,44 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		};
 	}
 
-	private Command getNewCommand() {
-		return new MenuBar.Command() { // TODO new what? settings file?
+	private Command getNewFileCommand() {
+		return new MenuBar.Command() {
 			private static final long serialVersionUID = -3670981539441287472L;
 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				// TODO stub
 				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label()); // Sorry, not available yet.
+			}
+		};
+	}
+	
+	private Command getNewProfileCommand() {
+		return new MenuBar.Command() {
+			private static final long serialVersionUID = -3670981539441287472L;
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				
+				TextInputDialog dialog = new TextInputDialog("Add Profile", "", new TextInputDialog.Callback() {
+					
+					@Override
+					public void onDialogResult(boolean isOk, String input) {
+						
+						if (isOk) {
+							// get the id of the currently selected settings file (which will be the parent of the newly added profile)
+							Object parentId = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().getSelectedSettingsFileItemId();
+							// add the profile to the settings file
+							JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().addProfile(input, parentId);
+						}
+						
+					}
+				});
+				dialog.setEmptyInputAllowed(false);
+				dialog.setEmptyInputMessage("Please enter a name.");
+				
+				UI.getCurrent().addWindow(dialog);
+
 			}
 		};
 	}
@@ -280,6 +320,10 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 		return logMenu;
 	}
 	
+	private void initEnabledStates() {
+		newProfileMenu.setEnabled(false);
+	}
+	
 	/**
 	 * Enable or disable the Save-/Save As-Items.
 	 * @param enabled
@@ -287,6 +331,14 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 	public void setSaveItemsEnabled(boolean enabled) {
 		saveMenu.setEnabled(enabled);
 		saveAsMenu.setEnabled(enabled);
+	}
+	
+	/**
+	 * Enable or disable the "New Profile" item.
+	 * @param enabled
+	 */
+	public void setNewProfileItemEnabled(boolean enabled) {
+		newProfileMenu.setEnabled(enabled);
 	}
 
 	@Override

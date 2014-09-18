@@ -12,10 +12,8 @@ public class ProfileTabSheetSelectedTabChangeListener implements SelectedTabChan
 
 	@Override
 	public void selectedTabChange(SelectedTabChangeEvent event) {
-		Item selectedProfileItem = ((FormsTabSheet) event.getTabSheet()
-				.getSelectedTab()).getProfileItem();
+		Item selectedProfileItem = ((FormsTabSheet) event.getTabSheet().getSelectedTab()).getProfileItem();
 		Object selectedProfileItemId = selectedProfileItem.getItemProperty(ProfileContainer.PROPERTY.ID).getValue();
-//		Constants.getJadeDataProvider().loadParameters(selectedItem);
 		JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().setValue(selectedProfileItemId);
 	}
 

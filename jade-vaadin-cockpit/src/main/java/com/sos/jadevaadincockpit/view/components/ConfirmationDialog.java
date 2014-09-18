@@ -19,7 +19,7 @@ public class ConfirmationDialog extends Window implements ClickListener {
 	private FormLayout layout = new FormLayout();
 	private HorizontalLayout buttonLayout = new HorizontalLayout();
 	
-	Callback callback;
+	private Callback callback;
 	private Button okButton = new Button("Ok", this);
 	private Button cancelButton = new Button("Cancel", this);
 	private Label messageLabel = new Label();
@@ -46,8 +46,14 @@ public class ConfirmationDialog extends Window implements ClickListener {
 		layout.addComponent(messageLabel);
 		
 		buttonLayout.setSpacing(true);
+		buttonLayout.setWidth("100%");
 		buttonLayout.addComponents(okButton, cancelButton);
 		layout.addComponent(buttonLayout);
+		
+		layout.setMargin(true);
+		layout.setSpacing(true);
+		
+		center();
 	}
 	
 	@Override
