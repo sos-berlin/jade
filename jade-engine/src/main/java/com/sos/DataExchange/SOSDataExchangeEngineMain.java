@@ -73,7 +73,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			objO.ApplicationName.Value(new SOSMsgJade("SOSJADE_T_0020").get());
 			objO.ApplicationDocuUrl.Value(new SOSMsgJade("SOSJADE_T_0021").get());
 			objO.AllowEmptyParameterList.setFalse();
-			objO.CheckNotProcessedOptions.setTrue();
+			objO.CheckNotProcessedOptions.setFalse();
 			@SuppressWarnings("unused")
 			String strLog4jPropertyFileName = objO.log4jPropertyFileName.Value();
 			for (String strParam : pstrArgs) {
@@ -95,7 +95,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 
 			objO.CommandLineArgs(pstrArgs);
 			if (objO.CheckNotProcessedOptions.isTrue()) {
-				if (objO.CheckNotProcessedOptions() == true) {
+				if (objO.ReportNotProcessedOptions() == true) {
 				}
 				else {
 					JADEException objE = new JADEException("Unsupported or wrong Options found.");
