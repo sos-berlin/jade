@@ -315,10 +315,10 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				tbtmProfileTab.setData(objTreeViewEntry);
 
 				ControlHelper.objValueChangedListener = objTreeViewEntry;
-//				Composite composite = new SOSComposite(tabFolder, SWT.H_SCROLL + SWT.V_SCROLL );
-//				tbtmProfileTab.setControl(composite);
-//				// tbtmProfileTab.setData("composite", composite);
-//				Gridlayout.set4ColumnLayout(composite);
+				//				Composite composite = new SOSComposite(tabFolder, SWT.H_SCROLL + SWT.V_SCROLL );
+				//				tbtmProfileTab.setControl(composite);
+				//				// tbtmProfileTab.setData("composite", composite);
+				//				Gridlayout.set4ColumnLayout(composite);
 
 				ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objTreeViewEntry);
 				tbtmProfileTab.setImage(SWTResourceManager.getImage("Profil.gif"));
@@ -456,10 +456,12 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	Action			actionExit			= new Action("&Exit@Ctrl+X", getImage("exit.gif")) {
 											@Override
 											public void run() {
-												objPersistenceStore.saveWindowPosAndSize();
+												if (objPersistenceStore != null) {
+													objPersistenceStore.saveWindowPosAndSize();
+												}
 												Shell sShell = Display.getCurrent().getActiveShell();
 												sShell.close();
-//												sShell.dispose();
+												//												sShell.dispose();
 											}
 										};
 
@@ -600,7 +602,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		MenuManager barMenuManager = new MenuManager();
 
 		MenuManager fileMenuManager = new MenuManager("&File");
-
 		barMenuManager.add(fileMenuManager);
 
 		fileMenuManager.add(actionNew);
@@ -608,6 +609,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		fileMenuManager.add(actionSave);
 		fileMenuManager.add(new Separator());
 
+		actionExit.setAccelerator(SWT.CTRL | 'X');
 		fileMenuManager.add(actionExit);
 
 		MenuManager optionsMenuManager = new MenuManager("&Options");
