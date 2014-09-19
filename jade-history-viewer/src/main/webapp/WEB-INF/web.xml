@@ -5,7 +5,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" version="3.0">
 <!-- comment this complete configuration to run on Tomcat from the IDE while developing,
 	 uncomment for release build to run on embedded Jetty [SP] -->
-  <display-name>Vaadin JADE BS History configuration (web.xml)</display-name>
+  <display-name>Vaadin JADE History Viewer configuration (web.xml)</display-name>
 	<servlet>
 		<servlet-name>vaadinservlet</servlet-name>
 		<servlet-class>

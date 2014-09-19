@@ -1,6 +1,6 @@
 <?xml version="1.0"  encoding="ISO-8859-1"?>
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
-  <Set name="contextPath">/jadeHistory</Set>
-  <Set name="war">/opt/web/webapps/jade-background-service-cockpit-1.8-SNAPSHOT.war</Set>
+  <Set name="contextPath">/jadeHistoryViewer</Set>
+  <Set name="war">/opt/web/webapps/jade-history-viewer-1.8-SNAPSHOT.war</Set>
   <Set name="extractWAR">false</Set>
 </Configure>
