@@ -68,24 +68,30 @@
             <artifactId>log4j</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>com.trilead</groupId>
-			<artifactId>sos-trilead-ssh2</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
-			<scope>test</scope>
-		</dependency>
-
+				<dependency>
+					<groupId>com.trilead</groupId>
+					<artifactId>sos-trilead-ssh2</artifactId>
+					<scope>test</scope>
+				</dependency>
+		
+				<dependency>
+					<groupId>commons-net</groupId>
+					<artifactId>commons-net</artifactId>
+					<scope>test</scope>
+				</dependency>
+		
+				<dependency>
+					<groupId>com.jcraft</groupId>
+					<artifactId>jsch</artifactId>
+					<scope>test</scope>
+				</dependency>
+		
+		    <dependency>
+			    <groupId>junit</groupId>
+			    <artifactId>junit</artifactId>
+			    <scope>test</scope>
+				</dependency>
+		
     </dependencies>
 
 </project>
