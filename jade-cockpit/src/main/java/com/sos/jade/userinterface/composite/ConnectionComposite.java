@@ -12,11 +12,12 @@ import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.layouts.Gridlayout;
 
 public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
-	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger					= Logger.getLogger(ConnectionComposite.class);
-	public final String												conSVNVersion			= "$Id$";
-	private SOSConnection2Options									objConnectionOptions	= null;
-	private int														intWhatType				= 0;
-	private JADEOptions											objOptions				= null;
+	@SuppressWarnings({ "unused" })
+	private final Logger			logger					= Logger.getLogger(ConnectionComposite.class);
+	public final String				conSVNVersion			= "$Id$";
+	private SOSConnection2Options	objConnectionOptions	= null;
+	private int						intWhatType				= 0;
+	private JADEOptions				objOptions				= null;
 
 	public ConnectionComposite(final SOSCTabItem parent, final JADEOptions objOptions, final int pWhatType) {
 		this((Composite) parent.getControl(), objOptions, pWhatType);
@@ -30,15 +31,14 @@ public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 		if (gflgCreateControlsImmediate == true) {
 			createComposite();
 		}
-
 	}
 
-	@Override public void createComposite() {
+	@Override
+	public void createComposite() {
 		Gridlayout.set4ColumnLayout(this);
-		SOSCTabFolder tabFolderConnection = new SOSCTabFolder(this, SWT.NONE);
+		SOSCTabFolder tabFolderConnection = new SOSCTabFolder(this, SWT.None /* .H_SCROLL | SWT.V_SCROLL */);
 		tabFolderConnection.setBackground(Globals.getCompositeBackground());
 		tabFolderConnection.ItemsHasClose = false;
-//		logger.debug(conSVNVersion);
 		{
 			SOSConnection2OptionsAlternate objO = null;
 			// TODO der switch muß in die connection options, Proxy fehlt hier auch noch.
@@ -58,24 +58,28 @@ public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 				default:
 					break;
 			}
+			
 			SOSCTabItem tbtmServer = tabFolderConnection.getTabItem("tab_Server");
-			tbtmServer.setComposite(new ConnectionDataComposite(tbtmServer, objO));
+			ConnectionDataComposite<SOSConnection2OptionsAlternate> objCDC = new ConnectionDataComposite<>(tabFolderConnection, objO);
+			tbtmServer.setControl(objCDC);
 
-			SOSCTabItem tbtmCredentialStore = tabFolderConnection.getTabItem("tab_CredentialStore");
-			tbtmCredentialStore.setComposite(new FileCredentialStoreComposite(tbtmCredentialStore, objO));
+			SOSCTabItem tbtmItem = tabFolderConnection.getTabItem("tab_CredentialStore");
+			FileCredentialStoreComposite objFCSC = new FileCredentialStoreComposite(tabFolderConnection, objO);
+			tbtmItem.setControl(objFCSC);
 
 			if (intWhatType <= 1) {
 				SOSCTabItem tbtmFilter = tabFolderConnection.getTabItem("tab_Filter");
-				tbtmFilter.setComposite(new Filter4ResultSetComposite(tbtmFilter, objOptions));
+				tbtmFilter.setControl(new Filter4ResultSetComposite(tabFolderConnection, objOptions));
 			}
 			if (intWhatType > 2) {
 				SOSCTabItem tbtmProxy = tabFolderConnection.getTabItem("tab_Proxy");
-				tbtmProxy.setComposite(new ConnectionDataComposite(tbtmProxy, objO));
+				tbtmProxy.setControl(new ConnectionDataComposite<SOSConnection2OptionsAlternate>(tabFolderConnection, objO));
 				SOSCTabItem tbtmJump = tabFolderConnection.getTabItem("tab_Jump");
-				tbtmJump.setComposite(new ConnectionDataComposite(tbtmJump, objConnectionOptions.JumpServer()));
+				tbtmJump.setControl(new ConnectionDataComposite<SOSConnection2OptionsAlternate>(tabFolderConnection, objConnectionOptions.JumpServer()));
 			}
 		}
 		// TODO global variable für zuletzt gezeigten Tab. auf den dann positionieren.
 		tabFolderConnection.setSelection(0);
 	}
+
 }

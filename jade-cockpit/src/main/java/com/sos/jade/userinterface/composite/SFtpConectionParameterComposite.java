@@ -1,6 +1,5 @@
 package com.sos.jade.userinterface.composite;
 import org.apache.log4j.Logger;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -12,10 +11,10 @@ public class SFtpConectionParameterComposite extends CompositeBaseClass<SOSConne
 	@SuppressWarnings("unused") 	private static final String	conSVNVersion	= "$Id$";
 	@SuppressWarnings("unused") 	private final Logger		logger			= Logger.getLogger(this.getClass());
 
-	public SFtpConectionParameterComposite(final CTabItem parent, final SOSConnection2OptionsAlternate objOptions) {
-		this((Composite) parent.getControl(), objOptions);
-	}
-
+//	public SFtpConectionParameterComposite(final CTabItem parent, final SOSConnection2OptionsAlternate objOptions) {
+//		this((Composite) parent.getControl(), objOptions);
+//	}
+//
 	public SFtpConectionParameterComposite(final Composite parent, final SOSConnection2OptionsAlternate objOptions) {
 		super(parent, objOptions);
 		objJadeOptions = objOptions;

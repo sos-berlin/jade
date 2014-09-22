@@ -8,7 +8,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-import com.sos.JSHelper.Options.JSOptionsClass;
 import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
@@ -16,33 +15,32 @@ import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSCheckBox;
 
-public class ConnectionDataComposite extends CompositeBaseClass<SOSConnection2OptionsAlternate> {
+public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
 	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger						= Logger.getLogger(ConnectionDataComposite.class);
 	public final String									conSVNVersion				= "$Id$";
 	private SOSConnection2OptionsAlternate				objJadeConnectionOptions	= null;
 	private SOSCTabFolder								tabFolderProtocols			= null;
-	private SOSCTabItem									tbtmFtp						= null;
-	private SOSCTabItem									tbtmSFtp					= null;
-	private SOSCTabItem									tbtmFtpS					= null;
-	private SOSCTabItem									tbtmLocal					= null;
-	private SOSCTabItem									tbtmWebDav					= null;
-	private SOSCTabItem									tbtmHttp					= null;
-	private SOSCTabItem									tbtmHttps					= null;
-	private SOSCTabItem									tbtmSmtp					= null;
-	private SOSCTabItem									tbtmIMap					= null;
-	private SOSCTabItem									tbtmZip						= null;
+	private final SOSCTabItem									tbtmFtp						= null;
+	private final SOSCTabItem									tbtmSFtp					= null;
+	private final SOSCTabItem									tbtmFtpS					= null;
+	private final SOSCTabItem									tbtmLocal					= null;
+	private final SOSCTabItem									tbtmWebDav					= null;
+	private final SOSCTabItem									tbtmHttp					= null;
+	private final SOSCTabItem									tbtmHttps					= null;
+	private final SOSCTabItem									tbtmSmtp					= null;
+	private final SOSCTabItem									tbtmIMap					= null;
+	private final SOSCTabItem									tbtmZip						= null;
 
-	public ConnectionDataComposite(final CTabItem parent, final JSOptionsClass objOptions) {
-		this((Composite) parent.getControl(), objOptions);
-	}
-
-	public ConnectionDataComposite(final Composite parent, final JSOptionsClass objOptions) {
+//	public ConnectionDataComposite(final SOSCTabItem parent, final T objOptions) {
+//		super(parent.getParent(), objOptions);
+//	}
+//
+	public ConnectionDataComposite(final Composite parent, final T objOptions) {
 		super(parent, null);
 		objJadeConnectionOptions = (SOSConnection2OptionsAlternate) objOptions;
 		if (gflgCreateControlsImmediate == true) {
 			createComposite();
 		}
-
 	}
 
 	SOSCheckBox btnUseCS = null;
@@ -50,8 +48,6 @@ public class ConnectionDataComposite extends CompositeBaseClass<SOSConnection2Op
 	
 	@Override public void createComposite() {
 		int i = this.getChildren().length;
-//		this.setLayout(Gridlayout.get4ColumnLayout());
-//		Gridlayout.set4ColumnLayout(this);
 		// TODO protocol kann für jede Verbindung (alternate, proxy, jump) unterschiedlich sein
 		cboProtocol = (CCombo) objCC.getControl(objJadeConnectionOptions.protocol);
 		
@@ -63,37 +59,27 @@ public class ConnectionDataComposite extends CompositeBaseClass<SOSConnection2Op
 
 		objCC.getSeparator();
 		//
-		tabFolderProtocols = new SOSCTabFolder(objParent, SWT.NONE);
+		tabFolderProtocols = new SOSCTabFolder(this, SWT.NONE);
 		tabFolderProtocols.ItemsHasClose = false;
 //		tabFolderProtocols.flgRejectTabItemSelection = true;
 		tabFolderProtocols.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
-		tbtmFtp = getTabItem(enuTransferTypes.ftp);
-		tbtmFtp.setComposite(new FtpConectionParameterComposite(tbtmFtp, objJadeConnectionOptions));
-		//
-		tbtmSFtp = getTabItem(enuTransferTypes.sftp);
-		tbtmSFtp.setComposite(new SFtpConectionParameterComposite(tbtmSFtp, objJadeConnectionOptions));
-		tbtmFtpS = getTabItem(enuTransferTypes.ftps);
-		tbtmFtpS.setComposite(new FtpSConectionParameterComposite(tbtmFtpS, objJadeConnectionOptions));
-		tbtmLocal = getTabItem(enuTransferTypes.local);
-		tbtmLocal.setComposite(new FileSystemConectionParameterComposite(tbtmLocal, objJadeConnectionOptions));
-		tbtmWebDav = getTabItem(enuTransferTypes.webdav);
-		tbtmWebDav.setComposite(new WebdavConectionParameterComposite(tbtmWebDav, objJadeConnectionOptions));
-		tbtmHttp = getTabItem(enuTransferTypes.http);
-		tbtmHttp.setComposite(new HttpConectionParameterComposite(tbtmHttp, objJadeConnectionOptions));
-		tbtmHttps = getTabItem(enuTransferTypes.https);
-		tbtmHttps.setComposite(new HttpsConectionParameterComposite(tbtmHttps, objJadeConnectionOptions));
+
+		createTab(tabFolderProtocols, new FtpConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.ftp);
+		createTab(tabFolderProtocols, new SFtpConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.sftp);
+		createTab(tabFolderProtocols, new FtpSConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.ftps);
+		createTab(tabFolderProtocols, new FileSystemConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.local);
+		createTab(tabFolderProtocols, new WebdavConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.webdav);
+		createTab(tabFolderProtocols, new HttpConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.http);
+		createTab(tabFolderProtocols, new HttpsConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.https);
 		// target only
 		if (objJadeConnectionOptions.isSource == false) {
-			tbtmSmtp = getTabItem(enuTransferTypes.smtp);
-			tbtmSmtp.setComposite(new SmtpConectionParameterComposite(tbtmSmtp, objJadeConnectionOptions));
+			createTab(tabFolderProtocols, new SmtpConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.smtp);
 		}
 		else {
 			// source only
-			tbtmIMap = getTabItem(enuTransferTypes.imap);
-			tbtmIMap.setComposite(new IMapConectionParameterComposite(tbtmIMap, objJadeConnectionOptions));
+			createTab(tabFolderProtocols, new IMapConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.imap);
 		}
-		tbtmZip = getTabItem(enuTransferTypes.zip);
-		tbtmZip.setComposite(new ZipConectionParameterComposite(tbtmZip, objJadeConnectionOptions));
+		createTab(tabFolderProtocols, new ZipConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.zip);
 		//
 		btnUseCS = (SOSCheckBox) objCC.getControl(objJadeConnectionOptions.getCredentialStore().use_credential_Store);
 		objCC.getLabel(2);
@@ -180,11 +166,11 @@ public class ConnectionDataComposite extends CompositeBaseClass<SOSConnection2Op
 		}
 	}
 
-	private SOSCTabItem getTabItem(final enuTransferTypes penuT) {
-		SOSCTabItem objTabItem = tabFolderProtocols.getTabItem("tab_" + penuT.Text());
-		return objTabItem;
-	}
-	
+//	private SOSCTabItem getTabItem(final enuTransferTypes penuT) {
+//		SOSCTabItem objTabItem = tabFolderProtocols.getTabItem("tab_" + penuT.Text());
+//		return objTabItem;
+//	}
+//	
 	protected void initValues() {
 		btnUseCS.setEnabledDisabled();
 	}	

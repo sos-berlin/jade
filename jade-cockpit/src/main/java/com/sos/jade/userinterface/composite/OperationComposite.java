@@ -1,5 +1,5 @@
 package com.sos.jade.userinterface.composite;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -7,12 +7,17 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.classes.SOSCheckBox;
 
 public class OperationComposite extends CompositeBaseClass<JADEOptions> {
-	@SuppressWarnings("unused") private final String		conClassName			= this.getClass().getSimpleName();
-	@SuppressWarnings("unused") private static final String	conSVNVersion			= "$Id$";
-	private SOSCheckBox										btnConcurrentTransfer	= null;
+	private final String		conClassName			= this.getClass().getSimpleName();
+	@SuppressWarnings("unused")
+	private static final String	conSVNVersion			= "$Id$";
+	private SOSCheckBox			btnConcurrentTransfer	= null;
 
-	public OperationComposite(final CTabItem parent, final JADEOptions objOptions) {
-		this((Composite) parent.getControl(), objOptions);
+	public OperationComposite(final CTabFolder pobjTabFolder, final JADEOptions objOptions) {
+		super(pobjTabFolder, objOptions);
+		if (gflgCreateControlsImmediate == true) {
+			createComposite();
+		}
+		pobjTabFolder.pack();
 	}
 
 	public OperationComposite(final Composite parent, final JADEOptions objOptions) {
@@ -23,13 +28,17 @@ public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 		}
 	}
 
-	@Override public void createComposite() {
+	@Override
+	public void createComposite() {
 		logger.debug("createComposite " + conClassName);
 
-		objCC.getSeparator();
+//		objCC.getSeparator();
 		objCC.getControl(objJadeOptions.title, 3);
 		objCC.getControl(objJadeOptions.operation, 3);
-		@SuppressWarnings("unused") SOSCheckBox btnCheckButton = (SOSCheckBox) objCC.getControl(objJadeOptions.TransactionMode);
+		
+		
+		@SuppressWarnings("unused")
+		SOSCheckBox btnCheckButton = (SOSCheckBox) objCC.getControl(objJadeOptions.TransactionMode);
 		objCC.getLabel(2);
 		objCC.getControl(objJadeOptions.atomic_prefix);
 		objCC.getControl(objJadeOptions.atomic_suffix);

@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.classes.SOSCTabFolder;
-import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.layouts.Gridlayout;
 
 public class FileSelectionComposite extends CompositeBaseClass<JADEOptions> {
@@ -32,21 +31,11 @@ public class FileSelectionComposite extends CompositeBaseClass<JADEOptions> {
 		SOSCTabFolder tabFolderFileSection = new SOSCTabFolder(this, SWT.NONE);
 		tabFolderFileSection.ItemsHasClose = false;
 		{
-			SOSCTabItem tbtmItemFileRegEx = tabFolderFileSection.getTabItem("tab_Selection");
-			FileRegExComposite objFileRegExComposite = new FileRegExComposite(tbtmItemFileRegEx, objJadeOptions);
-			tbtmItemFileRegEx.setComposite(objFileRegExComposite);
-			//
-			SOSCTabItem tbtmNFileRename = tabFolderFileSection.getTabItem("tab_Rename");
-			tbtmNFileRename.setComposite(new FileRenameComposite(tbtmNFileRename, objJadeOptions));
-			//
-			SOSCTabItem tbtmFilePolling = tabFolderFileSection.getTabItem("tab_Polling");
-			tbtmFilePolling.setComposite(new FilePollingComposite(tbtmFilePolling, objJadeOptions));
-			//
-			SOSCTabItem tbtmFileSteadyState = tabFolderFileSection.getTabItem("tab_SteadyState");
-			tbtmFileSteadyState.setComposite(new FileSteadyStateComposite(tbtmFileSteadyState, objJadeOptions));
-			//
-			SOSCTabItem tbtmCumulateFiles = tabFolderFileSection.getTabItem("tab_CumulateFiles");
-			tbtmCumulateFiles.setComposite(new FileCumulateComposite(tbtmCumulateFiles, objJadeOptions));
+			createTab(tabFolderFileSection, new FileRegExComposite(tabFolderFileSection, objJadeOptions), "tab_Selection");
+			createTab(tabFolderFileSection, new FileRenameComposite(tabFolderFileSection, objJadeOptions), "tab_Rename");
+			createTab(tabFolderFileSection, new FilePollingComposite(tabFolderFileSection, objJadeOptions), "tab_Polling");
+			createTab(tabFolderFileSection, new FileSteadyStateComposite(tabFolderFileSection, objJadeOptions), "tab_SteadyState");
+			createTab(tabFolderFileSection, new FileCumulateComposite(tabFolderFileSection, objJadeOptions), "tab_CumulateFiles");
 		}
 		tabFolderFileSection.setSelection(0);
 	}

@@ -1,145 +1,142 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.sos-berlin</groupId>
-        <artifactId>jade</artifactId>
-        <version>1.8-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<groupId>com.sos-berlin</groupId>
+		<artifactId>jade</artifactId>
+		<version>1.8-SNAPSHOT</version>
+	</parent>
 
-    <groupId>com.sos-berlin.jade</groupId>
-    <artifactId>jade-cockpit</artifactId>
-    <name>${project.artifactId}</name>
+	<groupId>com.sos-berlin.jade</groupId>
+	<artifactId>jade-cockpit</artifactId>
+	<name>${project.artifactId}</name>
 
-    <build>
-        <resources>
-    <!--
-            <resource>
-                <directory>src</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-            -->
-        </resources>
-    </build>
+	<build>
+		<resources>
+			<!-- <resource> <directory>src</directory> <excludes> <exclude>**/*.java</exclude> 
+				</excludes> </resource> -->
+		</resources>
+	</build>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.sos-berlin.commons</groupId>
-            <artifactId>credentialstore</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>com.sos-berlin.commons</groupId>
+			<artifactId>credentialstore</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.commons</groupId>
-            <artifactId>sos-settings</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.commons</groupId>
+			<artifactId>sos-settings</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.commons</groupId>
-            <artifactId>sos-configuration</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.commons</groupId>
+			<artifactId>sos-configuration</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jobscheduler</groupId>
-            <artifactId>sos-dialog</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>sos-dialog</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jobscheduler</groupId>
-            <artifactId>sos-mail</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>sos-mail</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jobscheduler</groupId>
-            <artifactId>sos-net</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>sos-net</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jobscheduler</groupId>
-            <artifactId>virtual-file-system</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>virtual-file-system</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jade</groupId>
-            <artifactId>jade-engine</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jade</groupId>
+			<artifactId>jade-engine</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jobscheduler</groupId>
-            <artifactId>jobscheduler-helper</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>jobscheduler-helper</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.jobscheduler</groupId>
-            <artifactId>jobscheduler-object-model</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>jobscheduler-object-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.sos-berlin.commons</groupId>
-            <artifactId>sos-util</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.sos-berlin.commons</groupId>
+			<artifactId>sos-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 
 
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
 
-   
-      <!-- JFace + Eclipse's JFace extensions -->
-   <!-- SWT 
-                    <groupId>swt-repo</groupId>
-   
-   -->
 
-        <dependency>
-            <groupId>org.eclipse.swt</groupId>
-            <artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
-            <version>${swt.version}</version>
-        </dependency>
+		<!-- JFace + Eclipse's JFace extensions -->
+		<!-- SWT <groupId>swt-repo</groupId> -->
 
-        <dependency>
-            <groupId>org.eclipse.ui</groupId>
-            <artifactId>org.eclipse.ui.workbench</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.${swtSuffix}</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
 
-        <dependency>
-            <groupId>org.eclipse.jface</groupId>
-            <artifactId>org.eclipse.jface</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.ui</groupId>
+			<artifactId>org.eclipse.ui.workbench</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.eclipse.jface</groupId>
-            <artifactId>text</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.jface</groupId>
+			<artifactId>org.eclipse.jface</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>runtime</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.jface</groupId>
+			<artifactId>text</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>commands</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.eclipse.equinox</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>commands</artifactId>
+		</dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>org.eclipse.equinox</groupId>
+			<artifactId>common</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.freedesktop.tango</groupId>
+			<artifactId>tango-icon-theme</artifactId>
+			<version>0.8.90</version>
+		</dependency>
+	</dependencies>
 </project>

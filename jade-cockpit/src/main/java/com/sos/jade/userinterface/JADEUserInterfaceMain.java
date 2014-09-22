@@ -1,8 +1,7 @@
 package com.sos.jade.userinterface;
 
 import static com.sos.dialog.Globals.MsgHandler;
-
-import java.net.URL;
+import static com.sos.dialog.swtdesigner.SWTResourceManager.getImageFromResource;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -33,6 +32,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -189,7 +189,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 								actCopy.setText(MsgHandler.newMsg("treenode_menu_Copy").params(strCaption));
-								actCopy.setImageDescriptor(getImage("Copy.gif"));
+								actCopy.setImageDescriptor(getImageDescriptor("Copy.gif"));
 								menuPopUpMenueMgr.add(actCopy);
 
 								actionSave.setText(MsgHandler.newMsg("treenode_menu_Save").params(strCaption));
@@ -199,31 +199,31 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 								menuPopUpMenueMgr.add(actSaveAs);
 
 								actDelete.setText(MsgHandler.newMsg("treenode_menu_Delete").params(strCaption));
-								actDelete.setImageDescriptor(getImage("Delete.gif"));
+								actDelete.setImageDescriptor(getImageDescriptor("Delete.gif"));
 								menuPopUpMenueMgr.add(actDelete);
 
 								actRename.setText(MsgHandler.newMsg("treenode_menu_Rename").params(strCaption));
-								actRename.setImageDescriptor(getImage("Rename.gif"));
+								actRename.setImageDescriptor(getImageDescriptor("Rename.gif"));
 								menuPopUpMenueMgr.add(actRename);
 
 								actPaste.setText(MsgHandler.newMsg("treenode_menu_Paste").params(strCaption));
-								actPaste.setImageDescriptor(getImage("DocumentIn.gif"));
+								actPaste.setImageDescriptor(getImageDescriptor("DocumentIn.gif"));
 								menuPopUpMenueMgr.add(actPaste);
 
 								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 								actNew.setText(MsgHandler.newMsg("treenode_menu_New").params(strCaption));
 								menuPopUpMenueMgr.add(actNew);
-								actNew.setImageDescriptor(getImage("New.gif"));
+								actNew.setImageDescriptor(getImageDescriptor("New.gif"));
 								if (objSelectedSection1.isSourceGen()) {
 									menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 									MenuManager subMenu = new MenuManager(MsgHandler.newMsg("treenode_menu_Create").label(), null);
 									actCreateJobChain.setText(MsgHandler.newMsg("treenode_menu_JobChain").params(strCaption));
-									actCreateJobChain.setImageDescriptor(getImage("Chain.gif"));
+									actCreateJobChain.setImageDescriptor(getImageDescriptor("Chain.gif"));
 									subMenu.add(actCreateJobChain);
 
 									actCreateScript.setText(MsgHandler.newMsg("treenode_menu_Script").params(strCaption));
-									actCreateScript.setImageDescriptor(getImage("Document.gif"));
+									actCreateScript.setImageDescriptor(getImageDescriptor("Document.gif"));
 									subMenu.add(actCreateScript);
 
 									menuPopUpMenueMgr.add(subMenu);
@@ -280,14 +280,26 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		return container;
 	}
 
-	private ImageDescriptor getImage(final String pstrFileName) {
-		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
-		if (url != null) {
-			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
-		}
-		else {
-			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
-		}
+	private ImageDescriptor getImageDescriptor(final String pstrFileName) {
+		return ImageDescriptor.createFromImage(getImage(pstrFileName));
+		//		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
+		//		if (url != null) {
+		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
+		//		}
+		//		else {
+		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
+		//		}
+	}
+
+	private Image getImage(final String pstrFileName) {
+		return SWTResourceManager.getImageFromResource(pstrFileName);
+		//		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
+		//		if (url != null) {
+		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
+		//		}
+		//		else {
+		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
+		//		}
 	}
 
 	private Session	session;
@@ -309,7 +321,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	private void createTabFolder(final JadeTreeViewEntry objTreeViewEntry) {
 		try {
 			if (CompositeBaseClass.gflgCreateControlsImmediate == true) {
-				//				if (tbtmProfileTab == null) {
 				tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getName());
 				tbtmProfileTab.setText(objTreeViewEntry.getTitle());
 				tbtmProfileTab.setData(objTreeViewEntry);
@@ -320,10 +331,11 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				//				// tbtmProfileTab.setData("composite", composite);
 				//				Gridlayout.set4ColumnLayout(composite);
 
-				ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objTreeViewEntry);
-				tbtmProfileTab.setImage(SWTResourceManager.getImage("Profil.gif"));
-				tbtmProfileTab.setComposite(objComposite);
-				objComposite.createTabItemComposite();
+				MainComposite objMainComposite = new MainComposite(tabFolder, objTreeViewEntry);
+				tbtmProfileTab.setImage(getImageFromResource("org/freedesktop/tango/16x16/status/network-idle.png"));
+				tbtmProfileTab.setComposite(objMainComposite);
+				objMainComposite.createTabItemComposite();
+				tbtmProfileTab.setControl(objMainComposite);
 				tabFolder.setSelection(tbtmProfileTab);
 				tabFolder.setRedraw(true);
 			}
@@ -332,7 +344,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 					SOSCTabItem tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getTitle());
 					tbtmProfileTab.setText(objTreeViewEntry.getTitle());
 					tbtmProfileTab.setData(objTreeViewEntry);
-					ISOSTabItem objComposite = new MainComposite(tbtmProfileTab, objTreeViewEntry);
+					ISOSTabItem objComposite = new MainComposite(tabFolder, objTreeViewEntry);
 					tbtmProfileTab.setComposite(objComposite);
 					objComposite.createTabItemComposite();
 					tabFolder.setSelection(tbtmProfileTab);
@@ -453,31 +465,23 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		return objMenuItem;
 	}
 
-	Action			actionExit			= new Action("&Exit@Ctrl+X", getImage("exit.gif")) {
-											@Override
-											public void run() {
-												if (objPersistenceStore != null) {
-													objPersistenceStore.saveWindowPosAndSize();
-												}
-												Shell sShell = Display.getCurrent().getActiveShell();
-												sShell.close();
-												//												sShell.dispose();
-											}
-										};
+	Action	actionNew	= new Action("&New@Ctrl+N", getImageDescriptor("new.gif")) {
+							@Override
+							public void run() {
+							}
+						};
 
-	Action			actionNew			= new Action("&New@Ctrl+N", getImage("new.gif")) {
-											@Override
-											public void run() {
-											}
-										};
-
-	Action			actionOpen			= new Action("&Open@Ctrl+O", getImage("open.gif")) {
+	private String getIconName(final String pstrIcon) {
+		return "org/freedesktop/tango/22x22/" + pstrIcon + ".png";
+	}
+	
+	Action			actionOpen			= new Action("&Open@Ctrl+O", getImageDescriptor(getIconName("actions/document-open"))) {
 											@Override
 											public void run() {
 											}
 										};
 
-	final Action	actExecute			= new Action("", getImage("ExecuteProject.gif")) {
+	final Action	actExecute			= new Action("", getImageDescriptor("ExecuteProject.gif")) {
 											@Override
 											public void run() {
 												try {
@@ -495,7 +499,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 											}
 										};
 
-	final Action	actionBrowseSource	= new Action("", getImage("Document.gif")) {
+	final Action	actionBrowseSource	= new Action("", getImageDescriptor("Document.gif")) {
 											@Override
 											public void run() {
 												try {
@@ -512,19 +516,19 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 											}
 										};
 
-	final Action	actCopy				= new Action("Copy") {
+	final Action	actCopy				= new Action("Copy", getImageDescriptor(getIconName("actions/edit-copy"))) {
 											@Override
 											public void run() {
 												// showMessage("Copy");
 											}
 										};
-	final Action	actDelete			= new Action("Delete") {
+	final Action	actDelete			= new Action("Delete", getImageDescriptor(getIconName("actions/edit-delete"))) {
 											@Override
 											public void run() {
 												// showMessage("Delete");
 											}
 										};
-	final Action	actRename			= new Action("Rename") {
+	final Action	actRename			= new Action("Rename", getImageDescriptor("edit-rename.png")) {
 											@Override
 											public void run() {
 												// showMessage("Rename");
@@ -555,34 +559,93 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 											}
 										};
 
-	final Action	actionSave			= new Action("&Save\tCtrl+S", getImage("save.gif")) {
-											@Override
-											public void run() {
-												try {
-													if ((objSelectedSection = getTreeViewEntry()) != null) {
-														setStatus("Save Source ... " + objSelectedSection.getName());
-														objSelectedSection.getSession().saveConfigurationFile();
-													}
-												}
-												catch (Exception e) {
-													e.printStackTrace();
-												}
+	public class MenueActionBase extends Action {
+		public MenueActionBase(String pstrMenueText, ImageDescriptor pobjImgDescr) {
+			super(pstrMenueText, pobjImgDescr);
+		}
+
+		protected void init(String pstrMenueText, final String pstrAccText, final String pstrImageFileName) {
+			super.setText(pstrMenueText + "\t" + pstrAccText);
+			super.setToolTipText(pstrMenueText + " the changed document");
+			super.setAccelerator(Action.convertAccelerator(pstrAccText));
+			super.setImageDescriptor(getImageDescr(pstrImageFileName));
+		}
+
+		protected ImageDescriptor getImageDescr(final String pstrFileName) {
+			return ImageDescriptor.createFromImage(SWTResourceManager.getImageFromResource(pstrFileName));
+
+			//			URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
+			//			if (url != null) {
+			//				return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
+			//			}
+			//			else {
+			//				return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
+			//			}
+		}
+	}
+
+	Action	actionExit	= new MenueActionExit();
+	public class MenueActionExit extends MenueActionBase {
+		public MenueActionExit() {
+			this("Exit", "Alt+F4", "/org/freedesktop/tango/16x16/actions/system-log-out.png");
+		}
+
+		public MenueActionExit(String pstrMenueText, final String pstrAccText, final String pstrImageFileName) {
+			super(pstrMenueText, null);
+			init(pstrMenueText, pstrAccText, pstrImageFileName);
+		}
+
+		@Override
+		public void run() {
+			if (objPersistenceStore != null) {
+				objPersistenceStore.saveWindowPosAndSize();
+			}
+			Shell sShell = Display.getCurrent().getActiveShell();
+			sShell.close();
+			//												sShell.dispose();
+		}
+
+	}
+	public class MenueActionSave extends MenueActionBase {
+
+		public MenueActionSave() {
+			this("Save", "Ctrl+S", "/org/freedesktop/tango/16x16/actions/document-save.png");
+		}
+
+		public MenueActionSave(String pstrMenueText, final String pstrAccText, final String pstrImageFileName) {
+			super(pstrMenueText, null);
+			init(pstrMenueText, pstrAccText, pstrImageFileName);
+		}
+
+		@Override
+		public void run() {
+			try {
+				if ((objSelectedSection = getTreeViewEntry()) != null) {
+					setStatus("Save Source ... " + objSelectedSection.getName());
+					objSelectedSection.getSession().saveConfigurationFile();
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+	final Action	actionSave	= new MenueActionSave();
+	final Action	actSaveAs	= new Action("SaveAs", getImageDescriptor("SaveAs.gif")) {
+									@Override
+									public void run() {
+										try {
+											if ((objSelectedSection = getTreeViewEntry()) != null) {
+												setStatus("Save Source ... " + objSelectedSection.getName());
+												objSelectedSection.getSession().saveConfigurationFile();
 											}
-										};
-	final Action	actSaveAs			= new Action("SaveAs", getImage("SaveAs.gif")) {
-											@Override
-											public void run() {
-												try {
-													if ((objSelectedSection = getTreeViewEntry()) != null) {
-														setStatus("Save Source ... " + objSelectedSection.getName());
-														objSelectedSection.getSession().saveConfigurationFile();
-													}
-												}
-												catch (Exception e) {
-													e.printStackTrace();
-												}
-											}
-										};
+										}
+										catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
+								};
 
 	private Shell	sShell;
 
@@ -609,7 +672,8 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		fileMenuManager.add(actionSave);
 		fileMenuManager.add(new Separator());
 
-		actionExit.setAccelerator(SWT.CTRL | 'X');
+		///		actionExit.setAccelerator(SWT.CTRL | 'X');
+		actionExit.setAccelerator(SWT.ALT | SWT.F4);
 		fileMenuManager.add(actionExit);
 
 		MenuManager optionsMenuManager = new MenuManager("&Options");

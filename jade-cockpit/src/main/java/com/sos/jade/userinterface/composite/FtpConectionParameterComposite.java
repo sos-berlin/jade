@@ -1,6 +1,5 @@
 package com.sos.jade.userinterface.composite;
 import org.apache.log4j.Logger;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
@@ -10,10 +9,10 @@ public class FtpConectionParameterComposite extends CompositeBaseClass<SOSConnec
 	@SuppressWarnings("unused") private static final String	conSVNVersion	= "$Id$";
 	@SuppressWarnings({ "unused", "hiding" }) private final Logger		logger			= Logger.getLogger(this.getClass());
 
-	public FtpConectionParameterComposite(final CTabItem parent, final SOSConnection2OptionsAlternate objOptions) {
-		this((Composite) parent.getControl(), objOptions);
-	}
-
+//	public FtpConectionParameterComposite(final CTabItem parent, final SOSConnection2OptionsAlternate objOptions) {
+//		this((Composite) parent.getControl(), objOptions);
+//	}
+//
 	public FtpConectionParameterComposite(final Composite parent, final SOSConnection2OptionsAlternate objOptions) {
 		super(parent, objOptions);
 		objJadeOptions = objOptions;

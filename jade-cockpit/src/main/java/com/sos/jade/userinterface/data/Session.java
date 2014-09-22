@@ -43,7 +43,7 @@ public class Session {
 	}
 
 	public SectionsHandler loadJadeConfigurationFile() {
-		return loadJadeConfigurationFile("../jade-engine/src/test/resources/examples/jade_settings.ini");
+		return loadJadeConfigurationFile("src/test/resources/jade_settings.ini");
 	}
 
 	public SectionsHandler loadJadeConfigurationFile(final String pstrFileName) {
