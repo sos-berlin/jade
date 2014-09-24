@@ -49,6 +49,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.Globals;
+import com.sos.dialog.classes.DialogAdapter;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSComposite;
@@ -60,6 +61,7 @@ import com.sos.jade.userinterface.composite.CompositeBaseClass;
 import com.sos.jade.userinterface.composite.LogFileComposite;
 import com.sos.jade.userinterface.composite.MainComposite;
 import com.sos.jade.userinterface.composite.SourceBrowserComposite;
+import com.sos.jade.userinterface.composite.createNewProfile;
 import com.sos.jade.userinterface.data.JadeTreeViewEntry;
 import com.sos.jade.userinterface.data.SectionsHandler;
 import com.sos.jade.userinterface.data.Session;
@@ -84,6 +86,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		Display display = Display.getCurrent();
 		BasicConfigurator.configure();
 		RootLogger.getRoot().setLevel(Level.DEBUG);
+
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addStatusLine();
@@ -100,6 +103,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		Globals.stFontRegistry.put("code", new FontData[] { new FontData("Courier New", 10, SWT.NORMAL) });
 		Globals.stFontRegistry.put("text", new FontData[] { new FontData("Arial", 10, SWT.NORMAL) });
 		Globals.stFontRegistry.put("tabitem-text", new FontData[] { new FontData("", 9, SWT.NORMAL) });
+		Globals.stFontRegistry.put("dirty-text", new FontData[] { new FontData("Arial", 10, SWT.BOLD | SWT.ITALIC) });
 
 		Display display = parent.getDisplay();
 		assert display != null;
@@ -118,10 +122,15 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		// Globals.stColorRegistry.put("CompositeBackGround", new
 		// RGB(236,252,113)); // var. 5 = #ECFC71 = rgb(236,252,113)
 		// var. 5 = #FFFFB0 = rgb(255,255,176)
-		Globals.stColorRegistry.put("CompositeBackGround", new RGB(255, 255, 176)); //
+		Globals.stColorRegistry.put("CompositeBackGround", new RGB(245, 255, 255)); //  F5FFFF  light blue
+
+		//		Globals.stColorRegistry.put("CompositeBackGround", new RGB(255, 255, 176)); //
 
 		Globals.setApplicationWindow(this);
 		Globals.MsgHandler = new JADEMsg("init");
+
+		statusLineManager.getControl().setBackground(Globals.getCompositeBackground());
+
 		parent.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(final DisposeEvent arg0) {
@@ -211,13 +220,14 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 								menuPopUpMenueMgr.add(actPaste);
 
 								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-								actNew.setText(MsgHandler.newMsg("treenode_menu_New").params(strCaption));
-								menuPopUpMenueMgr.add(actNew);
-								actNew.setImageDescriptor(getImageDescriptor("New.gif"));
+								actionNew.setText(MsgHandler.newMsg("treenode_menu_New").params(strCaption));
+								menuPopUpMenueMgr.add(actionNew);
+
 								if (objSelectedSection1.isSourceGen()) {
 									menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-									MenuManager subMenu = new MenuManager(MsgHandler.newMsg("treenode_menu_Create").label(), null);
+									MenuManager subMenu = new MenuManager(MsgHandler.newMsg("treenode_menu_Create").params(strCaption),
+											getImageDescriptor("jobscheduler_rabbit.png"), "");
 									actCreateJobChain.setText(MsgHandler.newMsg("treenode_menu_JobChain").params(strCaption));
 									actCreateJobChain.setImageDescriptor(getImageDescriptor("Chain.gif"));
 									subMenu.add(actCreateJobChain);
@@ -375,6 +385,8 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		return null;
 	}
 
+	StatusLineManager	statusLineManager	= null;
+
 	/**
 	 * Create the status line manager.
 	 * 
@@ -382,9 +394,8 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	 */
 	@Override
 	protected StatusLineManager createStatusLineManager() {
-		StatusLineManager statusLineManager = new StatusLineManager();
+		statusLineManager = new StatusLineManager();
 		statusLineManager.setCancelEnabled(true);
-		//		statusLineManager.getControl().setBackground(Globals.getCompositeBackground());
 		return statusLineManager;
 	}
 
@@ -414,6 +425,8 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("JADEUserInterface");
+		newShell.setBackground(Globals.getCompositeBackground());
+		newShell.setImage(SWTResourceManager.getImageFromResource("jade-cockpit.ico"));
 	}
 
 	/**
@@ -468,13 +481,39 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	Action	actionNew	= new Action("&New@Ctrl+N", getImageDescriptor("new.gif")) {
 							@Override
 							public void run() {
+								if ((objSelectedSection = getTreeViewEntry()) != null) {
+									DialogAdapter objDA = new DialogAdapter(getShell(), "newJadeProfile");
+									// set Action
+									// set CallBack
+									JADEOptions objJO = new JADEOptions();
+									switch (objSelectedSection.getType()) {
+										case IsRoot:
+											break;
+
+										case profile:
+										case profiles:
+										case profiles_root:
+											objJO.isFragment.setFalse();
+											objDA.open(new createNewProfile(objDA.createContents(), objJO));
+											break;
+
+										case fragments_root:
+										case fragment:
+											objJO.isFragment.setTrue();
+											objDA.open(new createNewProfile(objDA.createContents(), objJO));
+											break;
+
+										default:
+											break;
+									}
+								}
 							}
 						};
 
 	private String getIconName(final String pstrIcon) {
 		return "org/freedesktop/tango/22x22/" + pstrIcon + ".png";
 	}
-	
+
 	Action			actionOpen			= new Action("&Open@Ctrl+O", getImageDescriptor(getIconName("actions/document-open"))) {
 											@Override
 											public void run() {
@@ -538,12 +577,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 											@Override
 											public void run() {
 												// showMessage("Paste");
-											}
-										};
-	final Action	actNew				= new Action("New") {
-											@Override
-											public void run() {
-												// showMessage("New");
 											}
 										};
 	final Action	actCreateScript		= new Action("Script") {

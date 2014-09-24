@@ -23,7 +23,7 @@ public class FilePollingComposite extends CompositeBaseClass<JADEOptions> {
 
 	@Override public void createComposite() {
 		{
-			objCC.getInvisibleSeparator();
+//			objCC.getInvisibleSeparator();
 
 			objCC.getControl(objJadeOptions.poll_interval);
 			objCC.getLabel(2);

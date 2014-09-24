@@ -23,7 +23,7 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 	private JSIniFile			objIniFile		= null;
 	private enuTreeItemType		enuType			= enuTreeItemType.IsRoot;
 	public enum enuTreeItemType {
-		IsRoot, fragments_root, profiles_root, profiles, profile, globals, fragments_used, transfer_history, servers_used, source_servers, target_servers;
+		IsRoot, fragments_root, profiles_root, profiles, profile, fragment, globals, fragments_used, transfer_history, servers_used, source_servers, target_servers;
 	}
 
 	private JADEOptions	objOptions	= null;
@@ -154,7 +154,7 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 
 	@Override
 	public void ValueHasChanged(String pstrNewValue) {
-		if (objTreeItem != null) {
+		if (objTreeItem != null && objTreeItem.isDisposed() == false) {
 			String strT = objTreeItem.getText();
 			if (strT.startsWith("*") == false) {
 				strT = "*> " + strT;

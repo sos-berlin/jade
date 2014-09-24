@@ -7,6 +7,7 @@ import static com.sos.dialog.Globals.MsgHandler;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -128,6 +129,16 @@ public class ControlCreator {
 		Label label = new Label(objParentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 4, 1));
 		label.setBackground(Globals.getCompositeBackground());
+		return label;
+	}
+
+
+	public Control getSeparator(final String pstrI18NKey) {
+		CLabel label = new CLabel(objParentComposite, SWT.SHADOW_OUT | SWT.CENTER);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 4, 1));
+		label.setBackground(Globals.getCompositeBackground());
+		label.setText(MsgHandler.newMsg(pstrI18NKey).label());
+		label.setToolTipText(MsgHandler.newMsg(pstrI18NKey).tooltip());
 		return label;
 	}
 

@@ -36,23 +36,24 @@ import com.sos.dialog.classes.SOSCheckBox;
  *
  */
 public class ControlHelper implements IValueChangedListener {
-	public static final String	conColor4TEXT				= "text";
-	public static final String	conColor4INCLUDED_OPTION	= "IncludedOption";
-	public static final String	conMANDATORY_FIELD_COLOR	= "MandatoryFieldColor";
-	public static final String	conCOLOR4_FIELD_HAS_FOCUS	= "Color4FieldHasFocus";
+	public static final String			conColor4TEXT				= "text";
+	public static final String			conColor4DirtyField			= "dirty-text";
+	public static final String			conColor4INCLUDED_OPTION	= "IncludedOption";
+	public static final String			conMANDATORY_FIELD_COLOR	= "MandatoryFieldColor";
+	public static final String			conCOLOR4_FIELD_HAS_FOCUS	= "Color4FieldHasFocus";
 	@SuppressWarnings("unused")
-	private final String		conClassName				= this.getClass().getSimpleName();
+	private final String				conClassName				= this.getClass().getSimpleName();
 	@SuppressWarnings("unused")
-	private static final String	conSVNVersion				= "$Id$";
-	private final Logger		logger						= Logger.getLogger(this.getClass());
-	private Control				objControl					= null;
-	private boolean				flgIsDirty					= false;
-	private Label				objLabel					= null;
-	private SOSOptionElement	objOptionElement			= null;
+	private static final String			conSVNVersion				= "$Id$";
+	private final Logger				logger						= Logger.getLogger(this.getClass());
+	private Control						objControl					= null;
+	private boolean						flgIsDirty					= false;
+	private Label						objLabel					= null;
+	private SOSOptionElement			objOptionElement			= null;
 
 	// a dirty hack
-	public static IValueChangedListener objValueChangedListener = null;
-	
+	public static IValueChangedListener	objValueChangedListener		= null;
+
 	// parent für callbacks fehlt ...
 	/**
 	 *
@@ -106,7 +107,8 @@ public class ControlHelper implements IValueChangedListener {
 				objText.setEditable(false);
 			}
 			objText.addModifyListener(new ModifyListener() {
-				@Override public void modifyText(final ModifyEvent arg0) {
+				@Override
+				public void modifyText(final ModifyEvent arg0) {
 					flgIsDirty = true;
 				}
 			});
@@ -120,7 +122,8 @@ public class ControlHelper implements IValueChangedListener {
 				objCombo.setItems(objValueList.getValueList());
 			}
 			objCombo.addModifyListener(new ModifyListener() {
-				@Override public void modifyText(final ModifyEvent arg0) {
+				@Override
+				public void modifyText(final ModifyEvent arg0) {
 					flgIsDirty = true;
 				}
 			});
@@ -138,13 +141,15 @@ public class ControlHelper implements IValueChangedListener {
 				objCombo.setItems(objValueList.getValueList());
 			}
 			objCombo.addModifyListener(new ModifyListener() {
-				@Override public void modifyText(final ModifyEvent arg0) {
+				@Override
+				public void modifyText(final ModifyEvent arg0) {
 					flgIsDirty = true;
 				}
 			});
 			objCombo.addTraverseListener(changeReturn2Tab());
 		}
 		if (objControl instanceof Button || objControl instanceof SOSCheckBox) {
+			objControl.setBackground(Globals.getCompositeBackground());
 			if (pobjOptionElement instanceof SOSOptionBoolean) {
 				SOSOptionBoolean objBoolean = (SOSOptionBoolean) objOptionElement;
 				((Button) objControl).setSelection(objBoolean.value());
@@ -153,22 +158,24 @@ public class ControlHelper implements IValueChangedListener {
 			}
 			if (objControl instanceof SOSCheckBox) {
 				objControl.addTraverseListener(changeReturn2Tab());
-				objControl.setBackground(Globals.getCompositeBackground());
 			}
 		}
 		objControl.addDisposeListener(new DisposeListener() {
-			@Override public void widgetDisposed(final DisposeEvent e) {
+			@Override
+			public void widgetDisposed(final DisposeEvent e) {
 				removeListeners((Control) e.getSource());
 			}
 		});
 		FocusAdapter objFocusListener = new FocusAdapter() {
-			@Override public void focusGained(final FocusEvent e) {
+			@Override
+			public void focusGained(final FocusEvent e) {
 				Control objC = (Control) e.getSource();
 				setFocusColor(objC);
 				Globals.setStatus(objOptionElement.Description());
 			}
 
-			@Override public void focusLost(final FocusEvent e) {
+			@Override
+			public void focusLost(final FocusEvent e) {
 				flgControlValueInError = false;
 				final Control objC = (Control) e.getSource();
 				logger.debug("focusLost: " + objC.getToolTipText());
@@ -189,7 +196,8 @@ public class ControlHelper implements IValueChangedListener {
 				}
 				if (flgControlValueInError == true) {
 					Display.getCurrent().asyncExec(new Runnable() {
-						@Override public void run() {
+						@Override
+						public void run() {
 							objC.setFocus();
 						}
 					});
@@ -197,7 +205,7 @@ public class ControlHelper implements IValueChangedListener {
 			}
 		};
 
-		objControl.addFocusListener(objFocusListener) ;
+		objControl.addFocusListener(objFocusListener);
 		flgIsDirty = false;
 	}
 
@@ -207,7 +215,8 @@ public class ControlHelper implements IValueChangedListener {
 
 	private TraverseListener changeReturn2Tab() {
 		TraverseListener tl = new TraverseListener() {
-			@Override public void keyTraversed(final TraverseEvent e) {
+			@Override
+			public void keyTraversed(final TraverseEvent e) {
 				e.doit = true;
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					if ((e.stateMask & SWT.SHIFT) != 0)
@@ -265,6 +274,10 @@ public class ControlHelper implements IValueChangedListener {
 		}
 	}
 
+	public void setDirtyFont(final Control objControl) {
+		objControl.setFont(Globals.stFontRegistry.get(conColor4DirtyField));
+	}
+
 	/**
 	 * 
 	*
@@ -283,11 +296,16 @@ public class ControlHelper implements IValueChangedListener {
 		else {
 			objControl.setBackground(Globals.getFieldBackground());
 		}
+		if (objOptionElement1.getControlType().equals("checkbox")) {
+			objControl.setBackground(Globals.getCompositeBackground());
+		}
 		if (flgIsDirty) {
+			setDirtyFont(objControl);
 		}
 	}
 
-	@Override// IValueChangedListener from SOSOptionElement (every time an option is changed this listener is called)
+	@Override
+	// IValueChangedListener from SOSOptionElement (every time an option is changed this listener is called)
 	public void ValueHasChanged(final String pstrNewValue) {
 		logger.debug("value changed to " + pstrNewValue + " (name of control is:  " + objControl.getClass().getName());
 		if (objControl.isDisposed() == true) {

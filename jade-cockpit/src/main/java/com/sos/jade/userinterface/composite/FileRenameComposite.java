@@ -4,7 +4,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
 import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.jade.userinterface.ControlCreator;
 
 public class FileRenameComposite extends CompositeBaseClass<JADEOptions> {
@@ -14,10 +13,6 @@ public class FileRenameComposite extends CompositeBaseClass<JADEOptions> {
 	private final Logger	logger			= Logger.getLogger(this.getClass());
 	public final String		conSVNVersion	= "$Id: BackgroundServiceComposite.java 21704 2013-12-29 22:35:13Z kb $";
 
-	public FileRenameComposite(final SOSCTabItem parent, final JADEOptions objOptions) {
-		this((Composite) parent.getControl(), objOptions);
-	}
-
 	public FileRenameComposite(final Composite parent, final JADEOptions objOptions) {
 		super(parent, objOptions);
 		if (gflgCreateControlsImmediate == true) {
@@ -26,7 +21,7 @@ public class FileRenameComposite extends CompositeBaseClass<JADEOptions> {
 	}
 
 	@Override public void createComposite() {
-		objCC.getInvisibleSeparator();
+//		objCC.getInvisibleSeparator();
 		{
 			Group group_1 = objCC.getGroup("rename_general");
 			@SuppressWarnings("hiding") ControlCreator objCC = new ControlCreator(group_1);

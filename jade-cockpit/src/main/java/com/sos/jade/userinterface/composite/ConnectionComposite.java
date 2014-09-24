@@ -19,10 +19,6 @@ public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 	private int						intWhatType				= 0;
 	private JADEOptions				objOptions				= null;
 
-	public ConnectionComposite(final SOSCTabItem parent, final JADEOptions objOptions, final int pWhatType) {
-		this((Composite) parent.getControl(), objOptions, pWhatType);
-	}
-
 	public ConnectionComposite(final Composite parent, final JADEOptions pobjOptions, final int pWhatType) {
 		super(parent, pobjOptions);
 		objConnectionOptions = pobjOptions.getConnectionOptions();

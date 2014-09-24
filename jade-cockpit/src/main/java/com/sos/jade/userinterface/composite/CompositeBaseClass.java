@@ -15,6 +15,7 @@ import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.dialog.Globals;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
+import com.sos.dialog.interfaces.ICompositeBaseAbstract;
 import com.sos.dialog.interfaces.ISOSTabItem;
 import com.sos.dialog.layouts.Gridlayout;
 import com.sos.jade.userinterface.ControlCreator;
@@ -23,7 +24,7 @@ import com.sos.jade.userinterface.ControlCreator;
  * @author KB
  *
  */
-public abstract class CompositeBaseClass<T> extends Composite implements ISOSTabItem {
+public abstract class CompositeBaseClass<T> extends Composite implements ISOSTabItem, ICompositeBaseAbstract {
 	private final String		conClassName				= this.getClass().getSimpleName();
 	@SuppressWarnings("unused")
 	private static final String	conSVNVersion				= "$Id$";
@@ -34,14 +35,7 @@ public abstract class CompositeBaseClass<T> extends Composite implements ISOSTab
 	protected Composite			composite					= this;
 	public static boolean		gflgCreateControlsImmediate	= true;
 
-	//	public CompositeBaseClass(final SOSCTabItem pobjCTabItem, final T objOptions) {
-	//		this(pobjCTabItem.getParent(), objOptions);
-	//		pobjCTabItem.setControl(this);
-	//		pobjCTabItem.setComposite(this);
-	//		pobjCTabItem.setData("composite", this);
-	//	}
-	//
-	private static int			intCompositeStyle			= SWT.None ; // .H_SCROLL | SWT.V_SCROLL;
+	private static int			intCompositeStyle			= SWT.None;														// .H_SCROLL | SWT.V_SCROLL;
 
 	public CompositeBaseClass(final SOSCTabFolder pobjCTabFolder, final T objOptions) {
 		super(pobjCTabFolder, intCompositeStyle);
@@ -63,7 +57,7 @@ public abstract class CompositeBaseClass<T> extends Composite implements ISOSTab
 	private void getControlCreator(final Composite pobjParentComposite) {
 		composite = pobjParentComposite;
 		objParent = pobjParentComposite;
-		//		Gridlayout.set4ColumnLayout(composite);
+//				Gridlayout.set4ColumnLayout(composite);
 		setLayout(Gridlayout.get4ColumnLayout());
 		objCC = new ControlCreator(this);
 		//		objCC.getInvisibleSeparator();
@@ -130,6 +124,24 @@ public abstract class CompositeBaseClass<T> extends Composite implements ISOSTab
 		tbtmItem.setComposite((ISOSTabItem) pobjComposite);
 		tbtmItem.setControl(pobjComposite);
 	}
+
+	@Override
+	public void createGroup(final Composite parent) {
+	};
+
+	@Override
+	public void init() {
+	};
+
+	@Override
+	public Composite createComposite(final Composite parent) {
+		return this;
+	};
+
+	@Override
+	public String getWindowTitle() {
+		return "Window-Title";
+	};
 
 	@Override
 	protected void checkSubclass() {

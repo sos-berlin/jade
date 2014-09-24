@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.dialog.classes.SOSCTabItem;
 
 public class BackgroundServiceComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger				= Logger.getLogger(BackgroundServiceComposite.class);
@@ -16,10 +15,6 @@ public class BackgroundServiceComposite extends CompositeBaseClass<JADEOptions> 
 	private Text										tbxBSPortNumber		= null;
 	private CCombo										cboBSTransferMethod	= null;
 	private Button										btnAppendFiles		= null;
-
-	public BackgroundServiceComposite(final SOSCTabItem parent, final JADEOptions objOptions) {
-		this((Composite) parent.getControl(), objOptions);
-	}
 
 	public BackgroundServiceComposite(final Composite parent, final JADEOptions objOptions) {
 		super(parent, objOptions);
@@ -31,7 +26,7 @@ public class BackgroundServiceComposite extends CompositeBaseClass<JADEOptions> 
 
 	@Override public void createComposite() { 
 		{
-			objCC.getInvisibleSeparator();
+//			objCC.getInvisibleSeparator();
 
 			btnAppendFiles = (Button) objCC.getControl(objJadeOptions.SendTransferHistory);
 			btnAppendFiles.addSelectionListener(EnableFieldsListener);
