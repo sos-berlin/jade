@@ -9,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.sos.jadevaadincockpit.data.JadeSettingsFile;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
 import com.sos.jadevaadincockpit.globals.SessionAttributes;
@@ -23,7 +22,6 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.UI;
 
 @Theme("jadevaadincockpit")

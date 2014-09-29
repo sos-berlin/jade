@@ -16,8 +16,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseListener;
 
-public class TextInputDialog extends Window implements ClickListener {
+public class TextInputDialog extends Window implements ClickListener, CloseListener {
 	private static final long serialVersionUID = -8446446811658321342L;
 	
 	private FormLayout layout = new FormLayout();
@@ -62,6 +63,8 @@ public class TextInputDialog extends Window implements ClickListener {
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		layout.setWidth("100%");
+		
+		addCloseListener(this);
 		
 		/**
 		 * FIXME This seems like an awkward workaround. The ShorcutListener has to be removed
@@ -118,6 +121,12 @@ public class TextInputDialog extends Window implements ClickListener {
 				callback.onDialogResult(true, inputField.getValue());
 			}
 		}
+	}
+	
+	@Override
+	public void windowClose(CloseEvent e) {
+		// dialog closed, fire callback
+		callback.onDialogResult(false, inputField.getValue());
 	}
 	
 	/**
@@ -208,10 +217,9 @@ public class TextInputDialog extends Window implements ClickListener {
 		
 		/**
 		 * 
-		 * @param isOk
-		 * @param input
+		 * @param isOk True if OK button was selected, false otherwise.
+		 * @param input The user input String.
 		 */
 		public void onDialogResult(boolean isOk, String input);
 	}
-
 }

@@ -116,7 +116,7 @@ public class ProfileTreeActionHandler implements Handler {
 				
 			} else if (action == ADD_PROFILE) {
 				
-				TextInputDialog dialog = new TextInputDialog("Add Profile", "", new TextInputDialog.Callback() {
+				TextInputDialog dialog = new TextInputDialog("Add Profile", "Please enter a name.", new TextInputDialog.Callback() {
 					
 					@Override
 					public void onDialogResult(boolean isOk, String input) {
@@ -137,7 +137,23 @@ public class ProfileTreeActionHandler implements Handler {
 
 			} else if (action == RENAME_FILE) {
 				
-				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
+				TextInputDialog dialog = new TextInputDialog("Rename File", "Please enter a new name.", new TextInputDialog.Callback() {
+					
+					@Override
+					public void onDialogResult(boolean isOk, String input) {
+						
+						if (isOk) {
+							if (!input.endsWith(".ini")) { // TODO
+								input = input.concat(".ini");
+							}
+							JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().renameSettingsFile(target, input);
+						}
+					}
+				});
+				dialog.setEmptyInputAllowed(false);
+				dialog.setEmptyInputMessage("Please enter a name.");
+				
+				UI.getCurrent().addWindow(dialog);
 				
 //			} else if (action == UPDATE_INCLUDES) { // TODO
 //				
@@ -191,7 +207,20 @@ public class ProfileTreeActionHandler implements Handler {
 
 			} else if (action == RENAME_PROFILE) {
 				
-				Notification.show(new JadeCockpitMsg("jade_msg_I_0001").label());
+				TextInputDialog dialog = new TextInputDialog("Rename Profile", "Please enter a new name.", new TextInputDialog.Callback() {
+					
+					@Override
+					public void onDialogResult(boolean isOk, String input) {
+						
+						if (isOk) {
+							JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().renameProfile(target, input);
+						}
+					}
+				});
+				dialog.setEmptyInputAllowed(false);
+				dialog.setEmptyInputMessage("Please enter a name.");
+				
+				UI.getCurrent().addWindow(dialog);
 				
 			} else if (action == DELETE_PROFILE) {
 				

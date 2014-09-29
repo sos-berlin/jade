@@ -1,5 +1,6 @@
 package com.sos.jadevaadincockpit.data;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -202,7 +203,6 @@ public class JadeSettingsFile extends ProfileContainer {
 			while (optionsFromSettingsFileIterator.hasNext()) {
 				String optionName = optionsFromSettingsFileIterator.next();
 				String optionValue = optionsFromSettingsFile.get(optionName);
-				System.out.println(profileName + " --- " + optionName + " = " + optionValue);
 				
 				profile.addEntry(optionName, optionValue);
 			}
@@ -252,11 +252,6 @@ public class JadeSettingsFile extends ProfileContainer {
 					
 					Object profileId = profileContainer.addProfileItem(name, parentId);
 					
-					/* FIXME this seems weird. what is "jadeConfigurationFile.SectionName(name)" good for?
-					JSIniFile jadeConfigurationFile = (JSIniFile) profileContainer.getItem(parentId).getItemProperty(ProfileContainer.PROPERTY.JADESETTINGSFILE).getValue();
-					jadeConfigurationFile.SectionName(name);
-					item.getItemProperty(ProfileContainer.PROPERTY.JADESETTINGSFILE).setValue(jadeConfigurationFile);
-					*/
 					JadevaadincockpitUI.getCurrent().getMainView().getProfileTree().setValue(profileId);
 					returnValue = true;
 				}
@@ -280,6 +275,47 @@ public class JadeSettingsFile extends ProfileContainer {
 		
 		// delete profile from container
 		profileContainer.removeItemRecursively(target);
+		
+	}
+	
+	/**
+	 * Rename a settings file.
+	 * @param itemId The id of the settings file
+	 * @param newName The new name
+	 */
+	@SuppressWarnings("unchecked")
+	public void renameSettingsFile(Object itemId, String newName) {
+		// get the item from the container representing the settings file
+		Item settingsFileItem = profileContainer.getItem(itemId);
+		// rename the item
+		settingsFileItem.getItemProperty(ProfileContainer.PROPERTY.NAME).setValue(newName);
+		// get the new filepath
+		String newPath = new File(ApplicationAttributes.getBasePath() + "/WEB-INF/uploads/" + newName).getAbsolutePath();
+		// set the filepath property to the new filepath
+		settingsFileItem.getItemProperty(ProfileContainer.PROPERTY.FILEPATH).setValue(newPath);
+		// change jadeoptions.settings for all profiles
+		Iterator<?> profileIterator = profileContainer.getChildren(itemId).iterator();
+		while(profileIterator.hasNext()) {
+			Item profile = profileContainer.getItem(profileIterator.next());
+			JADEOptions jadeoptions = (JADEOptions) profile.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
+			jadeoptions.settings.Value(newPath);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param itemId The id of the profile
+	 * @param newName The new name
+	 */
+	@SuppressWarnings("unchecked")
+	public void renameProfile(Object itemId, String newName) {
+		// get the item from the container representing the profile
+		Item profileItem = profileContainer.getItem(itemId);
+		// rename the item
+		profileItem.getItemProperty(ProfileContainer.PROPERTY.NAME).setValue(newName);
+		// change jadeoptions.profile
+		JADEOptions jadeoptions = (JADEOptions) profileItem.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
+		jadeoptions.profile.Value(newName);
 		
 	}
 	

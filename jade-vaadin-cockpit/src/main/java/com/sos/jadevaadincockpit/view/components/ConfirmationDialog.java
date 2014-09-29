@@ -7,13 +7,14 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseListener;
 
 /**
  * 
  * @author JS
  *
  */
-public class ConfirmationDialog extends Window implements ClickListener {
+public class ConfirmationDialog extends Window implements ClickListener, CloseListener {
 	private static final long serialVersionUID = -8446446811658321342L;
 	
 	private FormLayout layout = new FormLayout();
@@ -60,6 +61,12 @@ public class ConfirmationDialog extends Window implements ClickListener {
 	public void buttonClick(ClickEvent event) {
 		close();
 		callback.onDialogResult(event.getButton() == okButton);
+	}
+
+	@Override
+	public void windowClose(CloseEvent e) {
+		// dialog closed, fire callback
+		callback.onDialogResult(false);
 	}
 	
 	/**
@@ -116,9 +123,8 @@ public class ConfirmationDialog extends Window implements ClickListener {
 	public interface Callback {
 		/**
 		 * 
-		 * @param isOk
+		 * @param isOk True if OK button was selected, false otherwise.
 		 */
 		public void onDialogResult(boolean isOk);
 	}
-
 }
