@@ -57,4 +57,12 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
 		objOptions.profile.Value("copyWithAsciiMode");
 		super.testUseProfileWithoutCreatingTestFiles();
 	}
+	
+	@Test
+	public void testUseProfileWithOperationReceive() throws Exception {
+		final String conMethodName = conClassName + "::testUseProfileWithOperationReceive";
+		objOptions.settings.Value(strSettingsFile);
+		objOptions.profile.Value("receive");
+		super.testUseProfileWithoutCreatingTestFiles();
+	}
 }

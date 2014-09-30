@@ -292,10 +292,9 @@ public class JadeTestFtpAsSource extends JadeTestBase {
 		super.testUseProfileWithoutCreatingTestFiles();
 	}
 
-	@Override
 	@Test
-	public void testUseProfileWithoutCreatingTestFiles() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfileWithoutCreatingTestFiles";
+	public void testUseProfileWithoutOperationGetList() throws Exception {
+		final String conMethodName = conClassName + "::testUseProfileWithoutOperationGetList";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("getList_example_ftp");
 		super.testUseProfileWithoutCreatingTestFiles();
