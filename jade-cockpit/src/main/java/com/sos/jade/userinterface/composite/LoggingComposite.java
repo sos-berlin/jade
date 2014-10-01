@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Text;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSCheckBox;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class LoggingComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused") private final Logger	logger					= Logger.getLogger(LoggingComposite.class);

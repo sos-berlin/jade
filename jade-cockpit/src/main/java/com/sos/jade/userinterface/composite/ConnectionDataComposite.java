@@ -14,6 +14,7 @@ import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSCheckBox;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
 	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger						= Logger.getLogger(ConnectionDataComposite.class);

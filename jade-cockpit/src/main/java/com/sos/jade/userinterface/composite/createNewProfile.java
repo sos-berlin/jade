@@ -3,6 +3,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation.enuJadeOperations;
+import com.sos.dialog.components.CompositeBaseClass;
 import com.sos.dialog.components.WaitCursor;
 import com.sos.dialog.message.ErrorLog;
 

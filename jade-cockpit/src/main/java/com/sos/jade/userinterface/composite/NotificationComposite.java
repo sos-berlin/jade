@@ -7,6 +7,7 @@ import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.classes.SOSCTabItem;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class NotificationComposite extends CompositeBaseClass<JADEOptions> { 
 	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger			= Logger.getLogger(NotificationComposite.class);

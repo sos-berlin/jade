@@ -3,6 +3,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class FileRegExComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused")

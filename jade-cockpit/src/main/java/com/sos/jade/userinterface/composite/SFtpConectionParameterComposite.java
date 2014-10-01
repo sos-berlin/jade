@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.dialog.classes.SOSCheckBox;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class SFtpConectionParameterComposite extends CompositeBaseClass<SOSConnection2OptionsAlternate> {
 	@SuppressWarnings("unused") 	private final String		conClassName	= this.getClass().getSimpleName();

@@ -4,6 +4,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class ZipConectionParameterComposite extends CompositeBaseClass<SOSConnection2OptionsAlternate> {
 	@SuppressWarnings("unused") 	private final String		conClassName	= this.getClass().getSimpleName();

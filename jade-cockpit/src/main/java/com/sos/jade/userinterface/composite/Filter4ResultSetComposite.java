@@ -3,6 +3,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class Filter4ResultSetComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused") private final String		conClassName	= this.getClass().getSimpleName();

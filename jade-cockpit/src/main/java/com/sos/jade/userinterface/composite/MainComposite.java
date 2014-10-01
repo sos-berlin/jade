@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.dialog.classes.SOSCTabFolder;
+import com.sos.dialog.components.CompositeBaseClass;
 import com.sos.jade.userinterface.data.JadeTreeViewEntry;
 
 public class MainComposite extends CompositeBaseClass<JADEOptions> {
@@ -43,7 +44,8 @@ public class MainComposite extends CompositeBaseClass<JADEOptions> {
 			SOSCTabFolder objMainTabFolder = new SOSCTabFolder(this, SWT.NONE);
 			objMainTabFolder.ItemsHasClose = false;
 
-			createTab(objMainTabFolder, new OperationComposite(objMainTabFolder, objJadeOptions), "tab_Operation");
+			OperationComposite objOpC = new OperationComposite(objMainTabFolder, objJadeOptions);
+			createTab(objMainTabFolder, objOpC , "tab_Operation");
 			createTab(objMainTabFolder, new ConnectionComposite(objMainTabFolder, objJadeOptions, 1), "tab_Source");
 			//			objConnectionComposite.createTabItemComposite();
 
@@ -77,6 +79,7 @@ public class MainComposite extends CompositeBaseClass<JADEOptions> {
 			createTab(objMainTabFolder, new JITLComposite(objMainTabFolder, objJadeOptions), "tab_JITL");
 			createTab(objMainTabFolder, new PollEngineComposite(objMainTabFolder, objJadeOptions), "tab_PollEngine");
 			// TODO letzte Position global merken,. auch in die Preferenzen schreiben.
+			objOpC.createTabItemComposite();
 			objMainTabFolder.setSelection(0);
 		}
 	}

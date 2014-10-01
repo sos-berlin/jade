@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 	private final String		conClassName	= this.getClass().getSimpleName();

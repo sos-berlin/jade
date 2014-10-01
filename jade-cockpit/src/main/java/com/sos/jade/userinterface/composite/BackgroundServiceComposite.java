@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class BackgroundServiceComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger				= Logger.getLogger(BackgroundServiceComposite.class);

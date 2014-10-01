@@ -28,11 +28,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -47,6 +50,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 import com.sos.DataExchange.Options.JADEOptions;
@@ -57,14 +61,14 @@ import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSComposite;
 import com.sos.dialog.classes.WindowsSaver;
+import com.sos.dialog.components.CompositeBaseClass;
+import com.sos.dialog.components.ControlHelper;
 import com.sos.dialog.components.SOSCursor;
 import com.sos.dialog.interfaces.IDialogActionHandler;
-import com.sos.dialog.interfaces.ISOSTabItem;
 import com.sos.dialog.message.DialogMsg;
 import com.sos.dialog.message.ErrorLog;
 import com.sos.dialog.swtdesigner.SWTResourceManager;
 import com.sos.jade.userinterface.adapters.JADEEngineAdapter;
-import com.sos.jade.userinterface.composite.CompositeBaseClass;
 import com.sos.jade.userinterface.composite.LogFileComposite;
 import com.sos.jade.userinterface.composite.MainComposite;
 import com.sos.jade.userinterface.composite.SourceBrowserComposite;
@@ -94,6 +98,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		BasicConfigurator.configure();
 		RootLogger.getRoot().setLevel(Level.DEBUG);
 		ErrorLog.gstrApplication = "JADECockpit";
+		CompositeBaseClass.gflgCreateControlsImmediate = false;
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addStatusLine();
@@ -303,6 +308,17 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				treeViewer.setInput(initializeSession());
 				treeViewer.expandAll();
 				tabFolder = new SOSCTabFolder(sashForm, SWT.BORDER);
+				tabFolder.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(final SelectionEvent event) {
+						logger.debug("CTabFolder Item selected");
+						CTabItem objSelectedItem = tabFolder.getSelection();
+						JadeTreeViewEntry objTVE = (JadeTreeViewEntry) objSelectedItem.getData();
+						TreeItem objTI = objTVE.getTreeItem();
+						treeViewer.getTree().setSelection(objTI);
+						treeViewer.setSelection(treeViewer.getSelection(), true);  
+					}
+				});
 				sashForm.setWeights(new int[] { 225, 683 });
 				sashForm.setVisible(true);
 			}
@@ -340,7 +356,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 	private void createTabFolder(final JadeTreeViewEntry objTreeViewEntry) {
 		try (SOSCursor objCurs = new SOSCursor(SWT.CURSOR_WAIT)) {
-			if (CompositeBaseClass.gflgCreateControlsImmediate == true) {
 				tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getName());
 				tbtmProfileTab.setText(objTreeViewEntry.getTitle());
 				tbtmProfileTab.setData(objTreeViewEntry);
@@ -358,19 +373,18 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				tbtmProfileTab.setControl(objMainComposite);
 				tabFolder.setSelection(tbtmProfileTab);
 				tabFolder.setRedraw(true);
-			}
-			else {
-				if (tabFolder.setFocus(objTreeViewEntry) == null) {
-					SOSCTabItem tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getTitle());
-					tbtmProfileTab.setText(objTreeViewEntry.getTitle());
-					tbtmProfileTab.setData(objTreeViewEntry);
-					ISOSTabItem objComposite = new MainComposite(tabFolder, objTreeViewEntry);
-					tbtmProfileTab.setComposite(objComposite);
-					objComposite.createTabItemComposite();
-					tabFolder.setSelection(tbtmProfileTab);
-					tabFolder.setRedraw(true);
-				}
-			}
+//			else {
+//				if (tabFolder.setFocus(objTreeViewEntry) == null) {
+//					SOSCTabItem tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getTitle());
+//					tbtmProfileTab.setText(objTreeViewEntry.getTitle());
+//					tbtmProfileTab.setData(objTreeViewEntry);
+//					ISOSTabItem objComposite = new MainComposite(tabFolder, objTreeViewEntry);
+//					tbtmProfileTab.setComposite(objComposite);
+//					objComposite.createTabItemComposite();
+//					tabFolder.setSelection(tbtmProfileTab);
+//					tabFolder.setRedraw(true);
+//				}
+//			}
 			tabFolder.layout();
 		}
 		catch (Exception e) {

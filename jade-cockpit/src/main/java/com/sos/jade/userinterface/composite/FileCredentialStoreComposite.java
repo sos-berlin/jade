@@ -8,6 +8,7 @@ import com.sos.JSHelper.Options.JSOptionsClass;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSCheckBox;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class FileCredentialStoreComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused")

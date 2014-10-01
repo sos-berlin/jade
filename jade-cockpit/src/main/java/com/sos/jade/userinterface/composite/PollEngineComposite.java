@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.dialog.classes.SOSCheckBox;
+import com.sos.dialog.components.CompositeBaseClass;
 
 public class PollEngineComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused")

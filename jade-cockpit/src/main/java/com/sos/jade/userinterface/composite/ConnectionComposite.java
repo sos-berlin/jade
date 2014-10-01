@@ -9,6 +9,7 @@ import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.dialog.Globals;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
+import com.sos.dialog.components.CompositeBaseClass;
 import com.sos.dialog.layouts.Gridlayout;
 
 public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
@@ -73,6 +74,7 @@ public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 				SOSCTabItem tbtmJump = tabFolderConnection.getTabItem("tab_Jump");
 				tbtmJump.setControl(new ConnectionDataComposite<SOSConnection2OptionsAlternate>(tabFolderConnection, objConnectionOptions.JumpServer()));
 			}
+			objCDC.createTabItemComposite();
 		}
 		// TODO global variable für zuletzt gezeigten Tab. auf den dann positionieren.
 		tabFolderConnection.setSelection(0);
