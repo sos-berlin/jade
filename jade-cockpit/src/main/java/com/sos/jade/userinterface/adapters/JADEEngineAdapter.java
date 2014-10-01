@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
  * @author KB
  *
  */
-public class SOSDataExchangeAdapter extends JSToolBox {
+public class JADEEngineAdapter extends JSToolBox {
 	@SuppressWarnings("unused")
 	private final String				conClassName	= this.getClass().getSimpleName();
 	@SuppressWarnings("unused")
@@ -32,13 +32,13 @@ public class SOSDataExchangeAdapter extends JSToolBox {
 	@SuppressWarnings("unused")
 	private final ISOSVfsFileTransfer	ftpClient		= null;
 
-	public SOSDataExchangeAdapter() {
+	public JADEEngineAdapter() {
 	}
 
 	/**
 	 * @param pstrResourceBundleName
 	 */
-	public SOSDataExchangeAdapter(final String pstrResourceBundleName) {
+	public JADEEngineAdapter(final String pstrResourceBundleName) {
 		super(pstrResourceBundleName);
 	}
 	@SuppressWarnings("unused")

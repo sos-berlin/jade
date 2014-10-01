@@ -2,6 +2,7 @@ package com.sos.jade.userinterface;
 
 import static com.sos.dialog.Globals.MsgHandler;
 import static com.sos.dialog.swtdesigner.SWTResourceManager.getImageFromResource;
+import menues.SOSMenueEvent;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -20,6 +21,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -48,15 +50,20 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.dialog.Globals;
 import com.sos.dialog.classes.DialogAdapter;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSComposite;
 import com.sos.dialog.classes.WindowsSaver;
+import com.sos.dialog.components.SOSCursor;
+import com.sos.dialog.interfaces.IDialogActionHandler;
 import com.sos.dialog.interfaces.ISOSTabItem;
+import com.sos.dialog.message.DialogMsg;
+import com.sos.dialog.message.ErrorLog;
 import com.sos.dialog.swtdesigner.SWTResourceManager;
-import com.sos.jade.userinterface.adapters.SOSDataExchangeAdapter;
+import com.sos.jade.userinterface.adapters.JADEEngineAdapter;
 import com.sos.jade.userinterface.composite.CompositeBaseClass;
 import com.sos.jade.userinterface.composite.LogFileComposite;
 import com.sos.jade.userinterface.composite.MainComposite;
@@ -74,7 +81,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	private final JADEOptions	objJadeOptions		= new JADEOptions();
 	private WindowsSaver		objPersistenceStore;
 	private SOSCTabFolder		tabFolder			= null;
-	private JadeTreeViewEntry	objSelectedSection	= null;
+	private JadeTreeViewEntry	objSelectedTreeItem	= null;
 	private TreeViewer			treeViewer			= null;
 
 	/**
@@ -86,10 +93,21 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		Display display = Display.getCurrent();
 		BasicConfigurator.configure();
 		RootLogger.getRoot().setLevel(Level.DEBUG);
-
+		ErrorLog.gstrApplication = "JADECockpit";
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addStatusLine();
+	}
+
+	@Override
+	protected Control createContents(final Composite parent) {
+		try (@SuppressWarnings("resource")
+		SOSCursor objCur = new SOSCursor().showWait()) {
+			return createContents2(parent);
+		}
+		catch (Exception e) {
+		}
+		return null;
 	}
 
 	/**
@@ -97,8 +115,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	 * 
 	 * @param parent
 	 */
-	@Override
-	protected Control createContents(final Composite parent) {
+	protected Control createContents2(final Composite parent) {
 		Globals.stFontRegistry.put("button-text", new FontData[] { new FontData("Arial", 9, SWT.BOLD) });
 		Globals.stFontRegistry.put("code", new FontData[] { new FontData("Courier New", 10, SWT.NORMAL) });
 		Globals.stFontRegistry.put("text", new FontData[] { new FontData("Arial", 10, SWT.NORMAL) });
@@ -131,36 +148,29 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 		statusLineManager.getControl().setBackground(Globals.getCompositeBackground());
 
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(final DisposeEvent arg0) {
-				logger.debug("disposed");
-				objPersistenceStore.saveWindowPosAndSize();
-			}
-		});
-		parent.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(final ControlEvent e) {
-				logger.debug("control resized");
-				objPersistenceStore.saveWindowPosAndSize();
-			}
-		});
 		setStatus(" ");
 		Composite container = new SOSComposite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
-		{
-			// new ToolBar(container, SWT.FLAT | SWT.RIGHT);
-		}
 		{
 			final SashForm sashForm = new SashForm(container, SWT.BORDER | SWT.SMOOTH);
 			sashForm.addControlListener(new ControlAdapter() {
 				@Override
 				public void controlResized(final ControlEvent e) {
 					logger.debug("sashForm resized");
-					// int[] weights = sashForm.getWeights();
-					// Store your weights here
-					// System.out.println("Weights: " + weights[0] + " " +
-					// weights[1]);
+					//					objPersistenceStore.saveSash(sashForm.getWeights());
+				}
+			});
+			sashForm.addDisposeListener(new DisposeListener() {
+				@Override
+				public void widgetDisposed(DisposeEvent e) {
+					objPersistenceStore.saveSash(sashForm.getWeights());
+				}
+			});
+			parent.addControlListener(new ControlAdapter() {
+				@Override
+				public void controlResized(final ControlEvent e) {
+					logger.debug("control resized");
+					//					objPersistenceStore.saveWindowPosAndSize();
 				}
 			});
 			sashForm.setSashWidth(5);
@@ -176,70 +186,77 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 				// Create the popup menu
 				final MenuManager menuPopUpMenueMgr = new MenuManager("#PopupMenu");
+				menuPopUpMenueMgr.setRemoveAllWhenShown(true); // see http://wiki.eclipse.org/FAQ_How_do_I_make_menus_with_dynamic_contents%3F
+
 				Menu menu = menuPopUpMenueMgr.createContextMenu(treeViewer.getControl());
 				// getSite().registerContextMenu(menuMgr, treeViewer);
 				menuPopUpMenueMgr.addMenuListener(new IMenuListener() {
 					@Override
 					public void menuAboutToShow(final IMenuManager manager) {
-						if (treeViewer.getSelection().isEmpty()) {
-							return;
-						}
-						if (treeViewer.getSelection() instanceof ISelection) {
-							JadeTreeViewEntry objSelectedSection1 = null;
-							if ((objSelectedSection1 = getTreeViewEntry()) != null) {
-								String strCaption = objSelectedSection1.getTitle();
-								if (objSelectedSection1.isExecutable()) {
-									actExecute.setText(MsgHandler.newMsg("treenode_menu_Execute").params(strCaption));
-									menuPopUpMenueMgr.add(actExecute);
-								}
-								actionBrowseSource.setText(MsgHandler.newMsg("treenode_menu_BrowseSource").params(strCaption));
-								menuPopUpMenueMgr.add(actionBrowseSource);
+						try (SOSCursor objC = new SOSCursor().showWait()) {
+							if (treeViewer.getSelection().isEmpty()) {
+								return;
+							}
+							if (treeViewer.getSelection() instanceof ISelection) {
+								JadeTreeViewEntry objSelectedSection1 = null;
+								if ((objSelectedSection1 = getTreeViewEntry()) != null) {
+									String strCaption = objSelectedSection1.getTitle();
+									if (objSelectedSection1.isExecutable()) {
+										actExecute.setText(MsgHandler.newMsg("treenode_menu_Execute").params(strCaption));
+										menuPopUpMenueMgr.add(actExecute);
+									}
+									actionBrowseSource.setText(MsgHandler.newMsg("treenode_menu_BrowseSource").params(strCaption));
+									menuPopUpMenueMgr.add(actionBrowseSource);
 
-								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-
-								actCopy.setText(MsgHandler.newMsg("treenode_menu_Copy").params(strCaption));
-								actCopy.setImageDescriptor(getImageDescriptor("Copy.gif"));
-								menuPopUpMenueMgr.add(actCopy);
-
-								actionSave.setText(MsgHandler.newMsg("treenode_menu_Save").params(strCaption));
-								menuPopUpMenueMgr.add(actionSave);
-
-								actSaveAs.setText(MsgHandler.newMsg("treenode_menu_SaveAs").params(strCaption));
-								menuPopUpMenueMgr.add(actSaveAs);
-
-								actDelete.setText(MsgHandler.newMsg("treenode_menu_Delete").params(strCaption));
-								actDelete.setImageDescriptor(getImageDescriptor("Delete.gif"));
-								menuPopUpMenueMgr.add(actDelete);
-
-								actRename.setText(MsgHandler.newMsg("treenode_menu_Rename").params(strCaption));
-								actRename.setImageDescriptor(getImageDescriptor("Rename.gif"));
-								menuPopUpMenueMgr.add(actRename);
-
-								actPaste.setText(MsgHandler.newMsg("treenode_menu_Paste").params(strCaption));
-								actPaste.setImageDescriptor(getImageDescriptor("DocumentIn.gif"));
-								menuPopUpMenueMgr.add(actPaste);
-
-								menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-								actionNew.setText(MsgHandler.newMsg("treenode_menu_New").params(strCaption));
-								menuPopUpMenueMgr.add(actionNew);
-
-								if (objSelectedSection1.isSourceGen()) {
 									menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-									MenuManager subMenu = new MenuManager(MsgHandler.newMsg("treenode_menu_Create").params(strCaption),
-											getImageDescriptor("jobscheduler_rabbit.png"), "");
-									actCreateJobChain.setText(MsgHandler.newMsg("treenode_menu_JobChain").params(strCaption));
-									actCreateJobChain.setImageDescriptor(getImageDescriptor("Chain.gif"));
-									subMenu.add(actCreateJobChain);
+									actCopy.setText(MsgHandler.newMsg("treenode_menu_Copy").params(strCaption));
+									actCopy.setImageDescriptor(getImageDescr("Copy.gif"));
+									menuPopUpMenueMgr.add(actCopy);
 
-									actCreateScript.setText(MsgHandler.newMsg("treenode_menu_Script").params(strCaption));
-									actCreateScript.setImageDescriptor(getImageDescriptor("Document.gif"));
-									subMenu.add(actCreateScript);
+									actionSave.setText(MsgHandler.newMsg("treenode_menu_Save").params(strCaption));
+									menuPopUpMenueMgr.add(actionSave);
 
-									menuPopUpMenueMgr.add(subMenu);
+									actSaveAs.setText(MsgHandler.newMsg("treenode_menu_SaveAs").params(strCaption));
+									menuPopUpMenueMgr.add(actSaveAs);
+
+									actDelete.setText(MsgHandler.newMsg("treenode_menu_Delete").params(strCaption));
+									actDelete.setImageDescriptor(getImageDescr("Delete.gif"));
+									menuPopUpMenueMgr.add(actDelete);
+
+									actRename.setText(MsgHandler.newMsg("treenode_menu_Rename").params(strCaption));
+									actRename.setImageDescriptor(getImageDescr("Rename.gif"));
+									menuPopUpMenueMgr.add(actRename);
+
+									actPaste.setText(MsgHandler.newMsg("treenode_menu_Paste").params(strCaption));
+									actPaste.setImageDescriptor(getImageDescr("DocumentIn.gif"));
+									menuPopUpMenueMgr.add(actPaste);
+
+									menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+									menuPopUpMenueMgr.add(new actionNew(strCaption));
+
+									if (objSelectedSection1.isSourceGen()) {
+										menuPopUpMenueMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+
+										MenuManager subMenu = new MenuManager(MsgHandler.newMsg("treenode_menu_Create").params(strCaption),
+												getImageDescr("jobscheduler_rabbit.png"), "");
+										actCreateJobChain.setText(MsgHandler.newMsg("treenode_menu_JobChain").params(strCaption));
+										actCreateJobChain.setImageDescriptor(getImageDescr("Chain.gif"));
+										subMenu.add(actCreateJobChain);
+
+										actCreateScript.setText(MsgHandler.newMsg("treenode_menu_Script").params(strCaption));
+										actCreateScript.setImageDescriptor(getImageDescr("Document.gif"));
+										subMenu.add(actCreateScript);
+
+										menuPopUpMenueMgr.add(subMenu);
+									}
 								}
 							}
 						}
+						catch (Exception e) {
+							new ErrorLog("problem with menu", e);
+						}
+
 					}
 				});
 				menuPopUpMenueMgr.setRemoveAllWhenShown(true);
@@ -256,20 +273,26 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 					@Override
 					public void doubleClick(final DoubleClickEvent objEvent) {
-						IStructuredSelection objSelection = (IStructuredSelection) objEvent.getSelection();
-						TreeViewer objTv = (TreeViewer) objEvent.getSource();
-						Tree tree1 = objTv.getTree();
-						int i = 0;
-						for (Object objSel : objSelection.toList()) {
-							if (objSel instanceof JadeTreeViewEntry) {
-								JadeTreeViewEntry objJadeTreeViewEntry = (JadeTreeViewEntry) objSel;
-								if (objJadeTreeViewEntry.isFragment() || objJadeTreeViewEntry.isProfile()) {
-									String strM = "Section ausgewählt: " + objJadeTreeViewEntry.getName();
-									setStatus(strM);
-									objJadeTreeViewEntry.setTreeItem(tree1.getSelection()[i++]);
-									createTabFolder(objJadeTreeViewEntry);
+						try (SOSCursor objCur = new SOSCursor().showWait()) {
+							IStructuredSelection objSelection = (IStructuredSelection) objEvent.getSelection();
+							TreeViewer objTv = (TreeViewer) objEvent.getSource();
+							Tree tree1 = objTv.getTree();
+							int i = 0;
+							for (Object objSel : objSelection.toList()) {
+								if (objSel instanceof JadeTreeViewEntry) {
+									JadeTreeViewEntry objJadeTreeViewEntry = (JadeTreeViewEntry) objSel;
+									if (objJadeTreeViewEntry.isFragment() || objJadeTreeViewEntry.isProfile()) {
+										String strM = "Section ausgewählt: " + objJadeTreeViewEntry.getName();
+										setStatus(strM);
+										objJadeTreeViewEntry.setTreeItem(tree1.getSelection()[i++]);
+										createTabFolder(objJadeTreeViewEntry);
+									}
 								}
 							}
+
+						}
+						catch (Exception e) {
+							new ErrorLog("problem", e);
 						}
 					}
 				});
@@ -283,33 +306,20 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 				sashForm.setWeights(new int[] { 225, 683 });
 				sashForm.setVisible(true);
 			}
+			objPersistenceStore.restoreWindow();
+			objPersistenceStore.loadSash(sashForm);
+			createMenu();
 		}
-		createMenu();
-		objPersistenceStore.restoreWindow();
 
 		return container;
 	}
 
-	private ImageDescriptor getImageDescriptor(final String pstrFileName) {
+	private ImageDescriptor getImageDescr(final String pstrFileName) {
 		return ImageDescriptor.createFromImage(getImage(pstrFileName));
-		//		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
-		//		if (url != null) {
-		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
-		//		}
-		//		else {
-		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
-		//		}
 	}
 
 	private Image getImage(final String pstrFileName) {
 		return SWTResourceManager.getImageFromResource(pstrFileName);
-		//		URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
-		//		if (url != null) {
-		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
-		//		}
-		//		else {
-		//			return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
-		//		}
 	}
 
 	private Session	session;
@@ -329,7 +339,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	SOSCTabItem	tbtmProfileTab	= null;
 
 	private void createTabFolder(final JadeTreeViewEntry objTreeViewEntry) {
-		try {
+		try (SOSCursor objCurs = new SOSCursor(SWT.CURSOR_WAIT)) {
 			if (CompositeBaseClass.gflgCreateControlsImmediate == true) {
 				tbtmProfileTab = tabFolder.getTabItem(objTreeViewEntry.getName());
 				tbtmProfileTab.setText(objTreeViewEntry.getTitle());
@@ -364,7 +374,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 			tabFolder.layout();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			new ErrorLog("problem", e);
 		}
 	}
 
@@ -478,121 +488,276 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 		return objMenuItem;
 	}
 
-	Action	actionNew	= new Action("&New@Ctrl+N", getImageDescriptor("new.gif")) {
-							@Override
-							public void run() {
-								if ((objSelectedSection = getTreeViewEntry()) != null) {
-									DialogAdapter objDA = new DialogAdapter(getShell(), "newJadeProfile");
-									// set Action
-									// set CallBack
-									JADEOptions objJO = new JADEOptions();
-									switch (objSelectedSection.getType()) {
-										case IsRoot:
-											break;
+	private class MenueActionNewBase extends MenueActionBase {
+		private static final String	conI18NKeyTREENODE_MENU_NEW	= "treenode_menu_New";
 
-										case profile:
-										case profiles:
-										case profiles_root:
-											objJO.isFragment.setFalse();
-											objDA.open(new createNewProfile(objDA.createContents(), objJO));
-											break;
+		public MenueActionNewBase(String pstrMenueTextI18NKey, final String pstrAccText, final String pstrImageFileName) {
+			super(pstrMenueTextI18NKey, null);
+			init(pstrMenueTextI18NKey, pstrAccText, pstrImageFileName);
+		}
 
-										case fragments_root:
-										case fragment:
-											objJO.isFragment.setTrue();
-											objDA.open(new createNewProfile(objDA.createContents(), objJO));
-											break;
+		public MenueActionNewBase(final String pstrMenueTextParameter) {
+			this(new DialogMsg(conI18NKeyTREENODE_MENU_NEW).params(pstrMenueTextParameter), "Ctrl+N", "new.gif");
+		}
 
-										default:
-											break;
-									}
-								}
+		@Override
+		public void setText(final String pstrI18NKey) {
+			super.setText(new DialogMsg(conI18NKeyTREENODE_MENU_NEW).params(pstrI18NKey));
+		}
+
+		@Override
+		public void run() {
+		}
+	}
+
+	/**
+	 * 
+	 * @author KB
+	 *
+	 */
+	private class actionNew extends MenueActionNewBase implements IDialogActionHandler {
+
+		private JADEOptions	objJO	= null;
+
+		public actionNew(final String pstrMenueTextI18NKey) {
+			super(pstrMenueTextI18NKey);
+		}
+
+		@Override
+		public void run() {
+			try (SOSCursor objC = new SOSCursor().showWait()) {
+				if ((objSelectedTreeItem = getTreeViewEntry()) != null) {
+					DialogAdapter objDA = new DialogAdapter(Display.getCurrent().getActiveShell(), "newJadeProfile");
+					// set Action
+					objJO = new JADEOptions();
+					switch (objSelectedTreeItem.getType()) {
+						case IsRoot:
+							break;
+
+						case profile:
+						case profiles:
+						case profiles_root:
+							objJO.isFragment.setFalse();
+							objDA.open(this, new createNewProfile(objDA.createContents(), objJO));
+							break;
+
+						case fragments_root:
+						case fragment:
+							objJO.isFragment.setTrue();
+							objDA.open(this, new createNewProfile(objDA.createContents(), objJO));
+							break;
+
+						default:
+							break;
+					}
+				}
+			}
+			catch (Exception e) {
+				new ErrorLog("problem", e);
+			}
+		}
+
+		@Override
+		public void doNew(final SOSMenueEvent objE) {
+			try (SOSCursor objC = new SOSCursor().showWait()) {
+				switch (objE.operation) {
+					case show:
+						objE.showMenueItem = true;
+						break;
+
+					case execute:
+						try {
+							objE.addMessage(objJO.title.getErrorIfMandatory(true));
+							objE.addMessage(objJO.profile.getErrorIfMandatory(true));
+							objE.addMessage(objJO.operation.getErrorIfMandatory(true));
+
+							// check if the profile-name is not duplicated
+
+							if (objJO.profile.isDirty()) {
+								objE.addMessage(session.checkDuplicateProfileName(objJO.profile));
 							}
-						};
+
+							// create treeview item
+							JSIniFile objIni = session.getObjJadeConfigurationFile();
+							JadeTreeViewEntry objTVE = session.newTreeViewEntry(objIni, objJO);
+							treeViewer.refresh();
+							treeViewer.setSelection(new StructuredSelection(objSelectedTreeItem.getTreeItem()));
+							// go to the maintenance window for this profile
+							objSelectedTreeItem = objTVE;
+							createTabFolder(objTVE);
+							objTVE.ValueHasChanged();
+						}
+						catch (Exception e) {
+							objE.addMessage(e.getLocalizedMessage());
+							new ErrorLog("problem", e);
+						}
+						finally {
+							objE.doIt = objE.hasMessage() == false;
+						}
+
+						break;
+
+					default:
+						objE.doIt = false;
+						objE.showMenueItem = false;
+						break;
+				}
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+
+		@Override
+		public void doCancel(final SOSMenueEvent objE) {
+			switch (objE.operation) {
+				case show:
+					objE.showMenueItem = true;
+					break;
+
+				case execute:
+					objE.doIt = true;
+					break;
+
+				default:
+					objE.doIt = false;
+					objE.showMenueItem = false;
+					break;
+			}
+		}
+	}
 
 	private String getIconName(final String pstrIcon) {
 		return "org/freedesktop/tango/22x22/" + pstrIcon + ".png";
 	}
 
-	Action			actionOpen			= new Action("&Open@Ctrl+O", getImageDescriptor(getIconName("actions/document-open"))) {
+	Action			actionOpen			= new Action("&Open@Ctrl+O", getImageDescr(getIconName("actions/document-open"))) {
 											@Override
 											public void run() {
 											}
 										};
 
-	final Action	actExecute			= new Action("", getImageDescriptor("ExecuteProject.gif")) {
+	final Action	actExecute			= new Action("", getImageDescr("ExecuteProject.gif")) {
 											@Override
 											public void run() {
-												try {
-													if ((objSelectedSection = getTreeViewEntry()) != null) {
-														setStatus("Execute ... " + objSelectedSection.getName());
-														LogFileComposite objLogFileComposite = new LogFileComposite(tabFolder, objSelectedSection);
-														objLogFileComposite.setData(objSelectedSection);
-														SOSDataExchangeAdapter objDEx = new SOSDataExchangeAdapter();
-														objDEx.Execute(objSelectedSection, objLogFileComposite);
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+													if ((objSelectedTreeItem = getTreeViewEntry()) != null) {
+														setStatus("Execute ... " + objSelectedTreeItem.getName());
+														LogFileComposite objLogFileComposite = new LogFileComposite(tabFolder, objSelectedTreeItem);
+														objLogFileComposite.setData(objSelectedTreeItem);
+														JADEEngineAdapter objJADEEngine = new JADEEngineAdapter();
+														objJADEEngine.Execute(objSelectedTreeItem, objLogFileComposite);
 													}
 												}
 												catch (Exception e) {
-													e.printStackTrace();
+													new ErrorLog("Problem", e);
 												}
 											}
 										};
 
-	final Action	actionBrowseSource	= new Action("", getImageDescriptor("Document.gif")) {
+	final Action	actionBrowseSource	= new Action("", getImageDescr("Document.gif")) {
 											@Override
 											public void run() {
-												try {
-													if ((objSelectedSection = getTreeViewEntry()) != null) {
-														setStatus("Browse Source ... " + objSelectedSection.getName());
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+													if ((objSelectedTreeItem = getTreeViewEntry()) != null) {
+														setStatus("Browse Source ... " + objSelectedTreeItem.getName());
 														SourceBrowserComposite objSourceBrowserComposite = new SourceBrowserComposite(tabFolder,
-																objSelectedSection);
-														objSourceBrowserComposite.setData(objSelectedSection);
+																objSelectedTreeItem);
+														objSourceBrowserComposite.setData(objSelectedTreeItem);
 													}
 												}
 												catch (Exception e) {
-													e.printStackTrace();
+													new ErrorLog("Problem", e);
 												}
 											}
 										};
 
-	final Action	actCopy				= new Action("Copy", getImageDescriptor(getIconName("actions/edit-copy"))) {
+	final Action	actCopy				= new Action("Copy", getImageDescr(getIconName("actions/edit-copy"))) {
 											@Override
 											public void run() {
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+
+												}
+												catch (Exception e) {
+													new ErrorLog("problem", e);
+												}
+												finally {
+												}
 												// showMessage("Copy");
 											}
 										};
-	final Action	actDelete			= new Action("Delete", getImageDescriptor(getIconName("actions/edit-delete"))) {
+	final Action	actDelete			= new Action("Delete", getImageDescr(getIconName("actions/edit-delete"))) {
 											@Override
 											public void run() {
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+
+												}
+												catch (Exception e) {
+													new ErrorLog("problem", e);
+												}
+												finally {
+												}
 												// showMessage("Delete");
 											}
 										};
-	final Action	actRename			= new Action("Rename", getImageDescriptor("edit-rename.png")) {
+	final Action	actRename			= new Action("Rename", getImageDescr("edit-rename.png")) {
 											@Override
 											public void run() {
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+
+												}
+												catch (Exception e) {
+													new ErrorLog("problem", e);
+												}
+												finally {
+												}
 												// showMessage("Rename");
 											}
 										};
 	final Action	actPaste			= new Action("Paste") {
 											@Override
 											public void run() {
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+
+												}
+												catch (Exception e) {
+													new ErrorLog("problem", e);
+												}
+												finally {
+												}
 												// showMessage("Paste");
 											}
 										};
 	final Action	actCreateScript		= new Action("Script") {
 											@Override
 											public void run() {
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+
+												}
+												catch (Exception e) {
+													new ErrorLog("problem", e);
+												}
+												finally {
+												}
 												// showMessage("Script");
 											}
 										};
 	final Action	actCreateJobChain	= new Action("JobChain") {
 											@Override
 											public void run() {
+												try (SOSCursor objC = new SOSCursor().showWait()) {
+
+												}
+												catch (Exception e) {
+													new ErrorLog("problem", e);
+												}
+												finally {
+												}
 												// showMessage("JobChain");
 											}
 										};
 
-	public class MenueActionBase extends Action {
+	public class MenueActionBase extends Action implements IDialogActionHandler {
 		public MenueActionBase(String pstrMenueText, ImageDescriptor pobjImgDescr) {
 			super(pstrMenueText, pobjImgDescr);
 		}
@@ -606,14 +771,41 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 		protected ImageDescriptor getImageDescr(final String pstrFileName) {
 			return ImageDescriptor.createFromImage(SWTResourceManager.getImageFromResource(pstrFileName));
+		}
 
-			//			URL url = Thread.currentThread().getContextClassLoader().getResource(pstrFileName);
-			//			if (url != null) {
-			//				return ImageDescriptor.createFromImage(SWTResourceManager.getImage(url.getPath()));
-			//			}
-			//			else {
-			//				return ImageDescriptor.createFromImage(SWTResourceManager.getImage(pstrFileName));
-			//			}
+		@Override
+		public void doCancel(final SOSMenueEvent objE) {
+			objE.doIt = true;
+		}
+
+		@Override
+		public void doEdit(final SOSMenueEvent objE) {
+			objE.doIt = true;
+		}
+
+		@Override
+		public void doNew(final SOSMenueEvent objE) {
+			objE.doIt = true;
+		}
+
+		@Override
+		public void doDelete(final SOSMenueEvent objE) {
+			objE.doIt = true;
+		}
+
+		@Override
+		public void doClose(final SOSMenueEvent objE) {
+			objE.doIt = true;
+		}
+
+		@Override
+		public void setDialogActionHandler(IDialogActionHandler pobjDialogActionHandler) {
+		}
+
+		@Override
+		public boolean doValidation(final SOSMenueEvent objE) {
+			objE.doIt = true;
+			return false;
 		}
 	}
 
@@ -630,9 +822,6 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 		@Override
 		public void run() {
-			if (objPersistenceStore != null) {
-				objPersistenceStore.saveWindowPosAndSize();
-			}
 			Shell sShell = Display.getCurrent().getActiveShell();
 			sShell.close();
 			//												sShell.dispose();
@@ -652,10 +841,10 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 		@Override
 		public void run() {
-			try {
-				if ((objSelectedSection = getTreeViewEntry()) != null) {
-					setStatus("Save Source ... " + objSelectedSection.getName());
-					objSelectedSection.getSession().saveConfigurationFile();
+			try (SOSCursor objC = new SOSCursor().showWait()) {
+				if ((objSelectedTreeItem = getTreeViewEntry()) != null) {
+					setStatus("Save Source ... " + objSelectedTreeItem.getName());
+					objSelectedTreeItem.getSession().saveConfigurationFile();
 				}
 			}
 			catch (Exception e) {
@@ -665,13 +854,13 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 	}
 	final Action	actionSave	= new MenueActionSave();
-	final Action	actSaveAs	= new Action("SaveAs", getImageDescriptor("SaveAs.gif")) {
+	final Action	actSaveAs	= new Action("SaveAs", getImageDescr("SaveAs.gif")) {
 									@Override
 									public void run() {
-										try {
-											if ((objSelectedSection = getTreeViewEntry()) != null) {
-												setStatus("Save Source ... " + objSelectedSection.getName());
-												objSelectedSection.getSession().saveConfigurationFile();
+										try (SOSCursor objC = new SOSCursor().showWait()) {
+											if ((objSelectedTreeItem = getTreeViewEntry()) != null) {
+												setStatus("Save Source ... " + objSelectedTreeItem.getName());
+												objSelectedTreeItem.getSession().saveConfigurationFile();
 											}
 										}
 										catch (Exception e) {
@@ -684,10 +873,17 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 
 	private JadeTreeViewEntry getTreeViewEntry() {
 		JadeTreeViewEntry lobjSelectedSection = null;
-		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-		Object item = selection.getFirstElement();
-		if (item instanceof JadeTreeViewEntry) {
-			lobjSelectedSection = (JadeTreeViewEntry) item;
+		try (SOSCursor objC = new SOSCursor().showWait()) {
+			IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+			Object item = selection.getFirstElement();
+			if (item instanceof JadeTreeViewEntry) {
+				lobjSelectedSection = (JadeTreeViewEntry) item;
+			}
+		}
+		catch (Exception e) {
+			new ErrorLog("problem", e);
+		}
+		finally {
 		}
 		return lobjSelectedSection;
 	}
@@ -695,33 +891,40 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 	private void createMenu() {
 		final Shell sShell = this.getShell();
 
-		MenuManager barMenuManager = new MenuManager();
+		try (SOSCursor objC = new SOSCursor().showWait()) {
+			MenuManager barMenuManager = new MenuManager();
 
-		MenuManager fileMenuManager = new MenuManager("&File");
-		barMenuManager.add(fileMenuManager);
+			MenuManager fileMenuManager = new MenuManager("&File");
+			//		fileMenuManager.setAccelerator(Action.convertAccelerator("ALT+F"));
 
-		fileMenuManager.add(actionNew);
-		fileMenuManager.add(actionOpen);
-		fileMenuManager.add(actionSave);
-		fileMenuManager.add(new Separator());
+			barMenuManager.add(fileMenuManager);
 
-		///		actionExit.setAccelerator(SWT.CTRL | 'X');
-		actionExit.setAccelerator(SWT.ALT | SWT.F4);
-		fileMenuManager.add(actionExit);
+			fileMenuManager.add(new actionNew(null));
+			fileMenuManager.add(actionOpen);
+			fileMenuManager.add(actionSave);
+			fileMenuManager.add(new Separator());
 
-		MenuManager optionsMenuManager = new MenuManager("&Options");
-		barMenuManager.add(optionsMenuManager);
-		optionsMenuManager.add(actionSave);
-		optionsMenuManager.add(new Separator());
+			actionExit.setAccelerator(SWT.ALT | SWT.F4);
+			fileMenuManager.add(actionExit);
 
-		MenuManager helpMenuManager = new MenuManager("&Help");
-		barMenuManager.add(helpMenuManager);
-		helpMenuManager.add(actionSave);
-		helpMenuManager.add(new Separator());
+			MenuManager optionsMenuManager = new MenuManager("&Options");
+			barMenuManager.add(optionsMenuManager);
+			optionsMenuManager.add(actionSave);
+			optionsMenuManager.add(new Separator());
 
-		barMenuManager.updateAll(true);
-		sShell.setMenuBar(barMenuManager.createMenuBar((Decorations) sShell));
+			MenuManager helpMenuManager = new MenuManager("&Help");
+			barMenuManager.add(helpMenuManager);
+			helpMenuManager.add(actionSave);
+			helpMenuManager.add(new Separator());
 
+			barMenuManager.updateAll(true);
+			sShell.setMenuBar(barMenuManager.createMenuBar((Decorations) sShell));
+
+		}
+		catch (Exception e) {
+			new ErrorLog("problem", e);
+		}
+		finally {
+		}
 	}
-
 }

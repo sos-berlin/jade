@@ -15,6 +15,7 @@ import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.dialog.Globals;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
+import com.sos.dialog.components.WaitCursor;
 import com.sos.dialog.interfaces.ICompositeBaseAbstract;
 import com.sos.dialog.interfaces.ISOSTabItem;
 import com.sos.dialog.layouts.Gridlayout;
@@ -37,6 +38,8 @@ public abstract class CompositeBaseClass<T> extends Composite implements ISOSTab
 
 	private static int			intCompositeStyle			= SWT.None;														// .H_SCROLL | SWT.V_SCROLL;
 
+	protected WaitCursor objC = null;
+	
 	public CompositeBaseClass(final SOSCTabFolder pobjCTabFolder, final T objOptions) {
 		super(pobjCTabFolder, intCompositeStyle);
 		objJadeOptions = objOptions;

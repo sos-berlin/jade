@@ -116,7 +116,7 @@ public class ControlHelper implements IValueChangedListener {
 		}
 		if (objControl instanceof Combo) {
 			Combo objCombo = (Combo) objControl;
-			objCombo.setText(objOptionElement.Value());
+			objCombo.setText(pobjOptionElement.Value());
 			if (pobjOptionElement instanceof SOSOptionStringValueList) {
 				SOSOptionStringValueList objValueList = (SOSOptionStringValueList) pobjOptionElement;
 				objCombo.setItems(objValueList.getValueList());
@@ -131,7 +131,6 @@ public class ControlHelper implements IValueChangedListener {
 		}
 		if (objControl instanceof CCombo) {
 			CCombo objCombo = (CCombo) objControl;
-			objCombo.setText(objOptionElement.Value());
 			if (objOptionElement.isProtected() == true) {
 				objCombo.setEditable(false);
 				objCombo.setBackground(Globals.getProtectedFieldColor());
@@ -140,6 +139,9 @@ public class ControlHelper implements IValueChangedListener {
 				SOSOptionStringValueList objValueList = (SOSOptionStringValueList) pobjOptionElement;
 				objCombo.setItems(objValueList.getValueList());
 			}
+			// set this after setting the items of the combobox, otherwise text will be deleted
+			objCombo.setText(objOptionElement.Value());
+			String str1 = objCombo.getText();
 			objCombo.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(final ModifyEvent arg0) {
@@ -182,8 +184,10 @@ public class ControlHelper implements IValueChangedListener {
 				setNoFocusColor(objC);
 				Globals.setStatus("");
 				if (objC instanceof Text) {
-					Text objText = (Text) objC;
-					objOptionElement.Value(objText.getText());
+					if (flgIsDirty) {
+						Text objText = (Text) objC;
+						objOptionElement.Value(objText.getText());
+					}
 				}
 				//				objControl.doValidation();
 				if (objC instanceof SOSCheckBox) {
@@ -192,6 +196,10 @@ public class ControlHelper implements IValueChangedListener {
 				}
 				if (objC instanceof Combo) {
 					Combo objCheck = (Combo) objC;
+					objOptionElement.Value(objCheck.getText());
+				}
+				if (objC instanceof CCombo) {
+					CCombo objCheck = (CCombo) objC;
 					objOptionElement.Value(objCheck.getText());
 				}
 				if (flgControlValueInError == true) {
@@ -306,21 +314,24 @@ public class ControlHelper implements IValueChangedListener {
 
 	@Override
 	// IValueChangedListener from SOSOptionElement (every time an option is changed this listener is called)
-	public void ValueHasChanged(final String pstrNewValue) {
-		logger.debug("value changed to " + pstrNewValue + " (name of control is:  " + objControl.getClass().getName());
+	public void ValueHasChanged(final SOSOptionElement pobjOptionElement) {
 		if (objControl.isDisposed() == true) {
 			logger.debug("Control is disposed");
 			return;
 		}
+
+		String strCurrValue = pobjOptionElement.Value();
+		logger.debug("value changed to " + strCurrValue + " (name of control is:  " + objControl.getClass().getName());
+
 		if (objControl instanceof Text) {
 			Text objText = (Text) objControl;
 			if (objText.isDisposed() == false) {
-				objText.setText(objOptionElement.Value());
+				objText.setText(strCurrValue);
 			}
 		}
 		if (objControl instanceof Button) {
-			if (objOptionElement instanceof SOSOptionBoolean) {
-				SOSOptionBoolean objBoolean = (SOSOptionBoolean) objOptionElement;
+			if (pobjOptionElement instanceof SOSOptionBoolean) {
+				SOSOptionBoolean objBoolean = (SOSOptionBoolean) pobjOptionElement;
 				((Button) objControl).setSelection(objBoolean.value());
 				if (objControl instanceof SOSCheckBox) {
 					((SOSCheckBox) objControl).setEnabledDisabled();
@@ -331,11 +342,11 @@ public class ControlHelper implements IValueChangedListener {
 		}
 		if (objControl instanceof CCombo) {
 			CCombo objCombo = (CCombo) objControl;
-			objCombo.setText(objOptionElement.Value());
+			objCombo.setText(strCurrValue);
 		}
 		if (objControl instanceof Combo) {
 			Combo objCombo = (Combo) objControl;
-			objCombo.setText(objOptionElement.Value());
+			objCombo.setText(strCurrValue);
 		}
 	}
 	//    private void setFont(final FontData f, final RGB foreGround) {

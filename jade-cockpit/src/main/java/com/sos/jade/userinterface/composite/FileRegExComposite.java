@@ -18,29 +18,33 @@ public class FileRegExComposite extends CompositeBaseClass<JADEOptions> {
 		}
 	}
 
-	@Override public void createComposite() {
+	@Override
+	public void createComposite() {
 		{
 			objCC.getControl(objJadeOptions.Source().FolderName, 3);
 			objCC.getControl(objJadeOptions.file_spec, 3);
 			objCC.getControl(objJadeOptions.file_path, 3);
 			objCC.getControl(objJadeOptions.FileListName, 3);
-			
+
 			objCC.getControl(objJadeOptions.remove_files);
 			objCC.getControl(objJadeOptions.RecurseSubFolders);
 			objCC.getControl(objJadeOptions.force_files);
 			objCC.getControl(objJadeOptions.TransferZeroByteFiles);
 
 			objCC.getSeparator();
-			
-			objCC.getControl(objJadeOptions.Target().FolderName, 3);
-			objCC.getControl(objJadeOptions.append_files);
-			objCC.getLabel(2);
-			objCC.getControl(objJadeOptions.overwrite_files);
-			objCC.getLabel(2);
+
+			if (objJadeOptions.NeedTargetClient() == true) {
+				objCC.getControl(objJadeOptions.Target().FolderName, 3);
+				objCC.getControl(objJadeOptions.append_files);
+				objCC.getLabel(2);
+				objCC.getControl(objJadeOptions.overwrite_files);
+				objCC.getLabel(2);
+			}
 		}
 		enableFields();
 	}
 
-	@Override protected void enableFields() {
+	@Override
+	protected void enableFields() {
 	}
 }

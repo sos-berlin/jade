@@ -1,4 +1,7 @@
 package com.sos.jade.userinterface.data;
+
+import static com.sos.dialog.Globals.MsgHandler;
+
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -8,6 +11,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.IValueChangedListener;
+import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.Options.SOSValidationError;
 import com.sos.JSHelper.interfaces.IDirty;
 import com.sos.JSHelper.io.Files.JSIniFile;
@@ -46,6 +50,16 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 		getOptions();
 	}
 
+	public JadeTreeViewEntry(final JSIniFile pobjIniFile, JADEOptions pobjJO, final SOSProfileSection pobjSection) {
+		objSection = pobjSection;
+		objIniFile = pobjIniFile;
+		objOptions = pobjJO;
+		enuType = enuTreeItemType.profiles;
+		// Layzy ??
+		logger.debug(String.format("initialize section '%1$s'", objSection.Name()));
+		getOptions();
+	}
+
 	public void setSession(final Session pobjSession) {
 		objSession = pobjSession;
 	}
@@ -63,14 +77,21 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 		String strR = "";
 		switch (enuType) {
 			case IsRoot:
-				strR = "JADE config file";
-				//				strR = objIniFile.getName();
+				if (getParent() != null) {
+					strR = getParent().getAbsolutePath();
+				}
+				else {
+					strR = "JADE config file";
+					//				strR = objIniFile.getName();
+				}
 				break;
 			case fragments_root:
-				strR = "Fragments";
+				strR = MsgHandler.newMsg("fragments_caption").get();
+				//				strR = "Fragments";
 				break;
 			case profiles_root:
-				strR = "Transfer Profiles";
+				strR = MsgHandler.newMsg("profiles_caption").get();
+				//				strR = "Transfer Profiles";
 				break;
 			case profiles:
 			default:
@@ -109,11 +130,11 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 				objOptions.settings.setProtected(true);
 				objOptions.profile.setProtected(true);
 				objOptions.ReadSettingsFile();
-				flgIsFragment = objOptions.isFragment.isTrue();
-				logger.trace("is Fragment = " + flgIsFragment);
-				flgIsProfile = objOptions.isFragment.isFalse();
 			}
 		}
+		flgIsFragment = objOptions.isFragment.isTrue();
+		logger.trace("is Fragment = " + flgIsFragment);
+		flgIsProfile = objOptions.isFragment.isFalse();
 		return objOptions;
 	}
 
@@ -142,6 +163,10 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 		objTreeItem = pobjTreeItem;
 	}
 
+	public TreeItem getTreeItem() {
+		return objTreeItem;
+	}
+
 	public boolean isExecutable() {
 		boolean flgIsExec = flgIsProfile == true;
 		return flgIsExec;
@@ -152,8 +177,7 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 		return flgIsExec;
 	}
 
-	@Override
-	public void ValueHasChanged(String pstrNewValue) {
+	public void ValueHasChanged() {
 		if (objTreeItem != null && objTreeItem.isDisposed() == false) {
 			String strT = objTreeItem.getText();
 			if (strT.startsWith("*") == false) {
@@ -164,6 +188,12 @@ public class JadeTreeViewEntry implements ISOSControlProperties, IValueChangedLi
 		if (objIniFile != null) {
 			objIniFile.setDirty();
 		}
+	}
+
+
+	@Override
+	public void ValueHasChanged(final SOSOptionElement pobjOptionElement) {
+		ValueHasChanged();
 	}
 
 	@Override

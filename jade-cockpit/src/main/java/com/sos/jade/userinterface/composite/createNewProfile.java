@@ -3,6 +3,8 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation.enuJadeOperations;
+import com.sos.dialog.components.WaitCursor;
+import com.sos.dialog.message.ErrorLog;
 
 public class createNewProfile extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused")
@@ -20,18 +22,26 @@ public class createNewProfile extends CompositeBaseClass<JADEOptions> {
 
 	@Override
 	public void createComposite() {
-
-		objCC.getControl(objJadeOptions.title, 3);
-		objCC.getControl(objJadeOptions.profile, 3);
-		if (objJadeOptions.isFragment.isFalse()) {
-			objJadeOptions.operation.Value(enuJadeOperations.copy);
-			objCC.getControl(objJadeOptions.operation, 3);
+		try (WaitCursor objC = new WaitCursor()) {
+			this.setVisible(false);
+			objCC.getControl(objJadeOptions.title, 3);
+			objCC.getControl(objJadeOptions.profile, 3);
+			if (objJadeOptions.isFragment.isFalse()) {
+				objJadeOptions.operation.Value(enuJadeOperations.copy);
+				objCC.getControl(objJadeOptions.operation, 3);
+				objCC.getControl(objJadeOptions.Source().protocol, 3);
+				objCC.getControl(objJadeOptions.Target().protocol, 3);
+			}
+			initValues();
 		}
-
-		initValues();
+		catch (Exception e) {
+			new ErrorLog("problem", e);
+		}
+		finally {
+			this.setVisible(true);
+		}
 	}
 
 	private void initValues() {
 	}
-
 }

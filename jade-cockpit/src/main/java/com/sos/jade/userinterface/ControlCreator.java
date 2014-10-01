@@ -18,6 +18,7 @@ import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.dialog.Globals;
 import com.sos.dialog.classes.SOSCheckBox;
 import com.sos.dialog.classes.SOSGroup;
+import com.sos.dialog.classes.SOSTextBox;
 import com.sos.dialog.components.SOSFileNameSelector;
 import com.sos.dialog.layouts.Gridlayout;
 
@@ -177,11 +178,12 @@ public class ControlCreator {
 			String strControlType = pobjOption.getControlType();
 			//
 			if (strControlType.equalsIgnoreCase("text")) {
-				Text tbxText = new Text(objParentComposite, Globals.gTextBoxStyle);
+				SOSTextBox tbxText = new SOSTextBox(objParentComposite, Globals.gTextBoxStyle);
 				if (pobjOption.isHideValue() == true) {
 					tbxText.setEchoChar('*');
 				}
 				objT = tbxText;
+				tbxText.setAutoCompletehandler(pobjOption);
 			}
 			if (strControlType.equalsIgnoreCase("combo")) {
 				CCombo cbxCCombo1 = new CCombo(objParentComposite, SWT.NONE | Globals.gTextBoxStyle);
@@ -195,11 +197,13 @@ public class ControlCreator {
 				SOSFileNameSelector objFS = new SOSFileNameSelector(objParentComposite, Globals.gTextBoxStyle);
 				objFS.setPreferenceStoreKey(pobjOption.getShortKey());
 				objT = objFS;
+				objFS.setAutoCompletehandler(pobjOption);
 			}
 			if (strControlType.equalsIgnoreCase("folder")) {
 				SOSFileNameSelector objFS = new SOSFileNameSelector(objParentComposite, Globals.gTextBoxStyle);
 				objFS.setPreferenceStoreKey(pobjOption.getShortKey());
 				objT = objFS;
+				objFS.setAutoCompletehandler(pobjOption);
 			}
 			if (objT != null) {
 				objT.setData("option", pobjOption);
