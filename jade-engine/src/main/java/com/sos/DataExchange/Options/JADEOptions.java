@@ -216,6 +216,17 @@ public class JADEOptions extends SOSFTPOptions {
 			}
 		}
 	}
+	
+	
+	@Override
+	public JADEOptions getClone() { //https://change.sos-berlin.com/browse/SOSFTP-217
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::getClone";
+		JADEOptions objClone = new JADEOptions();
+		String strB = this.getOptionsAsCommandLine();
+		objClone.CommandLineArgs(strB);
+		return objClone;
+	} // public JADEOptions getClone
 
 
 }
