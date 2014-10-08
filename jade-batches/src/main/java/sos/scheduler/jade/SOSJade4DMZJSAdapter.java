@@ -1,5 +1,15 @@
 package sos.scheduler.jade;
 
+import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
+
+import java.util.HashMap;
+
+import sos.scheduler.job.SOSDExJSAdapterClass;
+import sos.spooler.Variable_set;
+
 import com.sos.DataExchange.Jade4DMZ;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -8,12 +18,6 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import sos.scheduler.job.SOSDExJSAdapterClass;
-import sos.spooler.Variable_set;
-
-import java.util.HashMap;
-
-import static com.sos.scheduler.messages.JSMessages.*;
 
 /**
  * \file SOSJade4DMZJSAdapter.java
@@ -101,7 +105,10 @@ public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
 		transfFiles = objR.getFileList();
 
 		 
-		int intNoOfHitsInResultSet = transfFiles.List().size();
+		int intNoOfHitsInResultSet = 0;
+		if (isNotNull(transfFiles)) { //https://change.sos-berlin.com/browse/SOSFTP-218
+			intNoOfHitsInResultSet = transfFiles.List().size();
+		}
 
 		if (intNoOfHitsInResultSet <= 0 && isOrderJob()) {
 			String strPollErrorState = objO.PollErrorState.Value();
