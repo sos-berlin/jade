@@ -97,12 +97,15 @@ public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
 		objR.setJSJobUtilites(this);
 
 		objR.Execute();
- 
+		
 		transfFiles = objR.getFileList();
 
 		 
-		int intNoOfHitsInResultSet = transfFiles.List().size();
-
+		int intNoOfHitsInResultSet = 0;
+		if (isNotNull(transfFiles)) { //https://change.sos-berlin.com/browse/SOSFTP-218
+			intNoOfHitsInResultSet = transfFiles.List().size();
+		}
+ 
 		if (intNoOfHitsInResultSet <= 0 && isOrderJob()) {
 			String strPollErrorState = objO.PollErrorState.Value();
 			if (objO.PollErrorState.isDirty()) {
