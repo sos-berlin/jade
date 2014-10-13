@@ -216,6 +216,14 @@ public class JADEOptions extends SOSFTPOptions {
 			}
 		}
 	}
+	
+	public JADEOptions getClone() {
+		@SuppressWarnings("unused") final String conMethodName = conClassName + "::getClone";
+		JADEOptions objClone = new JADEOptions();
+		String strB = this.getOptionsAsCommandLine();
+		objClone.CommandLineArgs(strB);
+		return objClone;
+	} // public JADEOptions getClone
 
 
 }
