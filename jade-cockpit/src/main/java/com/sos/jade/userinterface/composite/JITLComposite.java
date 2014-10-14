@@ -26,7 +26,7 @@ public class JITLComposite extends CompositeBaseClass<JADEOptions> {
 
 	@Override
 	public void createComposite() {
-		objCC.getLabel();
+//		objCC.getLabel();
 		objCC.getSeparator("order_creation_mode");
 		btnCreateAnOrder = (SOSCheckBox) objCC.getControl(objJadeOptions.create_order, 3);
 		btnCreateAnOrder.addSelectionListener(EnableFieldsListener);

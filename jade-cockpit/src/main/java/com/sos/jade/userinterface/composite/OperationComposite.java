@@ -17,8 +17,9 @@ public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 		objJadeOptions = objOptions;
 		if (gflgCreateControlsImmediate == true) {
 			createComposite();
+			pobjTabFolder.pack();
+			pobjTabFolder.layout(true);
 		}
-		pobjTabFolder.pack();
 	}
 
 	public OperationComposite(final Composite parent, final JADEOptions objOptions) {
@@ -58,13 +59,14 @@ public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 			objCC.getLabel();
 		}
 		else {
-			objCC.getControl(objJadeOptions.remove_files);			
+			objCC.getControl(objJadeOptions.remove_files);
 		}
+
 		if (objJadeOptions.operation.isOperationRename() == true) {
 			objCC.getControl(objJadeOptions.Source().ReplaceWhat, 3);
 			objCC.getControl(objJadeOptions.Source().ReplaceWith, 3);
 		}
-		
+
 		if (objJadeOptions.NeedTargetClient() == true) {
 			objCC.getSeparator("datatarget");
 
@@ -89,6 +91,8 @@ public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 		objCC.getControl(objJadeOptions.include, 3);
 		//		objCC.getSeparator();
 		initValues();
+		pack();
+		layout(true);
 	}
 
 	private void initValues() {
@@ -102,7 +106,7 @@ public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 	}
 
 	private void createConnectionControls(SOSConnection2OptionsAlternate pobjO) {
-		if (objJadeOptions.protocol.needConnectionData()) {
+		if (pobjO.protocol.needConnectionData() == true) {
 			objCC.getControl(pobjO.port);
 			objCC.getControl(pobjO.HostName);
 			objCC.getControl(pobjO.user);

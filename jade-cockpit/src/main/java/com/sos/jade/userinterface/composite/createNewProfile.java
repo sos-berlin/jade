@@ -16,9 +16,9 @@ public class createNewProfile extends CompositeBaseClass<JADEOptions> {
 	public createNewProfile(final Composite parent, final JADEOptions objOptions) {
 		super(parent, objOptions);
 		objJadeOptions = objOptions;
-		if (gflgCreateControlsImmediate == true) {
+//		if (gflgCreateControlsImmediate == true) {
 			createComposite();
-		}
+//		}
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.Options.SOSOptionString;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
+import com.sos.dialog.components.SplashScreen;
 
 public class Session {
 	private final Logger	logger						= Logger.getLogger(Session.class);
@@ -43,7 +44,10 @@ public class Session {
 		return objSectionsHandler;
 	}
 
-	public SectionsHandler loadJadeConfigurationFile() {
+	SplashScreen objSplash = null;
+	
+	public SectionsHandler loadJadeConfigurationFile(final SplashScreen pobjSplash) {
+		objSplash = pobjSplash;
 		return loadJadeConfigurationFile("src/test/resources/jade_settings.ini");
 	}
 
@@ -51,12 +55,22 @@ public class Session {
 		if (objJadeConfigurationFile == null) {
 			name = pstrFileName;
 			objJadeConfigurationFile = new JSIniFile(pstrFileName);
+			if (objSplash != null) {
+				objSplash.setSteps(objSplash.steps +  objJadeConfigurationFile.getSections().size());
+			}
 			objSectionsHandler = new SectionsHandler(null, this.getName());
 			for (SOSProfileSection objSection : objJadeConfigurationFile.getSections()) {
+				if (objSplash != null) {
+					objSplash.step();
+				}
 				JadeTreeViewEntry objJ = new JadeTreeViewEntry(objJadeConfigurationFile, objSection);
 				objSectionsHandler.addEntry(objJ);
 				objJ.setSession(this);
 			}
+			if (objSplash != null) {
+				objSplash.step();
+			}
+			objSplash = null;
 		}
 		return objSectionsHandler;
 	}

@@ -42,22 +42,6 @@ public class MiscComposite extends CompositeBaseClass<JADEOptions> {
 
 		initValues();
 
-		//		objCC.getControl(objJadeOptions.operation, 3);
-		//		Button btnCheckButton = (Button) objCC.getControl(objJadeOptions.TransactionMode);
-		//		btnCheckButton.addSelectionListener(new SelectionAdapter() {
-		//			@Override public void widgetSelected(final SelectionEvent e) {
-		//			}
-		//		});
-		//		objCC.getLabel(2);
-		//		objCC.getControl(objJadeOptions.atomic_prefix);
-		//		objCC.getControl(objJadeOptions.atomic_suffix);
-		//		objCC.getControl(objJadeOptions.MaxConcurrentTransfers);
-		//		objCC.getControl(objJadeOptions.ConcurrentTransfer);
-		//		objCC.getControl(objJadeOptions.reuseConnection);
-		//		objCC.getSeparator();
-		//		objCC.getControl(objJadeOptions.PreTransferCommands, 3);
-		//		objCC.getControl(objJadeOptions.PostTransferCommands, 3);
-		//		objCC.getControl(objJadeOptions.include, 3);
 	}
 
 	private void initValues() {

@@ -29,12 +29,14 @@ public class PollEngineComposite extends CompositeBaseClass<JADEOptions> {
 	SOSCheckBox	btnPollingServer	= null;
 
 	@Override public void createComposite() {
-		objCC.getSeparator();
+//		objCC.getSeparator();
 		btnPollingServer = objCC.getCheckBox(objJadeOptions.PollingServer);
 		objCC.getLabel(2);
 		btnPollingServer.addChild(objCC.getControl(objJadeOptions.pollingEndAt));
+		objCC.getLabel(2);
 		btnPollingServer.addChild(objCC.getControl(objJadeOptions.pollingServerDuration));
-		objCC.getSeparator();
+		objCC.getLabel(2);
+//		objCC.getSeparator();
 		initValues();
 	}
 
