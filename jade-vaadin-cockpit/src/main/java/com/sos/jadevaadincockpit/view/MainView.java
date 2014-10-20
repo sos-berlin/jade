@@ -1,23 +1,12 @@
 package com.sos.jadevaadincockpit.view;
 
-import java.util.Locale;
-
-import org.vaadin.peter.contextmenu.ContextMenu;
-
-import com.google.common.eventbus.Subscribe;
-import com.sos.jadevaadincockpit.JadevaadincockpitUI;
-import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.util.FileUploadDragAndDropWrapper;
 import com.sos.jadevaadincockpit.view.components.DropArea;
-import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
-import com.sos.jadevaadincockpit.view.event.LocaleChangeListener;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
-import com.vaadin.ui.Button.ClickEvent;
 
 /**
  * 
@@ -34,6 +23,7 @@ public class MainView extends CustomComponent {
 	private ProfileTabSheet profileTabSheet;
 	private LogTabSheet logTabSheet;
 	private DropArea dropArea;
+	private SettingsFileOverview settingsFileOverview;
 	
 	// layouts
 	private VerticalLayout vLayout;
@@ -50,6 +40,7 @@ public class MainView extends CustomComponent {
 		dropArea = new DropArea(new JadeCockpitMsg("jade_l_MainUi_DropArea").label()); // Drag files here
 		dropArea.setSizeFull();
 		dropArea.setDragAndDropUploadEnabled(false);
+		settingsFileOverview = new SettingsFileOverview();
 		
 		
 		vLayout = new VerticalLayout();
@@ -143,6 +134,22 @@ public class MainView extends CustomComponent {
 		}
 	}
 	
+	/**
+	 * Shows the ProfileTabSheet and removes the SettingsFileOverview.
+	 */
+	public void showProfileTabSheet() {
+		hSplitPanel1.removeComponent(settingsFileOverview);
+		hSplitPanel1.addComponent(profileTabSheet);
+	}
+	
+	/**
+	 * Shows the SettingsFileOverview and removes the ProfileTabSheet.
+	 */
+	public void showSettingsFileOverview() {
+		hSplitPanel1.removeComponent(profileTabSheet);
+		hSplitPanel1.addComponent(settingsFileOverview);
+	}
+	
 	public JadeMenuBar getJadeMenuBar() {
 		if (jadeMenuBar == null) {
 			jadeMenuBar = new JadeMenuBar();
@@ -171,8 +178,19 @@ public class MainView extends CustomComponent {
 		return profileTabSheet;
 	}
 	
+	public SettingsFileOverview getSettingsFileOverview() {
+		if (settingsFileOverview == null) {
+			settingsFileOverview = new SettingsFileOverview();
+		}
+		return settingsFileOverview;
+	}
+	
 	public VerticalSplitPanel getVSplitPanel() {
 		return vSplitPanel;
+	}
+	
+	public HorizontalSplitPanel getHSplitPanel1() {
+		return hSplitPanel1;
 	}
 
 }

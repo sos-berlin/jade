@@ -92,11 +92,16 @@ public class JadeSettingsFile extends ProfileContainer {
 			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 			// expand added items
 			profileTree.expandItemsRecursively(rootId);
+			/*
 			// set tree's selection on the first profile of the new settings file
 			Iterator<?> it = profileTree.getChildren(rootId).iterator();
 			if (it.hasNext()) {
 				profileTree.setValue(it.next());
 			}
+			*/
+			
+			// set tree's selection on the new settings file to open the overview
+			profileTree.setValue(rootId);
 			
 			JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(true);
 		}
@@ -262,8 +267,8 @@ public class JadeSettingsFile extends ProfileContainer {
 	}
 	
 	/**
-	 * 
-	 * @param target
+	 * Deletes a profile from the container.
+	 * @param target id of the item to delete
 	 */
 	public void deleteProfile(Object target) {
 		

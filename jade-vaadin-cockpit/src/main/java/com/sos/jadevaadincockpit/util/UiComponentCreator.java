@@ -19,14 +19,8 @@ import com.sos.jadevaadincockpit.view.components.JadeTextField;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.event.FieldEvents.FocusEvent;
-import com.vaadin.event.FieldEvents.FocusListener;
-import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
 
 /**
  * 
@@ -64,7 +58,8 @@ public class UiComponentCreator implements Serializable {
 		}
 		
 		comp.addValueChangeListener(new ValueChangeListener() {
-			
+			private static final long serialVersionUID = 5851279292914178361L;
+
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				handleProtectedField(comp, optionElement.isProtected());
@@ -247,24 +242,25 @@ public class UiComponentCreator implements Serializable {
 		});
 		
 		optionElement.addValueChangedListener(new IValueChangedListener() {
-			@Override
-			public void ValueHasChanged(String pstrNewValue) {
-				
-				// value of readOnly fields can not be changed
-				if (comboBox.isReadOnly()) {
-					comboBox.setReadOnly(false);
-					comboBox.setValue(pstrNewValue);
-					comboBox.setReadOnly(true);
-				} else {
-					comboBox.setValue(pstrNewValue);
-				}
-				handleProtectedField(comboBox, optionElement.isProtected());
-			}
 
 			@Override
 			public void ValidationError(
 					SOSValidationError pobjVE) {
 				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void ValueHasChanged(SOSOptionElement pobjOptionElement) {
+				
+				// value of readOnly fields can not be changed
+				if (comboBox.isReadOnly()) {
+					comboBox.setReadOnly(false);
+					comboBox.setValue(pobjOptionElement.Value());
+					comboBox.setReadOnly(true);
+				} else {
+					comboBox.setValue(pobjOptionElement.Value());
+				}
+				handleProtectedField(comboBox, optionElement.isProtected());
 			}
 		});
 		
@@ -309,15 +305,15 @@ public class UiComponentCreator implements Serializable {
 		
 		optionElement.addValueChangedListener(new IValueChangedListener() {
 			@Override
-			public void ValueHasChanged(String pstrNewValue) {
+			public void ValueHasChanged(SOSOptionElement pobjOptionElement) {
 				
 				// value of readOnly fields can not be changed
 				if (checkBox.isReadOnly()) {
 					checkBox.setReadOnly(false);
-					checkBox.setValue(optionElement.String2Bool(pstrNewValue));
+					checkBox.setValue(optionElement.String2Bool(pobjOptionElement.Value()));
 					checkBox.setReadOnly(true);
 				} else {
-					checkBox.setValue(optionElement.String2Bool(pstrNewValue));
+					checkBox.setValue(optionElement.String2Bool(pobjOptionElement.Value()));
 				}
 				handleProtectedField(checkBox, optionElement.isProtected());
 			}
@@ -370,15 +366,15 @@ public class UiComponentCreator implements Serializable {
 		
 		optionElement.addValueChangedListener(new IValueChangedListener() { // TODO valueHasChanged wird VOR setzen des Protected flag aufgerufen -> setProtected sollte auch listener benachrichtigen
 			@Override
-			public void ValueHasChanged(String pstrNewValue) {
+			public void ValueHasChanged(SOSOptionElement pobjOptionElement) {
 				
 				// value of readOnly fields can not be changed
 				if (textField.isReadOnly()) {
 					textField.setReadOnly(false);
-					textField.setValue(pstrNewValue);
+					textField.setValue(pobjOptionElement.Value());
 					textField.setReadOnly(true);
 				} else {
-					textField.setValue(pstrNewValue);
+					textField.setValue(pobjOptionElement.Value());
 				}
 				handleProtectedField(textField, optionElement.isProtected());
 			}

@@ -1,11 +1,18 @@
 package com.sos.jadevaadincockpit.view;
 
+import java.util.Iterator;
+
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeActionHandler;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeItemSetChangeListener;
 import com.sos.jadevaadincockpit.view.event.ProfileTreeValueChangeListener;
+import com.vaadin.data.Container.ItemSetChangeEvent;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 
 /**
  * 
