@@ -62,22 +62,74 @@ public class SettingsFileOverview extends FormLayout {
 			
 			final ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
 			final Object profileItemId = profileItem.getItemProperty(ProfileContainer.PROPERTY.ID).getValue();
+			JADEOptions options = (JADEOptions) profileItem.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
 			
 			HorizontalLayout buttonLayout = new HorizontalLayout();
-			Button executeButton = new Button("execute");
-			executeButton.setIcon(new ThemeResource("icons/exec_16.png"));
+			Button executeButton = null;
+			Button renameButton = null;
+			Label spacerLabel = new Label();
+			
 			Button editButton = new Button("edit");
 			editButton.setIcon(new ThemeResource("icons/edit_16.png"));
-			Button renameButton = new Button("rename");
-			renameButton.setIcon(new ThemeResource("icons/rename_16.png"));
 			Button deleteButton = new Button("delete");
 			deleteButton.setIcon(new ThemeResource("icons/delete_16.png"));
-			Label spacerLabel = new Label();
-			buttonLayout.addComponents(executeButton, editButton, renameButton, deleteButton, spacerLabel);
+			
+			if (!options.isFragment.value() && !options.profile.Value().equalsIgnoreCase("globals")) {
+				executeButton = new Button("execute");
+				executeButton.setIcon(new ThemeResource("icons/exec_16.png"));
+				executeButton.addClickListener(new ClickListener() {
+					
+					@Override
+					public void buttonClick(ClickEvent event) {
+						// TODO profile has to be saved before execution as checkMandatory() will read from the file (not from the options-Object)
+						JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(profileItemId);
+						
+						JadeVaadinAdapter jadeAdapter = new JadeVaadinAdapter();
+						jadeAdapter.execute(profileItem);
+						
+					}
+				});
+			}
+			
+			if (!options.profile.Value().equalsIgnoreCase("globals")) {
+				renameButton = new Button("rename");
+				renameButton.setIcon(new ThemeResource("icons/rename_16.png"));
+				renameButton.addClickListener(new ClickListener() {
+					
+					@Override
+					public void buttonClick(ClickEvent event) {
+						
+						TextInputDialog dialog = new TextInputDialog("Rename Profile", "Please enter a new name.", new TextInputDialog.Callback() {
+							
+							@Override
+							public void onDialogResult(boolean isOk, String input) {
+								
+								if (isOk) {
+									JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().renameProfile(profileItemId, input);
+								}
+							}
+						});
+						dialog.setEmptyInputAllowed(false);
+						dialog.setEmptyInputMessage("Please enter a name.");
+						
+						UI.getCurrent().addWindow(dialog);
+						
+					}
+				});
+			}
+			
+			if (executeButton != null) {
+				buttonLayout.addComponent(executeButton);				
+			}
+			buttonLayout.addComponent(editButton);
+			if (renameButton != null) {
+				buttonLayout.addComponent(renameButton);
+			}
+			buttonLayout.addComponents(deleteButton, spacerLabel);
+			
 			buttonLayout.setExpandRatio(spacerLabel, 1);
 			buttonLayout.setSpacing(true);
 			
-			JADEOptions options = (JADEOptions) profileItem.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
 			final ComponentGroup group = new ComponentGroup(options.profile.Value());
 			
 			options.profile.addValueChangedListener(new IValueChangedListener() {
@@ -113,47 +165,11 @@ public class SettingsFileOverview extends FormLayout {
 			
 			setCompositionRoot(group);
 			
-			executeButton.addClickListener(new ClickListener() {
-				
-				@Override
-				public void buttonClick(ClickEvent event) {
-					// TODO profile has to be saved before execution as checkMandatory() will read from the file (not from the options-Object)
-					JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(profileItemId);
-					
-					JadeVaadinAdapter jadeAdapter = new JadeVaadinAdapter();
-					jadeAdapter.execute(profileItem);
-					
-				}
-			});
-			
 			editButton.addClickListener(new ClickListener() {
 				
 				@Override
 				public void buttonClick(ClickEvent event) {
 					profileTree.setValue(profileItemId);
-				}
-			});
-			
-			renameButton.addClickListener(new ClickListener() {
-				
-				@Override
-				public void buttonClick(ClickEvent event) {
-					
-					TextInputDialog dialog = new TextInputDialog("Rename Profile", "Please enter a new name.", new TextInputDialog.Callback() {
-						
-						@Override
-						public void onDialogResult(boolean isOk, String input) {
-							
-							if (isOk) {
-								JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().renameProfile(profileItemId, input);
-							}
-						}
-					});
-					dialog.setEmptyInputAllowed(false);
-					dialog.setEmptyInputMessage("Please enter a name.");
-					
-					UI.getCurrent().addWindow(dialog);
-					
 				}
 			});
 			

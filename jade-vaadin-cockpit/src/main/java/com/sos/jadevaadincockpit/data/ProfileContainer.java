@@ -9,10 +9,13 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.jadevaadincockpit.globals.ApplicationAttributes;
+import com.sos.jadevaadincockpit.globals.Icon;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Notification;
 
 /**
  * 
@@ -51,7 +54,7 @@ public class ProfileContainer extends HierarchicalContainer {
 			return defaultValue;
 		}
 	};
-
+	
 	public static enum NODETYPE {
 		FILE, PROFILE;
 	};
@@ -191,37 +194,52 @@ public class ProfileContainer extends HierarchicalContainer {
 		
 		if (rootItem != null) {
 			
-			rootItem.getItemProperty(PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Document_small.gif")));
+			rootItem.getItemProperty(PROPERTY.ICON).setValue(Icon.SETTINGSFILE.getResource());
 			
 			Iterator<?> childrenIterator = getChildren(rootId).iterator();
 			
 			while (childrenIterator.hasNext()) {
 				
 				Object profileItemId = childrenIterator.next();
+				Item profileItem = getItem(profileItemId);
+				JADEOptions options = (JADEOptions) profileItem.getItemProperty(PROPERTY.JADEOPTIONS).getValue();
 				
-				HashMap<String, String> optionsFromSettingsFile = (HashMap<String, String>) getContainerProperty(profileItemId, PROPERTY.OPTIONSFROMSETTINGSFILE).getValue();
-				
-				if (optionsFromSettingsFile.containsKey("is_fragment")) {
-					
-					if (optionsFromSettingsFile.get("is_fragment").equalsIgnoreCase("true")) {
-						
-						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
-						
+				if (options.isFragment.value()) {
+					if (options.profile.Value().equalsIgnoreCase("globals")) {
+						profileItem.getItemProperty(PROPERTY.ICON).setValue(Icon.GLOBALS.getResource());
+					} else {
+						profileItem.getItemProperty(PROPERTY.ICON).setValue(Icon.FRAGMENT.getResource());						
 					}
-					
-				} else if (optionsFromSettingsFile.containsKey("isFragment")) {
-					
-					if (optionsFromSettingsFile.get("isFragment").equalsIgnoreCase("true")) {
-						
-						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
-						
-					}
-					
 				} else {
-					
-					getContainerProperty(profileItemId, PROPERTY.ICON).setValue(PROPERTY.ICON.getDefaultValue());
-					
+					profileItem.getItemProperty(PROPERTY.ICON).setValue(Icon.PROFILE.getResource());
 				}
+				
+				
+				
+				
+//				HashMap<String, String> optionsFromSettingsFile = (HashMap<String, String>) getContainerProperty(profileItemId, PROPERTY.OPTIONSFROMSETTINGSFILE).getValue();
+//				
+//				if (optionsFromSettingsFile.containsKey("is_fragment")) {
+//					
+//					if (optionsFromSettingsFile.get("is_fragment").equalsIgnoreCase("true")) {
+//						
+//						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
+//						
+//					}
+//					
+//				} else if (optionsFromSettingsFile.containsKey("isFragment")) {
+//					
+//					if (optionsFromSettingsFile.get("isFragment").equalsIgnoreCase("true")) {
+//						
+//						getContainerProperty(profileItemId, PROPERTY.ICON).setValue(new FileResource(new File(ApplicationAttributes.getBasePath() + "/WEB-INF/icons/Fragment.gif")));
+//						
+//					}
+//					
+//				} else {
+//					
+//					getContainerProperty(profileItemId, PROPERTY.ICON).setValue(PROPERTY.ICON.getDefaultValue());
+//					
+//				}
 					
 			}
 		}

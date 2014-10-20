@@ -14,6 +14,7 @@ import com.sos.jadevaadincockpit.i18n.I18NComponent;
 import com.sos.jadevaadincockpit.i18n.JadeCockpitMsg;
 import com.sos.jadevaadincockpit.view.FileSystemBrowser.BrowserType;
 import com.sos.jadevaadincockpit.view.components.TextInputDialog;
+import com.sos.jadevaadincockpit.view.event.FileSavedCallback;
 import com.sos.jadevaadincockpit.view.event.LocaleChangeEvent;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button.ClickEvent;
@@ -207,7 +208,19 @@ public class JadeMenuBar extends MenuBar implements Serializable, I18NComponent 
 			@Override
 			public void menuSelected(MenuItem selectedItem) {
 				ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
-				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(profileTree.getValue());
+				JadevaadincockpitUI.getCurrent().getApplicationAttributes().getJadeSettingsFile().saveSettingsFile(profileTree.getValue(), new FileSavedCallback() {
+					
+					@Override
+					public void onSuccess() {
+						Notification.show("File saved!", Notification.Type.TRAY_NOTIFICATION);
+					}
+					
+					@Override
+					public void onFailure() {
+						// TODO Auto-generated method stub
+						
+					}
+				});
 			}
 		};
 	}

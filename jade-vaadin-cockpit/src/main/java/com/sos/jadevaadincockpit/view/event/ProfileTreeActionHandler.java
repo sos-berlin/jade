@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.jadevaadincockpit.JadevaadincockpitUI;
 import com.sos.jadevaadincockpit.adapters.JadeVaadinAdapter;
@@ -44,6 +45,8 @@ public class ProfileTreeActionHandler implements Handler {
     
     private static final Action[] settingsFileActions = new Action[] { SAVE_FILE, CLOSE_FILE, ADD_PROFILE, RENAME_FILE };
     private static final Action[] profileActions = new Action[] { EXECUTE_PROFILE, RENAME_PROFILE, DELETE_PROFILE };
+    private static final Action[] globalsActions = new Action[] { DELETE_PROFILE };
+    private static final Action[] fragmentActions = new Action[] { RENAME_PROFILE, DELETE_PROFILE };
     
     private static final Action[] debugActions = new Action[] { DEBUG_PRINT_OPTIONS, DEBUG_PRINT_MISSING_OPTIONS }; // dbg
 
@@ -55,16 +58,30 @@ public class ProfileTreeActionHandler implements Handler {
 		if (target != null) {
 			
 			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
+			Item targetItem = profileTree.getItem(target);
+			JADEOptions options = (JADEOptions) targetItem.getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue();
 			
-			ProfileContainer profileContainer = profileTree.getProfileContainer();
 			
-			if (profileContainer.isRoot(target)) { // item which received the right click is a settings file
+			if (profileTree.isRoot(target)) { // item which received the right click is a settings file
 				
 				for (Action a : settingsFileActions) {
 					
 					actionsList.add(a);
 				}
-			} else { // item which received the right click is a profile
+			} else if (options.profile.Value().equalsIgnoreCase("globals")) { // item which received the right click is the globals profile
+				
+				for (Action a : globalsActions) {
+					
+					actionsList.add(a);
+				}
+			} else if (options.isFragment.value()) { // item which received the right click is a fragment
+				
+				for (Action a : fragmentActions) {
+					
+					actionsList.add(a);
+				}
+				
+			} else { // item which received the right click is the a profile
 				
 				for (Action a : profileActions) {
 					
