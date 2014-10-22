@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 
 import sos.net.SOSMail;
@@ -59,8 +60,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private static final String		conKeywordSTATUS				= "status";
 	private final String			conClassName					= "SOSDataExchangeEngine";
 	public final String				conSVNVersion					= "$Id$";
-	private final Logger			logger							= Logger.getLogger(SOSDataExchangeEngine.class);
+	//	private final Logger			logger							= Logger.getLogger(SOSDataExchangeEngine.class);
+	private final Logger			logger							= Logger.getLogger("com.sos.DataExchange");
 	final String					strLoggerName					= "JadeReportLog";
+	private static Logger			objVFSLogger					= Logger.getLogger("com.sos.VirtualFileSystem");
+	private static Logger			objJSHLogger					= Logger.getLogger("com.sos.JSHelper");
+
 	private final Logger			objJadeReportLogger				= Logger.getLogger(strLoggerName);
 	private ISOSVFSHandler			objVfs4Target					= null;
 	private final ISOSVFSHandler	objVfs4Source					= null;
@@ -275,8 +280,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		logger.info(strV);
 		objTxtProps.put("version", strV);
 		objOptions.log_filename.setLogger(objJadeReportLogger);
-		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
-		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
+		objOptions.remote_dir.SetIfNotDirty(objOptions.Target().Directory);
+		objOptions.local_dir.SetIfNotDirty(objOptions.Source().Directory);
 		objOptions.host.SetIfNotDirty(objOptions.Target().host);
 		String strT = "";
 		if (objOptions.banner_header.isDirty()) {
@@ -286,24 +291,28 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			strT = SOSJADE_T_0010.get(); // LogFile Header
 		}
 
-		if (objOptions.file_spec.isNotDirty()) {
-			objTxtProps.put("file_path", "n.a.");
-		}
-		else {
+		if (objOptions.file_path.isDirty()) {
+			objTxtProps.put("file_path", objOptions.file_path.Value());
 			objTxtProps.put("file_spec", "n.a.");
 		}
+		if (objOptions.file_spec.isDirty()) {
+			objTxtProps.put("file_spec", objOptions.file_spec.Value());
+			objTxtProps.put("file_path", "n.a.");
+		}
+
 		objTxtProps.put("source_host", objOptions.Source().host.Value());
-		objTxtProps.put("source_dir", objOptions.SourceDir.Value());
+		objTxtProps.put("source_dir", objOptions.Source().Directory.Value());
 		objTxtProps.put("protocol", objOptions.Source().protocol.Value());
+
 		if (objOptions.Source().protocol.needPortNumber() == true) {
 			objTxtProps.put("port", objOptions.Source().port.Value());
 		}
 		else {
 			objTxtProps.put("port", "n.a.");
 		}
-		objTxtProps.put("source_dir", objOptions.SourceDir.Value());
+		objTxtProps.put("source_dir", objOptions.Source().Directory.Value());
 		if (objOptions.NeedTargetClient() == true) {
-			objTxtProps.put("target_dir", objOptions.TargetDir.Value());
+			objTxtProps.put("target_dir", objOptions.Target().Directory.Value());
 			objTxtProps.put("target_host", objOptions.Target().host.Value());
 		}
 		else {
@@ -346,7 +355,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 				String strT;
 				logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
-						+ getSuccessfulTransfers());
+						+ objSourceFileList.NoOfBytesTransferred());
 				if (objOptions.banner_footer.isDirty()) {
 					strT = objOptions.banner_footer.JSFile().getContent();
 				}
@@ -529,6 +538,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private void init() {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::init";
+		flgGlobalError = false;
+		JobSchedulerException.LastErrorMessage = EMPTY_STRING;
 		// logger is not yet initialized.
 		//		logger.info(conClassName + " --- " + conSVNVersion);
 	} // private void init
@@ -919,6 +930,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		boolean flgReturnCode = false;
 		try { // to connect, authenticate and execute commands
 			Options().CheckMandatory();
+			if (Options().VerbosityLevel.isNotDirty()) {
+				Options().VerbosityLevel.value(Options().DebugLevel.value());
+			}
 			Options().verbose.initializeLog4jLevels();
 			createHeadingBanner();
 			logger.debug(Options().dirtyString());
@@ -1080,7 +1094,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			setTextProperties();
 			objOptions.getTextProperties().put(conKeywordSTATUS, SOSJADE_T_0013.get());
 			String strM = SOSJADE_E_0101.params(e.getLocalizedMessage());
-			objJadeReportLogger.info(strM, e);
+			objJadeReportLogger.error(strM, e);
 			throw e;
 		}
 	}
@@ -1201,4 +1215,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		boolean flgRet = true;
 		return flgRet;
 	} // private void sendTransferHistory
+
+	@Override
+	public Logger getLogger() {
+		return logger;
+	}
+
+	@Override
+	public void setLogAppender(Appender pobjAppender) {
+		objJadeReportLogger.addAppender(pobjAppender);
+		logger.addAppender(pobjAppender);
+		objVFSLogger.addAppender(pobjAppender);
+		objJSHLogger.addAppender(pobjAppender);
+	}
 }

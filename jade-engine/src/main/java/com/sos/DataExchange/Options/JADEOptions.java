@@ -24,6 +24,7 @@ import com.sos.DataExchange.jaxb.configuration.JADEProfile;
 import com.sos.DataExchange.jaxb.configuration.JADEProfileIncludes;
 import com.sos.DataExchange.jaxb.configuration.JADEProfiles;
 import com.sos.DataExchange.jaxb.configuration.Value;
+import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
@@ -40,27 +41,26 @@ public class JADEOptions extends SOSFTPOptions {
 	 */
 	private static final long	serialVersionUID	= -5788970501747521212L;
 	@SuppressWarnings("unused")
-	private static final String	conSVNVersion					= "$Id$";
+	private static final String	conSVNVersion		= "$Id$";
 
-	@SuppressWarnings("unused") private final String conClassName = this.getClass().getSimpleName();
-	private final Logger logger = Logger.getLogger(this.getClass());
-	
+	@SuppressWarnings("unused")
+	private final String		conClassName		= this.getClass().getSimpleName();
+	private final Logger		logger				= Logger.getLogger(this.getClass());
 
 	public JADEOptions() {
 		super();
 	}
-	
-	
+
 	public JADEOptions(final HashMap<String, String> JSSettings) throws Exception {
 		super(JSSettings);
 	}
-	
+
 	public JADEOptions(final enuTransferTypes local, final enuTransferTypes enuTargetTransferType) {
 		super(local, enuTargetTransferType);
 	}
 
 	private static final String	conFileNameExtensionJADEConfigFile	= ".jadeconf";
-	
+
 	@Override
 	public HashMap<String, String> ReadSettingsFile() {
 		Properties objP = new Properties();
@@ -83,12 +83,12 @@ public class JADEOptions extends SOSFTPOptions {
 				ioe.printStackTrace();
 			}
 		}
-		else {  // TODO any file extension is allowed for the ini-configuration file
+		else { // TODO any file extension is allowed for the ini-configuration file
 			super.ReadSettingsFile();
 		}
 		return map;
 	}
-	
+
 	private void processXMLProfile(final Properties objP, final JADEProfile objProfile) {
 		for (Object object2 : objProfile.getIncludeOrIncludesOrParams()) {
 			if (object2 instanceof JADEProfileIncludes) {
@@ -171,7 +171,8 @@ public class JADEOptions extends SOSFTPOptions {
 		}
 	}
 
-	@SuppressWarnings("unused") private void iterateProfile(final Object objP) {
+	@SuppressWarnings("unused")
+	private void iterateProfile(final Object objP) {
 		if (objP instanceof JADEProfile) {
 			JADEProfile objProfile = (JADEProfile) objP;
 			System.out.println("--- Profile name = " + objProfile.getName());
@@ -216,8 +217,7 @@ public class JADEOptions extends SOSFTPOptions {
 			}
 		}
 	}
-	
-	
+
 	@Override
 	public JADEOptions getClone() { //https://change.sos-berlin.com/browse/SOSFTP-217
 		@SuppressWarnings("unused")
@@ -228,5 +228,40 @@ public class JADEOptions extends SOSFTPOptions {
 		return objClone;
 	} // public JADEOptions getClone
 
+	public void hideAndProtect() {
+		settings.setHideOption(true);
+		profile.setHideOption(true);
 
+		settings.setProtected(true);
+		profile.setProtected(true);
+
+		host.setProtected(true);
+		host.setHideOption(true);
+
+		SourceDir.setHideOption(true);
+		local_dir.setHideOption(true);
+		local_dir.setProtected(true);
+		TargetDir.setHideOption(true);
+		protocol.setHideOption(true);
+		port.setHideOption(true);
+
+		if (FileNameRegExp.isNotEmpty() == true) {
+			FileNameRegExp.setDirty(); // just to make sure to write out the value
+		}
+
+		if (profileID.IsEmpty() == true && isFragment.isFalse()) {
+			String strT = profileID.Value();
+		}
+
+		switch (operation.value()) {
+			case receive:
+			case send:
+				operation.Value(SOSOptionJadeOperation.enuJadeOperations.copy);
+				break;
+
+			default:
+				break;
+		}
+
+	}
 }
