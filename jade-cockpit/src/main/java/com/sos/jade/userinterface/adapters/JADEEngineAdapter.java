@@ -2,37 +2,44 @@
  *
  */
 package com.sos.jade.userinterface.adapters;
-import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.JSHelper.Basics.JSToolBox;
-import com.sos.JSHelper.interfaces.IJadeEngine;
-import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
-import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
-import com.sos.jade.userinterface.composite.LogFileComposite;
-import com.sos.jade.userinterface.data.JadeTreeViewEntry;
-import org.apache.log4j.Level;
+import java.util.Enumeration;
+
+import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.eclipse.swt.widgets.Display;
+
+import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.interfaces.IJadeEngine;
+import com.sos.jade.userinterface.composite.LogFileComposite;
+import com.sos.jade.userinterface.data.JadeTreeViewEntry;
 
 /**
  * @author KB
  *
  */
-public class JADEEngineAdapter extends JSToolBox {
+public class JADEEngineAdapter extends Thread implements Runnable {
 	@SuppressWarnings("unused")
-	private final String				conClassName	= this.getClass().getSimpleName();
+	private final String		conClassName		= this.getClass().getSimpleName();
+	private final Logger		logger				= Logger.getLogger(this.getClass());
 	@SuppressWarnings("unused")
-	private final Logger				logger			= Logger.getLogger(this.getClass());
-	@SuppressWarnings("unused")
-	private static final String			conSVNVersion	= "$Id$";
-	@SuppressWarnings("unused")
-	private JADEOptions				objOptions		= null;
-	@SuppressWarnings("unused")
-	private final ISOSVFSHandler		objVFS			= null;
-	@SuppressWarnings("unused")
-	private final ISOSVfsFileTransfer	ftpClient		= null;
+	private static final String	conSVNVersion		= "$Id$";
+	private JADEOptions			objOptions			= null;
 
-	public JADEEngineAdapter() {
+	private ISOSSWTAppenderUI	objLogFileComposite	= null;
+	private JadeTreeViewEntry	objTreeViewEntry	= null;
+
+	//	@SuppressWarnings("unused")
+	//	private final ISOSVFSHandler	objVFS			= null;
+
+	//	@SuppressWarnings("unused")
+	//	private final ISOSVfsFileTransfer	ftpClient		= null;
+
+	public JADEEngineAdapter(final JadeTreeViewEntry pobjTreeViewEntry, final ISOSSWTAppenderUI pobjLogFileComposite) {
+
+		objTreeViewEntry = pobjTreeViewEntry;
+		objLogFileComposite = pobjLogFileComposite;
+
 	}
 
 	/**
@@ -41,8 +48,6 @@ public class JADEEngineAdapter extends JSToolBox {
 	public JADEEngineAdapter(final String pstrResourceBundleName) {
 		super(pstrResourceBundleName);
 	}
-	@SuppressWarnings("unused")
-	private LogFileComposite	objLogFileComposite	= null;
 
 	public void setLogFileComposite(final LogFileComposite pobjLogFileComposite) {
 		objLogFileComposite = pobjLogFileComposite;
@@ -53,37 +58,44 @@ public class JADEEngineAdapter extends JSToolBox {
 		strVerbose = pstrVerbose;
 	}
 
-	public void Execute(final JadeTreeViewEntry objTreeViewEntry, final ISOSSWTAppenderUI pobjLogFileComposite) {
-		PatternLayout layout = new PatternLayout("%5p [%t] (%F:%L) - %m%n");
-		SOSSWTAppender objSWTAppender = new SOSSWTAppender(layout);
-		objSWTAppender.setAppenderUI(pobjLogFileComposite);
+	@Override
+	public void run() {
+		start();
+	}
+
+	private void removeAppender(Logger pogjLogger) {
+		for (Enumeration appenders = pogjLogger.getAllAppenders(); appenders.hasMoreElements();) {
+			Appender appender = (Appender) appenders.nextElement();
+			if (appender instanceof SOSSWTAppender) {
+				pogjLogger.removeAppender(appender);
+			}
+		}
+	}
+
+	private static final SOSSWTAppender	objSWTAppender	= new SOSSWTAppender();
+
+	@Override
+	public void start() {
+		// TODO Option info_log4jPatternLayout, debug_ , error_ , trace_ 
+		PatternLayout layout = new PatternLayout("[%-p] %d{ABSOLUTE} - %m%n");
 		Logger objRootLog = Logger.getRootLogger();
-		objRootLog.setLevel(Level.DEBUG);
-		objRootLog.addAppender(objSWTAppender);
-		//
-		// Appender consoleAppender2 = new ConsoleAppender(layout);
-		// // Appender consoleAppender = new ConsoleAppender(layout);
-		//
-		// objRootLog.addAppender(consoleAppender2);
-		//
-		// // ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
-		// objRootLog.setLevel(Level.DEBUG);
-		// objRootLog.debug("Log4J configured programmatically");
-		//
-		// String strLog4JFileName = "./log4j.properties";
-		// String strT = new File(strLog4JFileName).getAbsolutePath();
-		// System.out.println(strT);
-		// logger.info("logfilename = " + strT);
-//		objOptions = objTreeViewEntry.getOptions();
+
+		// delete previous defined appenders, because of the singleton nature of the log4j
+		removeAppender(objRootLog);
+
+		objSWTAppender.setLayout(layout);
+		objSWTAppender.setAppenderUI(objLogFileComposite);
+
+		// ave to be defined, otherwise ERRORs are not reported (I don't know why)
+		//		logger.setLevel(Level.INFO);
+		//		logger.addAppender(objSWTAppender);
+
 		objOptions = null;
 		if (objOptions == null) {
 			objOptions = new JADEOptions();
 			String strSettingsFileName = objTreeViewEntry.getSession().getJadeProperties().getAbsolutePath();
-			//		consoleAppender.setSession(objSection.getSession());
 			String strProfileName = objTreeViewEntry.getName();
-			//		consoleAppender.setConsoleName(strProfileName);
-			//		int intVerbose = objSection.getSession().getJadeProperties().getPropertyInt(strProfileName, "verbose", 0);
-			String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=" + strProfileName, "-verbose=" + strVerbose };
+			String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFileName, "-profile=" + strProfileName };
 			try {
 				objOptions.CommandLineArgs(strCmdLineParameters);
 			}
@@ -96,23 +108,19 @@ public class JADEEngineAdapter extends JSToolBox {
 			// TODO class name as an Option
 			Class<?> objA = classLoader.loadClass("com.sos.DataExchange.JadeEngine");
 			IJadeEngine objJADEEngine = (IJadeEngine) objA.newInstance();
+			Logger objJadeLogger = objJADEEngine.getLogger();
+			removeAppender(objJadeLogger);
+			objJADEEngine.setLogAppender(objSWTAppender);
 			objJADEEngine.setJadeOptions(objOptions);
-			//			Display.getDefault().syncExec(objJADEEngine);
 			Display.getDefault().asyncExec(objJADEEngine);
-			//			SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor();
-			//			objTPE.runTask(objJADEEngine);
-			//			
-			//			try {
-			//				objTPE.shutDown();
-			//				objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
-			//			}
-			//			catch (InterruptedException e) {
-			//				e.printStackTrace();
-			//			}
-			System.out.println(objJADEEngine.getState());
+			//			System.out.println("objJADEEngine.getState() = " + objJADEEngine.getState());
 		}
 		catch (Exception e) {
 			logger.info("abort", e);
+		}
+		finally {
+			//			objRootLog.removeAppender(objSWTAppender);
+			//			objSWTAppender = null;
 		}
 	}
 }

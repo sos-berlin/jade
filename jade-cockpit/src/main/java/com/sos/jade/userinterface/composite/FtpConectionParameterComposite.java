@@ -6,14 +6,17 @@ import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.dialog.components.CompositeBaseClass;
 
 public class FtpConectionParameterComposite extends CompositeBaseClass<SOSConnection2OptionsAlternate> {
-	@SuppressWarnings("unused") private final String		conClassName	= this.getClass().getSimpleName();
-	@SuppressWarnings("unused") private static final String	conSVNVersion	= "$Id$";
-	@SuppressWarnings({ "unused", "hiding" }) private final Logger		logger			= Logger.getLogger(this.getClass());
+	@SuppressWarnings("unused")
+	private final String		conClassName	= this.getClass().getSimpleName();
+	@SuppressWarnings("unused")
+	private static final String	conSVNVersion	= "$Id$";
+	@SuppressWarnings({ "unused", "hiding" })
+	private final Logger		logger			= Logger.getLogger(this.getClass());
 
-//	public FtpConectionParameterComposite(final CTabItem parent, final SOSConnection2OptionsAlternate objOptions) {
-//		this((Composite) parent.getControl(), objOptions);
-//	}
-//
+	//	public FtpConectionParameterComposite(final CTabItem parent, final SOSConnection2OptionsAlternate objOptions) {
+	//		this((Composite) parent.getControl(), objOptions);
+	//	}
+	//
 	public FtpConectionParameterComposite(final Composite parent, final SOSConnection2OptionsAlternate objOptions) {
 		super(parent, objOptions);
 		objJadeOptions = objOptions;
@@ -23,7 +26,8 @@ public class FtpConectionParameterComposite extends CompositeBaseClass<SOSConnec
 
 	}
 
-	@Override public void createComposite() {
+	@Override
+	public void createComposite() {
 		objCC.getControl(objJadeOptions.HostName);
 		objCC.getControl(objJadeOptions.port);
 		objCC.getControl(objJadeOptions.user);
@@ -33,5 +37,7 @@ public class FtpConectionParameterComposite extends CompositeBaseClass<SOSConnec
 		objCC.getControl(objJadeOptions.loadClassName, 3);
 		objCC.getControl(objJadeOptions.passive_mode);
 		objCC.getControl(objJadeOptions.ProtocolCommandListener);
+
+		doResize();
 	}
 }

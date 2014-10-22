@@ -14,18 +14,15 @@ public class Session {
 	private final Logger	logger						= Logger.getLogger(Session.class);
 	public final String		conSVNVersion				= "$Id$";
 	private SectionsHandler	objSectionsHandler;
-	private JSIniFile				objJadeConfigurationFile	= null;
+	private JSIniFile		objJadeConfigurationFile	= null;
 	private String			name;
 	private boolean			flgIsDirty					= false;
 
 	public Session() {
-		//		PatternLayout layout = new PatternLayout("%5p [%t] (%F:%L) - %m%n");
-		//		Logger objRootLog = Logger.getRootLogger();
-		//		Appender consoleAppender2 = new ConsoleAppender(layout);
-		//		objRootLog.addAppender(consoleAppender2);
-		//		// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
-		//		objRootLog.setLevel(Level.DEBUG);
-		//		objRootLog.debug("Log4J configured programmatically");
+	}
+
+	public Session(final String pstrJADEConfigurationFileName) {
+		strCurrentConfigFile = pstrJADEConfigurationFileName;
 	}
 
 	public boolean isDirty() {
@@ -44,11 +41,12 @@ public class Session {
 		return objSectionsHandler;
 	}
 
-	SplashScreen objSplash = null;
-	
+	SplashScreen	objSplash				= null;
+	private String	strCurrentConfigFile	= "src/test/resources/jade_settings.ini";
+
 	public SectionsHandler loadJadeConfigurationFile(final SplashScreen pobjSplash) {
 		objSplash = pobjSplash;
-		return loadJadeConfigurationFile("src/test/resources/jade_settings.ini");
+		return loadJadeConfigurationFile(strCurrentConfigFile);
 	}
 
 	public SectionsHandler loadJadeConfigurationFile(final String pstrFileName) {
@@ -56,7 +54,7 @@ public class Session {
 			name = pstrFileName;
 			objJadeConfigurationFile = new JSIniFile(pstrFileName);
 			if (objSplash != null) {
-				objSplash.setSteps(objSplash.steps +  objJadeConfigurationFile.getSections().size());
+				objSplash.setSteps(objSplash.steps + objJadeConfigurationFile.getSections().size());
 			}
 			objSectionsHandler = new SectionsHandler(null, this.getName());
 			for (SOSProfileSection objSection : objJadeConfigurationFile.getSections()) {
@@ -82,17 +80,17 @@ public class Session {
 		return objTVW;
 	}
 
-	public JadeTreeViewEntry newTreeViewEntry (final JADEOptions pobjOptions) {
+	public JadeTreeViewEntry newTreeViewEntry(final JADEOptions pobjOptions) {
 		JadeTreeViewEntry objTVW = new JadeTreeViewEntry(objJadeConfigurationFile, objJadeConfigurationFile.addSection(pobjOptions.profile.Value()));
 		objTVW.setOptions(pobjOptions);
 		return objTVW;
 	}
 
-	public JadeTreeViewEntry newTreeViewEntry (final SOSOptionString pobjProfile) {
+	public JadeTreeViewEntry newTreeViewEntry(final SOSOptionString pobjProfile) {
 		JadeTreeViewEntry objTVW = new JadeTreeViewEntry(objJadeConfigurationFile, objJadeConfigurationFile.addSection(pobjProfile.Value()));
 		return objTVW;
 	}
-	
+
 	public void saveConfigurationFile() {
 		objJadeConfigurationFile.CreateBackup();
 		try {
@@ -101,10 +99,8 @@ public class Session {
 			for (JadeTreeViewEntry objEntry : objSectionsHandler.getEntries()) {
 				JADEOptions objJadeOptions = objEntry.getOptions();
 				// avoid writing to file
-				objJadeOptions.settings.setHideOption(true);
-				objJadeOptions.profile.setHideOption(true);
-				objJadeOptions.settings.setProtected(true);
-				objJadeOptions.profile.setProtected(true);
+				objJadeOptions.hideAndProtect();
+
 				String strT1 = "\n[" + objJadeOptions.profile.Value() + "]\n";
 				strT1 += objJadeOptions.DirtyString();
 				objJadeConfigurationFile.WriteLine(strT1);
@@ -113,7 +109,7 @@ public class Session {
 		catch (IOException e) {
 		}
 		finally {
-			SOSOptionElement.flgShowPasswords = true;			
+			SOSOptionElement.flgShowPasswords = true;
 		}
 	}
 

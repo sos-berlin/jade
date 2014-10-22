@@ -1,5 +1,4 @@
 package com.sos.jade.userinterface.composite;
-import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 
 import com.sos.DataExchange.Options.JADEOptions;
@@ -10,20 +9,20 @@ import com.sos.jade.userinterface.data.JadeTreeViewEntry;
 
 public class MainComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings("unused")
-	private final String		conClassName		= this.getClass().getSimpleName();
+	private final String		conClassName	= this.getClass().getSimpleName();
 	@SuppressWarnings("unused")
-	private static final String	conSVNVersion		= "$Id$";
-	@SuppressWarnings("unused")
-	private final Logger		logger1				= Logger.getLogger(this.getClass());
-	private JadeTreeViewEntry	objTreeViewEntry	= null;
+	private static final String	conSVNVersion	= "$Id$";
 
-	private SOSCTabFolder pobjThisTabFolder  = null;
-	
+	//	private final Logger		logger1				= Logger.getLogger(this.getClass());
+	//	private final JadeTreeViewEntry	objTreeViewEntry	= null;
+
+	//	private SOSCTabFolder		pobjThisTabFolder	= null;
+
 	public MainComposite(final SOSCTabFolder pobjTabFolder, final JadeTreeViewEntry pobjTreeViewEntry) {
 		super(pobjTabFolder);
-		objTreeViewEntry = pobjTreeViewEntry;
+		JadeTreeViewEntry objTreeViewEntry = pobjTreeViewEntry;
 		objJadeOptions = objTreeViewEntry.getOptions();
-		pobjThisTabFolder = pobjTabFolder;
+		//		pobjThisTabFolder = pobjTabFolder;
 		try {
 			objJadeOptions.adjustDefaults();
 		}
@@ -32,12 +31,12 @@ public class MainComposite extends CompositeBaseClass<JADEOptions> {
 		}
 	}
 
-//	public MainComposite(final CTabItem pobjTabItem, final JadeTreeViewEntry pobjTreeViewEntry) {
-//		super((Composite) pobjTabItem.getControl());
-//		objTreeViewEntry = pobjTreeViewEntry;
-//		objJadeOptions = objTreeViewEntry.getOptions();
-//	}
-//
+	//	public MainComposite(final CTabItem pobjTabItem, final JadeTreeViewEntry pobjTreeViewEntry) {
+	//		super((Composite) pobjTabItem.getControl());
+	//		objTreeViewEntry = pobjTreeViewEntry;
+	//		objJadeOptions = objTreeViewEntry.getOptions();
+	//	}
+	//
 	@Override
 	public void createComposite() {
 		{
@@ -45,7 +44,7 @@ public class MainComposite extends CompositeBaseClass<JADEOptions> {
 			objMainTabFolder.ItemsHasClose = false;
 
 			OperationComposite objOpC = new OperationComposite(objMainTabFolder, objJadeOptions);
-			createTab(objMainTabFolder, objOpC , "tab_Operation");
+			createTab(objMainTabFolder, objOpC, "tab_Operation");
 			createTab(objMainTabFolder, new ConnectionComposite(objMainTabFolder, objJadeOptions, 1), "tab_Source");
 			//			objConnectionComposite.createTabItemComposite();
 

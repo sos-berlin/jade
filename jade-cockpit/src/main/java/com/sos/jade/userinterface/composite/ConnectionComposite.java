@@ -6,11 +6,9 @@ import org.eclipse.swt.widgets.Composite;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.VirtualFileSystem.Options.SOSConnection2Options;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
-import com.sos.dialog.Globals;
 import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.components.CompositeBaseClass;
-import com.sos.dialog.layouts.Gridlayout;
 
 public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 	@SuppressWarnings({ "unused" })
@@ -32,9 +30,8 @@ public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 
 	@Override
 	public void createComposite() {
-		Gridlayout.set4ColumnLayout(this);
+		//		Gridlayout.set4ColumnLayout(this);
 		SOSCTabFolder tabFolderConnection = new SOSCTabFolder(this, SWT.None /* .H_SCROLL | SWT.V_SCROLL */);
-		tabFolderConnection.setBackground(Globals.getCompositeBackground());
 		tabFolderConnection.ItemsHasClose = false;
 		{
 			SOSConnection2OptionsAlternate objO = null;
@@ -55,7 +52,7 @@ public class ConnectionComposite extends CompositeBaseClass<JADEOptions> {
 				default:
 					break;
 			}
-			
+
 			SOSCTabItem tbtmServer = tabFolderConnection.getTabItem("tab_Server");
 			ConnectionDataComposite<SOSConnection2OptionsAlternate> objCDC = new ConnectionDataComposite<>(tabFolderConnection, objO);
 			tbtmServer.setControl(objCDC);

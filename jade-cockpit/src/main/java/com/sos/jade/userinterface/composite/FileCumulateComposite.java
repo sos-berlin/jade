@@ -20,14 +20,17 @@ public class FileCumulateComposite extends CompositeBaseClass<JADEOptions> {
 		}
 	}
 
-	private SOSCheckBox btnCumulateFiles = null;
+	private SOSCheckBox	btnCumulateFiles	= null;
+
 	/**
 	 * 
 	 */
-	@Override public void createComposite() {
+	@Override
+	public void createComposite() {
 		objCC.getInvisibleSeparator();
 
-		btnCumulateFiles =  objCC.getCheckBox(objJadeOptions.CumulateFiles);
+		btnCumulateFiles = objCC.getCheckBox(objJadeOptions.CumulateFiles);
+		btnCumulateFiles.addSelectionListener(EnableFieldsListener);
 		objCC.getLabel(2);
 		btnCumulateFiles.addChild(objCC.getControl(objJadeOptions.CumulativeFileName, 3));
 		btnCumulateFiles.addChild(objCC.getControl(objJadeOptions.CumulativeFileSeparator));
@@ -40,11 +43,13 @@ public class FileCumulateComposite extends CompositeBaseClass<JADEOptions> {
 	/**
 	 * 
 	 */
-	@Override protected void enableFields() {
+	@Override
+	protected void enableFields() {
+		btnCumulateFiles.setEnabledDisabled();
 	}
-	
+
 	private void initValues() {
 		btnCumulateFiles.setEnabledDisabled();
 	}
-	
+
 }

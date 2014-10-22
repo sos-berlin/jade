@@ -15,27 +15,29 @@ import com.sos.dialog.classes.SOSCTabFolder;
 import com.sos.dialog.classes.SOSCTabItem;
 import com.sos.dialog.classes.SOSCheckBox;
 import com.sos.dialog.components.CompositeBaseClass;
+import com.sos.dialog.interfaces.ISOSTabItem;
 
-public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
-	@SuppressWarnings({ "unused", "hiding" }) private final Logger	logger						= Logger.getLogger(ConnectionDataComposite.class);
-	public final String									conSVNVersion				= "$Id$";
-	private SOSConnection2OptionsAlternate				objJadeConnectionOptions	= null;
-	private SOSCTabFolder								tabFolderProtocols			= null;
-	private final SOSCTabItem									tbtmFtp						= null;
-	private final SOSCTabItem									tbtmSFtp					= null;
-	private final SOSCTabItem									tbtmFtpS					= null;
-	private final SOSCTabItem									tbtmLocal					= null;
-	private final SOSCTabItem									tbtmWebDav					= null;
-	private final SOSCTabItem									tbtmHttp					= null;
-	private final SOSCTabItem									tbtmHttps					= null;
-	private final SOSCTabItem									tbtmSmtp					= null;
-	private final SOSCTabItem									tbtmIMap					= null;
-	private final SOSCTabItem									tbtmZip						= null;
+public class ConnectionDataComposite<T> extends CompositeBaseClass<T> {
+	@SuppressWarnings({ "unused", "hiding" })
+	private final Logger					logger						= Logger.getLogger(ConnectionDataComposite.class);
+	public final String						conSVNVersion				= "$Id$";
+	private SOSConnection2OptionsAlternate	objJadeConnectionOptions	= null;
+	private SOSCTabFolder					tabFolderProtocols			= null;
+	private final SOSCTabItem				tbtmFtp						= null;
+	private final SOSCTabItem				tbtmSFtp					= null;
+	private final SOSCTabItem				tbtmFtpS					= null;
+	private final SOSCTabItem				tbtmLocal					= null;
+	private final SOSCTabItem				tbtmWebDav					= null;
+	private final SOSCTabItem				tbtmHttp					= null;
+	private final SOSCTabItem				tbtmHttps					= null;
+	private final SOSCTabItem				tbtmSmtp					= null;
+	private final SOSCTabItem				tbtmIMap					= null;
+	private final SOSCTabItem				tbtmZip						= null;
 
-//	public ConnectionDataComposite(final SOSCTabItem parent, final T objOptions) {
-//		super(parent.getParent(), objOptions);
-//	}
-//
+	//	public ConnectionDataComposite(final SOSCTabItem parent, final T objOptions) {
+	//		super(parent.getParent(), objOptions);
+	//	}
+	//
 	public ConnectionDataComposite(final Composite parent, final T objOptions) {
 		super(parent, null);
 		objJadeConnectionOptions = (SOSConnection2OptionsAlternate) objOptions;
@@ -44,16 +46,18 @@ public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
 		}
 	}
 
-	SOSCheckBox btnUseCS = null;
-	CCombo cboProtocol = null;
-	
-	@Override public void createComposite() {
+	SOSCheckBox	btnUseCS	= null;
+	CCombo		cboProtocol	= null;
+
+	@Override
+	public void createComposite() {
 		int i = this.getChildren().length;
 		// TODO protocol kann für jede Verbindung (alternate, proxy, jump) unterschiedlich sein
 		cboProtocol = (CCombo) objCC.getControl(objJadeConnectionOptions.protocol);
-		
+
 		cboProtocol.addModifyListener(new ModifyListener() {
-			@Override public void modifyText(final ModifyEvent arg0) {
+			@Override
+			public void modifyText(final ModifyEvent arg0) {
 				selectTabItem(cboProtocol.getText());
 			}
 		});
@@ -62,7 +66,7 @@ public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
 		//
 		tabFolderProtocols = new SOSCTabFolder(this, SWT.NONE);
 		tabFolderProtocols.ItemsHasClose = false;
-//		tabFolderProtocols.flgRejectTabItemSelection = true;
+		//		tabFolderProtocols.flgRejectTabItemSelection = true;
 		tabFolderProtocols.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
 
 		createTab(tabFolderProtocols, new FtpConectionParameterComposite(tabFolderProtocols, objJadeConnectionOptions), "tab_" + enuTransferTypes.ftp);
@@ -91,33 +95,34 @@ public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
 		objCC.getControl(objJadeConnectionOptions.makeDirs, 3);
 		objCC.getControl(objJadeConnectionOptions.ReplaceWhat, 3);
 		objCC.getControl(objJadeConnectionOptions.ReplaceWith, 3);
-		
+
 		initValues();
+		doResize();
 		//
 		selectTabItem(objJadeConnectionOptions.protocol.Value());
 	}
 
-	private void selectTabItem (final String pstrWhatProcotol) {
+	private void selectTabItem(final String pstrWhatProcotol) {
 		String strP = "tab_" + pstrWhatProcotol;
 		for (CTabItem objTabItem : tabFolderProtocols.getItems()) {
 			String strT = (String) objTabItem.getData("key");
 			if (strT != null && strT.equalsIgnoreCase(strP)) {
-//				tabFolderProtocols.flgRejectTabItemSelection = false;
 				tabFolderProtocols.setSelection(objTabItem);
-//				tabFolderProtocols.flgRejectTabItemSelection = true;
-//				ISOSTabItem objCurrTab = (ISOSTabItem) objTabItem.getData("composite");
-//				if (objCurrTab != null) {
-//					objCurrTab.createTabItemComposite();
-//					objParent.layout();
-//					tabFolderProtocols.layout();
-//				}
+				tabFolderProtocols.flgRejectTabItemSelection = false;
+				ISOSTabItem objCurrTab = (ISOSTabItem) objTabItem.getData("composite");
+				if (objCurrTab != null) {
+					objCurrTab.createTabItemComposite();
+				}
+				tabFolderProtocols.getParent().layout(true, true);
 				break;
 			}
 		}
 
 	}
+
 	// TODO must be a method of the Options-Class
-	@SuppressWarnings("unused") private void setMandatory(final SOSOptionTransferType pobjTF) {
+	@SuppressWarnings("unused")
+	private void setMandatory(final SOSOptionTransferType pobjTF) {
 		switch (pobjTF.getEnum()) {
 			case ftp:
 				objJadeConnectionOptions.HostName.isMandatory(true);
@@ -167,12 +172,12 @@ public class ConnectionDataComposite <T> extends CompositeBaseClass<T> {
 		}
 	}
 
-//	private SOSCTabItem getTabItem(final enuTransferTypes penuT) {
-//		SOSCTabItem objTabItem = tabFolderProtocols.getTabItem("tab_" + penuT.Text());
-//		return objTabItem;
-//	}
-//	
+	//	private SOSCTabItem getTabItem(final enuTransferTypes penuT) {
+	//		SOSCTabItem objTabItem = tabFolderProtocols.getTabItem("tab_" + penuT.Text());
+	//		return objTabItem;
+	//	}
+	//	
 	protected void initValues() {
 		btnUseCS.setEnabledDisabled();
-	}	
+	}
 }

@@ -1,5 +1,4 @@
 package com.sos.jade.userinterface.composite;
-import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -9,9 +8,9 @@ import com.sos.dialog.components.CompositeBaseClass;
 import com.sos.dialog.layouts.Gridlayout;
 
 public class FileSelectionComposite extends CompositeBaseClass<JADEOptions> {
-	@SuppressWarnings({ "unused" })
-	private final Logger	logger			= Logger.getLogger(FileSelectionComposite.class);
-	public final String		conSVNVersion	= "$Id$";
+	//	@SuppressWarnings({ "unused" })
+	//	private final Logger	logger			= Logger.getLogger(FileSelectionComposite.class);
+	public final String	conSVNVersion	= "$Id$";
 
 	public FileSelectionComposite(final Composite parent, final JADEOptions objOptions) {
 		super(parent, objOptions);
@@ -29,9 +28,12 @@ public class FileSelectionComposite extends CompositeBaseClass<JADEOptions> {
 		FileRegExComposite objFreg = null;
 		createTab(tabFolderFileSection, (objFreg = new FileRegExComposite(tabFolderFileSection, objJadeOptions)), "tab_Selection");
 		createTab(tabFolderFileSection, new FileRenameComposite(tabFolderFileSection, objJadeOptions), "tab_Rename");
-		createTab(tabFolderFileSection, new FilePollingComposite(tabFolderFileSection, objJadeOptions), "tab_Polling");
-		createTab(tabFolderFileSection, new FileSteadyStateComposite(tabFolderFileSection, objJadeOptions), "tab_SteadyState");
-		createTab(tabFolderFileSection, new FileCumulateComposite(tabFolderFileSection, objJadeOptions), "tab_CumulateFiles");
+		boolean flgT = objJadeOptions.operation.isOperationDelete() || objJadeOptions.operation.isOperationRename();
+		if (flgT == false) {
+			createTab(tabFolderFileSection, new FilePollingComposite(tabFolderFileSection, objJadeOptions), "tab_Polling");
+			createTab(tabFolderFileSection, new FileSteadyStateComposite(tabFolderFileSection, objJadeOptions), "tab_SteadyState");
+			createTab(tabFolderFileSection, new FileCumulateComposite(tabFolderFileSection, objJadeOptions), "tab_CumulateFiles");
+		}
 		objFreg.createTabItemComposite();
 		tabFolderFileSection.setSelection(0);
 	}

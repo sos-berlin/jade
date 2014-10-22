@@ -55,8 +55,8 @@ public class OperationComposite extends CompositeBaseClass<JADEOptions> {
 
 		objCC.getControl(objJadeOptions.RecurseSubFolders);
 
-		if (objJadeOptions.operation.isOperationDelete() == true) {
-			objCC.getLabel();
+		if (objJadeOptions.operation.isOperationDelete() == true || objJadeOptions.operation.isOperationRename()) {
+			objCC.getLabel(2);
 		}
 		else {
 			objCC.getControl(objJadeOptions.remove_files);
