@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import static junit.framework.Assert.*;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
