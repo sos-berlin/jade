@@ -33,7 +33,7 @@ public class SOSOptionUrlTest {
 		assertEquals("Protocol = ", "file", objSF.getprotocol().Value());
 		assertEquals("userid = ", "", objSF.getUser().Value());
 		assertEquals("password = ", "", objSF.getPassword().Value());
-		assertEquals("host = ", "", objSF.getHost().Value());
+		assertEquals("host = ", "localhost", objSF.getHost().Value());
 		assertEquals("filePath = ", "./JCLs", objU.getFolderName());
 	}
 
@@ -45,7 +45,7 @@ public class SOSOptionUrlTest {
 		assertEquals("Protocol = ", "file", objSF.getprotocol().Value());
 		assertEquals("userid = ", "", objSF.getUser().Value());
 		assertEquals("password = ", "", objSF.getPassword().Value());
-		assertEquals("host = ", "", objSF.getHost().Value());
+		assertEquals("host = ", "localhost", objSF.getHost().Value());
 		assertEquals("filePath = ", "./JCLs", objU.getFolderName());
 	}
 
@@ -57,7 +57,7 @@ public class SOSOptionUrlTest {
 		assertEquals("Protocol = ", "file", objSF.getprotocol().Value());
 		assertEquals("userid = ", "", objSF.getUser().Value());
 		assertEquals("password = ", "", objSF.getPassword().Value());
-		assertEquals("host = ", "", objSF.getHost().Value());
+		assertEquals("host = ", "localhost", objSF.getHost().Value());
 //		assertEquals("filePath = ", "/home/test/test.txt", objSF.getfile_path().Value());
 	}
 
