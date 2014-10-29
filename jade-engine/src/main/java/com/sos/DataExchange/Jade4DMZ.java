@@ -218,7 +218,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	}
 
 	private void StartTransferFromDMZ2Intranet() {
-		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
+		JADEOptions obj2DMZ = objOptions.getClone();
 		
  		setDMZasSource4Receive(obj2DMZ);
 		  
@@ -241,7 +241,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	
 	private void StartTransferFromInet2DMZ() {
 
-		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
+		JADEOptions obj2DMZ = objOptions.getClone();
 
 		SOSConnection2OptionsAlternate objSource = objOptions.Source();
 		String strD = objSource.getOptionsAsCommandLine();
@@ -295,7 +295,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		final String conMethodName = conClassName + "::StartTransferToDMZ";
 		logger.trace(conMethodName);
 
-		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
+		JADEOptions obj2DMZ = objOptions.getClone();
 		setDMZasTarget(obj2DMZ);
         logger.debug(obj2DMZ.Target().host.Value());
 		logger.debug(obj2DMZ.DirtyString());
@@ -353,15 +353,20 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 		//Jump Parameter als Target setzen
 		objDMZOptions.TargetDir.Value(strTempFolderNameOnDMZ);
+		objDMZOptions.Target().Directory.Value(strTempFolderNameOnDMZ);
 		objDMZOptions.Target().user.Value(objOptions.jump_user.Value());
 		objDMZOptions.Target().password.Value(objOptions.jump_password.Value());
 		objDMZOptions.Target().auth_method.Value(objOptions.jump_ssh_auth_method.Value());
 		objDMZOptions.Target().auth_file.Value(objOptions.jump_ssh_auth_file.Value());
 		objDMZOptions.Target().protocol.Value(objOptions.jump_protocol.Value());
 		objDMZOptions.Target().host.Value(objOptions.jump_host.Value());
-		
+		//oh 2014-10-29, add port otherwise -> jump login failed 
+		objDMZOptions.Target().port.Value(objOptions.jump_port.Value());
+
 		//Change some other parameters.
 		objDMZOptions.settings.Value("");
+		//oh 2014-10-29, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
+		objDMZOptions.settings.setNotDirty();
 		objDMZOptions.profile.Value("");
 		objDMZOptions.atomic_prefix.Value("");
 		objDMZOptions.atomic_suffix.Value("");
