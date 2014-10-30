@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	private JADEOptions		objOptions				= null;
 //	private final String		strSettingsFileName		= "./scripts/sosdex_settings.ini";
 //	protected String			strSettingsFile			= "R:/backup/sos/java/development/SOSDataExchange/examples/jade_settings.ini";
-	protected String			strSettingsFile			= "R:/java.sources/trunk/products/jade/jade-engine/src/test/resources/examples/jade_settings.ini";
+	protected String			strSettingsFile			= "src/test/resources/examples/jade_settings.ini";
 	private ISOSVFSHandler		objVFS					= null;
 	@SuppressWarnings("unused")
 	private ISOSVfsFileTransfer	ftpClient				= null;
@@ -62,7 +62,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	String						constrSettingsTestFile	= strTestPathName + "/jade-test.ini";
 	@SuppressWarnings("unused")
 	private final String		strAPrefix				= "~~";
-	protected String			dynamicClassNameSource	= null;
+	protected String			dynamicClassNameSource	= null; 
 
 	public SOSDataExchangeEngineTest() {
 		//
@@ -1400,7 +1400,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		for (SOSFileListEntry objListItem : objJadeEngine.getFileList().List()) {
 			String strF = MakeFullPathName(objOptions.TargetDir.Value(), objListItem.TargetFileName());
 			boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).FileExists();
-			Assert.assertTrue("File " + strF + " exist, but should not", flgResult);
+			assertTrue("File " + strF + " exist, but should not", flgResult);
 		}
 		objJadeEngine.Logout();
 	}
@@ -1441,7 +1441,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		for (SOSFileListEntry objListItem : objJadeEngine.getFileList().List()) {
 			String strF = objListItem.SourceFileName();
 			boolean flgResult = objListItem.getDataSourceClient().getFileHandle(strF).FileExists();
-			Assert.assertFalse("File " + strF + " exist, but should not", flgResult);
+			assertFalse("File " + strF + " exist, but should not", flgResult);
 		}
 		objJadeEngine.Logout();
 	}
@@ -1465,7 +1465,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		for (SOSFileListEntry objListItem : objJadeEngine.getFileList().List()) {
 			String strF = MakeFullPathName(objOptions.TargetDir.Value(), objListItem.TargetFileName());
 			boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).FileExists();
-			Assert.assertTrue("File " + strF + " exist, but should not", flgResult);
+			assertTrue("File " + strF + " exist, but should not", flgResult);
 		}
 		objJadeEngine.Logout();
 	}
@@ -1771,18 +1771,18 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("Copy_Local2SFTP_recursive");
 		objOptions.ReadSettingsFile();
-		Assert.assertEquals("User ID", "test", objOptions.Target().user.Value());
-		Assert.assertEquals("password", "12345", objOptions.Target().password.Value());
+		assertEquals("User ID", "test", objOptions.Target().user.Value());
+		assertEquals("password", "12345", objOptions.Target().password.Value());
 	}
 
 	@Test public void testJadeConfig() throws Exception {
 		final String conMethodName = conClassName + "::testJadeConfig";
 		logger.info("*********************************************** " + conMethodName + "******************");
-		objOptions.settings.Value("ConfigurationExample.jadeconf");
+		objOptions.settings.Value("examples/ConfigurationExample.jadeconf");
 		objOptions.profile.Value("copylocal2local1");
 		objOptions.ReadSettingsFile();
 		logger.debug(objOptions.DirtyString());
-		Assert.assertEquals("operation ", "copy", objOptions.operation.Value());
+		assertEquals("operation ", "copy", objOptions.operation.Value());
 	}
 
 	@Test(
@@ -1793,8 +1793,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.settings.Value(constrSettingsTestFile);
 		objOptions.profile.Value("include-TestTest");
 		objOptions.ReadSettingsFile();
-		Assert.assertEquals("User ID", "kb", objOptions.user.Value());
-		Assert.assertEquals("password", "kb", objOptions.password.Value());
+		assertEquals("User ID", "kb", objOptions.user.Value());
+		assertEquals("password", "kb", objOptions.password.Value());
 	}
 
 	@Test public void testIniFile3() throws Exception {
@@ -1805,11 +1805,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.profile.Value("include-Test");
 		objOptions.ReadSettingsFile();
 		objOptions.local_dir.Value(".");
-		Assert.assertEquals("User ID", "kb", objOptions.user.Value());
-		Assert.assertEquals("password", "kb", objOptions.password.Value());
-		Assert.assertEquals("Hostname", "localhost", objOptions.host.Value());
-		Assert.assertEquals("port", 88, objOptions.port.value());
-		Assert.assertEquals("protocol", "scp", objOptions.protocol.Value());
+		assertEquals("User ID", "kb", objOptions.user.Value());
+		assertEquals("password", "kb", objOptions.password.Value());
+		assertEquals("Hostname", "localhost", objOptions.host.Value());
+		assertEquals("port", 88, objOptions.port.value());
+		assertEquals("protocol", "scp", objOptions.protocol.Value());
 		//		objOptions.CheckMandatory();
 	}
 
@@ -1821,8 +1821,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.settings.Value(constrSettingsTestFile);
 		objOptions.profile.Value("include-TestWithNonexistenceInclude");
 		objOptions.ReadSettingsFile();
-		Assert.assertEquals("User ID", "kb", objOptions.user.Value());
-		Assert.assertEquals("password", "kb", objOptions.password.Value());
+		assertEquals("User ID", "kb", objOptions.user.Value());
+		assertEquals("password", "kb", objOptions.password.Value());
 	}
 
 	@Test public void testIniFile5() throws Exception {
@@ -1848,9 +1848,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.ReadSettingsFile();
 		SOSConnection2Options objConn = objOptions.getConnectionOptions();
 		String strComputerName = System.getenv("computername");
-		Assert.assertEquals("Source.Host", conHostNameWILMA_SOS, objConn.Source().host.Value());
-		Assert.assertEquals("Target.Host", conHostName8OF9_SOS, objConn.Target().host.Value());
-		Assert.assertEquals("file_path", "test.txt", objOptions.file_path.Value());
+		assertEquals("Source.Host", conHostNameWILMA_SOS, objConn.Source().host.Value());
+		assertEquals("Target.Host", conHostName8OF9_SOS, objConn.Target().host.Value());
+		assertEquals("file_path", "test.txt", objOptions.file_path.Value());
 		objOptions.CheckMandatory();
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
