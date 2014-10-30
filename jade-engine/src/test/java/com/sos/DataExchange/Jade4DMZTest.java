@@ -203,6 +203,18 @@ public class Jade4DMZTest {
 
 		objJ.Execute();
 	}
+	
+	@Test
+	public final void testsendusingdmzOH() {
+		Jade4DMZ objJ = new Jade4DMZ();
+		objO = objJ.Options();
+
+		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
+		objO.profile.Value("jumphost_test_receive");
+		objO.ReadSettingsFile();
+
+		objJ.Execute();
+	}
 
 	@Test
 	public final void testreceiveusingdmz() {
