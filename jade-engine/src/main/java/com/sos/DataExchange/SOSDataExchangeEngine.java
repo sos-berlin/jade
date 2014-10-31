@@ -688,7 +688,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				strM += "\n" + "List of transferred Files:" + "\n";
 				for (SOSFileListEntry objListItem : objSourceFileList.List()) {
 					String strSourceFileName = objListItem.getSourceFilename();
-					strM += strSourceFileName + "\n";
+					strM += strSourceFileName.replaceAll("\\\\", "/") + "\n";
 				}
 				pobjO.body.Value(strM);
 				if (pobjO.from.isDirty() == false) {
