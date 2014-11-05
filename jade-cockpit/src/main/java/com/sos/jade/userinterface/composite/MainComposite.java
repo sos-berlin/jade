@@ -45,30 +45,13 @@ public class MainComposite extends CompositeBaseClass<JADEOptions> {
 
 			OperationComposite objOpC = new OperationComposite(objMainTabFolder, objJadeOptions);
 			createTab(objMainTabFolder, objOpC, "tab_Operation");
-			createTab(objMainTabFolder, new ConnectionComposite(objMainTabFolder, objJadeOptions, 1), "tab_Source");
+			createTab(objMainTabFolder, new ServerComposite(objMainTabFolder, objJadeOptions, 1), "tab_Source");
 			//			objConnectionComposite.createTabItemComposite();
 
-			// Primary, Alternate
-			//						CTabItem tbtmNewItem_2 = tabFolder_2.getTabItem("Alt Source");
-			//						{
-			//							Composite composite = new Composite(tabFolder_2, SWT.NONE);
-			//							tbtmNewItem_2.setControl(composite);
-			//							Gridlayout.set4ColumnLayout(composite);
-			//							new ConnectionComposite(composite, objJadeOptions, 2);
-			//		
 			createTab(objMainTabFolder, new FileSelectionComposite(objMainTabFolder, objJadeOptions), "tab_Objects");
 
 			if (objJadeOptions.NeedTargetClient() == true) {
-				createTab(objMainTabFolder, new ConnectionComposite(objMainTabFolder, objJadeOptions, 3), "tab_Target");
-				//						{
-				//							CTabItem tbtmNewItem_3 = tabFolder_2.getTabItem("Alt Target");
-				//							{
-				//								Composite composite = new Composite(tabFolder_2, SWT.NONE);
-				//								tbtmNewItem_3.setControl(composite);
-				//								Gridlayout.set4ColumnLayout(composite);
-				//								new ConnectionComposite(composite, objJadeOptions, 4);
-				//							}
-				//						}
+				createTab(objMainTabFolder, new ServerComposite(objMainTabFolder, objJadeOptions, 3), "tab_Target");
 			}
 
 			createTab(objMainTabFolder, new MiscComposite(objMainTabFolder, objJadeOptions), "tab_Misc");

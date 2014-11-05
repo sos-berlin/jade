@@ -33,6 +33,7 @@ public class FileSelectionComposite extends CompositeBaseClass<JADEOptions> {
 			createTab(tabFolderFileSection, new FilePollingComposite(tabFolderFileSection, objJadeOptions), "tab_Polling");
 			createTab(tabFolderFileSection, new FileSteadyStateComposite(tabFolderFileSection, objJadeOptions), "tab_SteadyState");
 			createTab(tabFolderFileSection, new FileCumulateComposite(tabFolderFileSection, objJadeOptions), "tab_CumulateFiles");
+			createTab(tabFolderFileSection, new Filter4ResultSetComposite(tabFolderFileSection, objJadeOptions), "tab_Filter");
 		}
 		objFreg.createTabItemComposite();
 		tabFolderFileSection.setSelection(0);

@@ -24,13 +24,37 @@ public class TreeLabelProvider extends LabelProvider implements ILabelProvider, 
 		if (element instanceof JadeTreeViewEntry) {
 			JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
 			// [SP] changed to get image resources dynamically at runtime
-			URL url = Thread.currentThread().getContextClassLoader().getResource("Profil.gif");
-			return SWTResourceManager.getImage(url.getPath());
-//			return SWTResourceManager.getImage("Profil.gif");
+			ClassLoader objCL = Thread.currentThread().getContextClassLoader();
+			URL url = null;
+
+			switch (objS.getType()) {
+				case IsRoot:
+					url = objCL.getResource("database.png");
+					break;
+				case fragments_root:
+					url = objCL.getResource("lego.png");
+					break;
+				case profiles_root:
+					url = objCL.getResource("org/freedesktop/tango/16x16/places/folder.png");
+					break;
+				case profiles:
+					url = objCL.getResource("disk.png");
+					break;
+				case fragment:
+					url = objCL.getResource("lego.png");
+					break;
+				default:
+					break;
+			}
+
+			if (url != null) {
+				return SWTResourceManager.getImage(url.getPath());
+			}
+			//			return SWTResourceManager.getImage("Profil.gif");
 		}
 		URL url = Thread.currentThread().getContextClassLoader().getResource("BlueCircle.gif");
 		return SWTResourceManager.getImage(url.getPath());
-//		return SWTResourceManager.getImage("BlueCircle.gif");
+		//		return SWTResourceManager.getImage("BlueCircle.gif");
 	}
 
 	@Override
@@ -49,7 +73,8 @@ public class TreeLabelProvider extends LabelProvider implements ILabelProvider, 
 	@Override
 	public Font getFont(final Object element) {
 		if (element instanceof JadeTreeViewEntry) {
-			@SuppressWarnings("unused") JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
+			@SuppressWarnings("unused")
+			JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
 		}
 		return Globals.stFontRegistry.get("text");
 	}
@@ -59,7 +84,8 @@ public class TreeLabelProvider extends LabelProvider implements ILabelProvider, 
 		return null;
 	}
 
-	@SuppressWarnings("unused") @Override
+	@SuppressWarnings("unused")
+	@Override
 	public Color getForeground(final Object element) {
 		if (element instanceof JadeTreeViewEntry) {
 			JadeTreeViewEntry objS = (JadeTreeViewEntry) element;
