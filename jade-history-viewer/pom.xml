@@ -69,9 +69,11 @@
 					<!-- the regex will remove all dependencies except for vaadin-server-<version>.jar,
 						 because it is needed for the servlets class loader to function correctly. Otherwise
 						 classes from WEB-INF/classes won´t be found -->        
+<!-- 
 						%regex[WEB-INF/lib/(?!vaadin-server).*.jar],
 						WEB-INF/classes/hibernate.cfg.xml
-					</packagingExcludes>
+ -->
+ 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
@@ -221,7 +223,6 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiler</artifactId>
-			<version>${vaadin.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		-->
@@ -251,16 +252,20 @@
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
       <version>${project.version}</version>
+<!-- 
 			<scope>provided</scope>
- 		</dependency>
+ -->
+  		</dependency>
 
 		<!-- scope provided exludes the dependency from the war build -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
       <version>${project.version}</version>
+<!-- 
 			<scope>provided</scope>
- 		</dependency>
+ -->
+  		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
@@ -277,13 +282,17 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
+<!-- 
 			<scope>provided</scope>
-		</dependency>
+ -->
+ 		</dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
+<!-- 
 			<scope>provided</scope>      
-    </dependency>
+ -->
+     </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -291,13 +300,17 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+<!-- 
 			<scope>provided</scope>      
-		</dependency>
+ -->
+ 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
+<!-- 
 			<scope>provided</scope>      
-		</dependency>
+ -->
+ 		</dependency>
     <dependency>
 	    <groupId>junit</groupId>
 	    <artifactId>junit</artifactId>
