@@ -158,7 +158,8 @@ public class JADEOptions extends SOSFTPOptions {
 						String strV = objValue.getVal();
 						String strPre = objValue.getPrefix();
 						if (strPre != null) {
-							strV = strPre + "_" + objParam.getName();
+//							strV = strPre + "_" + objParam.getName();
+							strPre = strPre + "_" + objParam.getName();
 						}
 						else {
 							strPre = objParam.getName();
