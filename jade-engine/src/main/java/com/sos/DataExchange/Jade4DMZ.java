@@ -332,6 +332,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.settings.Value("");
 		objDMZOptions.profile.Value("");
 		objDMZOptions.TargetDir.Value(strTempFolderNameOnDMZ);
+//		objDMZOptions.Target().Directory.Value(strTempFolderNameOnDMZ);
 		objDMZOptions.ClearJumpParameter();
 	
 	} // private void setDMZasTarget
@@ -379,7 +380,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	private void setDMZasSource4Receive(final JADEOptions objDMZOptions) {
 
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::setDMZasTarget";
+		final String conMethodName = conClassName + "::setDMZasSource4Receive";
   		
 		objDMZOptions.operation.Value("copy");
 		objDMZOptions.transactional.value(true);
@@ -388,17 +389,20 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	 	
 		//Jump Parameter als Target setzen
 		objDMZOptions.SourceDir.Value(strTempFolderNameOnDMZ);
+		objDMZOptions.Source().Directory.Value(strTempFolderNameOnDMZ);
 		objDMZOptions.Source().user.Value(objOptions.jump_user.Value());
 		objDMZOptions.Source().password.Value(objOptions.jump_password.Value());
 		objDMZOptions.Source().auth_method.Value(objOptions.jump_ssh_auth_method.Value());
 		objDMZOptions.Source().auth_file.Value(objOptions.jump_ssh_auth_file.Value());
 		objDMZOptions.Source().protocol.Value(objOptions.jump_protocol.Value());
 		objDMZOptions.Source().host.Value(objOptions.jump_host.Value());
+		//oh 2014-10-29, add port otherwise -> jump login failed
+		objDMZOptions.Source().port.Value(objOptions.jump_port.Value());
 		
 		//Change some other parameters.
-		
-	 
 		objDMZOptions.settings.Value("");
+		//oh 2014-10-30, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
+		objDMZOptions.settings.setNotDirty();
 		objDMZOptions.profile.Value("");
 		objDMZOptions.atomic_prefix.Value("");
 		objDMZOptions.atomic_suffix.Value("");
@@ -406,10 +410,11 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		
 
 	} // private void setDMZasSource4Receive
+	
 	private void setDMZasSource(final JADEOptions objDMZOptions) {
 
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::setDMZasTarget";
+		final String conMethodName = conClassName + "::setDMZasSource";
 
 		//Source ist local
 		objDMZOptions.SourceDir.Value(strTempFolderNameOnDMZ);
@@ -418,6 +423,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 		objDMZOptions.scheduler_host.Value("");
 		objDMZOptions.settings.Value(null);
+		//oh 2014-10-30, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
+		objDMZOptions.settings.setNotDirty();
 		objDMZOptions.profile.Value(null);
 		objDMZOptions.ClearJumpParameter();
 		
@@ -426,7 +433,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
  		objDMZOptions.remove_files.value(false);
 
-	} // private void setDMZasTarget
+	} // private void setDMZasSource
 
 	private void StartTransferFromDMZ2Inet() {
 
