@@ -9,12 +9,12 @@ import com.vaadin.ui.AbstractComponent;
 public class NotificationForm extends BaseForm {
 	private static final long serialVersionUID = 1L;
 	
-	SOSSmtpMailOptions mailOptions;
+	SOSSmtpMailOptions mailOnErrorOptions;
 	
 	public NotificationForm(String caption, Item profile) {
 		super(profile);
 		setCaption(caption);
-		mailOptions = jadeOptions.getMailOptions().getOptions(enuMailClasses.MailOnError);
+		mailOnErrorOptions = jadeOptions.getMailOptions().getOptions(enuMailClasses.MailOnError);
 		
 		createForm();
 	}
@@ -30,46 +30,46 @@ public class NotificationForm extends BaseForm {
 		AbstractComponent mailOnEmptyFilesComponent = componentCreator.getComponentWithCaption(jadeOptions.mail_on_empty_files);
 		layout.addComponent(mailOnEmptyFilesComponent);
 		
-		AbstractComponent fromComponent = componentCreator.getComponentWithCaption(mailOptions.from);
+		AbstractComponent fromComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.from);
 		layout.addComponent(fromComponent);
 		
-		AbstractComponent fromNameComponent = componentCreator.getComponentWithCaption(mailOptions.from_name);
+		AbstractComponent fromNameComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.from_name);
 		layout.addComponent(fromNameComponent);
 		
-		AbstractComponent toComponent = componentCreator.getComponentWithCaption(mailOptions.to);
+		AbstractComponent toComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.to);
 		layout.addComponent(toComponent);
 		
-		AbstractComponent replyToComponent = componentCreator.getComponentWithCaption(mailOptions.reply_to);
+		AbstractComponent replyToComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.reply_to);
 		layout.addComponent(replyToComponent);
 		
-		AbstractComponent ccComponent = componentCreator.getComponentWithCaption(mailOptions.cc);
+		AbstractComponent ccComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.cc);
 		layout.addComponent(ccComponent);
 		
-		AbstractComponent bccComponent = componentCreator.getComponentWithCaption(mailOptions.bcc);
+		AbstractComponent bccComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.bcc);
 		layout.addComponent(bccComponent);
 		
-		AbstractComponent subjectComponent = componentCreator.getComponentWithCaption(mailOptions.subject);
+		AbstractComponent subjectComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.subject);
 		layout.addComponent(subjectComponent);
 		
-		AbstractComponent bodyComponent = componentCreator.getComponentWithCaption(mailOptions.body);
+		AbstractComponent bodyComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.body);
 		layout.addComponent(bodyComponent);
 		
-		AbstractComponent attachmentComponent = componentCreator.getComponentWithCaption(mailOptions.attachment);
+		AbstractComponent attachmentComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.attachment);
 		layout.addComponent(attachmentComponent);
 		
-		AbstractComponent attachmentCharsetComponent = componentCreator.getComponentWithCaption(mailOptions.attachment_charset);
+		AbstractComponent attachmentCharsetComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.attachment_charset);
 		layout.addComponent(attachmentCharsetComponent);
 		
-		AbstractComponent attachmentContentTypeComponent = componentCreator.getComponentWithCaption(mailOptions.attachment_content_type);
+		AbstractComponent attachmentContentTypeComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.attachment_content_type);
 		layout.addComponent(attachmentContentTypeComponent);
 		
-		AbstractComponent attachmentEncodingComponent = componentCreator.getComponentWithCaption(mailOptions.attachment_encoding);
+		AbstractComponent attachmentEncodingComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.attachment_encoding);
 		layout.addComponent(attachmentEncodingComponent);
 		
-		AbstractComponent hostComponent = componentCreator.getComponentWithCaption(mailOptions.host);
+		AbstractComponent hostComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.host);
 		layout.addComponent(hostComponent);
 		
-		AbstractComponent portComponent = componentCreator.getComponentWithCaption(mailOptions.port);
+		AbstractComponent portComponent = componentCreator.getComponentWithCaption(mailOnErrorOptions.port);
 		layout.addComponent(portComponent);
 	}
 }

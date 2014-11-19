@@ -118,15 +118,21 @@ public class ProfileContainer extends HierarchicalContainer {
 	 * @return the created root item id.
 	 */
 	@SuppressWarnings("unchecked")
-	public Object addRootItem(JSIniFile jadeSettingsFile) {
+	public Object addRootItem(String filePath) {
 		Object rootId = UUID.randomUUID();
 		
 		Item rootItem = addItem(rootId);
+		
+		File settingsFile = new File(filePath);
+		
+		String name = settingsFile.getName();
+		String absolutePath = settingsFile.getAbsolutePath();
+		
 
-		setAllProperties(rootId, rootItem, jadeSettingsFile.getName(), jadeSettingsFile.getName(), NODETYPE.FILE, (JADEOptions) PROPERTY.JADEOPTIONS.getDefaultValue(),
+		setAllProperties(rootId, rootItem, name, name, NODETYPE.FILE, (JADEOptions) PROPERTY.JADEOPTIONS.getDefaultValue(),
 				null, null,
 //				jadeSettingsFile, 
-				null, jadeSettingsFile.getAbsolutePath());
+				null, absolutePath);
 		
 		setParent(rootId, null);
 		setChildrenAllowed(rootId, true);

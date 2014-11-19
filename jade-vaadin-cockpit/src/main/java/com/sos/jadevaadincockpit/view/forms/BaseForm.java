@@ -4,6 +4,7 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.jadevaadincockpit.data.ProfileContainer;
 import com.sos.jadevaadincockpit.util.UiComponentCreator;
 import com.vaadin.data.Item;
+import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.FormLayout;
 
@@ -18,7 +19,7 @@ public class BaseForm extends CustomComponent {
 	protected UiComponentCreator componentCreator;
 	protected Item profile;
 	protected JADEOptions jadeOptions;
-	protected FormLayout layout;
+	protected AbstractOrderedLayout layout;
 	
 	public BaseForm(final Item profile) {
 		this("", profile);

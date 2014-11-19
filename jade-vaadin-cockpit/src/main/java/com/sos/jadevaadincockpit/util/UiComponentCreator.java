@@ -19,6 +19,8 @@ import com.sos.jadevaadincockpit.view.components.JadeTextField;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.FieldEvents.FocusEvent;
+import com.vaadin.event.FieldEvents.FocusListener;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Notification;
 

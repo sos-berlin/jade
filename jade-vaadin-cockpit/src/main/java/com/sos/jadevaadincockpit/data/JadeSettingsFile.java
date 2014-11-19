@@ -1,14 +1,30 @@
 package com.sos.jadevaadincockpit.data;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.jaxb.configuration.ConfigurationElement;
+import com.sos.DataExchange.jaxb.configuration.JADEParam;
+import com.sos.DataExchange.jaxb.configuration.JADEParamValues;
+import com.sos.DataExchange.jaxb.configuration.JADEParams;
+import com.sos.DataExchange.jaxb.configuration.JADEProfile;
+import com.sos.DataExchange.jaxb.configuration.JADEProfileIncludes;
+import com.sos.DataExchange.jaxb.configuration.JADEProfiles;
+import com.sos.DataExchange.jaxb.configuration.Value;
 import com.sos.JSHelper.Options.SOSOptionElement;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileEntry;
@@ -46,67 +62,183 @@ public class JadeSettingsFile extends ProfileContainer {
 	 */
 	public void loadSettingsFile(String filepath) {
 		
-		
-		JSIniFile jadeSettingsFile = new JSIniFile(filepath);
-		
-		if (jadeSettingsFile.exists()) {
+		if (filepath.endsWith(".jadeconf")) { // TODO new xml settings files have the ".jadeconf" extensions
 			
 			// create root node (settings file)
-			Object rootId = profileContainer.addRootItem(jadeSettingsFile);
+			Object rootId = profileContainer.addRootItem(filepath);
 			
-			// create leaves (profiles)
-			Map<String, SOSProfileSection> sections = jadeSettingsFile.Sections();
-			for (SOSProfileSection section : sections.values()) {
-				Object profileItemId = profileContainer.addProfileItem(section.Name(), rootId);
-				((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue()).ReadSettingsFile();
-				
-//				JADEOptions options = ((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue());
-				
-				/**
-				 * Fill a map with all the profile's options read from the settings file
-				 * and set it as a property for the profile; needed to make sure that options
-				 * which are not displayed in the UI forms will be written when saving.
-				 */
-				HashMap<String, String> optionsFromSettingsFile = new HashMap<String, String>();
-				for (SOSProfileEntry entry : section.Entries().values()) {
-					optionsFromSettingsFile.put(entry.Name(), entry.Value());
-				}
-				profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.OPTIONSFROMSETTINGSFILE).setValue(optionsFromSettingsFile);
-				
-				// -------------------- dbg
-				for (SOSProfileEntry entry : section.Entries().values()) {
-					if (!ApplicationAttributes.allOptionsFromSettingsFile.containsKey(entry.Name())) {
-						ApplicationAttributes.allOptionsFromSettingsFile.put(entry.Name(), entry.Value());
+			// -------------------------------------
+			try {
+				// create a JAXBContext capable of handling classes generated into
+				JAXBContext jc = JAXBContext.newInstance(ConfigurationElement.class);
+
+				// create an Unmarshaller
+				Unmarshaller u = jc.createUnmarshaller();
+
+				// unmarshal an instance document into a tree of Java content
+				ConfigurationElement objJADEConfig = (ConfigurationElement) u.unmarshal(new FileInputStream(filepath));
+				Vector<Object> objProfileOrProfiles = (Vector<Object>) objJADEConfig.getIncludeOrProfileOrProfiles();
+				for (Object object : objProfileOrProfiles) {
+					
+					if (object instanceof JADEProfile) {
+						iterateProfile(object, rootId);
+					}
+					else {
+						if (object instanceof JADEProfiles) {
+							iterateProfiles(object, rootId);
+						}
 					}
 				}
-				// --------------------
-				
 			}
-			
-			// set the tree item icons
-			profileContainer.initializeIconProperties(rootId);
-			
-			// sort items
-			profileContainer.sortByName();
-			
-			ProfileTree profileTree = JadevaadincockpitUI.getCurrent().getMainView().getProfileTree();
-			// expand added items
-			profileTree.expandItemsRecursively(rootId);
-			/*
-			// set tree's selection on the first profile of the new settings file
-			Iterator<?> it = profileTree.getChildren(rootId).iterator();
-			if (it.hasNext()) {
-				profileTree.setValue(it.next());
+			catch (JAXBException je) {
+				je.printStackTrace();
 			}
-			*/
+			catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			// -------------------------------------
 			
-			// set tree's selection on the new settings file to open the overview
-			profileTree.setValue(rootId);
 			
-			JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar().setSaveItemsEnabled(true);
+		} else {
+			JSIniFile jadeSettingsFile = new JSIniFile(filepath);
+
+			if (jadeSettingsFile.exists()) {
+
+				// create root node (settings file)
+				Object rootId = profileContainer.addRootItem(filepath);
+
+				// create leaves (profiles)
+				Map<String, SOSProfileSection> sections = jadeSettingsFile
+						.Sections();
+				for (SOSProfileSection section : sections.values()) {
+					Object profileItemId = profileContainer.addProfileItem(
+							section.Name(), rootId);
+					((JADEOptions) profileContainer
+							.getItem(profileItemId)
+							.getItemProperty(
+									ProfileContainer.PROPERTY.JADEOPTIONS)
+							.getValue()).ReadSettingsFile();
+
+					// JADEOptions options = ((JADEOptions)
+					// profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue());
+
+					/**
+					 * Fill a map with all the profile's options read from the
+					 * settings file and set it as a property for the profile;
+					 * needed to make sure that options which are not displayed
+					 * in the UI forms will be written when saving.
+					 */
+					HashMap<String, String> optionsFromSettingsFile = new HashMap<String, String>();
+					for (SOSProfileEntry entry : section.Entries().values()) {
+						optionsFromSettingsFile
+								.put(entry.Name(), entry.Value());
+					}
+					profileContainer
+							.getItem(profileItemId)
+							.getItemProperty(
+									ProfileContainer.PROPERTY.OPTIONSFROMSETTINGSFILE)
+							.setValue(optionsFromSettingsFile);
+
+					// -------------------- dbg
+					for (SOSProfileEntry entry : section.Entries().values()) {
+						if (!ApplicationAttributes.allOptionsFromSettingsFile
+								.containsKey(entry.Name())) {
+							ApplicationAttributes.allOptionsFromSettingsFile
+									.put(entry.Name(), entry.Value());
+						}
+					}
+					// --------------------
+
+				}
+
+				// set the tree item icons
+				profileContainer.initializeIconProperties(rootId);
+
+				// sort items
+				profileContainer.sortByName();
+
+				ProfileTree profileTree = JadevaadincockpitUI.getCurrent()
+						.getMainView().getProfileTree();
+				// expand added items
+				profileTree.expandItemsRecursively(rootId);
+				/*
+				 * // set tree's selection on the first profile of the new
+				 * settings file Iterator<?> it =
+				 * profileTree.getChildren(rootId).iterator(); if (it.hasNext())
+				 * { profileTree.setValue(it.next()); }
+				 */
+
+				// set tree's selection on the new settings file to open the
+				// overview
+				profileTree.setValue(rootId);
+
+				JadevaadincockpitUI.getCurrent().getMainView().getJadeMenuBar()
+						.setSaveItemsEnabled(true);
+			}
 		}
+		
+
 	}
 	
+	private void iterateProfiles(Object object, Object rootId) {
+		JADEProfiles objProfiles = (JADEProfiles) object;
+
+		List<Object> objProfileOrProfiles = objProfiles.getIncludeOrProfile();
+		for (Object object2 : objProfileOrProfiles) {
+			if (object2 instanceof JADEProfile) {
+				iterateProfile(object2, rootId);
+			}
+		}
+	}
+
+	private void iterateProfile(Object object, Object rootId) {
+		JADEProfile objProfile = (JADEProfile) object;
+		
+		Object profileItemId = profileContainer.addProfileItem(objProfile.getName(), rootId);
+		
+		((JADEOptions) profileContainer.getItem(profileItemId).getItemProperty(ProfileContainer.PROPERTY.JADEOPTIONS).getValue()).ReadSettingsFile();
+
+//		for (Object object2 : objProfile.getIncludeOrIncludesOrParams()) {
+//			if (object2 instanceof JADEProfileIncludes) {
+//			}
+//			else {
+//				if (object2 instanceof JADEParam) {
+//					JADEParam objParam = (JADEParam) object2;
+//					System.out.println(" ... Param name = " + objParam.getName());
+//					Object objV = objParam.getIncludeOrValues();
+//					if (objV instanceof JADEParamValues) {
+//						JADEParamValues objValues = (JADEParamValues) objV;
+//						for (Object objV2 : objValues.getValue()) {
+//							Value objValue = (Value) objV2;
+//							System.out.println(String.format(" +++ value '%1$2' with prefix '%2$s'", objValue.getVal(), objValue.getPrefix()));
+//						}
+//					}
+//				}
+//				else {
+//					if (object2 instanceof JADEParams) {
+//						JADEParams objParams = (JADEParams) object2;
+//						for (Object object3 : objParams.getParamOrParams()) {
+//							if (object3 instanceof JADEParam) {
+//								JADEParam objParam = (JADEParam) object3;
+//								System.out.println("Param name = " + objParam.getName());
+//								for (Object objV2 : objParam.getIncludeOrValues()) {
+//									if (objV2 instanceof JADEParamValues) {
+//										JADEParamValues objValues = (JADEParamValues) objV2;
+//										for (Object objV3 : objValues.getValue()) {
+//											Value objValue = (Value) objV3;
+//											System.out.println(String.format(" +++ value '%1$s' with prefix '%2$s'", objValue.getVal(),
+//													objValue.getPrefix()));
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+	}
+
 	/**
 	 * Close a settings file. 
 	 * @param itemId the id of the settings file item
