@@ -93,6 +93,13 @@ public class JadeTestsHTTP extends JadeTestBase {
 		this.execute(objOptions);
 	}
 	
+	@Test
+	public void testHttp2localContentLength() throws Exception {
+		objOptions.profile.Value("http_2_local_content_length");
+		
+		this.execute(objOptions);
+	}
+	
 	private void execute(JADEOptions options) throws Exception{
 		try{
 			objJadeEngine = new JadeEngine(objOptions);
