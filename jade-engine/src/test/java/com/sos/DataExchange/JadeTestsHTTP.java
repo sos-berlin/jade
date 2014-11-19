@@ -1,24 +1,16 @@
 package com.sos.DataExchange;
 
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
-import com.sos.JSHelper.Options.SOSOptionPortNumber;
-import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
+import com.sos.DataExchange.Options.JADEOptions;
 
 
 public class JadeTestsHTTP extends JadeTestBase {
-
-	protected final String			WEB_URI					= "http://www.sos-berlin.com";
-	protected final String			WEB_USER				= "";
-	protected final String			WEB_PASS				= "";
-	protected final String			REMOTE_BASE_PATH		= "timecard/timecard_dialog.php";
-
+	
 	public JadeTestsHTTP() {
-		enuSourceTransferType = enuTransferTypes.http;
-		enuTargetTransferType = enuTransferTypes.local;
 	}
 
 	/**
@@ -33,42 +25,77 @@ public class JadeTestsHTTP extends JadeTestBase {
 	@Override
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
-
-		objTestOptions.TargetDir.Value("C:/temp");
-
-		objTestOptions.Target().protocol.Value(enuTargetTransferType);
-		//objTestOptions.Target().user.Value("test");
-		//objTestOptions.Target().password.Value("12345");
-		objTestOptions.Target().host.Value("localhost");
-
-		objTestOptions.Source().protocol.Value(enuSourceTransferType);
-
-		objTestOptions.SourceDir.Value(REMOTE_BASE_PATH);
-		objTestOptions.Source().host.Value(WEB_URI);
-		objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4http);
-		objTestOptions.Source().user.Value(WEB_USER);
-		objTestOptions.Source().password.Value(WEB_PASS);
-		//objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.url);
+		objOptions = new JADEOptions();
+		objOptions.settings.Value("src/test/resources/examples/jade_http_settings.ini");
 	}
 
-
-
+	@Override
+	@After
+	public void tearDown() throws Exception{
+			
+	}
 
 	@Test
-	public void testDownloadFilePath() throws Exception {
-		objTestOptions.SourceDir.Value("Test");
-		objTestOptions.Source().host.Value("http://www.sos-berlin.com");
-		objTestOptions.Source().port.value(80);
-		objTestOptions.Source().user.Value("");
-		objTestOptions.Source().password.Value("");
-		objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.url);
-		//objTestOptions.file_spec.Value(".*");
-		objTestOptions.file_path.Value("timecard/timecard_dialog.php");
-		objTestOptions.TargetDir.Value("C:/temp");
-		//super.testSendFileSpec2();
-		super.httpDownloadFile();
+	public void testHttp2LocalOneFile() throws Exception {
+		objOptions.profile.Value("http_2_local_one_file");
+		
+		this.execute(objOptions);
 	}
 
+	@Test
+	public void testHttps2LocalTrustedCertificateOneFile() throws Exception {
+		objOptions.profile.Value("https_2_local_trusted_certificate_one_file");
+		
+		this.execute(objOptions);
+	}
+	
+	@Test
+	public void testHttps2LocalSelfSignedCertificateOneFile() throws Exception {
+		objOptions.profile.Value("https_2_local_self_signed_certificate_one_file");
+		
+		this.execute(objOptions);
+	}
+	
+	
+	
+	@Test
+	public void testHttp2LocalMultipleFiles() throws Exception {
+		objOptions.profile.Value("http_2_local_multiple_files");
+		
+		this.execute(objOptions);
+	}
 
+	@Test
+	public void testHttp2LocalMultiThreaded() throws Exception {
+		objOptions.profile.Value("http_2_local_multithreaded");
+		
+		this.execute(objOptions);
+	}
+	
+	@Test
+	public void testHttp2LocalWithAuthentication() throws Exception {
+		objOptions.profile.Value("http_2_local_with_authentication");
+		
+		this.execute(objOptions);
+	}
+	
+	@Test
+	public void testHttp2Sftp() throws Exception {
+		objOptions.profile.Value("http_2_sftp");
+		
+		this.execute(objOptions);
+	}
+	
+	private void execute(JADEOptions options) throws Exception{
+		try{
+			objJadeEngine = new JadeEngine(objOptions);
+			objJadeEngine.Execute();
+		}
+		catch(Exception ex){
+			throw ex;
+		}
+		finally{
+			objJadeEngine.Logout();	
+		}
+	}
 }
