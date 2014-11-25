@@ -51,7 +51,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private static final String OPERATION_COPY = "copy";
 	private static final String PROTOCOL_FTP = "ftp";
 	private static final String PROTOCOL_SFTP = "sftp";
-	private static final String PROTOCOL_LOCAL = "local";
+  private static final String PROTOCOL_LOCAL = "local";
+  private static final String PROTOCOL_HTTP = "http";
+  private static final String PROTOCOL_HTTPS = "https";
+  private static final String PROTOCOL_WEBDAV = "webdav";
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
 	private static final float DROPDOWN_WIDTH = 75.0f;
 	@SuppressWarnings("unused")
@@ -241,7 +244,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		List<String> protocolList = new ArrayList<String>();
 		protocolList.add(PROTOCOL_FTP);
 		protocolList.add(PROTOCOL_SFTP);
-		protocolList.add(PROTOCOL_LOCAL);
+    protocolList.add(PROTOCOL_HTTP);
+    protocolList.add(PROTOCOL_HTTPS);
+    protocolList.add(PROTOCOL_WEBDAV);
+    protocolList.add(PROTOCOL_LOCAL);
 		nsProtocol = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()), protocolList);
 		btnCommit = new Button(messages.getValue("FilterLayout.ok"));
 		btnDiscard = new Button(messages.getValue("FilterLayout.discard"));
