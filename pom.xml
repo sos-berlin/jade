@@ -13,7 +13,6 @@
     <name>${project.artifactId}</name>
 
     <modules>
-	  <module>jade-all</module>
 	  <module>jade-batches</module>
     <module>jade-engine</module>
 	  <module>jade-history-viewer</module>
