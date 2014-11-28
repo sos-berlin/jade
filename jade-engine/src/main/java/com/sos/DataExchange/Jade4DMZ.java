@@ -169,15 +169,18 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			CreateTempFolderOnDMZ();
 
 			if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) { // Intranet via DMZ to Internet
-				try {
+				//oh: 2014-1-19 delete try/catch because of
+				//https://change.sos-berlin.com/browse/JADE-224
+				//https://change.sos-berlin.com/browse/JADE-225
+//				try {
 					StartTransferFromIntranet2DMZ();
 					StartTransferFromDMZ2Inet();
  					RemoveFilesOnIntranet();
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					throw e;
-				}
+//				}
+//				catch (Exception e) {
+//					e.printStackTrace();
+//					throw e;
+//				}
 			}
 			else { // Internet via DMZ to Internet
 				if (objOptions.operation.isOperationCopyFromInternet() || objOptions.operation.isOperationReceiveUsingDMZ()) {
@@ -192,8 +195,12 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			flgOK = false;
+			//oh: 2014-1-19 throw exception because of
+			//https://change.sos-berlin.com/browse/JADE-224
+			//https://change.sos-berlin.com/browse/JADE-225
+			throw e;
 		}
 		finally {
 			RemoveFilesOnDMZ();
@@ -330,6 +337,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.atomic_prefix.Value("");
 		objDMZOptions.atomic_suffix.Value("");
 		objDMZOptions.settings.Value("");
+		//oh 2014-10-30, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
+		objDMZOptions.settings.setNotDirty();
 		objDMZOptions.profile.Value("");
 		objDMZOptions.TargetDir.Value(strTempFolderNameOnDMZ);
 //		objDMZOptions.Target().Directory.Value(strTempFolderNameOnDMZ);
@@ -442,7 +451,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 		String strB = objOptions.getOptionsAsCommandLine();
 		JADEOptions obj2Inet = new JADEOptions();
-		try {
+		//oh: 2014-1-19 delete try/catch because of
+		//https://change.sos-berlin.com/browse/JADE-224
+		//https://change.sos-berlin.com/browse/JADE-225
+//		try {
 			SOSConnection2OptionsAlternate objTarget = objOptions.Target();
 			String strD = objTarget.getOptionsAsCommandLine();
 			obj2Inet.CommandLineArgs(strB);
@@ -463,10 +475,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			logger.debug(String.format("Command on DMZ: %s",command));
 
 			executeSSHCommand(command);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	} // private void StartTransferFromDMZ2Inet
 	
 	
@@ -502,7 +514,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		try {
 			logger.debug(pstrCommand);
 			//TODO: Log4j konfiguration
-			objO.RaiseExceptionOnError.Value("false");
+			//objO.RaiseExceptionOnError.Value("false");
+			//oh: 2014-1-19 why raiseExceptionOnError = false 
+			//https://change.sos-berlin.com/browse/JADE-224
+			//https://change.sos-berlin.com/browse/JADE-225
 			objO.ignore_stderr.Value("true");
 			objO.command.Value(pstrCommand);
 			objM.Execute();
