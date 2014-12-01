@@ -3,6 +3,7 @@ package com.sos.DataExchange;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.Options.SOSOptionPortNumber;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
@@ -52,6 +53,31 @@ public class JadeTestWebDav extends JadeTestBase {
 		objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.url);
 	}
 
+	
+	@Test
+	public void testProfile() throws Exception{
+		objOptions = new JADEOptions();
+		objOptions.settings.Value("src/test/resources/examples/jade_webdav_settings.ini");
+		
+		objOptions.profile.Value("https_2_local_one_file");
+		
+		this.execute(objOptions);
+		
+	}
+	
+	private void execute(JADEOptions options) throws Exception{
+		try{
+			objJadeEngine = new JadeEngine(objOptions);
+			objJadeEngine.Execute();
+		}
+		catch(Exception ex){
+			throw ex;
+		}
+		finally{
+			objJadeEngine.Logout();	
+		}
+	}
+	
 	@Override
 	@Test
 	public void testSend2file_spec() throws Exception {
