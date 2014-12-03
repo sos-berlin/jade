@@ -333,7 +333,6 @@ public class JADEOptionsTest {
 	
 	@Test
 	public void testReplacement() {
-		// TODO there is no check of the replacement itself
 		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
 		objO.ReplaceWhat.Value("Hello World");
 		objO.ReplaceWith.Value("");
@@ -342,7 +341,6 @@ public class JADEOptionsTest {
 	
 	@Test
 	public void testReplacement2() {
-		// TODO there is no check of the replacement itself
 		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
 		objO.ReplaceWhat.Value("Hello World");
 		objO.ReplaceWith.Value("Hello JADE");
