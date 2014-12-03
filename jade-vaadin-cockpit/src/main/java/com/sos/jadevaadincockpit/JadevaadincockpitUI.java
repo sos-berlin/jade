@@ -103,7 +103,7 @@ public class JadevaadincockpitUI extends UI {
 	 */
 	private void initializeSessionAttributes() {
 		sessionAttributes = new SessionAttributes();
-		// Check if the EventBus had been initialized. Create a new one if thats not the case.
+		// Check if the EventBus has been initialized. Create a new one if thats not the case.
 		if (sessionAttributes.getEventBus() == null) {
 			sessionAttributes.setEventBus(new EventBus("SessionEventBus"));
 		}

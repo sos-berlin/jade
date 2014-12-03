@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by Andreas Pueschel (APL Software GmbH) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="settings" type="settingsType"/>
 	<xs:element name="profiles" type="profilesType"/>
@@ -66,7 +67,11 @@
 	</xs:complexType>
 	<xs:element name="param" type="paramType"/>
 	<xs:complexType name="paramType">
-		<xs:attribute ref="name" use="required"/>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
 	</xs:complexType>
 	<xs:attribute name="value" type="xs:string"/>
 	<xs:complexType name="sourceType">

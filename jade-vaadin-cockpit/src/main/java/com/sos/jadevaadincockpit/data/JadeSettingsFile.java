@@ -62,7 +62,7 @@ public class JadeSettingsFile extends ProfileContainer {
 	 */
 	public void loadSettingsFile(String filepath) {
 		
-		if (filepath.endsWith(".jadeconf")) { // TODO new xml settings files have the ".jadeconf" extensions
+		if (filepath.endsWith(".jadeconf")) { // new xml settings files have the ".jadeconf" extension
 			
 			// create root node (settings file)
 			Object rootId = profileContainer.addRootItem(filepath);
@@ -178,6 +178,48 @@ public class JadeSettingsFile extends ProfileContainer {
 		}
 		
 
+	}
+	
+	public void loadXMLSettingsFile(String filepath) {
+		
+		if (filepath.endsWith(".jadeconf")) { // new xml settings files have the ".jadeconf" extension
+			
+			// create root node (settings file)
+			Object rootId = profileContainer.addRootItem(filepath);
+			
+			// -------------------------------------
+			try {
+				// create a JAXBContext capable of handling classes generated into
+				JAXBContext jc = JAXBContext.newInstance(ConfigurationElement.class);
+
+				// create an Unmarshaller
+				Unmarshaller u = jc.createUnmarshaller();
+
+				// unmarshal an instance document into a tree of Java content
+				ConfigurationElement objJADEConfig = (ConfigurationElement) u.unmarshal(new FileInputStream(filepath));
+				Vector<Object> objProfileOrProfiles = (Vector<Object>) objJADEConfig.getIncludeOrProfileOrProfiles();
+				for (Object object : objProfileOrProfiles) {
+					
+					if (object instanceof JADEProfile) {
+						iterateProfile(object, rootId);
+					}
+					else {
+						if (object instanceof JADEProfiles) {
+							iterateProfiles(object, rootId);
+						}
+					}
+				}
+			}
+			catch (JAXBException je) {
+				je.printStackTrace();
+			}
+			catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			// -------------------------------------
+			
+			
+		}
 	}
 	
 	private void iterateProfiles(Object object, Object rootId) {
