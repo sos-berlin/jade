@@ -13,7 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation.enuJadeOperations;
+import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.JSHelper.io.Files.JSFile;
 
 /**
@@ -296,11 +298,54 @@ public class JADEOptionsTest {
 		}
 	}
 
-	@Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
-	public void testReplaceing() {
-		objO.operation.Value(enuJadeOperations.send);
-		objO.ReplaceWhat.Value("Hello World");
+	/**
+	 * ReplaceWhat is null, ReplaceWith is null, no exception occurs
+	 */
+	@Test
+	public void testReplaceWhatNull() {
+		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
+		objO.ReplaceWhat.setNull();
 		objO.ReplaceWith.setNull();
+		objO.CheckMandatory();
+	}
+	
+	/**
+	 * ReplaceWhat is null, ReplaceWith is not null -> an exception is expected
+	 */
+	@Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
+	public void testReplaceWhatNull2() {
+		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
+		objO.ReplaceWhat.setNull();
+		objO.ReplaceWith.Value("Hello JADE");
+		objO.CheckMandatory();
+	}
+	
+	/**
+	 * ReplaceWhat is not empty, ReplaceWith is null -> ReplaceWith will be set to "" (empty string), no exception occurs
+	 */
+	@Test
+	public void testReplaceWithNull() {
+		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
+		objO.ReplaceWhat.Value("Hello World");
+		objO.ReplaceWith.setNull(); // will be set to "" in CheckMandatory() and thus not cause an exception
+		objO.CheckMandatory();
+	}
+	
+	@Test
+	public void testReplacement() {
+		// TODO there is no check of the replacement itself
+		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
+		objO.ReplaceWhat.Value("Hello World");
+		objO.ReplaceWith.Value("");
+		objO.CheckMandatory();
+	}
+	
+	@Test
+	public void testReplacement2() {
+		// TODO there is no check of the replacement itself
+		objO.Target().protocol.Value(enuTransferTypes.ftp); // avoids the occurrence of an exception because of a missing parameter
+		objO.ReplaceWhat.Value("Hello World");
+		objO.ReplaceWith.Value("Hello JADE");
 		objO.CheckMandatory();
 	}
 
@@ -320,23 +365,6 @@ public class JADEOptionsTest {
 	public void testOperationIsIllegal() {
 		objO.operation.Value("xyzddd");
 		System.out.println(objO.operation.value());
-	}
-
-	@Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
-	public void testReplaceingNull() {
-		objO.operation.Value(enuJadeOperations.send);
-		objO.ReplaceWhat.Value("Hello World");
-		objO.CheckMandatory();
-	}
-
-	@Test
-	public void testReplaceing2() {
-		objO.file_spec.Value(".*");
-		objO.operation.Value(enuJadeOperations.send);
-		objO.ReplaceWhat.Value("Hello World");
-		objO.ReplaceWith.Value("");
-		System.out.println(objO.DirtyString());
-		objO.CheckMandatory();
 	}
 
 	@Test
