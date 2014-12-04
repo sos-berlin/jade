@@ -124,7 +124,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.core</groupId>
-			<artifactId>commands</artifactId>
+			<artifactId>org.eclipse.core.commands</artifactId>
 		</dependency>
 
 		<dependency>
