@@ -8,13 +8,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSToolBox;
@@ -38,6 +38,8 @@ import com.sos.VirtualFileSystem.Options.SOSConnection2Options;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.VirtualFileSystem.exceptions.JADEException;
 
+// oh 18.04.14 No runnable methods [SP]
+@Ignore("Test set to Ignore for later examination")
 public abstract class JadeTestBase extends JSToolBox {
 	class WriteFile4Polling implements Runnable {
 		@Override public void run() {
