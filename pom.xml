@@ -12,6 +12,12 @@
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
+    <scm>
+        <connection>scm:git:git@github.com:sos-berlin/jade.git</connection>
+        <developerConnection>scm:git:git@github.com:sos-berlin/jade.git</developerConnection>
+        <url>https://github.com/sos-berlin/jade</url>
+    </scm>
+
     <modules>
 	  <module>jade-batches</module>
     <module>jade-engine</module>
