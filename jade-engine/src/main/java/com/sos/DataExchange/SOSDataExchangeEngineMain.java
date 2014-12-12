@@ -1,16 +1,14 @@
 package com.sos.DataExchange;
-import org.apache.log4j.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.ParametersMissingButRequiredException;
-import com.sos.VirtualFileSystem.enums.JADEExitCodes;
-import com.sos.VirtualFileSystem.exceptions.JADEException;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import org.apache.log4j.Logger;
 
 /**
  * \class 		SOSDataExchangeEngineMain - Main-Class for "Transfer files by FTP/SFTP and execute commands by SSH"
@@ -29,12 +27,11 @@ import com.sos.i18n.annotation.I18NResourceBundle;
  */
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
-	private final static String		conClassName	= "SOSDataExchangeEngineMain";
-	public static final String		conSVNVersion	= "$Id$";
-	private static Logger			logger			= Logger.getLogger(SOSDataExchangeEngineMain.class);
-	protected JADEOptions			objOptions		= null;
-	protected SOSDataExchangeEngine	objM;
-	private static boolean			flgEntryViaMain	= false;																	// just to avoid exit on junit-tests
+	private final static String	conClassName	= "SOSDataExchangeEngineMain";
+	public static final String	conSVNVersion	= "$Id$";
+
+	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngineMain.class);
+	protected JADEOptions		objOptions		= null;
 
 	/**
 	 *
@@ -48,10 +45,13 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 	 * @throws Exception
 	 */
 	public final static void main(final String[] pstrArgs) {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::Main"; //$NON-NLS-1$
+
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::Main"; //$NON-NLS-1$
+
 		// will setup basic logging to the console, and the error messages will be gone.
 		org.apache.log4j.BasicConfigurator.configure();
-		flgEntryViaMain = true;
+
 		SOSDataExchangeEngineMain objEngine = new SOSDataExchangeEngineMain();
 		objEngine.Execute(pstrArgs);
 		System.exit(0);
@@ -66,15 +66,16 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 	 * @param pstrArgs
 	 */
 	private void Execute(final String[] pstrArgs) {
+
 		final String conMethodName = conClassName + "::Execute";
+
 		try {
-			objM = new SOSDataExchangeEngine();
+			
+			SOSDataExchangeEngine objM = new SOSDataExchangeEngine();
 			JADEOptions objO = objM.Options();
-			objO.ApplicationName.Value(new SOSMsgJade("SOSJADE_T_0020").get());
-			objO.ApplicationDocuUrl.Value(new SOSMsgJade("SOSJADE_T_0021").get());
+			objO.ApplicationName.Value("JADE");
+			objO.ApplicationDocuUrl.Value("http://www.sos-berlin.com/doc/en/jade/JADE Parameter Reference.pdf");
 			objO.AllowEmptyParameterList.setFalse();
-			objO.CheckNotProcessedOptions.setFalse();
-			@SuppressWarnings("unused")
 			String strLog4jPropertyFileName = objO.log4jPropertyFileName.Value();
 			for (String strParam : pstrArgs) {
 				if (strParam.toLowerCase().startsWith("-log4jPropertyFileName")) {
@@ -82,65 +83,39 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 					strLog4jPropertyFileName = strS[1];
 				}
 			}
-			logger = objO.log4jPropertyFileName.getLoggerInstance(conClassName);
+
+
 			objM.setJSJobUtilites(this);
 			objO.SendTransferHistory.value(true);
 			objO.CommandLineArgs(pstrArgs);
-			if (objO.log4jPropertyFileName.isDirty()) {
-				logger = objO.log4jPropertyFileName.getLoggerInstance(conClassName);
-			}
+
 			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
 			logger.debug(conSVNVersion);
+
 			objO.CheckMandatory();
-
-			objO.CommandLineArgs(pstrArgs);
-			if (objO.CheckNotProcessedOptions.isTrue()) {
-				if (objO.ReportNotProcessedOptions() == true) {
-				}
-				else {
-					JADEException objE = new JADEException("Unsupported or wrong Options found.");
-					objE.setExitCode(JADEExitCodes.UnsupportedParametersFound);
-					throw objE;
-				}
-			}
-
-			boolean flgResult = objM.Execute();
-
+			objM.Execute();
 			objM.Logout();
-			if (flgResult == false || objM.flgGlobalError == true) {
-				setExitCode(99);
-			}
 		}
+
 		catch (ParametersMissingButRequiredException p) {
-			setExitCode(JADEExitCodes.ParametersMissingButRequired.ExitCode);
+			System.exit(99);
 		}
-		catch (JADEException e) {
+		catch (Exception e) {
 			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage()), e);
-			setExitCode(e.getExitCode().ExitCode);
-		}
-		logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
-	} // private void Execute
-
-	@SuppressWarnings("unused")
-	private void setExitCode() {
-		setExitCode(99);
-	}
-
-	private void setExitCode(final int pintExitCode) {
-		int intExitCode = pintExitCode;
-		// TODO check for exit-code from the configuration: make it possible to define exit-code dependend on the error
-		// e.g. no connection = 10
-		//      invalid login = 11
-		//      no files found = 12
-		//      ...
-		logger.error(String.format(getMsg(SOS_EXIT_CODE_RAISED), "JADE", intExitCode));
-		if (flgEntryViaMain == true) {
+			int intExitCode = 99;
+			// TODO check for exit-code from the configuration: make it possible to define exit-code dependend on the error
+			// e.g. no connection = 10
+			//      invalid login = 11
+			//      no files found = 12
+			//      ...
+			logger.error(String.format(getMsg(SOS_EXIT_CODE_RAISED), conMethodName, intExitCode), e);
 			System.exit(intExitCode);
 		}
-		else {
-			logger.info("exit with code = " + intExitCode);
-		}
-	}
+
+		logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
+
+	} // private void Execute
+
 	@I18NMessages(value = { @I18NMessage("SOSDataExchange - Main routine started ..."), //
 			@I18NMessage(value = "SOSDataExchange - Main", locale = "en_UK", //
 			explanation = "SOSDataExchange - Main" //
@@ -154,6 +129,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 	 * \brief SOSDataExchange - Main
 	 */
 	public static final String	SOSDX_Intro				= "SOSDataExchangeEngineMain.SOSDX-Intro";
+
 	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code 99 raised"), //
 			@I18NMessage(value = "%1$s: Error occurred ...: %2$s", locale = "en_UK", //
 			explanation = "%1$s: Error occurred ...: %2$s" //
@@ -167,6 +143,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 	 * \brief %1$s: Error occurred ...: %2$s
 	 */
 	public static final String	SOSDX_E_0001			= "SOSDataExchangeEngineMain.SOSDX_E_0001";
+
 	@I18NMessages(value = { @I18NMessage("%1$s - ended without errorsended without errors"), //
 			@I18NMessage(value = "%1$s - ended without errors", locale = "en_UK", //
 			explanation = "%1$s - ended without errorsended without errors" //
@@ -180,6 +157,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 	 * \brief %1$s - ended without errorsended without errors
 	 */
 	public static final String	SOS_EXIT_WO_ERRORS		= "SOSDataExchangeEngineMain.SOS_EXIT_WO_ERRORS";
+
 	@I18NMessages(value = { @I18NMessage("%1$s - terminated with exit-code %2$d"), //
 			@I18NMessage(value = "%1$s - terminated with exit-code %2$d", locale = "en_UK", //
 			explanation = "%1$s - terminated with exit-code %2$d" //
@@ -219,17 +197,23 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 
 	@Override
 	public void setJSJobUtilites(final JSJobUtilities pobjJSJobUtilities) {
+
 	}
 
 	@Override
 	public void setStateText(final String pstrStateText) {
+
 	}
 
 	@Override
 	public void setCC(final int pintCC) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	@Override
-	public void setNextNodeState(final String pstrNodeName) {
+	@Override public void setNextNodeState(final String pstrNodeName) {
+		// TODO Auto-generated method stub
+		
 	}
+
 } // class SOSDataExchangeEngineMain

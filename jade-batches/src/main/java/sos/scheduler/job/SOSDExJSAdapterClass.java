@@ -1,17 +1,4 @@
 package sos.scheduler.job;
-import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
-import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
-import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0017;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0018;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
-import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
-
-import java.io.File;
-
-import sos.spooler.Job_chain;
-import sos.spooler.Order;
-import sos.spooler.Variable_set;
 
 import com.sos.DataExchange.JadeEngine;
 import com.sos.JSHelper.Basics.VersionInfo;
@@ -21,10 +8,13 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import com.sos.scheduler.model.SchedulerObjectFactory;
-import com.sos.scheduler.model.commands.JSCmdAddOrder;
-import com.sos.scheduler.model.objects.Params;
-import com.sos.scheduler.model.objects.Spooler;
+import sos.spooler.Job_chain;
+import sos.spooler.Order;
+import sos.spooler.Variable_set;
+
+import java.io.File;
+
+import static com.sos.scheduler.messages.JSMessages.*;
 
 /**
  * \file SOSDExJSAdapterClass.java
@@ -112,16 +102,13 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 				objJadeOptions = objJadeEngine.Options();
 			}
 		}
-		else {
-			objJadeOptions = objJadeEngine.freshInstanceOfOptions();
-		}
 		objJadeOptions.CurrentNodeName(getCurrentNodeName());
 		hsmParameters = getSchedulerParameterAsProperties(getJobOrOrderParameters());
 		objJadeOptions.setAllOptions(objJadeOptions.DeletePrefix(hsmParameters, "ftp_"));
 		objJadeOptions.CheckMandatory();
 		int intLogLevel = spooler_log.level();
 		if (intLogLevel < 0) {
-			objJadeOptions.verbose.value(-1 * intLogLevel);
+			objJadeOptions.verbose.value(-1*intLogLevel);
 		}
 		logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objJadeOptions.operation.Value()));
 		objJadeEngine.setJSJobUtilites(this);
@@ -169,74 +156,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 		logger.info(String.format("%1$s with operation %2$s ended.", conMethodName, objJadeOptions.operation.Value()));
 	} // doProcessing
 
-	protected void createOrder(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
-		String strT;
-		if (objJadeOptions.createOrderOnRemoteJobScheduler.isTrue()) {
-			strT = createOrderOnRemoteJobScheduler(pobjListItem, pstrOrderJobChainName);
-		}
-		else {
-			strT = createOrderOnLocalJobScheduler(pobjListItem, pstrOrderJobChainName);
-		}
-		logger.info(strT);
-	}
-	private SchedulerObjectFactory	objFactory	= null;
-
-	protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
-		if (objFactory == null) {
-			objFactory = new SchedulerObjectFactory(objJadeOptions.order_jobscheduler_host_name.Value(), objJadeOptions.order_jobscheduler_port_number.value());
-			objFactory.initMarshaller(Spooler.class);
-			objFactory.Options().TransferMethod.Set(objJadeOptions.BackgroundServiceTransferMethod);
-			objFactory.Options().PortNumber.Set(objJadeOptions.order_jobscheduler_port_number);
-			objFactory.Options().ServerName.Set(objJadeOptions.order_jobscheduler_host_name);
-		}
-		JSCmdAddOrder objOrder = objFactory.createAddOrder();
-		String strTargetFileName = pobjListItem.TargetFileName();
-		objOrder.setId(strTargetFileName);
-		objOrder.setJobChain(pstrOrderJobChainName /* "scheduler_sosftp_history" */);
-		Params objParams = objFactory.setParams(buildOrderParams(pobjListItem));
-		objOrder.setParams(objParams);
-		//		logger.debug(objOrder.toXMLString());
-		String strT = JSJ_I_0018.get(pobjListItem.SourceFileName(), pstrOrderJobChainName); // "Order '%1$s' created for JobChain '%2$s'."
-		if (changeOrderState() == true) {
-			String strNextState = objJadeOptions.next_state.Value();
-			objOrder.setState(strNextState);
-			strT += " " + JSJ_I_0019.get(strNextState); // "Next State is '%1$s'."
-		}
-		objOrder.run();
-		return strT;
-	}
-
-	private Variable_set buildOrderParams(final SOSFileListEntry pobjListItem) {
-		Variable_set objOrderParams = spooler.create_variable_set();
-		// kb: merge actual parameters into created order params (2012-07-25)
-		if (objJadeOptions.MergeOrderParameter.isTrue()) {
-			objOrderParams.merge(spooler_task.order().params());
-		}
-		String strTargetFileName = pobjListItem.TargetFileName();
-		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_PATH, strTargetFileName);
-		String strT = new File(strTargetFileName).getParent();
-		if (strT == null) {
-			strT = "";
-		}
-		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_PARENT, strT);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_NAME, new File(strTargetFileName).getName());
-		objOrderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_PARENT, strT);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_NAME, new File(strTargetFileName).getName());
-		String strSourceFileName = pobjListItem.SourceFileName();
-		strT = new File(strSourceFileName).getParent();
-		if (strT == null) {
-			strT = "";
-		}
-		objOrderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_PARENT, strT);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_NAME, new File(strSourceFileName).getName());
-		return objOrderParams;
-	}
-
 	/**
 	 *
 	 * @param pstrOrderJobChainName
 	 */
-	protected String createOrderOnLocalJobScheduler(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
+	protected void createOrder(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
 		final String conMethodName = conClassName + "::createOrder";
 		Order objOrder = spooler.create_order();
 		Variable_set objOrderParams = spooler.create_variable_set();
@@ -272,7 +196,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 		objOrder.set_title(JSJ_I_0017.get(conMethodName)); // "Order created by %1$s"
 		Job_chain objJobchain = spooler.job_chain(pstrOrderJobChainName);
 		objJobchain.add_order(objOrder);
-		return strT;
+		logger.info(strT);
 	} // private void createOrder
 
 	/**
@@ -376,11 +300,14 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
 	@Override
 	public void spooler_close() {
+
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::close";
+		final String	conMethodName	= conClassName + "::close";
+
 		if (objJadeEngine != null) {
 			objJadeEngine.Logout();
 			objJadeEngine = null;
 		}
+
 	} // private void close
 }
