@@ -256,9 +256,12 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		logger.debug(obj2DMZ.DirtyString());
 		setDMZasTarget4Receive(obj2DMZ);
 		String strC = obj2DMZ.getOptionsAsCommandLine();
+		
+		//why -log_filename= and -createResultSet=true -ResultSetFileName= ?
+		// see https://change.sos-berlin.com/browse/JADE-226
 
-		strC += " -log_filename=" + getUniqueFileName("log");
-		strC += " -createResultSet=true -ResultSetFileName=" + getUniqueFileName("fls");
+		//strC += " -log_filename=" + getUniqueFileName("log");
+		//strC += " -createResultSet=true -ResultSetFileName=" + getUniqueFileName("fls");
 		strC += " -target_protocol=local";
 		
 		String command = objOptions.jump_command.Value() + " " + strC + " " + strD;
