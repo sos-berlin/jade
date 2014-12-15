@@ -9,7 +9,6 @@ import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
-import sos.scheduler.job.SOSDExJSAdapterClass;
 import sos.spooler.Job_chain;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
