@@ -1,7 +1,6 @@
 package sos.scheduler.job;
 
 import com.sos.DataExchange.JadeEngine;
-import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
@@ -92,7 +91,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
 	private void doProcessing() throws Exception {
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
-		logger.debug(VersionInfo.VERSION_STRING);
 		logger.debug(conSVNVersion);
 		if (objJadeEngine == null) {
 			objJadeEngine = new JadeEngine();
