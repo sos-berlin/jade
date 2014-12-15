@@ -1,7 +1,6 @@
 package sos.scheduler.job;
 
 import com.sos.DataExchange.JadeEngine;
-import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
@@ -43,6 +42,17 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 	private final String	conVarname_ftp_result_filenames			= "ftp_result_filenames";
 	private final String	conVarname_ftp_result_filepaths			= "ftp_result_filepaths";
 	private final String	conVarname_ftp_result_error_message		= "ftp_result_error_message";
+	private static final String	conOrderParameterSCHEDULER_FILE_PATH							= "scheduler_file_path";
+	private static final String	conOrderParameterSCHEDULER_FILE_PARENT							= "scheduler_file_parent";
+	private static final String	conOrderParameterSCHEDULER_FILE_NAME							= "scheduler_file_name";
+	private static final String	conOrderParameterSCHEDULER_TARGET_FILE_PARENT					= "scheduler_target_file_parent";
+	private static final String	conOrderParameterSCHEDULER_TARGET_FILE_NAME						= "scheduler_target_file_name";
+	private static final String	conOrderParameterSCHEDULER_SOURCE_FILE_PARENT					= "scheduler_source_file_parent";
+	private static final String	conOrderParameterSCHEDULER_SOURCE_FILE_NAME						= "scheduler_source_file_name";
+	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET		= "scheduler_SOSFileOperations_ResultSet";
+	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE	= "scheduler_SOSFileOperations_ResultSetSize";
+	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT		= "scheduler_SOSFileOperations_file_count";
+	
 	private SOSFileList		transfFiles								= null;
 
 	public void init() {
@@ -92,7 +102,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
 	private void doProcessing() throws Exception {
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
-		logger.debug(VersionInfo.VERSION_STRING);
 		logger.debug(conSVNVersion);
 		if (objJadeEngine == null) {
 			objJadeEngine = new JadeEngine();
@@ -219,17 +228,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 		}
 		return flgR;
 	} // private boolean changeOrderState
-	private static final String	conOrderParameterSCHEDULER_FILE_PATH							= "scheduler_file_path";
-	private static final String	conOrderParameterSCHEDULER_FILE_PARENT							= "scheduler_file_parent";
-	private static final String	conOrderParameterSCHEDULER_FILE_NAME							= "scheduler_file_name";
-	private static final String	conOrderParameterSCHEDULER_TARGET_FILE_PARENT					= "scheduler_target_file_parent";
-	private static final String	conOrderParameterSCHEDULER_TARGET_FILE_NAME						= "scheduler_target_file_name";
-	private static final String	conOrderParameterSCHEDULER_SOURCE_FILE_PARENT					= "scheduler_source_file_parent";
-	private static final String	conOrderParameterSCHEDULER_SOURCE_FILE_NAME						= "scheduler_source_file_name";
-	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET		= "scheduler_SOSFileOperations_ResultSet";
-	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE	= "scheduler_SOSFileOperations_ResultSetSize";
-	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT		= "scheduler_SOSFileOperations_file_count";
-
+	
 	private void createOrderParameter(final JadeEngine objR) throws Exception {
 		try {
 			String fileNames = "";

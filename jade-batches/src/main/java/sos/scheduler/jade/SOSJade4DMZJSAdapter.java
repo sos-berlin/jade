@@ -1,16 +1,20 @@
 package sos.scheduler.jade;
 
 import com.sos.DataExchange.Jade4DMZ;
-import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+
+import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.scheduler.job.SOSDExJSAdapterClass;
+import sos.spooler.Job_chain;
+import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
+import java.io.File;
 import java.util.HashMap;
 
 import static com.sos.scheduler.messages.JSMessages.*;
@@ -34,7 +38,7 @@ import static com.sos.scheduler.messages.JSMessages.*;
  * \endverbatim
  */
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
-public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
+public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 	SOSJade4DMZJSAdapter() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -49,6 +53,17 @@ public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
 	private final String	conVarname_ftp_result_filenames			= "ftp_result_filenames";
 	private final String	conVarname_ftp_result_filepaths			= "ftp_result_filepaths";
 	private final String	conVarname_ftp_result_error_message		= "ftp_result_error_message";
+	private static final String	conOrderParameterSCHEDULER_FILE_PATH							= "scheduler_file_path";
+	private static final String	conOrderParameterSCHEDULER_FILE_PARENT							= "scheduler_file_parent";
+	private static final String	conOrderParameterSCHEDULER_FILE_NAME							= "scheduler_file_name";
+	private static final String	conOrderParameterSCHEDULER_TARGET_FILE_PARENT					= "scheduler_target_file_parent";
+	private static final String	conOrderParameterSCHEDULER_TARGET_FILE_NAME						= "scheduler_target_file_name";
+	private static final String	conOrderParameterSCHEDULER_SOURCE_FILE_PARENT					= "scheduler_source_file_parent";
+	private static final String	conOrderParameterSCHEDULER_SOURCE_FILE_NAME						= "scheduler_source_file_name";
+	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET		= "scheduler_SOSFileOperations_ResultSet";
+	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE	= "scheduler_SOSFileOperations_ResultSetSize";
+	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT		= "scheduler_SOSFileOperations_file_count";
+	
 
 	private SOSFileList		transfFiles								= null;
 
@@ -80,7 +95,6 @@ public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
 	private void doProcessing() throws Exception {
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
 
-		logger.debug(VersionInfo.VERSION_STRING);
 		logger.debug(conSVNVersion);
 		Jade4DMZ objR = new Jade4DMZ();
 		objO = objR.Options();
@@ -153,7 +167,72 @@ public class SOSJade4DMZJSAdapter extends SOSDExJSAdapterClass {
 	} // doProcessing
 
 	  
-
+	
+	/**
+	 *
+	 * @param pstrOrderJobChainName
+	 */
+	protected void createOrder(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
+		final String conMethodName = conClassName + "::createOrder";
+		Order objOrder = spooler.create_order();
+		Variable_set objOrderParams = spooler.create_variable_set();
+		// kb: merge actual parameters into created order params (2012-07-25)
+		if (objO.MergeOrderParameter.isTrue()) {
+			objOrderParams.merge(spooler_task.order().params());
+		}
+		String strTargetFileName = pobjListItem.TargetFileName();
+		objOrder.set_id(strTargetFileName);
+		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_PATH, strTargetFileName);
+		String strT = new File(strTargetFileName).getParent();
+		if (strT == null) {
+			strT = "";
+		}
+		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_PARENT, strT);
+		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_NAME, new File(strTargetFileName).getName());
+		objOrderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_PARENT, strT);
+		objOrderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_NAME, new File(strTargetFileName).getName());
+		String strSourceFileName = pobjListItem.SourceFileName();
+		strT = new File(strSourceFileName).getParent();
+		if (strT == null) {
+			strT = "";
+		}
+		objOrderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_PARENT, strT);
+		objOrderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_NAME, new File(strSourceFileName).getName());
+		strT = JSJ_I_0018.get(strSourceFileName, pstrOrderJobChainName); // "Order '%1$s' created for JobChain '%2$s'."
+		if (changeOrderState() == true) {
+			String strNextState = objO.next_state.Value();
+			objOrder.set_state(strNextState);
+			strT += " " + JSJ_I_0019.get(strNextState); // "Next State is '%1$s'."
+		}
+		objOrder.set_params(objOrderParams);
+		objOrder.set_title(JSJ_I_0017.get(conMethodName)); // "Order created by %1$s"
+		Job_chain objJobchain = spooler.job_chain(pstrOrderJobChainName);
+		objJobchain.add_order(objOrder);
+		logger.info(strT);
+	} // private void createOrder
+	
+	
+	/**
+	 * 
+	*
+	* \brief changeOrderState
+	*
+	* \details
+	* 
+	* \return boolean
+	*
+	 */
+	private boolean changeOrderState() {
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::changeOrderState";
+		boolean flgR = false;
+		String strNextState = objO.next_state.Value();
+		if (isNotEmpty(strNextState)) {
+			flgR = true;
+		}
+		return flgR;
+	} // private boolean changeOrderState
+	
 	 
 	private void createOrderParameter(final Jade4DMZ objR) throws Exception {
 		try {
