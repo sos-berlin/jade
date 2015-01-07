@@ -142,6 +142,29 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>8.1.15.v20140411</version>
 			</plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>generate-3rdParty-licenses</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/META-INF</outputDirectory>
+                            <thirdPartyFilename>ThirdParty.txt</thirdPartyFilename>
+                            <sortArtifactByName>true</sortArtifactByName>
+                            <excludedGroups>com\.sos(-berlin)?</excludedGroups>
+                            <excludedArtifacts>(activemq-all|servlet-api|javax.servlet|hostware|itext|poi|stresstest|xml-im-exporter)</excludedArtifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -255,16 +278,35 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.sos-berlin.jobscheduler</groupId>
+			<artifactId>hibernate-commons</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+				</exclusion>
+			</exclusions>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<!--dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<!--scope>provided</scope -->
-		</dependency>
+			<scope>provided</scope>
+		</dependency-->
+
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 			<!--scope>provided</scope -->
 		</dependency>
+
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
