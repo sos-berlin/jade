@@ -3,6 +3,7 @@ package com.sos.jade.backgroundservice.listeners.impl;
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.hibernateConfigFile;
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
 
+import java.io.File;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,22 +34,12 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
 		String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-//		if(jadeBsOptions.getDevel().isDevelopment()){
-//			// webserver runs in development environment
-//			if(jadeBsOptions.getWebserverType().isJetty()){
-//				//run on mvn jetty:run with envirmonment variables to the config file
-//				jadeBsOptions.hibernateConfigurationFileName.Value(jadeBsOptions.hibernateConfigurationFileName.Value());
-//			}else if(jadeBsOptions.getWebserverType().isTomcat()){
-//				//run on tomcat with the config file from the webapp folder
-//				jadeBsOptions.hibernateConfigurationFileName.Value(absolutePath + jadeBsOptions.hibernateConfigurationFileName.Value());
-//			}
-//		}
 		if(hibernateConfigFile != null && hibernateConfigFile.length() != 0){
 			jadeBsOptions.hibernateConfigurationFileName.Value(hibernateConfigFile);
 		}
  		jadeBsOptions.hibernateConfigurationFileName.CheckMandatory();
-		this.jadeFilesDBLayer = new JadeFilesDBLayer(jadeBsOptions.hibernateConfigurationFileName.JSFile());
-		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(jadeBsOptions.hibernateConfigurationFileName.JSFile());
+		this.jadeFilesDBLayer = new JadeFilesDBLayer(new File(hibernateConfigFile));
+		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(new File(hibernateConfigFile));
 	}
 
 	@Override
@@ -99,23 +90,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	}
 
 	private void closeJadeFilesDbSession(){
-		// let some time pass before closing the actual hibernate session
-		new Thread(){
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(10000L);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				UI.getCurrent().access(new Runnable() {
-					@Override
-					public void run() {
-				        jadeFilesDBLayer.closeSession();
-					}
-				});
-			};
-		}.start();
+        jadeFilesDBLayer.closeSession();
 	}
 
 	private void initJadeFilesHistoryDbSession(){
@@ -134,24 +109,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 
 	@Override
 	public void closeJadeFilesHistoryDbSession(){
-		// let some time pass before closing the actual hibernate session
-//		new Thread(){
-//			@Override
-//			public void run() {
-//				try {
-//					Thread.sleep(10000L);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//				UI.getCurrent().access(new Runnable() {
-//					@Override
-//					public void run() {
-				        jadeFilesHistoryDBLayer.closeSession();
-//						log.debug("Hibernate SESSION finally closed at " + sdf.format(new Date()) + "!");
-//					}
-//				});
-//			};
-//		}.start();
+		jadeFilesHistoryDBLayer.closeSession();
 	}
 
 }
