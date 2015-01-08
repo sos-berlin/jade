@@ -225,6 +225,7 @@
 		jars and shouldn`t deliver them in the war file except for the vaadin-server 
 		dependency, because this had to start the servlet in the correct ClassLoader. -->
 	<dependencies>
+		<!-- vaadin -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
@@ -232,14 +233,16 @@
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client-compiled</artifactId>
-			<!--scope>provided</scope -->
 		</dependency>
 		<!-- Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory). 
 			For widgetset compilation, vaadin-client-compiler is automatically added 
 			on the compilation classpath by vaadin-maven-plugin so normally there is 
 			no need for an explicit dependency. -->
-		<!-- <dependency> <groupId>com.vaadin</groupId> <artifactId>vaadin-client-compiler</artifactId> 
-			<scope>provided</scope> </dependency> -->
+		<!-- dependency> 
+			<groupId>com.vaadin</groupId> 
+			<artifactId>vaadin-client-compiler</artifactId> 
+			<scope>provided</scope> 
+		</dependency-->
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-client</artifactId>
@@ -255,26 +258,23 @@
 			<artifactId>vaadin-themes</artifactId>
 			<!--scope>provided</scope -->
 		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- scope provided exludes the dependency from the war build -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>ftp-history</artifactId>
 			<version>${project.version}</version>
-			<!-- <scope>provided</scope> -->
 		</dependency>
 
-		<!-- scope provided exludes the dependency from the war build -->
 		<dependency>
 			<groupId>com.sos-berlin.jobscheduler</groupId>
 			<artifactId>sos-security</artifactId>
 			<version>${project.version}</version>
-			<!-- <scope>provided</scope> -->
 		</dependency>
 
 		<dependency>
@@ -287,14 +287,25 @@
 					<artifactId>postgresql</artifactId>
 				</exclusion>
 			</exclusions>
-			<!-- <scope>provided</scope> -->
 		</dependency>
 
-		<!--dependency>
+		<dependency>
+			<groupId>jcifs</groupId>
+			<artifactId>jcifs</artifactId>
+			<exclusions>
+				<exclusion>
+		            <groupId>javax.servlet</groupId>
+		            <artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- db drivers -->
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>provided</scope>
-		</dependency-->
+		</dependency>
 
         <dependency>
             <groupId>postgresql</groupId>
@@ -304,37 +315,33 @@
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
-			<!--scope>provided</scope -->
 		</dependency>
 
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+        </dependency>
+
+		<!-- logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jul-to-slf4j</artifactId>
-			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		<!--dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<!- - <scope>provided</scope> - ->
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<!- - <scope>provided</scope> - ->
-		</dependency-->
+
+		<!-- testing -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
