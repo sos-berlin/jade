@@ -71,6 +71,7 @@ public class JadeTestCifsAsSource extends JadeTestBase {
 
 	@Override
 	@Test
+	@Ignore("Test set to Ignore for later examination")
 	public void testSendAndDeleteMultipleFiles() throws Exception {
 		super.testSendAndDeleteMultipleFiles();
 	}
