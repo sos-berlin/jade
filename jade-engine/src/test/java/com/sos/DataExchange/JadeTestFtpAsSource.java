@@ -284,6 +284,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
 	}
 
 	@Test
+	@Ignore("Test set to Ignore for later examination")
 	public void test_send_local2ftp_file_spec_5() throws Exception {
 		final String conMethodName = conClassName + "::test_send_local2ftp_file_spec_5";
 		objOptions.settings.Value(strSettingsFile);
