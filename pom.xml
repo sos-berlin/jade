@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.sos-berlin</groupId>
-		    <artifactId>products</artifactId>
+	<parent>
+		<groupId>com.sos-berlin</groupId>
+		<artifactId>products</artifactId>
         <version>1.9-SNAPSHOT</version>
-    </parent>
+	</parent>
 
-    <artifactId>jade</artifactId>
-    <packaging>pom</packaging>
-    <name>${project.artifactId}</name>
+	<artifactId>jade</artifactId>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
 
-    <scm>
-        <connection>scm:git:git@github.com:sos-berlin/jade.git</connection>
-        <developerConnection>scm:git:git@github.com:sos-berlin/jade.git</developerConnection>
-        <url>https://github.com/sos-berlin/jade</url>
-    </scm>
+	<scm>
+		<connection>scm:git:git@github.com:sos-berlin/jade.git</connection>
+		<developerConnection>scm:git:git@github.com:sos-berlin/jade.git</developerConnection>
+		<url>https://github.com/sos-berlin/jade</url>
+	</scm>
 
-    <modules>
-	  <module>jade-batches</module>
-    <module>jade-engine</module>
-	  <module>jade-history-viewer</module>
-	  <!-- z.Zt. nicht in der Auslieferung -->
-	  <module>jade-file-watcher</module>
-	  <!-- z.Zt. aus dem Build entfernt wegen build error -->
-	  <!--module>jade-cockpit</module-->
-	  <module>jade-cli</module>
-	  <!-- z.Zt. aus dem Build entfernt wegen build error -->
-	  <!--module>jade-vaadin-cockpit</module-->
-    </modules>
+	<modules>
+		<module>jade-batches</module>
+		<module>jade-engine</module>
+		<module>jade-history-viewer</module>
+		<!-- z.Zt. nicht in der Auslieferung -->
+		<module>jade-file-watcher</module>
+		<!-- z.Zt. aus dem Build entfernt wegen build error -->
+		<!--module>jade-cockpit</module -->
+		<module>jade-cli</module>
+		<!-- z.Zt. aus dem Build entfernt wegen build error -->
+		<!--module>jade-vaadin-cockpit</module -->
+	</modules>
 
 </project>
