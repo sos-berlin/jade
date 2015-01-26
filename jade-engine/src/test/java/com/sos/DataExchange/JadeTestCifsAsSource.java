@@ -1,7 +1,6 @@
 package com.sos.DataExchange;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
@@ -40,7 +39,6 @@ public class JadeTestCifsAsSource extends JadeTestBase {
 	
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSend2file_spec() throws Exception {
 		super.testSend2file_spec();
 	}
@@ -71,7 +69,6 @@ public class JadeTestCifsAsSource extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendAndDeleteMultipleFiles() throws Exception {
 		super.testSendAndDeleteMultipleFiles();
 	}

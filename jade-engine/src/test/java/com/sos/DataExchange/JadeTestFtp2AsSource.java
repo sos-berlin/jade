@@ -4,7 +4,6 @@
 package com.sos.DataExchange;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -31,11 +30,11 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
 	@Test
 	public void testTransferUsingAbsolutFilePath () throws Exception {
 		super.testTransferUsingAbsolutFilePath();
+		super.testTransferUsingAbsolutFilePath();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendWithPolling0Files () throws Exception {
 		objTestOptions.PollingServer.value(true);
 		objTestOptions.VerbosityLevel.value(2);
@@ -60,7 +59,6 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
 	}
 	
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testUseProfileWithOperationReceive() throws Exception {
 		final String conMethodName = conClassName + "::testUseProfileWithOperationReceive";
 		objOptions.settings.Value(strSettingsFile);

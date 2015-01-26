@@ -1,5 +1,5 @@
 <configuration debug="true">
-  <property name="PATH_FOR_LOGFILES" value="${java.io.tmpdir}"/>
+  <property name="PATH_FOR_LOGFILES" value="/opt/web/jetty_base/logs"/>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%-5level [%d{yyyy-MM-dd HH:mm:ss.SSS ZZZ}]: [%thread] %logger [%file:%line] - %msg%n</pattern>

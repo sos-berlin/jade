@@ -1,7 +1,6 @@
 package com.sos.DataExchange;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
@@ -62,7 +61,6 @@ public class JadeTestMail extends JadeTestBase {
 	}
 	
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testMailOnError() throws Exception {
 		//use mail_on_error_* params
 		final String conMethodName = conClassName + "::testMailOnError";

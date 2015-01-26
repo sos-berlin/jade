@@ -6,7 +6,6 @@ package com.sos.DataExchange;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.JSHelper.DataElements.JSDataElementDate;
@@ -105,7 +104,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testFtpReceive2Wilma() throws Exception {
 		final String conMethodName = conClassName + "::testUseProfile";
 		objOptions.settings.Value(strSettingsFile);
@@ -114,7 +112,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndRenameSourceAndTarget() throws Exception {
 		final String conMethodName = conClassName + "::CopyAndRenameSourceAndTarget_Local2Local";
 		objOptions.settings.Value(strSettingsFile);
@@ -123,7 +120,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndCreateVariableFolder() throws Exception {
 		final String conMethodName = conClassName + "::CopyAndRenameSourceAndTarget";
 		objOptions.settings.Value(strSettingsFile);
@@ -132,7 +128,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndMoveSource() throws Exception {
 		final String conMethodName = conClassName + "::CopyAndMoveSource";
 		objOptions.settings.Value(strSettingsFile);
@@ -141,7 +136,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndMoveSource2NewFolder() throws Exception {
 		final String conMethodName = conClassName + "::CopyAndMoveSource2NewFolder";
 		objOptions.settings.Value(strSettingsFile);
@@ -152,7 +146,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndRenameSource() throws Exception {
 		final String conMethodName = conClassName + "::CopyAndRenameSource";
 		objOptions.settings.Value(strSettingsFile);
@@ -161,7 +154,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyUsingUNCNames() throws Exception {
 		final String conMethodName = conClassName + "::CopyUsingUNCNames";
 		objOptions.settings.Value(strSettingsFile);
@@ -170,7 +162,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyUsingUNCNamesWithNetUse() throws Exception {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::CopyUsingUNCNamesWithNetUse";
@@ -220,20 +211,17 @@ public class JadeTestLocal extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyMultipleFilesThreaded() throws Exception {
 		super.testCopyMultipleFilesThreaded();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination, test runs endlessly")
 	public void testBigCopyThreaded() throws Exception {
 		this.testBigCopy();
 	}
 
-	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class)
-	@Ignore("Test set to Ignore for later examination")
+	 @Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class)
 	public void testSendWithPollingWithoutWait4SourceDir() throws Exception  {
 		final String conMethodName = conClassName + "::testSendWithPolling";
 		logMethodName(conMethodName);
@@ -254,14 +242,12 @@ public class JadeTestLocal extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyWithFileList() throws Exception {
 		super.testCopyWithFileList();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy() throws Exception {
 		objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS);
 		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS);
@@ -269,7 +255,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy2() throws Exception {
 		objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS + "SOSVirtualFileSystem/");
 		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS+  "SOSVirtualFileSystem/");
@@ -319,7 +304,6 @@ public class JadeTestLocal extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendWithMd5Check() throws Exception {
 		final String conMethodName = conClassName + "::testSend";
 		objTestOptions.CheckSecurityHash.setTrue();
@@ -334,13 +318,11 @@ public class JadeTestLocal extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyWithFolderInSourceDir() throws Exception {
 		super.testCopyWithFolderInSourceDir();
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndCheckSteadyState_Local2Local() throws Exception {
 		final String conMethodName = conClassName + "::CopyAndCheckSteadyState_Local2Local";
 		objOptions.settings.Value(strSettingsFile);

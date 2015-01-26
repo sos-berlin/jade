@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.DataExchange.Options.JADEOptions;
@@ -167,7 +166,6 @@ public class JADEOptionsTest {
 	String	constrSettingsTestFile	= "";
 
 	@Test
-	@Ignore("Test set to Ignore for later examination, fails in Jenkins build")
 	public void testLoadSettingsFile() {
 		CreateSettingsFile();
 		readProfile("globals");

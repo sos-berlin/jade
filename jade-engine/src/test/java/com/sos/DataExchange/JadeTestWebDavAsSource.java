@@ -2,7 +2,6 @@ package com.sos.DataExchange;
 
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
@@ -67,13 +66,11 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSend2file_spec() throws Exception {
 		super.testSend2file_spec();
 	}
 	
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendfile_specSwissCom() throws Exception {
 		objTestOptions.SourceDir.Value("Test");
 		objTestOptions.Source().host.Value("https://filestation.creditmaster.ch");
@@ -90,28 +87,24 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyMultipleFiles() throws Exception {
 		super.testCopyMultipleFiles();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyMultipleFilesThreaded() throws Exception {
 		super.testCopyMultipleFilesThreaded();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopyThreaded() throws Exception {
 		this.testBigCopy();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy() throws Exception {
 		objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/");
 		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS);
@@ -119,7 +112,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy2() throws Exception {
 		objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
 		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
@@ -128,28 +120,24 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyMultipleResultList() throws Exception {
 		super.testCopyMultipleResultList();
 	}
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendAndDeleteMultipleFiles() throws Exception {
 		super.testSendAndDeleteMultipleFiles();
 	}
 	
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testRenameFiles() throws Exception {
 		super.testRenameFiles();
 	}
 	
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSend() throws Exception {
 		final String conMethodName = conClassName + "::testSend";
 		super.testSend();
@@ -157,7 +145,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSend2() throws Exception {
 		final String conMethodName = conClassName + "::testSend2";
 		// /jade liegt in /tmp/test/jade
@@ -168,7 +155,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendFileSpec() throws Exception {
 		//in /jade/out sind Unterverzeichnisse
 		final String conMethodName = conClassName + "::testSendFileSpec";
@@ -180,7 +166,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	}
 	
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendFileSpecWithProxy() throws Exception {
 		//in /jade/out sind Unterverzeichnisse
 		final String conMethodName = conClassName + "::testSendFileSpecWithProxy";
@@ -194,7 +179,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendFileSpec2() throws Exception {
 		//in /jade/massive sind keine Unterverzeichnisse
 		final String conMethodName = conClassName + "::testSendFileSpec";
@@ -206,7 +190,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	}
 
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendRecursive() throws Exception {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::testSendRecursive";
@@ -218,7 +201,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	}
 	
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testSendRecursiveWithProxy() throws Exception {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::testSendRecursiveWithProxy";
@@ -232,7 +214,6 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 
 	@Override
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testCopyAndRenameSourceAndTarget() throws Exception {
 		objTestOptions.SourceDir.Value("/jade/out");
 		homerAsSource();

@@ -3,7 +3,6 @@ package com.sos.DataExchange;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.JSHelper.Options.SOSOptionUrl;
@@ -26,9 +25,7 @@ public class SOSOptionUrlTest {
 //		assertEquals("filePath = ", "/home/test/test.txt", objSF.getfile_path().Value());
 	}
 
-	@Test 
-	@Ignore("Test set to Ignore for later examination, fails in Jenkins build")
-	public void testValue4File() {
+	@Test public void testValue4File() {
 		
 		objU.Value("file:///./JCLs");
 		ISOSDataProviderOptions objSF = new SOSConnection2Options();
@@ -40,9 +37,7 @@ public class SOSOptionUrlTest {
 		assertEquals("filePath = ", "./JCLs", objU.getFolderName());
 	}
 
-	@Test 
-	@Ignore("Test set to Ignore for later examination, fails in Jenkins build")
-	public void testValue4File3() {
+	@Test public void testValue4File3() {
 		
 		objU.Value("file:///./JCLs");
 		ISOSDataProviderOptions objSF = new SOSConnection2Options();
@@ -54,9 +49,7 @@ public class SOSOptionUrlTest {
 		assertEquals("filePath = ", "./JCLs", objU.getFolderName());
 	}
 
-	@Test 
-	@Ignore("Test set to Ignore for later examination, fails in Jenkins build")
-	public void testValue4File2() {
+	@Test public void testValue4File2() {
 		
 		objU.Value("file:///kb:kb@localhost:4711/./JCLs");
 		ISOSDataProviderOptions objSF = new SOSConnection2Options();
