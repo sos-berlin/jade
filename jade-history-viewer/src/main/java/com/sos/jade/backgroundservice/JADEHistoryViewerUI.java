@@ -55,7 +55,7 @@ public class JADEHistoryViewerUI extends UI {
 
     @Override
     protected void init(final VaadinRequest request) {
-  	  try {
+    	try {
 				VaadinSession.getCurrent().getLockInstance().lock();
 				if (VaadinSession.getCurrent().getAttribute(SessionAttributes.SESSION_ID.name()) == null) {
 					VaadinSession.getCurrent().setAttribute(SessionAttributes.SESSION_ID.name(), SessionAttributes.SESSION_ID);
@@ -65,18 +65,12 @@ public class JADEHistoryViewerUI extends UI {
 					prefs.node(parentNodeName);
 	//				setCookieUsage(request);
 				}
-			} finally {
-				VaadinSession.getCurrent().getLockInstance().unlock();
-			}
+		} finally {
+			VaadinSession.getCurrent().getLockInstance().unlock();
+		}
     	String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-    	JSIniFile jsConfig = new JSIniFile(absolutePath + "/WEB-INF/classes/jsconfig.ini");
-    	if(jsConfig != null){
-      	hibernateConfigFile = jsConfig.getPropertyString("Configuration", "hibernateConfigFile", absolutePath + "/WEB-INF/classes/hibernate.cfg.xml");
-      	log.debug("path to hibernate config file: {}", hibernateConfigFile);
-    	}
-    	/*Only for developement*/else{
+    	JSIniFile jsConfig = new JSIniFile(/*absolutePath + */"/WEB-INF/classes/jsconfig.ini");
       	hibernateConfigFile = absolutePath + "/WEB-INF/classes/hibernate.cfg.xml";
-    	}
     	
     	mainView = new MainView();
     	aboutWindow = new AboutWindow();
