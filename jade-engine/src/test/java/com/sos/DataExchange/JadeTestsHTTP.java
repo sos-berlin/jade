@@ -3,6 +3,7 @@ package com.sos.DataExchange;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sos.DataExchange.Options.JADEOptions;
@@ -87,6 +88,7 @@ public class JadeTestsHTTP extends JadeTestBase {
 	}
 	
 	@Test
+	@Ignore("Test set to Ignore for later examination")
 	public void testHttp2localProxy() throws Exception {
 		objOptions.profile.Value("http_2_local_proxy");
 		

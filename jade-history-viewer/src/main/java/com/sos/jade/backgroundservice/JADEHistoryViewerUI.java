@@ -26,7 +26,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 
 @Theme("bs")
-@Title("Jade History Viewer")
+@Title("Jade Background Service History Viewer")
 @Push
 public class JADEHistoryViewerUI extends UI {
 	private static final long serialVersionUID = 1L;
@@ -36,18 +36,18 @@ public class JADEHistoryViewerUI extends UI {
 	private MainView mainView;
 	private FilterLayoutWindow modalWindow;
 	private AboutWindow aboutWindow;
-  private static final String COMMAND_PERMISSIONS = "/jobscheduler/rest/sosPermission/permissions?session_id=%s";
-  private static final String SESSION_ID = "session_id";
-  private static final String SECURITY_SERVER = "security_server";
-  private String jsSessionId;
-  private String securityServer;
-  public static String hibernateConfigFile;
-  public static String log4jPropertiesFile;
-  public static String log4jFileOutputPath;
-  public static Logger log = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
+	private static final String COMMAND_PERMISSIONS = "/jobscheduler/rest/sosPermission/permissions?session_id=%s";
+	private static final String SESSION_ID = "session_id";
+	private static final String SECURITY_SERVER = "security_server";
+	private String jsSessionId;
+	private String securityServer;
+	public static String hibernateConfigFile;
+	public static String log4jPropertiesFile;
+	public static String log4jFileOutputPath;
+	public static Logger log = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
     
 	@WebServlet(value = "/*", asyncSupported = true)
-    /* productionMode = true gilt nicht, wenn die WebApp aus der IDE heraus gestartet wird! */
+    /* productionMode = true doesn´t work when the web app ist started from an IDE integrated webserver! */
     @VaadinServletConfiguration(productionMode = true, ui = JADEHistoryViewerUI.class)
     public static class Servlet extends VaadinServlet {
 			private static final long serialVersionUID = 1L;
