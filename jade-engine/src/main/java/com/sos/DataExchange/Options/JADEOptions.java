@@ -220,6 +220,9 @@ public class JADEOptions extends SOSFTPOptions {
 	public JADEOptions getClone() {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::getClone";
 		JADEOptions objClone = new JADEOptions();
+		//TODO hier werden zwei Methoden genutzt, die mit Cloning eigentlich nichts zu tun haben
+		//man könnte die aktuellen Options auch ein eine HashMap packen und der neuen JADEOptions instance uebergeben.
+		//Zumal CommandLineArgs buggy aussieht.
 		String strB = this.getOptionsAsCommandLine();
 		objClone.CommandLineArgs(strB);
 		return objClone;

@@ -200,7 +200,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			//oh: 2014-1-19 throw exception because of
 			//https://change.sos-berlin.com/browse/JADE-224
 			//https://change.sos-berlin.com/browse/JADE-225
-			throw e;
+			throw new JobSchedulerException("Transfer failed", e);
 		}
 		finally {
 			RemoveFilesOnDMZ();
@@ -251,11 +251,11 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
 
 		SOSConnection2OptionsAlternate objSource = objOptions.Source();
-		String strD = objSource.getOptionsAsCommandLine();
+		String strD = objSource.getOptionsAsQuotedCommandLine();
 
 		logger.debug(obj2DMZ.DirtyString());
 		setDMZasTarget4Receive(obj2DMZ);
-		String strC = obj2DMZ.getOptionsAsCommandLine();
+		String strC = obj2DMZ.getOptionsAsQuotedCommandLine();
 		
 		//Why -log_filename and -createResultSet=true -ResultSetFileName= ?
 		//see https://change.sos-berlin.com/browse/JADE-226
@@ -301,7 +301,6 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 	private void StartTransferFromIntranet2DMZ() {
 
-		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::StartTransferToDMZ";
 		logger.trace(conMethodName);
 
@@ -357,12 +356,15 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.operation.Value("copy");
 		objDMZOptions.transactional.value(true);
 		
-		
 		objDMZOptions.remove_files.value(false);   // delete on source platform at the end of the overall transfer
-
+		objDMZOptions.compress_files.value(false);
+		objDMZOptions.append_files.value(false);
+		objDMZOptions.CreateSecurityHashFile.value(false);
 		 
-		objDMZOptions.Target().replacement.Value(null);
-		objDMZOptions.Target().replacing.Value(null);
+		objDMZOptions.replacement.Value("");
+		objDMZOptions.replacing.Value("");
+		objDMZOptions.Target().replacement.Value("");
+		objDMZOptions.Target().replacing.Value("");
 
 		//Jump Parameter als Target setzen
 		objDMZOptions.TargetDir.Value(strTempFolderNameOnDMZ);
@@ -373,10 +375,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Target().auth_file.Value(objOptions.jump_ssh_auth_file.Value());
 		objDMZOptions.Target().protocol.Value(objOptions.jump_protocol.Value());
 		objDMZOptions.Target().host.Value(objOptions.jump_host.Value());
-		//oh 2014-10-30, add port otherwise -> jump login failed 
 		objDMZOptions.Target().port.Value(objOptions.jump_port.Value());
 		
-		//Change some other parameters.
 		objDMZOptions.settings.Value("");
 		//oh 2014-10-30, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
 		objDMZOptions.settings.setNotDirty();
@@ -423,66 +423,84 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	} // private void setDMZasSource4Receive
 	
 	
-	private void setDMZasSource(final JADEOptions objDMZOptions) {
-
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::setDMZasSource";
-
-		//Source ist local
+	private String setDMZasSource() {
+		
+		JADEOptions objDMZOptions = new JADEOptions();
+		
 		objDMZOptions.SourceDir.Value(strTempFolderNameOnDMZ);
-		objDMZOptions.Source().protocol.Value("local");
-		
-
-		objDMZOptions.scheduler_host.Value("");
-		objDMZOptions.settings.Value(null);
-		//oh 2014-10-30, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
-		objDMZOptions.settings.setNotDirty();
-		objDMZOptions.profile.Value(null);
-		objDMZOptions.ClearJumpParameter();
-		
-		//objDMZOptions.local_dir.Value(strTempFolderNameOnDMZ);
 		objDMZOptions.operation.Value("copy");
-
+		objDMZOptions.file_spec.Value(".*");
  		objDMZOptions.remove_files.value(false);
-
-	} // private void setDMZasSource
+ 		objDMZOptions.transactional.value(true);
+ 		
+ 		//DMZ inherits options from Intranet
+		objDMZOptions.append_files = objOptions.append_files;
+		objDMZOptions.atomic_prefix = objOptions.atomic_prefix;
+		objDMZOptions.atomic_suffix = objOptions.atomic_suffix;
+//		objDMZOptions.BackgroundServiceHost = objOptions.BackgroundServiceHost;
+//		objDMZOptions.BackgroundServicePort = objOptions.BackgroundServicePort;
+//		objDMZOptions.BackgroundServiceJobChainName = objOptions.BackgroundServiceJobChainName;
+		objDMZOptions.BufferSize = objOptions.BufferSize;
+		objDMZOptions.check_size = objOptions.check_size;
+		objDMZOptions.check_interval = objOptions.check_interval;
+		objDMZOptions.check_retry = objOptions.check_retry;
+		objDMZOptions.CheckSecurityHash = objOptions.CheckSecurityHash;
+		objDMZOptions.CreateSecurityHashFile = objOptions.CreateSecurityHashFile;
+		objDMZOptions.compress_files = objOptions.compress_files;
+		objDMZOptions.compressed_file_extension = objOptions.compressed_file_extension;
+		objDMZOptions.SecurityHashType = objOptions.SecurityHashType;
+		objDMZOptions.ConcurrentTransfer = objOptions.ConcurrentTransfer;
+		objDMZOptions.ControlEncoding = objOptions.ControlEncoding;
+		// ???macht das Sinn objDMZOptions.CreateResultList = objOptions.CreateResultList;
+		objDMZOptions.FileNameEncoding = objOptions.FileNameEncoding; //TODO wird nirgends verwendet??
+		objDMZOptions.force_files = objOptions.force_files;
+		objDMZOptions.keep_modification_date = objOptions.keep_modification_date;
+		objDMZOptions.LazyConnectionMode = objOptions.LazyConnectionMode; //TODO Was ist das??
+		objDMZOptions.makeDirs = objOptions.makeDirs;
+		objDMZOptions.MaxConcurrentTransfers = objOptions.MaxConcurrentTransfers;
+		objDMZOptions.overwrite_files = objOptions.overwrite_files;
+		objDMZOptions.recursive = objOptions.recursive; //TODO Immer true setzen???
+		objDMZOptions.replacing = objOptions.replacing;
+		objDMZOptions.replacement = objOptions.replacement;
+		objDMZOptions.ResumeTransfer = objOptions.ResumeTransfer;
+		objDMZOptions.reuseConnection = objOptions.reuseConnection;
+		objDMZOptions.scheduler_host = objOptions.scheduler_host;
+		objDMZOptions.scheduler_port = objOptions.scheduler_port;
+		objDMZOptions.scheduler_job_chain = objOptions.scheduler_job_chain;
+		objDMZOptions.Scheduler_Transfer_Method = objOptions.Scheduler_Transfer_Method;
+		objDMZOptions.verbose = objOptions.verbose;
+		
+ 		String cmd = "-source_protocol=local -source_host=" + objOptions.jump_host.Value() + " ";
+ 		//without background-service
+ 		//if (isEmpty(objDMZOptions.scheduler_host.Value())) {
+ 		  cmd += "-SendTransferHistory=false ";
+ 		//}
+ 		cmd += objDMZOptions.getOptionsAsQuotedCommandLine();
+ 		return cmd;
+	}
 
 	private void StartTransferFromDMZ2Inet() {
 
 		final String conMethodName = conClassName + "::StartTransferFromDMZ2Inet";
 		logger.trace(conMethodName);
+		//removeSecurityHashFiles();
+		//objOptions.Target().include.Value("");
+		String command = objOptions.jump_command.Value() + " ";
+		command += setDMZasSource();
+		command += " -log_filename=/tmp/jade-" + UUID.randomUUID().toString() + ".log ";
+		command += objOptions.Target().getOptionsAsQuotedCommandLine();
+		logger.debug(String.format("Command on DMZ: %s", command));
 
-		String strB = objOptions.getOptionsAsCommandLine();
-		JADEOptions obj2Inet = new JADEOptions();
-		//oh: 2014-1-19 delete try/catch because of
-		//https://change.sos-berlin.com/browse/JADE-224
-		//https://change.sos-berlin.com/browse/JADE-225
-//		try {
-			SOSConnection2OptionsAlternate objTarget = objOptions.Target();
-			String strD = objTarget.getOptionsAsCommandLine();
-			obj2Inet.CommandLineArgs(strB);
-			obj2Inet.settings.Value(null);
-			obj2Inet.profile.Value(null);
-
-			obj2Inet.host.Value(objTarget.host.Value());
-			if (obj2Inet.TargetDir.isDirty()) {
-				obj2Inet.remote_dir.Value(obj2Inet.TargetDir.Value());
-			}
-			setDMZasSource(obj2Inet);
-			String strE = "-source_protocol=local";//strD.replaceAll("target_", "");
-			String strC = obj2Inet.getOptionsAsCommandLine();
-			String strUUID = UUID.randomUUID().toString();
-			String strLogFileName = "/tmp/jade-" + strUUID + ".log";
-			strE += " -log_filename=" + strLogFileName;
-			String command = objOptions.jump_command.Value() + " " + strC + " " + strD + " " + strE;
-			logger.debug(String.format("Command on DMZ: %s",command));
-
-			executeSSHCommand(command);
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//		}
-	} // private void StartTransferFromDMZ2Inet
+		executeSSHCommand(command);
+	}
+	
+	
+	private void removeSecurityHashFiles() {
+		
+		if (objOptions.CreateSecurityHashFile.isTrue()) {
+			executeSSHCommand("rm -f `find " + strTempFolderNameOnDMZ + " -name '*." + objOptions.SecurityHashType + "'`");
+		}
+	}
 	
 	
 
