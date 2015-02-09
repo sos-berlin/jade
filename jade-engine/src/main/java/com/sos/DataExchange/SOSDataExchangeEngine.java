@@ -57,7 +57,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private long					lngNoOfPollingServerFiles		= 0;
 
 	public SOSDataExchangeEngine() throws Exception {
-		init();
 	}
 
 	public SOSDataExchangeEngine(final HashMap<String, String> pobjJSSettings) throws Exception {
@@ -271,9 +270,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				logger.debug("set loglevel to DEBUG due to option verbose = " + intVerbose);
 			}
 		}
-		String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
-		logger.info(strV);
-		objOptions.getTextProperties().put("version", strV);
+		objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
 		objOptions.log_filename.setLogger(objJadeReportLogger);
 		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
 		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
@@ -472,12 +469,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 		}
 	} // private void handleZeroByteFiles
-
-	private void init() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::init";
-		// logger is not yet initialized.
-		//		logger.info(conClassName + " --- " + conSVNVersion);
-	} // private void init
 
 	protected boolean isAPathName(final String pstrFileAndPathName) {
 		boolean flgOK = false;
