@@ -831,8 +831,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			logger.debug("Source : " + Options().Source().dirtyString());
 			logger.debug("Target : " + Options().Target().dirtyString());
 			Options().CheckMandatory();
-			logger.debug("Source : " + Options().Source().dirtyString());
-			logger.debug("Target : " + Options().Target().dirtyString());
 			setTextProperties();
 			objSourceFileList = new SOSFileList(objVfs4Target);
 			objSourceFileList.Options(objOptions);
