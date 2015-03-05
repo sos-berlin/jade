@@ -15,12 +15,15 @@ import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer2;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVirtualFile;
+import com.sos.VirtualFileSystem.common.SOSFileEntries;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
 import com.sos.scheduler.model.objects.Spooler;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import sos.net.SOSMail;
 import sos.net.mail.options.SOSSmtpMailOptions;
 import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
@@ -69,6 +72,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		this.Options();
 		// TODO Properties in die OptionsClasse weiterreichen
 		// objOptions.setAllOptions(pobjProperties);
+	}
+	
+	public SOSFileEntries getSOSFileEntries(){
+	    return objDataSourceClient.getSOSFileEntries();
 	}
 
 	public SOSDataExchangeEngine(final JADEOptions pobjOptions) throws Exception {
@@ -1007,7 +1014,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				objSourceFileList = objF.getFileListEntries(objSourceFileList, pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), poptRecurseFolders.value());
 			}
 			else {
-				String[] strFileList = objDataSourceClient.getFilelist(pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), 0, poptRecurseFolders.value());
+ 				String[] strFileList = objDataSourceClient.getFilelist(pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), 0, poptRecurseFolders.value());
 				fillFileList(strFileList, pobjSourceDir.Value());
 			}
 			setInfo(String.format("%1$d files found for regexp '%2$s'.", objSourceFileList.size(), pobjRegExp4FileNames.Value()));

@@ -59,11 +59,20 @@ public class JadeTestFtp extends JadeTestBase {
 		objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.password);
 	}
 
-	@Override
-	@Test
-	public void testCopyAndRenameSource() throws Exception {
-		super.testCopyAndRenameSource();
-	}
+    @Override
+    @Test
+    public void testCopyAndRenameSource() throws Exception {
+        super.testCopyAndRenameSource();
+    }
+
+    @Override
+    @Test
+    public void testCopyForceFiles() throws Exception {
+        super. testCopyForceFiles();
+
+    }
+
+
 
 	@Override
 	@Test

@@ -800,6 +800,23 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.history.Value(strTestPathName + "/history.csv");
 		startTransfer(objOptions);
 	}
+	
+	
+	   /**
+     * This Test copies a file that does not exist. ForceFiles=false. No error shoul occur
+     * 
+     *
+     * @throws Exception
+     */
+    //  @Test
+    public void testCopyForceFiles() throws Exception {
+        setSourceAndTarget();
+        objOptions.file_path.Value("nofile");
+        objOptions.operation.Value(enuJadeOperations.copy);
+        objOptions.force_files.value(false);
+        startTransfer(objOptions);
+    }
+
 
 	//  @Test
 	public void testCopyAndRenameSourceAndTarget() throws Exception {
@@ -929,7 +946,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		fleFile.delete();
 	} // protected void testDeleteZipFile
 
-	//  @Test
+	//   @Test
 	public void testExecuteGetFileList() throws Exception {
 		setSourceAndTarget();
 		CreateTestFiles(10);
