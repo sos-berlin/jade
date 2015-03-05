@@ -293,7 +293,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			strT = SOSJADE_T_0010.get(); // LogFile Header
 		}
 		strT = objOptions.replaceVars(strT);
-		objJadeReportLogger.info(strT + "");
+		objJadeReportLogger.info(strT);
+		logger.info(strT);
 		boolean flgOK = false;
 		try {
 			flgOK = this.transfer();
@@ -311,7 +312,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
 					+ getSuccessfulTransfers());
 			if (objOptions.banner_footer.isDirty()) {
-				objOptions.banner_footer.JSFile().getContent();
+				strT = objOptions.banner_footer.JSFile().getContent();
 			}
 			else {
 				strT = SOSJadeMessageCodes.SOSJADE_T_0011.get(); // LogFile Footer
@@ -319,6 +320,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			setTextProperties();
 			strT = objOptions.replaceVars(strT);
 			objJadeReportLogger.info(strT);
+			logger.info(strT);
 			sendNotifications();
 		}
 		return flgOK;
@@ -625,6 +627,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							if (objOptions.force_files.isTrue()) {
 								if (intNoOfFilesTransferred <= 0 && lngNoOfPollingServerFiles <= 0) {
 									objJadeReportLogger.info(strMsg);
+									logger.info(strMsg);
 									throw new JobSchedulerException(strMsg);
 								}
 							}
@@ -968,7 +971,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					catch (JobSchedulerException e) {
 						String strM = TRANSACTION_ABORTED.get(e);
 						logger.error(strM, e);
-						objJadeReportLogger.info(strM);
+						objJadeReportLogger.error(strM);
 						objSourceFileList.Rollback();
 						throw e;
 					}

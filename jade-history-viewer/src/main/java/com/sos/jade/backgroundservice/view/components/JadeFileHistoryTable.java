@@ -203,7 +203,7 @@ public class JadeFileHistoryTable extends Table{
 					} else if ("error".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
 						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusErrorLabel");
 						return "jadeStatusErrorLabel";
-					} else if ("transferring".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
+					} else if ("transferring".equals(((JadeFilesHistoryDBItem) itemId).getStatus()) || "notOverwritten".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
 						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusTransferLabel");
 						return "jadeStatusTransferLabel";
 					}

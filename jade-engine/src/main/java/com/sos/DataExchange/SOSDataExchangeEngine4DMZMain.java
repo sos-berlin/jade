@@ -1,5 +1,7 @@
 package com.sos.DataExchange;
 
+import java.io.File;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.JSHelper.Basics.VersionInfo;
@@ -7,54 +9,23 @@ import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
-/**
- * \class 		SOSDataExchangeEngineMain - Main-Class for "Transfer files by FTP/SFTP and execute commands by SSH"
- *
- * \brief MainClass to launch sosftp as an executable command-line program
- *
- * This Class SOSDataExchangeEngineMain is the worker-class.
- *
 
- *
- * see \see J:\E\java\development\com.sos.scheduler\src\sos\scheduler\jobdoc\sosftp.xml for (more) details.
- *
- * \verbatim ;
- * mechanicaly created by C:\Users\KB\eclipse\xsl\JSJobDoc2JSMainClass.xsl from http://www.sos-berlin.com at 20100930175655
- * \endverbatim
- */
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtilities {
 	private final static String	conClassName	= "SOSDataExchangeEngine4DMZMain";
-	public static final String	conSVNVersion	= "$Id$";
-
+	
 	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngine4DMZMain.class);
-	@SuppressWarnings("unused")
 	protected JADEOptions		objOptions		= null;
 
-	/**
-	 *
-	 * \brief main
-	 *
-	 * \details
-	 *
-	 * \return void
-	 *
-	 * @param pstrArgs
-	 * @throws Exception
-	 */
 	public final static void main(final String[] pstrArgs) {
 
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::Main"; //$NON-NLS-1$
-
-		// will setup basic logging to the console, and the error messages will be gone.
-		org.apache.log4j.BasicConfigurator.configure();
-
-	 	SOSDataExchangeEngine4DMZMain objEngine = new SOSDataExchangeEngine4DMZMain();
+		SOSDataExchangeEngine4DMZMain objEngine = new SOSDataExchangeEngine4DMZMain();
 	 	objEngine.Execute(pstrArgs);
-		
 		System.exit(0);
 	}
 
@@ -62,10 +33,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 		super("SOSDataExchange");
 	}
 
-	/**
-	 *
-	 * @param pstrArgs
-	 */
+
 	private void Execute(final String[] pstrArgs) {
 
 		final String conMethodName = conClassName + "::Execute";
@@ -74,21 +42,29 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			Jade4DMZ objM = new Jade4DMZ();
 			JADEOptions objO = objM.Options();
 
-			String strLog4jPropertyFileName = objO.log4jPropertyFileName.Value();
-			for (String strParam : pstrArgs) {
-				if (strParam.toLowerCase().startsWith("-log4jPropertyFileName")) {
-					String[] strS = strParam.split("=");
-					strLog4jPropertyFileName = strS[1];
-				}
-			}
-
 			objM.setJSJobUtilites(this);
 			objO.SendTransferHistory.value(true);
 			objO.CommandLineArgs(pstrArgs);
 
-			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
-			logger.debug(conSVNVersion);
+			try {
+				if (objO.log4jPropertyFileName.isDirty()) {
+					File log4jPropFile = new File(objO.log4jPropertyFileName.Value());
+					if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
+						PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
+					}
+				}
+			} catch (Exception e) {
+				//
+			}
+			
+			//if rootLogger gets basis configuration if it doesn't have already an appender 
+			if( !Logger.getRootLogger().getAllAppenders().hasMoreElements() ) {
+				BasicConfigurator.configure();
+			}
 
+			logger = Logger.getRootLogger();
+			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
+			
 			objO.CheckMandatory();
 			objM.Execute();
 		}
@@ -107,12 +83,13 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 
 	@I18NMessages(value = { @I18NMessage("SOSDataExchangeEngine4DMZMain - Main routine started ..."), //
 			@I18NMessage(value = "SOSDataExchange4DMZ - Main", locale = "en_UK", //
-			explanation = "SOSDataExchange - Main" //
+			explanation = "SOSDataExchange4DMZ - Main" //
 			), //
 			@I18NMessage(value = "SOSDataExchange4DMZ - Kommandozeilenprogram startet ....", locale = "de", //
 			explanation = "SOSDataExchange4DMZ - Main" //
 			) //
 	}, msgnum = "SOSDX-I-9999", msgurl = "")
+	
 	/*!
 	 * \var SOSDX-Intro
 	 * \brief SOSDataExchange - Main
@@ -127,20 +104,22 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			explanation = "%1$s: Error occurred ...: %2$s" //
 			) //
 	}, msgnum = "SOSDX-E-0001", msgurl = "")
+	
 	/*!
 	 * \var SOSDX_E_0001
 	 * \brief %1$s: Error occurred ...: %2$s
 	 */
 	public static final String	SOSDX_E_0001			= "SOSDataExchangeEngineMain.SOSDX_E_0001";
 
-	@I18NMessages(value = { @I18NMessage("%1$s - ended without errorsended without errors"), //
+	@I18NMessages(value = { @I18NMessage("%1$s - ended without errors"), //
 			@I18NMessage(value = "%1$s - ended without errors", locale = "en_UK", //
-			explanation = "%1$s - ended without errorsended without errors" //
+			explanation = "%1$s - ended without errors" //
 			), //
 			@I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", //
-			explanation = "%1$s - ended without errorsended without errors" //
+			explanation = "%1$s - ended without errors" //
 			) //
 	}, msgnum = "SOS-I-106", msgurl = "")
+	
 	/*!
 	 * \var SOS_EXIT_WO_ERRORS
 	 * \brief %1$s - ended without errorsended without errors
@@ -155,6 +134,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			explanation = "%1$s - terminated with exit-code %2$d" //
 			) //
 	}, msgnum = "SOSDX_E_0002", msgurl = "")
+	
 	/*!
 	 * \var SOS_EXIT_CODE_RAISED
 	 * \brief %1$s - terminated with exit-code %2$d
@@ -200,7 +180,6 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 	}
 
 	@Override public void setNextNodeState(final String pstrNodeName) {
-		// TODO Auto-generated method stub
 		
 	}
 
