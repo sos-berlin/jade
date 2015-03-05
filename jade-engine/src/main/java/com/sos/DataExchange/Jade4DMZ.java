@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import sos.net.ssh.SOSSSHJob2;
 import sos.net.ssh.SOSSSHJobOptions;
+import sos.net.ssh.SOSSSHJobTrilead;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -135,7 +136,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		VFSFactory.sFTPHandlerClassName = "com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft";
 
 		logger.info(conClassName + " --- " + conSVNVersion);
-		objM = new SOSSSHJob2();
+	  // http://www.sos-berlin.com/jira/browse/JITL-112
+		// refactored to SOSSSHJobTrilead to reflect the usage of Trilead,
+		// will be changed to use the JCraft implementation in the near future (1.10) [SP]
+		objM = new SOSSSHJobTrilead();
 		objM.keepConnected = true;
 		objO = objM.Options();
 
