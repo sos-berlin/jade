@@ -80,7 +80,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 			doProcessing();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			logger.error(String.format("%1$s ended abnormal.", conClassName));
 			logger.error(StackTrace2String(e));
 			throw e;
