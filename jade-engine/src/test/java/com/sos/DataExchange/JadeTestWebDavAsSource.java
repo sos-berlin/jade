@@ -54,7 +54,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	}
 	
 	public void homerAsSource() throws Exception {
-		objTestOptions.Source().host.Value("http://homer.sos/jade/");
+		objTestOptions.Source().host.Value("http://homer.sos:8080/webdav/");
 		objTestOptions.Source().user.Value("test");
 		objTestOptions.Source().password.Value("12345");
 	}

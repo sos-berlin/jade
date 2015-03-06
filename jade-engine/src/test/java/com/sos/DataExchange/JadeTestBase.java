@@ -665,7 +665,7 @@ public abstract class JadeTestBase extends JSToolBox {
 
 	private void startTransfer(final JADEOptions pobjOptions) throws Exception {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::startTransfer";
-		pobjOptions.verbose.value(9);
+		//pobjOptions.verbose.value(9);
 		pobjOptions.force_files.setTrue();
 		if (objJadeEngine == null) {
 			objJadeEngine = new JadeEngine(pobjOptions);
