@@ -381,6 +381,12 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Target().host.Value(objOptions.jump_host.Value());
 		objDMZOptions.Target().port.Value(objOptions.jump_port.Value());
 		
+		objDMZOptions.Target().proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
+		objDMZOptions.Target().proxy_host.Value(objOptions.jump_proxy_host.Value());
+		objDMZOptions.Target().proxy_port.Value(objOptions.jump_proxy_port.Value());
+		objDMZOptions.Target().proxy_user.Value(objOptions.jump_proxy_user.Value());
+		objDMZOptions.Target().proxy_password.Value(objOptions.jump_proxy_password.Value());
+		
 		objDMZOptions.settings.Value("");
 		//oh 2014-10-30, add setNotDirty() otherwise jump reads settings file (https://change.sos-berlin.com/browse/SOSFTP-219) 
 		objDMZOptions.settings.setNotDirty();
@@ -413,6 +419,13 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Source().host.Value(objOptions.jump_host.Value());
 		//oh 2014-10-30, add port otherwise -> jump login failed
 		objDMZOptions.Source().port.Value(objOptions.jump_port.Value());
+		
+		objDMZOptions.Source().proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
+		objDMZOptions.Source().proxy_host.Value(objOptions.jump_proxy_host.Value());
+		objDMZOptions.Source().proxy_port.Value(objOptions.jump_proxy_port.Value());
+		objDMZOptions.Source().proxy_user.Value(objOptions.jump_proxy_user.Value());
+		objDMZOptions.Source().proxy_password.Value(objOptions.jump_proxy_password.Value());
+		
 		
 		//Change some other parameters.
 		objDMZOptions.settings.Value("");
@@ -542,7 +555,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			//oh: 2014-1-19 why raiseExceptionOnError = false 
 			//https://change.sos-berlin.com/browse/JADE-224
 			//https://change.sos-berlin.com/browse/JADE-225
-			objO.RaiseExceptionOnError.value(true);
+			objO.raise_exception_on_error.value(true);
 			objO.ignore_stderr.Value("true");
 			objO.command.Value(pstrCommand);
 			objM.Execute();
