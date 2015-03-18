@@ -84,7 +84,6 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 			doProcessing();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			logger.error(String.format("%1$s ended abnormal.", conClassName));
 			logger.error(StackTrace2String(e));
 			throw e;
@@ -285,7 +284,6 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 							}
 						}
 						catch (Exception e) {
-							e.printStackTrace(System.err);
 							String strM = JSJ_F_0080.get(strResultList2File, objR.Options().result_list_file.getShortKey());
 							logger.fatal(strM);
 							throw new JobSchedulerException(strM, e);

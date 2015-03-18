@@ -256,5 +256,14 @@ public class JadeTestFtp extends JadeTestBase {
 		objOptions.profile.Value("copy_local2ftp_ascii");
 		super.testUseProfileWOCreatingTestFiles();
 	}
+	
+	@Test
+	public void testcopy_local2ftp() throws Exception {
+		@SuppressWarnings("unused")
+		final String conMethodName = conClassName + "::copy_local2ftp";
+		objOptions.settings.Value(strSettingsFile);
+		objOptions.profile.Value("copy_passive2ftp");
+		super.testUseProfileWOCreatingTestFiles();
+	}
 
 }

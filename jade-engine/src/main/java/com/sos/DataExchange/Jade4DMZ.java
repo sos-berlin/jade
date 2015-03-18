@@ -51,7 +51,6 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
-	@SuppressWarnings("unused")
 	private final String		conClassName				= "Jade4DMZ";
 	private static final String	conSVNVersion				= "$Id$";
 	private static final Logger	logger						= Logger.getLogger(Jade4DMZ.class);
@@ -199,7 +198,6 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			}
 		}
 		catch (Exception e) {
-//			e.printStackTrace();
 			flgOK = false;
 			//oh: 2014-1-19 throw exception because of
 			//https://change.sos-berlin.com/browse/JADE-224
@@ -523,14 +521,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 	private void RemoveFilesOnDMZ() {
 
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::RemoveFilesOnDMZ";
-		logger.trace(conMethodName);
-
 		if (StartTransferToDMZ == true) {
 			// remove Files
 		}
-	} // private void RemoveFilesOnDMZ
+	}
 
 	private void RemoveTempFolderOnDMZ() {
 
@@ -541,7 +535,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			CreateTempFolderOnDMZ = false;
 			RemoveTempFolderOnDMZ = true;
 		}
-	} // private void RemoveTempFolderOnDMZ
+	}
 
 	private void executeSSHCommand(final String pstrCommand) {
 

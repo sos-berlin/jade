@@ -41,6 +41,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private static final String		conKeywordSTATE					= "state";
 	private static final String		conKeywordSUCCESSFUL_TRANSFERS	= "successful_transfers";
 	private static final String		conKeywordFAILED_TRANSFERS		= "failed_transfers";
+	private static final String		conKeywordSKIPPED_TRANSFERS		= "skipped_transfers";
 	private static final String		conKeywordSTATUS				= "status";
 	private final String			conClassName					= "SOSDataExchangeEngine";
 	public final String				conSVNVersion					= "$Id$";
@@ -60,7 +61,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private long					lngNoOfPollingServerFiles		= 0;
 
 	public SOSDataExchangeEngine() throws Exception {
-		init();
 	}
 
 	public SOSDataExchangeEngine(final HashMap<String, String> pobjJSSettings) throws Exception {
@@ -209,7 +209,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						}
 					}
 					catch (Exception e) {
-						e.printStackTrace();
+						logger.error(e.getLocalizedMessage());
 					}
 					if (objOptions.poll_minfiles.isNotDirty() && lngCurrentNoOfFilesFound > 0) { // amount
 						break PollingLoop; // minfiles not specified and one/some files found
@@ -268,7 +268,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			Logger.getRootLogger().setLevel(Level.INFO);
 		}
 		else {
-			if (intVerbose == 9) {
+			if (intVerbose > 8) {
 				Logger.getRootLogger().setLevel(Level.TRACE);
 				logger.setLevel(Level.TRACE);
 				logger.debug("set loglevel to TRACE due to option verbose = " + intVerbose);
@@ -278,9 +278,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				logger.debug("set loglevel to DEBUG due to option verbose = " + intVerbose);
 			}
 		}
-		String strV = conSVNVersion + " -- " + VersionInfo.VERSION_STRING;
-		logger.info(strV);
-		objOptions.getTextProperties().put("version", strV);
+		objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
 		objOptions.log_filename.setLogger(objJadeReportLogger);
 		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
 		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
@@ -298,9 +296,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		boolean flgOK = false;
 		try {
 			flgOK = this.transfer();
+			if (JobSchedulerException.LastErrorMessage.length() > 0) {
+				throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
+			}
+		}
+		catch (JobSchedulerException e) {
+			throw e;
 		}
 		catch (Exception e) {
-			throw new JobSchedulerException(e.getLocalizedMessage(), e);
+			throw new JobSchedulerException(e.getLocalizedMessage());
 		}
 		finally {
 			long stopTime = System.currentTimeMillis();
@@ -371,7 +375,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	private String[] getSingleFileNames() {
 		final String conMethodName = conClassName + "::getSingleFileNames";
-		Vector<String> filelist = new Vector();
+		Vector<String> filelist = new Vector<String>();
 		if (objOptions.file_path.IsNotEmpty() == true) {
 			String filePath = objOptions.file_path.Value();
 			logger.debug(String.format("single file(s) specified : '%1$s'", filePath));
@@ -480,12 +484,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	} // private void handleZeroByteFiles
 
-	private void init() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::init";
-		// logger is not yet initialized.
-		//		logger.info(conClassName + " --- " + conSVNVersion);
-	} // private void init
-
 	protected boolean isAPathName(final String pstrFileAndPathName) {
 		boolean flgOK = false;
 		String lstrPathName = pstrFileAndPathName.replaceAll("\\\\", "/");
@@ -556,8 +554,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	private long OneOrMoreSingleFilesSpecified(final String strSourceDir) {
 		long lngNoOfFilesFound = 0;
-		if (objOptions.skip_transfer.isFalse()) {
-			objSourceFileList.add(getSingleFileNames(), strSourceDir);
+		//if (objOptions.skip_transfer.isFalse()) {
+			objSourceFileList.add(getSingleFileNames(), strSourceDir, true);
 			if (objOptions.isFilePollingEnabled() == true) {
 				long lngCurrentPollingTime = 0;
 				long lngPollInterval = objOptions.poll_interval.getTimeAsSeconds();
@@ -589,7 +587,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					lngCurrentPollingTime += lngPollInterval;
 				}
 			}
-		}
+		//}
 		return lngNoOfFilesFound;
 	}
 
@@ -608,59 +606,44 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	}
 
 	private boolean printState(boolean rc) throws Exception {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::printState";
 		String state = "processing successful ended";
-		try {
-			int intNoOfFilesTransferred = (int) getSuccessfulTransfers();
-			String strMsg = SOSJADE_E_0100.params(objOptions.file_spec.Value());
+
+		if (objOptions.FileListName.IsNotEmpty()) {
+			state = SOSJADE_E_0098.params(objOptions.FileListName.Value());
+		} else if (objOptions.file_path.IsNotEmpty()) {
+			state = SOSJADE_E_0099.params(objOptions.file_path.Value());
+		} else {
+			state = SOSJADE_E_0100.params(objOptions.file_spec.Value());
+		}
+		if (objSourceFileList.size() == 0) {
+			if (objOptions.force_files.isTrue()) {
+				objOptions.getTextProperties().put(conKeywordSTATE, state);
+				throw new JobSchedulerException(state);
+			}
+		} else {
+			long intNoOfFilesTransferred = getSuccessfulTransfers();
+			long intNoOfSkippedTransferred = getSkippedTransfers();
 			int zeroByteCount = objSourceFileList.getZeroByteCount();
-			switch (intNoOfFilesTransferred) {
-				case 0:
-					if (zeroByteCount > 0 && objOptions.TransferZeroByteFilesRelaxed()) {
-						state = strMsg;
-					}
-					else
-						if (zeroByteCount > 0 && objOptions.TransferZeroByteFilesRelaxed()) {
-							throw new JobSchedulerException(SOSJADE_I_0104.get());
-						}
-						else {
-							if (objOptions.force_files.isTrue()) {
-								if (intNoOfFilesTransferred <= 0 && lngNoOfPollingServerFiles <= 0) {
-									objJadeReportLogger.info(strMsg);
-									logger.info(strMsg);
-									throw new JobSchedulerException(strMsg);
-								}
-							}
-							else {
-								state = strMsg;
-							}
-						}
-					rc = objOptions.force_files.value() == false ? true : !objOptions.TransferZeroByteFilesRelaxed();
-					break;
-				case 1:
-					state = SOSJADE_I_0100.get();
-					rc = true;
-					break;
-				default:
-					state = SOSJADE_I_0101.params(intNoOfFilesTransferred);
-					rc = true;
-					break;
+			if (intNoOfFilesTransferred == 1) {
+				state = SOSJADE_I_0100.get();
+			} else {
+				state = SOSJADE_I_0101.params(intNoOfFilesTransferred);
 			}
 			if (zeroByteCount > 0) {
 				state += " " + SOSJADE_I_0102.params(zeroByteCount);
 			}
-			logger.debug(state);
-			objJadeReportLogger.info(state);
-			objOptions.getTextProperties().put(conKeywordSTATE, state);
-			return rc;
+			if (intNoOfSkippedTransferred > 0) {
+				state += " " + SOSJADE_I_0103.params(intNoOfSkippedTransferred);
+			}
 		}
-		catch (Exception e) {
-			objJadeReportLogger.info(e.getLocalizedMessage());
-			throw e;
+
+		logger.info(state);
+		objJadeReportLogger.info(state);
+		objOptions.getTextProperties().put(conKeywordSTATE, state);
+		if (getFailedTransfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0) {
+			return false;
 		}
-		finally {
-			objOptions.getTextProperties().put(conKeywordSTATE, state);
-		}
+		return true;
 	}
 
 	private void processSendMail(final SOSSmtpMailOptions pobjO) {
@@ -709,7 +692,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				objMail.sendMail(pobjO);
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getLocalizedMessage());
 			}
 		}
 	} // private void sendMail
@@ -762,7 +745,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
 			}
 			catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getLocalizedMessage());
 			}
 		}
 		if (objOptions.transactional.isFalse()) {
@@ -800,6 +783,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		// siehe hierzu das Interface ...
 		objOptions.getTextProperties().put(conKeywordSUCCESSFUL_TRANSFERS, String.valueOf(getSuccessfulTransfers()));
 		objOptions.getTextProperties().put(conKeywordFAILED_TRANSFERS, String.valueOf(getFailedTransfers()));
+		objOptions.getTextProperties().put(conKeywordSKIPPED_TRANSFERS, String.valueOf(getSkippedTransfers()));
 		// return the number of transferred files
 		if (JobSchedulerException.LastErrorMessage.length() <= 0) {
 			objOptions.getTextProperties().put(conKeywordSTATUS, SOSJADE_T_0012.get());
@@ -817,6 +801,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			if (lngNoOfPollingServerFiles > 0) {
 				lngTransfers = lngNoOfPollingServerFiles;
 			}
+		}
+		return lngTransfers;
+	}
+	
+	private long getSkippedTransfers() {
+		long lngTransfers = 0;
+		if (objSourceFileList != null) {
+			lngTransfers = objSourceFileList.SkippedTransfers();
 		}
 		return lngTransfers;
 	}
@@ -847,8 +839,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			logger.debug("Source : " + Options().Source().dirtyString());
 			logger.debug("Target : " + Options().Target().dirtyString());
 			Options().CheckMandatory();
-			logger.debug("Source : " + Options().Source().dirtyString());
-			logger.debug("Target : " + Options().Target().dirtyString());
 			setTextProperties();
 			objSourceFileList = new SOSFileList(objVfs4Target);
 			objSourceFileList.Options(objOptions);
@@ -892,7 +882,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							String strM = "";
 							if (objOptions.NeedTargetClient() == true) {
 								strM = "source directory/file: " + strSourceDir + ", target directory: " + strRemoteDir + ", file regexp: "
-										+ objOptions.file_spec;
+										+ objOptions.file_spec.Value();
 							}
 							else {
 								strM = SOSJADE_D_0200.params(strSourceDir, objOptions.file_spec.Value());
@@ -1008,7 +998,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	}
 	
 
-	private void selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
+	private long selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
 			final SOSOptionBoolean poptRecurseFolders) throws Exception {
 		if (objLocFile.isDirectory() == true) {
 			if (objDataSourceClient instanceof ISOSVfsFileTransfer2) {
@@ -1025,7 +1015,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		else { // not a directory, seems to be a filename
 			objSourceFileList.add(pobjSourceDir.Value());
 		}
+		return objSourceFileList.size();
 	}
+	
+	
 	@SuppressWarnings("unused")
 	private final SOSFileList	objParent							= null;
 	long						lngNoOfTransferHistoryRecordsSent	= 0;

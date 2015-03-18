@@ -11,6 +11,7 @@ public class SOSJadeMessageCodes extends JSToolBox {
 	public static final SOSMsgJade SOSJADE_I_0100 = new SOSMsgJade("SOSJADE_I_0100");	// "one file transferred";
 	public static final SOSMsgJade SOSJADE_I_0101 = new SOSMsgJade("SOSJADE_I_0101");	// "%1$d files transferred";
 	public static final SOSMsgJade SOSJADE_I_0102 = new SOSMsgJade("SOSJADE_I_0102");	// "%1$d file(s) skipped due to zero byte constraint";
+	public static final SOSMsgJade SOSJADE_I_0103 = new SOSMsgJade("SOSJADE_I_0103");	// "%1$d file(s) skipped due to skip_transfer parameter";
 	public static final SOSMsgJade SOSJADE_I_0115 = new SOSMsgJade("SOSJADE_I_0115");	// "Operation 'getList' is specified. no transfer will be done.";
 	public static final SOSMsgJade SOSJADE_E_0101 = new SOSMsgJade("SOSJADE_E_0101");	// "data transfer ended with error '%1$s'";
 	public static final SOSMsgJade SOSJADE_E_0200 = new SOSMsgJade("SOSJADE_E_0200");	// "Problems creating/connecting DataSourceClient";
@@ -22,6 +23,8 @@ public class SOSJadeMessageCodes extends JSToolBox {
 	public static final SOSMsgJade SOSJADE_T_0012 = new SOSMsgJade("SOSJADE_T_0012");	// 
 	public static final SOSMsgJade SOSJADE_T_0013 = new SOSMsgJade("SOSJADE_T_0013");	// 
 	
+	public static final SOSMsgJade 	SOSJADE_E_0098					= new SOSMsgJade("SOSJADE_E_0098");													// "No files found from the list in '%1$s'";
+	public static final SOSMsgJade 	SOSJADE_E_0099					= new SOSMsgJade("SOSJADE_E_0099");													// "No files found for file_path '%1$s'";
 	public static final SOSMsgJade 	SOSJADE_E_0100					= new SOSMsgJade("SOSJADE_E_0100");													// "No file name found which match the regular expression criteria '1$s'";
 	public static final SOSMsgJade 	SOSJADE_E_0099					= new SOSMsgJade("SOSJADE_E_0099");													// "No file name found which match the regular expression criteria '1$s'";
 
