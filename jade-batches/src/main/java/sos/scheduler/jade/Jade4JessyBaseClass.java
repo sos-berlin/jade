@@ -56,7 +56,6 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 			doProcessing();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			logger.error(String.format("%1$s ended abnormal.", conClassName));
 			logger.error(StackTrace2String(e));
 			return signalFailure();

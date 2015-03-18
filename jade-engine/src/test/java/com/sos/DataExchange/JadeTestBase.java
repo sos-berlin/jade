@@ -670,7 +670,7 @@ public abstract class JadeTestBase extends JSToolBox {
 
 	private void startTransfer(final JADEOptions pobjOptions) throws Exception {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::startTransfer";
-		pobjOptions.verbose.value(9);
+		//pobjOptions.verbose.value(9);
 		if (objJadeEngine == null) {
 			objJadeEngine = new JadeEngine(pobjOptions);
 		}
@@ -1590,7 +1590,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		logger.info("******************************************\n***** " + conMethodName + "\n******************");
 		setSourceAndTarget();
 		CreateTestFile();
-		objOptions.file_path.Value(strTestFileName.replaceAll("/", "\\\\"));
+		objOptions.file_path.Value(strTestFileName);
 		objOptions.operation.Value(enuJadeOperations.copy);
 		objOptions.log_filename.Value(objOptions.TempDir() + "test.log");
 		objOptions.profile.Value(conMethodName);
@@ -1750,7 +1750,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);                                                                 
 		objOptions.Target().replacing.Value(".*");                                                                                           
 		objOptions.Target().replacement.Value("[filename:uppercase]_[date:yyyMMddHHmmss]");                                                  
-		objOptions.Source().PreTransferCommands.Value("echo /PreTransferCommands on Source; echo ${source_dir}");                             
+		objOptions.Source().PreTransferCommands.Value("echo PreTransferCommands on Source; echo ${source_dir}");                             
 		objOptions.Source().PostTransferCommands.Value("echo PostTransferCommands on Source; echo ${source_dir}");                           
 		objOptions.Source().Pre_Command.Value("echo SourcePreCommand: $SourceTransferFileName + $SourceFileName");                           
 		objOptions.Source().Post_Command.Value("echo SourcePostCommand: $SourceTransferFileName + $SourceFileName");                         
