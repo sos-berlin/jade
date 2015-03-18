@@ -293,6 +293,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
 			}
 		}
+		catch (JobSchedulerException e) {
+			throw e;
+		}
 		catch (Exception e) {
 			throw new JobSchedulerException(e.getLocalizedMessage());
 		}
