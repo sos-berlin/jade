@@ -960,7 +960,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					}
 					catch (JobSchedulerException e) {
 						String strM = TRANSACTION_ABORTED.get(e);
-						logger.error(strM, e);
+						//logger.error(strM, e);
+						logger.error(strM);
 						objJadeReportLogger.error(strM);
 						objSourceFileList.Rollback();
 						throw e;
