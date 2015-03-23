@@ -295,6 +295,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		logger.info(strT);
 		boolean flgOK = false;
 		try {
+			JobSchedulerException.LastErrorMessage = "";
 			flgOK = this.transfer();
 			if (JobSchedulerException.LastErrorMessage.length() > 0) {
 				throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
@@ -835,10 +836,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	public boolean transfer() throws Exception {
 		boolean flgReturnCode = false;
 		try { // to connect, authenticate and execute commands
+			Options().CheckMandatory();
 			logger.debug(Options().dirtyString());
 			logger.debug("Source : " + Options().Source().dirtyString());
 			logger.debug("Target : " + Options().Target().dirtyString());
-			Options().CheckMandatory();
 			setTextProperties();
 			objSourceFileList = new SOSFileList(objVfs4Target);
 			objSourceFileList.Options(objOptions);

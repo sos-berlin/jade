@@ -63,17 +63,15 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			}
 
 			logger = Logger.getRootLogger();
-			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
+			logger.info(getMsg(SOSDX_Intro));
 			
 			objO.CheckMandatory();
 			objM.Execute();
 		}
 
 		catch (Exception e) {
-			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage()), e);
 			int intExitCode = 99;
-			 
-			logger.error(String.format(getMsg(SOS_EXIT_CODE_RAISED), conMethodName, intExitCode), e);
+			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), intExitCode));
 			System.exit(intExitCode);
 		}
 
@@ -81,29 +79,29 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 
 	} // private void Execute
 
-	@I18NMessages(value = { @I18NMessage("SOSDataExchangeEngine4DMZMain - Main routine started ..."), //
-			@I18NMessage(value = "SOSDataExchange4DMZ - Main", locale = "en_UK", //
-			explanation = "SOSDataExchange4DMZ - Main" //
+	@I18NMessages(value = { @I18NMessage("JADE4DMZ client - Main routine started ..."), //
+			@I18NMessage(value = "JADE4DMZ client", locale = "en_UK", //
+			explanation = "JADE4DMZ client" //
 			), //
-			@I18NMessage(value = "SOSDataExchange4DMZ - Kommandozeilenprogram startet ....", locale = "de", //
-			explanation = "SOSDataExchange4DMZ - Main" //
+			@I18NMessage(value = "JADE4DMZ client - Kommandozeilenprogram startet ...", locale = "de", //
+			explanation = "JADE4DMZ client" //
 			) //
-	}, msgnum = "SOSDX-I-9999", msgurl = "")
+	}, msgnum = "SOSJADE_I_9999", msgurl = "")
 	
 	/*!
 	 * \var SOSDX-Intro
 	 * \brief SOSDataExchange - Main
 	 */
-	public static final String	SOSDX_Intro				= "SOSDataExchangeEngineMain.SOSDX-Intro";
+	public static final String	SOSDX_Intro				= "SOSDataExchangeEngine4DMZMain.SOSDX-Intro";
 
-	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code 99 raised"), //
+	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"), //
 			@I18NMessage(value = "%1$s: Error occurred ...: %2$s", locale = "en_UK", //
 			explanation = "%1$s: Error occurred ...: %2$s" //
 			), //
-			@I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code 99 beendet.", locale = "de", //
+			@I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", //
 			explanation = "%1$s: Error occurred ...: %2$s" //
 			) //
-	}, msgnum = "SOSDX-E-0001", msgurl = "")
+	}, msgnum = "SOSJADE_E_0001", msgurl = "")
 	
 	/*!
 	 * \var SOSDX_E_0001
@@ -118,7 +116,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			@I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", //
 			explanation = "%1$s - ended without errors" //
 			) //
-	}, msgnum = "SOS-I-106", msgurl = "")
+	}, msgnum = "SOSJADE_I_106", msgurl = "")
 	
 	/*!
 	 * \var SOS_EXIT_WO_ERRORS
@@ -133,7 +131,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			@I18NMessage(value = "%1$s - Fehlercode %2$d wurde gesetzt", locale = "de", //
 			explanation = "%1$s - terminated with exit-code %2$d" //
 			) //
-	}, msgnum = "SOSDX_E_0002", msgurl = "")
+	}, msgnum = "SOSJADE_E_0002", msgurl = "")
 	
 	/*!
 	 * \var SOS_EXIT_CODE_RAISED

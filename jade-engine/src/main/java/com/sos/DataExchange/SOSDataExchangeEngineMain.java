@@ -44,9 +44,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			
 			SOSDataExchangeEngine objM = new SOSDataExchangeEngine();
 			JADEOptions objO = objM.Options();
-			objO.ApplicationName.Value("JADE");
-			objO.ApplicationDocuUrl.Value("http://www.sos-berlin.com/doc/en/jade/JADE Parameter Reference.pdf");
-			objO.AllowEmptyParameterList.setFalse();
+			//objO.AllowEmptyParameterList.setFalse();
 
 			objM.setJSJobUtilites(this);
 			objO.SendTransferHistory.value(true);
@@ -69,25 +67,21 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			}
 			
 			logger = Logger.getRootLogger();
-			logger.info(getMsg(SOSDX_Intro) + " -- " + VersionInfo.VERSION_STRING);
+			logger.info(getMsg(SOSDX_Intro));
 			
-			objO.CheckMandatory();
 			objM.Execute();
 			objM.Logout();
 		}
 
-		catch (ParametersMissingButRequiredException p) {
-			System.exit(99);
-		}
 		catch (Exception e) {
-			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage()), e);
 			int intExitCode = 99;
+			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), intExitCode));
+			System.exit(intExitCode);
 			// TODO check for exit-code from the configuration: make it possible to define exit-code dependend on the error
 			// e.g. no connection = 10
 			//      invalid login = 11
 			//      no files found = 12
 			//      ...
-			logger.error(String.format(getMsg(SOS_EXIT_CODE_RAISED), conMethodName, intExitCode), e);
 			System.exit(intExitCode);
 		}
 
@@ -95,14 +89,14 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 
 	} // private void Execute
 
-	@I18NMessages(value = { @I18NMessage("SOSDataExchange - Main routine started ..."), //
-			@I18NMessage(value = "SOSDataExchange - Main", locale = "en_UK", //
-			explanation = "SOSDataExchange - Main" //
+	@I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."), //
+			@I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", //
+			explanation = "JADE client - Main" //
 			), //
-			@I18NMessage(value = "SOSDataExchange - Kommandozeilenprogram startet ....", locale = "de", //
-			explanation = "SOSDataExchange - Main" //
+			@I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", //
+			explanation = "JADE Client - Main" //
 			) //
-	}, msgnum = "SOSDX-I-9999", msgurl = "")
+	}, msgnum = "SOSJADE_I_9999", msgurl = "")
 	
 	/*!
 	 * \var SOSDX-Intro
@@ -110,14 +104,14 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 	 */
 	public static final String	SOSDX_Intro				= "SOSDataExchangeEngineMain.SOSDX-Intro";
 
-	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code 99 raised"), //
-			@I18NMessage(value = "%1$s: Error occurred ...: %2$s", locale = "en_UK", //
+	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"), //
+			@I18NMessage(value = "%1$s: Error occurred ...: %2$s, exit-code %3$s raised", locale = "en_UK", //
 			explanation = "%1$s: Error occurred ...: %2$s" //
 			), //
-			@I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code 99 beendet.", locale = "de", //
+			@I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", //
 			explanation = "%1$s: Error occurred ...: %2$s" //
 			) //
-	}, msgnum = "SOSDX-E-0001", msgurl = "")
+	}, msgnum = "SOSJADE_E_0001", msgurl = "")
 	
 	/*!
 	 * \var SOSDX_E_0001
@@ -132,7 +126,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			@I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", //
 			explanation = "%1$s - ended without errors" //
 			) //
-	}, msgnum = "SOS-I-106", msgurl = "")
+	}, msgnum = "SOSJADE_I_106", msgurl = "")
 	
 	/*!
 	 * \var SOS_EXIT_WO_ERRORS
@@ -147,7 +141,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			@I18NMessage(value = "%1$s - Fehlercode %2$d wurde gesetzt", locale = "de", //
 			explanation = "%1$s - terminated with exit-code %2$d" //
 			) //
-	}, msgnum = "SOSDX_E_0002", msgurl = "")
+	}, msgnum = "SOSJADE_E_0002", msgurl = "")
 	
 	/*!
 	 * \var SOS_EXIT_CODE_RAISED
