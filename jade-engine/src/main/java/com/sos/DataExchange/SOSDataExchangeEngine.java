@@ -288,6 +288,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		logger.info(strT);
 		boolean flgOK = false;
 		try {
+			JobSchedulerException.LastErrorMessage = "";
 			flgOK = this.transfer();
 			if (JobSchedulerException.LastErrorMessage.length() > 0) {
 				throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
