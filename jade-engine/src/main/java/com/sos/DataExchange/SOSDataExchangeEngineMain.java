@@ -2,57 +2,61 @@ package com.sos.DataExchange;
 
 import java.io.File;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
-import com.sos.JSHelper.Basics.VersionInfo;
-import com.sos.JSHelper.Exceptions.ParametersMissingButRequiredException;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
-	private final static String	conClassName	= "SOSDataExchangeEngineMain";
+	private final static String	conClassName	= SOSDataExchangeEngineMain.class.getSimpleName();
 	
 	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngineMain.class);
-	protected JADEOptions		objOptions		= null;
+	protected JADEOptions		jadeOptions		= null;
 
-	
-	public final static void main(final String[] pstrArgs) {
+	/**
+	 * 
+	 * @param args
+	 */
+	public final static void main(final String[] args) {
 
-		SOSDataExchangeEngineMain objEngine = new SOSDataExchangeEngineMain();
-		objEngine.Execute(pstrArgs);
-		System.exit(0);
+		SOSDataExchangeEngineMain main = new SOSDataExchangeEngineMain();
+		main.Execute(args);
 	}
 
 	protected SOSDataExchangeEngineMain() {
 		super("SOSDataExchange");
 	}
 
+	/**
+	 * 
+	 * @param args
+	 */
+	private void Execute(final String[] args) {
+		final String method = "Execute";
 
-	private void Execute(final String[] pstrArgs) {
-
-		final String conMethodName = conClassName + "::Execute";
-
+		SOSDataExchangeEngine engine = null;
+		int exitCode = 0;
 		try {
 			
-			SOSDataExchangeEngine objM = new SOSDataExchangeEngine();
-			JADEOptions objO = objM.Options();
-			//objO.AllowEmptyParameterList.setFalse();
+			engine = new SOSDataExchangeEngine();
+			JADEOptions options = engine.Options();
+			//options.AllowEmptyParameterList.setFalse();
 
-			objM.setJSJobUtilites(this);
-			objO.SendTransferHistory.value(true);
-			objO.CommandLineArgs(pstrArgs);
+			engine.setJSJobUtilites(this);
+			options.SendTransferHistory.value(true);
+			options.CommandLineArgs(args);
 
 			try {
-				if (objO.log4jPropertyFileName.isDirty()) {
-					File log4jPropFile = new File(objO.log4jPropertyFileName.Value());
+				if (options.log4jPropertyFileName.isDirty()) {
+					File log4jPropFile = new File(options.log4jPropertyFileName.Value());
 					if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
 						PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
 					}
@@ -69,23 +73,31 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			logger = Logger.getRootLogger();
 			logger.info(getMsg(SOSDX_Intro));
 			
-			objM.Execute();
-			objM.Logout();
+			engine.Execute();
+			
 		}
-
 		catch (Exception e) {
-			int intExitCode = 99;
-			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), intExitCode));
-			System.exit(intExitCode);
+			exitCode = 99;
+			logger.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode));
 			// TODO check for exit-code from the configuration: make it possible to define exit-code dependend on the error
 			// e.g. no connection = 10
 			//      invalid login = 11
 			//      no files found = 12
 			//      ...
-			System.exit(intExitCode);
 		}
-
-		logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
+		finally{
+			try{
+				if(engine != null){
+					engine.Logout();
+				}
+			}
+			catch(Exception ex){
+				logger.warn(String.format("exception on logout: %s",ex.toString()));
+			}
+		}
+		
+		logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
+		System.exit(exitCode);
 
 	} // private void Execute
 
