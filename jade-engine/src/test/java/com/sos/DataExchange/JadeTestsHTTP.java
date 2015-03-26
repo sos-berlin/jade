@@ -88,7 +88,6 @@ public class JadeTestsHTTP extends JadeTestBase {
 	}
 	
 	@Test
-	@Ignore("Test set to Ignore for later examination")
 	public void testHttp2localProxy() throws Exception {
 		objOptions.profile.Value("http_2_local_proxy");
 		
@@ -104,7 +103,7 @@ public class JadeTestsHTTP extends JadeTestBase {
 	
 	private void execute(JADEOptions options) throws Exception{
 		try{
-			objJadeEngine = new JadeEngine(objOptions);
+			objJadeEngine = new JadeEngine(options);
 			objJadeEngine.Execute();
 		}
 		catch(Exception ex){

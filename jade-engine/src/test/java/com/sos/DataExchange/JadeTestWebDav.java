@@ -17,6 +17,8 @@ public class JadeTestWebDav extends JadeTestBase {
 	protected final String			WEB_PASS				= "sosapl10629";
 //	protected final String			REMOTE_BASE_PATH		= "/home/kb/";
 	protected final String			REMOTE_BASE_PATH		= "/home/test/";
+	
+	private static final String SETTINGS_FILE = "src/test/resources/examples/jade_webdav_settings.ini";
 
 	public JadeTestWebDav() {
 		enuSourceTransferType = enuTransferTypes.local;
@@ -56,19 +58,48 @@ public class JadeTestWebDav extends JadeTestBase {
 
 	
 	@Test
-	public void testProfile() throws Exception{
+	public void testProfileHttpsGmx2LocalOneFile() throws Exception{
 		objOptions = new JADEOptions();
-		objOptions.settings.Value("src/test/resources/examples/jade_webdav_settings.ini");
+		objOptions.settings.Value(SETTINGS_FILE);
 		
-		objOptions.profile.Value("https_2_local_one_file");
+		objOptions.profile.Value("https_gmx_2_local_one_file");
 		
-		this.execute(objOptions);
+		this.execute(objOptions);		
+	}
+	
+	@Test
+	public void testProfileHttpsProxyGmx2LocalOneFile() throws Exception{
+		objOptions = new JADEOptions();
+		objOptions.settings.Value(SETTINGS_FILE);
 		
+		objOptions.profile.Value("https_proxy_gmx_2_local_one_file");
+		
+		this.execute(objOptions);		
+	}
+	
+	@Test
+	public void testProfileHttpsHomer2LocalOneFile() throws Exception{
+		objOptions = new JADEOptions();
+		objOptions.settings.Value(SETTINGS_FILE);
+		
+		objOptions.profile.Value("https_homer_2_local_one_file");
+		
+		this.execute(objOptions);		
+	}
+	
+	@Test
+	public void testProfileHttpHomer2LocalOneFile() throws Exception{
+		objOptions = new JADEOptions();
+		objOptions.settings.Value(SETTINGS_FILE);
+		
+		objOptions.profile.Value("http_homer_2_local_one_file");
+		
+		this.execute(objOptions);		
 	}
 	
 	private void execute(JADEOptions options) throws Exception{
 		try{
-			objJadeEngine = new JadeEngine(objOptions);
+			objJadeEngine = new JadeEngine(options);
 			objJadeEngine.Execute();
 		}
 		catch(Exception ex){
