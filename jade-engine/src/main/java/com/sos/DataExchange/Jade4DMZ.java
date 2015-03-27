@@ -380,9 +380,9 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Target().port.Value(objOptions.jump_port.Value());
 		
 		objDMZOptions.Target().proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
-		objDMZOptions.Target().proxy_host.Value(objOptions.jump_proxy_host.Value());
-		objDMZOptions.Target().proxy_port.Value(objOptions.jump_proxy_port.Value());
-		objDMZOptions.Target().proxy_user.Value(objOptions.jump_proxy_user.Value());
+		objDMZOptions.Target().proxy_host.Value(objOptions.jump_proxy_host.Value().trim());
+		objDMZOptions.Target().proxy_port.Value(objOptions.jump_proxy_port.Value().trim());
+		objDMZOptions.Target().proxy_user.Value(objOptions.jump_proxy_user.Value().trim());
 		objDMZOptions.Target().proxy_password.Value(objOptions.jump_proxy_password.Value());
 		
 		objDMZOptions.settings.Value("");
@@ -419,9 +419,9 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Source().port.Value(objOptions.jump_port.Value());
 		
 		objDMZOptions.Source().proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
-		objDMZOptions.Source().proxy_host.Value(objOptions.jump_proxy_host.Value());
-		objDMZOptions.Source().proxy_port.Value(objOptions.jump_proxy_port.Value());
-		objDMZOptions.Source().proxy_user.Value(objOptions.jump_proxy_user.Value());
+		objDMZOptions.Source().proxy_host.Value(objOptions.jump_proxy_host.Value().trim());
+		objDMZOptions.Source().proxy_port.Value(objOptions.jump_proxy_port.Value().trim());
+		objDMZOptions.Source().proxy_user.Value(objOptions.jump_proxy_user.Value().trim());
 		objDMZOptions.Source().proxy_password.Value(objOptions.jump_proxy_password.Value());
 		
 		
