@@ -96,7 +96,9 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 			}
 		}
 		
-		logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
+		if(exitCode == 0){
+			logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
+		}
 		System.exit(exitCode);
 
 	} // private void Execute
