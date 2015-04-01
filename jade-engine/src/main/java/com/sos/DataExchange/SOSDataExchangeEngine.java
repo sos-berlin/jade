@@ -4,17 +4,20 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.*;
+import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
+import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.enuTransferStatus;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer2;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVirtualFile;
+import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.VirtualFileSystem.common.SOSFileEntries;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
@@ -28,6 +31,7 @@ import sos.net.SOSMail;
 import sos.net.mail.options.SOSSmtpMailOptions;
 import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
@@ -280,22 +284,34 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 		objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
 		objOptions.log_filename.setLogger(objJadeReportLogger);
-		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
-		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
-		objOptions.host.SetIfNotDirty(objOptions.Target().host);
-		String strT = "";
-		if (objOptions.banner_header.isDirty()) {
-			strT = objOptions.banner_header.JSFile().getContent();
-		}
-		else {
-			strT = SOSJADE_T_0010.get(); // LogFile Header
-		}
-		strT = objOptions.replaceVars(strT);
-		objJadeReportLogger.info(strT);
-		logger.info(strT);
+//		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
+//		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
+//		objOptions.host.SetIfNotDirty(objOptions.Target().host);
+//		String strT = "";
+//		if (objOptions.banner_header.isDirty()) {
+//			strT = objOptions.banner_header.JSFile().getContent();
+//		}
+//		else {
+//			strT = SOSJADE_T_0010.get(); // LogFile Header
+//		}
+//		strT = objOptions.replaceVars(strT);
+//		objJadeReportLogger.info(strT);
+//		logger.info(strT);
 		boolean flgOK = false;
 		try {
 			JobSchedulerException.LastErrorMessage = "";
+			try {
+				Options().CheckMandatory();
+			}
+			catch (JobSchedulerException e) {
+				throw e;
+			}
+			catch (Exception e) {
+				throw new JobSchedulerException(e.getLocalizedMessage());
+			}
+			finally {
+				showBanner();
+			}
 			flgOK = this.transfer();
 			if (JobSchedulerException.LastErrorMessage.length() > 0) {
 				throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
@@ -316,19 +332,159 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
 					+ getSuccessfulTransfers());
-			if (objOptions.banner_footer.isDirty()) {
-				strT = objOptions.banner_footer.JSFile().getContent();
-			}
-			else {
-				strT = SOSJadeMessageCodes.SOSJADE_T_0011.get(); // LogFile Footer
-			}
-			setTextProperties();
-			strT = objOptions.replaceVars(strT);
-			objJadeReportLogger.info(strT);
-			logger.info(strT);
+			showResult();
 			sendNotifications();
 		}
 		return flgOK;
+	}
+	
+	
+	private void showResult() {
+		String strT = "";
+		if (objOptions.banner_footer.isDirty()) {
+			strT = objOptions.banner_footer.JSFile().getContent();
+		}
+		else {
+			strT = SOSJadeMessageCodes.SOSJADE_T_0011.get();
+		}
+		setTextProperties();
+		strT = objOptions.replaceVars(strT);
+		objJadeReportLogger.info(strT);
+		logger.info(strT);
+	}
+	
+	
+	private String showBannerHeaderSource(SOSConnection2OptionsAlternate objConn, boolean isSource) {
+		String strT = "";
+		String pattern4String 	= "  | %-22s= %s%n";
+		String pattern4Bool 	= "  | %-22s= %b%n";
+		String pattern4Rename 	= "  | %-22s= %s -> %s%n";
+		strT += String.format(pattern4String, "Protocol", objConn.protocol.Value());
+		strT += String.format(pattern4String, "Host", objConn.host.Value());
+		if (!objConn.protocol.isLocal()) {
+			strT += String.format(pattern4String, "User", objConn.user.Value());
+			if (objConn.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && objConn.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
+				strT += String.format(pattern4String, "AuthMethod", objConn.ssh_auth_method.Value());
+			}
+			if (objConn.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp && !objConn.ssh_auth_method.Value().equals(enuAuthenticationMethods.password)) {
+				strT += String.format(pattern4String, "AuthFile", "***");
+			}
+			else {
+				strT += String.format(pattern4String, "Password", "***");
+			}
+			if (objConn.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.ftp) {
+				strT += String.format(pattern4Bool, "Passive", objConn.passive_mode.value());
+				strT += String.format(pattern4String, "TransferMode", objConn.transfer_mode.Value());
+			}
+		}
+		
+		if (isSource) {
+			if (objConn.Directory.isDirty()) {
+				strT += String.format(pattern4String, "Directory", objConn.Directory.Value());
+			}
+			if (Options().file_path.isDirty()) {
+				strT += String.format(pattern4String, "FilePath", Options().file_path.Value());
+			}
+			if (Options().FileListName.isDirty()) {
+				strT += String.format(pattern4String, "FileList", Options().FileListName.Value());
+			}
+			if (Options().file_spec.isDirty()) {
+				strT += String.format(pattern4String, "FileSpec", Options().file_spec.Value());
+			}
+			strT += String.format(pattern4Bool, "ErrorWhenNoFilesFound", Options().force_files.value());
+			strT += String.format(pattern4Bool, "Recursive", Options().recursive.value());
+			if (Options().skip_transfer.isFalse()) {
+				strT += String.format(pattern4Bool, "Remove", Options().remove_files.value());
+				if (Options().poll_interval.isDirty() || Options().poll_timeout.isDirty() || Options().poll_minfiles.isDirty()) {
+					strT += String.format(pattern4String, "PollingInterval", Options().poll_interval.Value());
+					strT += String.format(pattern4String, "PollingTimeout", Options().poll_timeout.Value());
+					strT += String.format(pattern4String, "PollingMinFiles", Options().poll_minfiles.Value());
+				}
+				if (Options().CheckSteadyStateOfFiles.isTrue()) {
+					strT += String.format(pattern4String, "CheckSteadyInterval", Options().CheckSteadyStateInterval.Value());
+					strT += String.format(pattern4String, "CheckSteadyCount", Options().CheckSteadyCount.Value());
+				}
+			}
+		}
+		else {
+			strT += String.format(pattern4String, "Directory", objConn.Directory.Value());
+			strT += String.format(pattern4Bool, "OverwriteFiles", Options().overwrite_files.value());
+			if (Options().append_files.isTrue()) {
+				strT += String.format(pattern4Bool, "AppendFiles", Options().append_files.value());
+			}
+			if (Options().compress_files.isTrue()) {
+				strT += String.format(pattern4Bool, "CompressFiles", Options().compress_files.value());
+			}
+			if (Options().CumulateFiles.isTrue()) {
+				strT += String.format(pattern4Bool, "CumulateFiles", Options().CumulateFiles.value());
+				strT += String.format(pattern4Bool, "CumulateFileName", Options().CumulativeFileName.Value());
+			}
+			if (Options().atomic_prefix.isDirty()) {
+				strT += String.format(pattern4String, "AtomicPrefix", Options().atomic_prefix.Value());
+			}
+			if (Options().atomic_suffix.isDirty()) {
+				strT += String.format(pattern4String, "AtomicSuffix", Options().atomic_suffix.Value());
+			}
+		}
+		if (objConn.replacement.isDirty() && objConn.replacing.isDirty()) {
+			strT += String.format(pattern4Rename, "Rename", objConn.replacing.Value(), objConn.replacement.Value());
+		}
+		return strT;
+	}
+
+	private void showBanner() {
+		String strT = "";
+		if (objOptions.banner_header.isDirty()) {
+			//this parameter should deprecated
+			strT = objOptions.banner_header.JSFile().getContent();
+			strT = objOptions.replaceVars(strT);
+		}
+		else {
+			String timestamp = "";
+			try {
+				timestamp = SOSOptionTime.getCurrentDateAsString(Options().DateFormatMask.Value()) + " " + SOSOptionTime.getCurrentTimeAsString(Options().TimeFormatMask.Value());
+			}
+			catch (Exception e) {
+				timestamp = Options().getDate()+ " " +Options().getTime();
+			}
+			String pattern4String 	= "  %-24s= %s%n";
+			String pattern4Bool 	= "  %-24s= %b%n";
+			String pattern4SourceTarget 	= "%n  +------------%s------------%n";
+			strT += String.format("%n%072d%n", 0).replace('0', '*');
+			strT += String.format("*%70s*%n", " ");
+			strT += String.format("*%20s%-50s*%n", "JADE", " - JobScheduler Advanced Data Exchange");
+			strT += String.format("*%37s%-33s*%n", "---www.sos-berlin.com", "---------------------");
+			strT += String.format("*%70s*%n", " ");
+			strT += String.format("%072d%n", 0).replace('0', '*');
+			strT += String.format(pattern4String, "Version", VersionInfo.VERSION_STRING);
+			strT += String.format(pattern4String, "Date", timestamp);
+			if (Options().settings.isDirty()) {
+				strT += String.format(pattern4String, "SettingsFile", Options().settings.Value());
+			}
+			if (Options().profile.isDirty()) {
+				strT += String.format(pattern4String, "Profile", Options().profile.Value());
+			}
+			strT += String.format(pattern4String, "Operation", Options().operation.Value());
+			strT += String.format(pattern4Bool, "Transactional", Options().transactional.value());
+			if (Options().skip_transfer.isDirty()) {
+				strT += String.format(pattern4Bool, "SkipTransfer", Options().skip_transfer.value());
+			}
+			if (Options().history.isDirty()) {
+				strT += String.format(pattern4String, "History", Options().history.Value());
+			}
+			if (Options().log_filename.isDirty()) {
+				strT += String.format(pattern4String, "LogFile", Options().log_filename.Value());
+			}
+			strT += String.format(pattern4SourceTarget, "Source");
+			strT += showBannerHeaderSource(Options().Source(), true);
+			if (objOptions.NeedTargetClient()) {
+				strT += String.format(pattern4SourceTarget, "Target");
+				strT += showBannerHeaderSource(Options().Target(), false);
+			}
+			strT += "\n";
+		}
+		objJadeReportLogger.info(strT);
+		logger.info(strT);
 	}
 
 	private void fillFileList(final String[] strFileList, final String strSourceDir) {
@@ -488,11 +644,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	protected boolean isAPathName(final String pstrFileAndPathName) {
 		boolean flgOK = false;
 		String lstrPathName = pstrFileAndPathName.replaceAll("\\\\", "/");
-		if (lstrPathName.startsWith(".") || lstrPathName.startsWith("..")) { // relative to localdir
-			flgOK = false;
+		if (lstrPathName.startsWith("./") || lstrPathName.startsWith("../")) { // relative to localdir
 		}
 		else {
-			if (lstrPathName.contains(":/") || lstrPathName.startsWith("/")) {
+			     //drive:/, protocol:/, /, ~/, $ (Unix Env), %...% (Windows Env)                      
+			if (lstrPathName.matches("^[a-zA-Z]+:/.*") || lstrPathName.startsWith("/") || lstrPathName.startsWith("~/") || lstrPathName.startsWith("$") || lstrPathName.matches("^%[a-zA-Z_0-9.-]+%.*")) {
 				flgOK = true;
 			}
 			else {
