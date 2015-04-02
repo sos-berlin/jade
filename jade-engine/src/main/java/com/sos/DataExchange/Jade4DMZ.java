@@ -11,6 +11,7 @@ import sos.net.ssh.SOSSSHJobOptions;
 import sos.net.ssh.SOSSSHJobTrilead;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -52,7 +53,6 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 	private final String		conClassName				= "Jade4DMZ";
-	private static final String	conSVNVersion				= "$Id$";
 	private static final Logger	logger						= Logger.getLogger(Jade4DMZ.class);
 
 //	private JADEOptions		objOptions					= null;
@@ -134,7 +134,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		 */
 		VFSFactory.sFTPHandlerClassName = "com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft";
 
-		logger.info(conClassName + " --- " + conSVNVersion);
+		logger.info(conClassName + " --- " + VersionInfo.VERSION_STRING);
 	  // http://www.sos-berlin.com/jira/browse/JITL-112
 		// refactored to SOSSSHJobTrilead to reflect the usage of Trilead,
 		// will be changed to use the JCraft implementation in the near future (1.10) [SP]
@@ -153,17 +153,18 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		try {
 			this.Execute();
 		}
+		catch (JobSchedulerException e) {
+			throw e;
+		}
 		catch (Exception e) {
 			throw new JobSchedulerException("abort", e);
 		}
 	}
 
 	public boolean Execute() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::execute";
 		boolean flgOK = true;
 
-		objOptions.getTextProperties().put("version", conSVNVersion);
+		objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
 
 		CheckJumpSettings();
 		EstablishSSHConnection();
@@ -196,6 +197,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 					// "jump host" / DMZ nur mit isOperationSendUsingDMZ oder isOperationReceiveUsingDMZ möglich
 				}
 			}
+		}
+		catch (JobSchedulerException e) {
+			flgOK = false;
+			throw e;
 		}
 		catch (Exception e) {
 			flgOK = false;
@@ -230,9 +235,9 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		JADEOptions obj2DMZ = objOptions.getClone();
 		
  		setDMZasSource4Receive(obj2DMZ);
-		  
+ 		JadeEngine objJade = null;  
 		try {
-			JadeEngine objJade = new JadeEngine(obj2DMZ);
+			objJade = new JadeEngine(obj2DMZ);
 			objJade.Execute();
 			transfFiles = objJade.getFileList(); 
 			objJade.Logout();
@@ -243,6 +248,15 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		}
 		catch (Exception e) {
 			throw new JobSchedulerException("Transfer failed", e);
+		}
+		finally {
+			try {
+				if (objJade != null) {
+					objJade.Logout();
+				}
+			} catch (Exception e) {
+				logger.warn("error on logout: " + e.getMessage());
+			}
 		}
 
 	} 
@@ -310,17 +324,26 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		setDMZasTarget(obj2DMZ);
         logger.debug(obj2DMZ.Target().host.Value());
 		logger.debug(obj2DMZ.DirtyString());
+		JadeEngine objJade = null;
 		try {
-			JadeEngine objJade = new JadeEngine(obj2DMZ);
+			objJade = new JadeEngine(obj2DMZ);
 			objJade.Execute();
 			transfFiles = objJade.getFileList(); 
-			objJade.Logout();
 			lstFilesTransferredFromIntranet = objJade.getFileList();
 			lngNoOfFilesTransferredFromIntranet = lstFilesTransferredFromIntranet.count();
 			StartTransferToDMZ = true;
 		}
 		catch (Exception e) {
 			throw new JobSchedulerException("Transfer failed", e);
+		}
+		finally {
+			try {
+				if(objJade!=null) {
+					objJade.Logout();
+				}
+			} catch (Exception e) {
+				logger.warn("error on logout: " + e.getMessage());
+			}
 		}
 	} // private void StartTransferToDMZ
 
@@ -581,8 +604,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 	private void CheckJumpSettings() {
 
-		final String conMethodName = conClassName + "::CheckJumpSettings";
-		logger.trace(conMethodName);
+//		final String conMethodName = conClassName + "::CheckJumpSettings";
+//		logger.trace(conMethodName);
 
 	} // private void CheckJumpSettings
 
@@ -591,14 +614,15 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		final String conMethodName = conClassName + "::EstablishSSHConnection";
 
 		try {
-			objO.auth_file = objOptions.getjump_ssh_auth_file();
-			objO.auth_method = objOptions.getjump_ssh_auth_method();
-			objO.host = objOptions.getjump_host();
-			objO.user = objOptions.getjump_user();
-			objO.password = objOptions.getjump_password();
-			objO.port = objOptions.getjump_port();
+			objO.auth_file.Value(objOptions.jump_ssh_auth_file.Value());
+			objO.auth_method.Value(objOptions.jump_ssh_auth_method.Value());
+			objO.host.Value(objOptions.jump_host.Value());
+			objO.user.Value(objOptions.jump_user.Value());
+			objO.password.Value(objOptions.jump_password.Value());
+			objO.port.value(objOptions.jump_port.value());
 
-			logger.info(objO.toString());
+			logger.debug("SSH options:");
+			logger.debug(objO.dirtyString());
 
 			// TODO: connect as method in SSHJob2
 

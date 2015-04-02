@@ -7,6 +7,7 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+
 import sos.spooler.Job_chain;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
@@ -24,19 +25,10 @@ import static com.sos.scheduler.messages.JSMessages.*;
  *
  * This Class SOSDExJSAdapterClass works as an adapter-class between the SOS
  * JobScheduler and the worker-class SOSDEx.
- *
-
- *
- * see \see J:\E\java\development\com.sos.scheduler\src\sos\scheduler\jobdoc\SOSDEx.xml for more details.
- *
- * \verbatim ;
- * mechanicaly created by C:\Users\KB\eclipse\sos.scheduler.xsl\JSJobDoc2JSAdapterClass.xsl from http://www.sos-berlin.com at 20100930175652
- * \endverbatim
  */
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 	private final String	conClassName							= "SOSDExJSAdapterClass";
-	private final String	conSVNVersion							= "$Id$";
 	private final String	conVarname_ftp_result_files				= "ftp_result_files";
 	private final String	conVarname_ftp_result_zero_byte_files	= "ftp_result_zero_byte_files";
 	private final String	conVarname_ftp_result_filenames			= "ftp_result_filenames";
@@ -53,80 +45,58 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE	= "scheduler_SOSFileOperations_ResultSetSize";
 	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT		= "scheduler_SOSFileOperations_file_count";
 	
-	private SOSFileList		transfFiles								= null;
-
-	public void init() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::init"; //$NON-NLS-1$
-		doInitialize();
-	}
-
-	private void doInitialize() {
-	} // doInitialize
-
-	@Override
-	public boolean spooler_init() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::spooler_init"; //$NON-NLS-1$
-		return super.spooler_init();
+	private SOSFileList		transfFiles		= null;
+	private SOSFTPOptions	objJadeOptions	= null;
+	private JadeEngine		objJadeEngine	= null;
+	
+	public SOSDExJSAdapterClass() {
+		super();
 	}
 
 	@Override
 	public boolean spooler_process() throws Exception {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::spooler_process"; //$NON-NLS-1$
 		try {
 			super.spooler_process();
 			doProcessing();
 		}
 		catch (Exception e) {
-			logger.error(String.format("%1$s ended abnormal.", conClassName));
-			logger.error(StackTrace2String(e));
+			logger.error(String.format("%1$s ended with error: %2$s", conClassName, e.getMessage()));
+			logger.debug("",e);
 			throw e;
-			//			return signalFailure();
 		}
 		finally {
-		} // finally
+		}
 		return signalSuccess();
-	} // spooler_process
-
-	@Override
-	public void spooler_exit() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::spooler_exit"; //$NON-NLS-1$
-		super.spooler_exit();
 	}
-	private SOSFTPOptions	objJadeOptions	= null;
-	private JadeEngine		objJadeEngine	= null;
 
 	private void doProcessing() throws Exception {
-		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
-		logger.debug(conSVNVersion);
-		if (objJadeEngine == null) {
-			objJadeEngine = new JadeEngine();
-			objJadeOptions = objJadeEngine.Options();
-			if (objJadeOptions.reuseConnection.isFalse()) {
-				objJadeEngine = new JadeEngine();
-				objJadeOptions = objJadeEngine.Options();
-			}
-		}
+		
+		objJadeOptions = null;
+		objJadeEngine = new JadeEngine();
+		objJadeOptions = objJadeEngine.Options();
 		objJadeOptions.CurrentNodeName(getCurrentNodeName());
 		hsmParameters = getSchedulerParameterAsProperties(getJobOrOrderParameters());
 		objJadeOptions.setAllOptions(objJadeOptions.DeletePrefix(hsmParameters, "ftp_"));
-		objJadeOptions.CheckMandatory();
+		//objJadeOptions.CheckMandatory(); //is made in Execute method
 		int intLogLevel = spooler_log.level();
-		if (intLogLevel < 0) {
+		if (intLogLevel <= 0) {
 			objJadeOptions.verbose.value(-1*intLogLevel);
 		}
-		logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objJadeOptions.operation.Value()));
 		objJadeEngine.setJSJobUtilites(this);
-		objJadeEngine.Execute();
-		objJadeEngine.Logout();
+		try {
+			objJadeEngine.Execute();
+		} 
+		catch (Exception e) {
+			throw e;
+		}
+		finally {
+			objJadeEngine.Logout();
+		}
 		transfFiles = objJadeEngine.getFileList();
 		int intNoOfHitsInResultSet = transfFiles.List().size();
 		if (intNoOfHitsInResultSet <= 0 && isOrderJob()) {
-			String strPollErrorState = objJadeOptions.PollErrorState.Value();
 			if (objJadeOptions.PollErrorState.isDirty()) {
+				String strPollErrorState = objJadeOptions.PollErrorState.Value();
 				logger.info("set order-state to " + strPollErrorState);
 				setNextNodeState(strPollErrorState);
 				spooler_task.order().params().set_var(conVarname_ftp_result_error_message, "");
@@ -145,7 +115,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 			boolean flgR = objJadeOptions.expected_size_of_result_set.compare(strRaiseErrorIfResultSetIs, intNoOfHitsInResultSet);
 			if (flgR == true) {
 				String strM = JSJ_E_0040.get(intNoOfHitsInResultSet, strRaiseErrorIfResultSetIs, objJadeOptions.expected_size_of_result_set.value());
-				logger.info(strM);
+				logger.error(strM);
 				throw new JobSchedulerException(strM);
 			}
 		}
@@ -161,7 +131,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 				createOrder(transfFiles.List().get(0), strOrderJobChainName);
 			}
 		}
-		logger.info(String.format("%1$s with operation %2$s ended.", conMethodName, objJadeOptions.operation.Value()));
 	} // doProcessing
 
 	/**
@@ -169,7 +138,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 	 * @param pstrOrderJobChainName
 	 */
 	protected void createOrder(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
-		final String conMethodName = conClassName + "::createOrder";
 		Order objOrder = spooler.create_order();
 		Variable_set objOrderParams = spooler.create_variable_set();
 		// kb: merge actual parameters into created order params (2012-07-25)
@@ -201,7 +169,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 			strT += " " + JSJ_I_0019.get(strNextState); // "Next State is '%1$s'."
 		}
 		objOrder.set_params(objOrderParams);
-		objOrder.set_title(JSJ_I_0017.get(conMethodName)); // "Order created by %1$s"
+		objOrder.set_title(JSJ_I_0017.get(spooler_task.job().name())); // "Order created by %1$s"
 		Job_chain objJobchain = spooler.job_chain(pstrOrderJobChainName);
 		objJobchain.add_order(objOrder);
 		logger.info(strT);
@@ -275,9 +243,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 							}
 						}
 						catch (Exception e) {
-							e.printStackTrace(System.err);
 							String strM = JSJ_F_0080.get(strResultList2File, objR.Options().result_list_file.getShortKey());
-							logger.fatal(strM);
 							throw new JobSchedulerException(strM, e);
 						}
 					}
@@ -291,21 +257,12 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 				objParams.set_var(conVarname_ftp_result_filepaths, filePaths);
 			}
 		}
+		catch (JobSchedulerException e) {
+			logger.error("error occurred creating order Parameter: " + e.getMessage());
+			throw e;
+		}
 		catch (Exception e) {
 			throw new JobSchedulerException("error occurred creating order Parameter: ", e);
 		}
 	}
-
-	@Override
-	public void spooler_close() {
-
-		@SuppressWarnings("unused")
-		final String	conMethodName	= conClassName + "::close";
-
-		if (objJadeEngine != null) {
-			objJadeEngine.Logout();
-			objJadeEngine = null;
-		}
-
-	} // private void close
 }

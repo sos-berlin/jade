@@ -33,25 +33,11 @@ import com.sos.i18n.annotation.I18NResourceBundle;
  *
  * This Class SOSDExJSAdapterClass works as an adapter-class between the SOS
  * JobScheduler and the worker-class SOSDEx.
- *
-
- *
- * see \see J:\E\java\development\com.sos.scheduler\src\sos\scheduler\jobdoc\SOSDEx.xml for more details.
- *
- * \verbatim ;
- * mechanicaly created by C:\Users\KB\eclipse\sos.scheduler.xsl\JSJobDoc2JSAdapterClass.xsl from http://www.sos-berlin.com at 20100930175652
- * \endverbatim
  */
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
-	SOSJade4DMZJSAdapter() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-
+	
 	private final String	conClassName							= "SOSJade4DMZJSAdapter";
-	private final String	conSVNVersion							= "$Id: SOSJade4DMZJSAdapter.java 20142 2013-05-15 16:46:28Z kb $";
 
 	private final String	conVarname_ftp_result_files				= "ftp_result_files";
 	private final String	conVarname_ftp_result_zero_byte_files	= "ftp_result_zero_byte_files";
@@ -70,49 +56,52 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE	= "scheduler_SOSFileOperations_ResultSetSize";
 	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT		= "scheduler_SOSFileOperations_file_count";
 
+	private SOSFileList		transfFiles	= null;
+	private SOSFTPOptions	objO		= null;
 
-	private SOSFileList		transfFiles								= null;
-
-	  
+	
+	
+	public SOSJade4DMZJSAdapter() {
+		super();
+	}
+  
 	@Override
 	public boolean spooler_process() throws Exception {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::spooler_process"; //$NON-NLS-1$
 
 		try {
 			super.spooler_process();
 			doProcessing();
 		}
 		catch (Exception e) {
-			logger.error(String.format("%1$s ended abnormal.", conClassName));
-			logger.error(StackTrace2String(e));
+			logger.error(String.format("%1$s ended with error: %2$s", conClassName, e.getMessage()));
+			logger.debug("",e);
 			throw e;
 		}
 		finally {
-		} // finally
+		}
 		return signalSuccess();
 
-	} // spooler_process
+	}
 
 	  
-	private SOSFTPOptions	objO	= null;
-
 	private void doProcessing() throws Exception {
-		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
-
-		logger.debug(conSVNVersion);
+		objO = null;
 		Jade4DMZ objR = new Jade4DMZ();
 		objO = objR.Options();
  		
 		objO.CurrentNodeName(getCurrentNodeName());
 		HashMap<String, String> hsmParameters = getSchedulerParameterAsProperties(getJobOrOrderParameters());
 		objO.setAllOptions(objO.DeletePrefix(hsmParameters, "ftp_"));
-		if (!objO.scheduler_host.isDirty()){
+		int intLogLevel = spooler_log.level();
+		if (intLogLevel <= 0) {
+			objO.verbose.value(-1*intLogLevel);
+		}
+		if (objO.scheduler_host.isNotDirty()){
 		   objO.scheduler_host.Value("");
 		}
-		objO.CheckMandatory();
+		//objO.CheckMandatory(); //is made in Execute method
 
-		logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.Value()));
+		logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", objO.operation.Value()));
 		objR.setJSJobUtilites(this);
 
 		objR.Execute();
@@ -168,7 +157,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 			}
 		}
 
-		logger.info(String.format("%1$s with operation %2$s ended.", conMethodName, objO.operation.Value()));
+		logger.info(String.format("%1$s with operation %2$s ended.", "JADE4DMZ", objO.operation.Value()));
 	} // doProcessing
 
 	  

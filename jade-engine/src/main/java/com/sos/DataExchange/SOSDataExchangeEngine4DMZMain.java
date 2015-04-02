@@ -4,7 +4,6 @@ import java.io.File;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
-import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
@@ -37,6 +36,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 	private void Execute(final String[] pstrArgs) {
 
 		final String conMethodName = conClassName + "::Execute";
+		int exitCode = 0;
 
 		try {
 			Jade4DMZ objM = new Jade4DMZ();
@@ -65,18 +65,17 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			logger = Logger.getRootLogger();
 			logger.info(getMsg(SOSDX_Intro));
 			
-			objO.CheckMandatory();
+			//objO.CheckMandatory();//is made in Execute method
 			objM.Execute();
+			logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
 		}
 
 		catch (Exception e) {
-			int intExitCode = 99;
-			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), intExitCode));
-			System.exit(intExitCode);
+			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode));
+			System.exit(exitCode);
 		}
-
-		logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
-
+		
+		System.exit(exitCode);
 	} // private void Execute
 
 	@I18NMessages(value = { @I18NMessage("JADE4DMZ client - Main routine started ..."), //

@@ -11,7 +11,6 @@ import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.enuTransferStatus;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
@@ -31,7 +30,6 @@ import sos.net.SOSMail;
 import sos.net.mail.options.SOSSmtpMailOptions;
 import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
@@ -262,9 +260,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	/* (non-Javadoc)
 	 * @see com.sos.DataExchange.IJadeEngine#Execute()
 	 */
-	@Override public boolean Execute() throws Exception {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::execute";
-		long startTime = System.currentTimeMillis();
+	@Override 
+	public boolean Execute() throws Exception {
+//		long startTime = System.currentTimeMillis();
 		//		long startTime = System.nanoTime();
 		VFSFactory.setParentLogger(strLoggerName);
 		int intVerbose = objOptions.verbose.value();
@@ -324,14 +322,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			throw new JobSchedulerException(e.getLocalizedMessage());
 		}
 		finally {
-			long stopTime = System.currentTimeMillis();
-			long elapsedTime = stopTime - startTime;
-			long intNoOfFilesTransferred = getSuccessfulTransfers();
-			if (intNoOfFilesTransferred <= 0) {
-				intNoOfFilesTransferred = 1;
-			}
-			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
-					+ getSuccessfulTransfers());
+//			long stopTime = System.currentTimeMillis();
+//			long elapsedTime = stopTime - startTime;
+//			long intNoOfFilesTransferred = getSuccessfulTransfers();
+//			if (intNoOfFilesTransferred <= 0) {
+//				intNoOfFilesTransferred = 1;
+//			}
+//			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
+//					+ getSuccessfulTransfers());
 			showResult();
 			sendNotifications();
 		}
@@ -1062,6 +1060,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							objJadeReportLogger.info(strM);
 							objOptions.remove_files.setFalse();
 							objOptions.force_files.setFalse();
+							objSourceFileList.logFileList();
 							objSourceFileList.CreateResultSetFile();
 						}
 						else {

@@ -16,7 +16,6 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
-	private final static String	conClassName	= SOSDataExchangeEngineMain.class.getSimpleName();
 	
 	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngineMain.class);
 	protected JADEOptions		jadeOptions		= null;
