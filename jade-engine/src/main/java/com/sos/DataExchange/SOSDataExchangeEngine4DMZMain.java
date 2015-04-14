@@ -91,7 +91,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 	 * \var SOSDX-Intro
 	 * \brief SOSDataExchange - Main
 	 */
-	public static final String	SOSDX_Intro				= "SOSDataExchangeEngine4DMZMain.SOSDX-Intro";
+	public static final String	SOSDX_Intro				= "SOSDataExchangeEngineMain.SOSDX-Intro";
 
 	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"), //
 			@I18NMessage(value = "%1$s: Error occurred ...: %2$s", locale = "en_UK", //
