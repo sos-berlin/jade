@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -25,6 +26,7 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
+import org.apache.commons.net.io.Util;
 import org.apache.commons.net.util.TrustManagerUtils;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -67,6 +69,12 @@ public class JadeTestsFTPS extends JadeTestBase{
 		this.execute(options);
 	}
 	
+	@Test
+	public void testLocal2ExplicitFtpsKeystore() throws Exception {
+		options.profile.Value("local_2_explicit_ftps_keystore");
+		
+		this.execute(options);
+	}
 	
 	@Test
 	public void testLocal2LocalExplicitFtps() throws Exception {
@@ -74,6 +82,8 @@ public class JadeTestsFTPS extends JadeTestBase{
 		
 		this.execute(options);
 	}
+	
+	
 	
 	@Test
 	public void testLocal2HomerExplicitFtpsSocksProxy() throws Exception {
@@ -146,6 +156,10 @@ public class JadeTestsFTPS extends JadeTestBase{
 			String target = "/home/sos/jade/to_homer/re_unitest.pdf";
 			target = "re_unitest.pdf";
 			
+			File keyStore = new File("D:/_temp/ftps/keys/1/keystore.jks");
+			String keyStorePass = "password";
+			
+			
 			////-Djava.net.preferIPv4Stack=true
 			//System.setProperty("java.net.preferIPv4Stack", "true");
 			
@@ -156,6 +170,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 			boolean useProxySelector = true;
 			boolean useProxy = false;
 			
+			boolean useKeyStore = true;
 			
 			SOSOptionProxyProtocol.Protocol proxyProtocol = SOSOptionProxyProtocol.Protocol.socks5;
 			String proxyHost = "homer.sos";
@@ -191,6 +206,9 @@ public class JadeTestsFTPS extends JadeTestBase{
 				cl = new FTPSClient("SSL",implicit);
 				//all|valid|none
 				//setTrustManager(cl,"none");
+				if(useKeyStore){
+					setKeyManager(cl, keyStore, keyStorePass);
+				}
 				
 				if(useProxy){
 					Proxy p = (useHttpProxy) ? getHTTPProxy(proxyHost, proxyPort) : getSocksProxy(proxyHost, proxyPort);
@@ -266,7 +284,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 		            stream = new FileInputStream(storePath);
 		            ks.load(stream, storePass.toCharArray());
 		        } finally {
-		        	//Util.closeQuietly(stream);
+		        	Util.closeQuietly(stream);
 		        }
 		        return ks;
 		    }
@@ -284,6 +302,15 @@ public class JadeTestsFTPS extends JadeTestBase{
 	        } else if ("none".equals(trustmgr)) {
 	            cl.setTrustManager(null);
 	        }
+		}
+		
+		private void setKeyManager(FTPSClient cl, File keyStore, String keyStorePass) throws Exception{
+			//KeyManager keyManager = org.apache.commons.net.util.KeyManagerUtils.createClientKeyManager(keyStore, keyStorePass);
+			//cl.setKeyManager(keyManager);
+			// cl.setTrustManager(TrustManagerUtils.getDefaultTrustManager(keyStore).getValidateServerCertificateTrustManager());
+		
+			KeyStore ks = loadStore("JKS", keyStore, keyStorePass);
+			cl.setTrustManager(TrustManagerUtils.getDefaultTrustManager(ks));
 		}
 		
 		/**
