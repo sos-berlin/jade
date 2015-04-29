@@ -71,6 +71,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 		}
 
 		catch (Exception e) {
+			exitCode = 99;
 			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode));
 			System.exit(exitCode);
 		}

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import sos.net.ssh.SOSSSHJob2;
@@ -165,6 +166,21 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		boolean flgOK = true;
 
 		objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
+		
+		int intVerbose = objOptions.verbose.value();
+		if (intVerbose <= 1) {
+			Logger.getRootLogger().setLevel(Level.INFO);
+		}
+		else {
+			if (intVerbose > 8) {
+				//Logger.getRootLogger().setLevel(Level.TRACE);
+				logger.setLevel(Level.TRACE);
+			}
+			else {
+				//Logger.getRootLogger().setLevel(Level.DEBUG);
+				logger.setLevel(Level.DEBUG);
+			}
+		}
 
 		CheckJumpSettings();
 		EstablishSSHConnection();
@@ -575,10 +591,11 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			objO.raise_exception_on_error.value(true);
 			objO.ignore_stderr.Value("true");
 			objO.command.Value(pstrCommand);
+			objM.Clear();
 			objM.Execute();
 
-			String strStdOut = objM.getStdOut().toString();
-			String strStdErr = objM.getStdErr().toString();
+//			String strStdOut = objM.getStdOut().toString();
+//			String strStdErr = objM.getStdErr().toString();
 			objM.Clear();
 		}
 		catch (Exception e) {
@@ -620,9 +637,24 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			objO.user.Value(objOptions.jump_user.Value());
 			objO.password.Value(objOptions.jump_password.Value());
 			objO.port.value(objOptions.jump_port.value());
+			if (objOptions.jump_proxy_host.isDirty()) {
+				objO.proxy_host.Value(objOptions.jump_proxy_host.Value());
+			}
+			if (objOptions.jump_proxy_password.isDirty()) {
+				objO.proxy_password.Value(objOptions.jump_proxy_password.Value());
+			}
+			if (objOptions.jump_proxy_port.isDirty()) {
+				objO.proxy_port.Value(objOptions.jump_proxy_port.Value());
+			}
+			if (objOptions.jump_proxy_protocol.isDirty()) {
+				objO.proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
+			}
+			if (objOptions.jump_proxy_user.isDirty()) {
+				objO.proxy_user.Value(objOptions.jump_proxy_user.Value());
+			}
 
-			logger.debug("SSH options:");
-			logger.debug(objO.dirtyString());
+			logger.info("SSH options:");
+			logger.info(objO.dirtyString());
 
 			// TODO: connect as method in SSHJob2
 
