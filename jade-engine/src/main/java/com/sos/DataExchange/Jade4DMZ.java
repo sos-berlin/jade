@@ -412,8 +412,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Target().Directory.Value(strTempFolderNameOnDMZ);
 		objDMZOptions.Target().user.Value(objOptions.jump_user.Value());
 		objDMZOptions.Target().password.Value(objOptions.jump_password.Value());
-		objDMZOptions.Target().auth_method.Value(objOptions.jump_ssh_auth_method.Value());
-		objDMZOptions.Target().auth_file.Value(objOptions.jump_ssh_auth_file.Value());
+		objDMZOptions.Target().ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
+		objDMZOptions.Target().ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
 		objDMZOptions.Target().protocol.Value(objOptions.jump_protocol.Value());
 		objDMZOptions.Target().host.Value(objOptions.jump_host.Value());
 		objDMZOptions.Target().port.Value(objOptions.jump_port.Value());
@@ -450,8 +450,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Source().Directory.Value(strTempFolderNameOnDMZ);
 		objDMZOptions.Source().user.Value(objOptions.jump_user.Value());
 		objDMZOptions.Source().password.Value(objOptions.jump_password.Value());
-		objDMZOptions.Source().auth_method.Value(objOptions.jump_ssh_auth_method.Value());
-		objDMZOptions.Source().auth_file.Value(objOptions.jump_ssh_auth_file.Value());
+		objDMZOptions.Source().ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
+		objDMZOptions.Source().ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
 		objDMZOptions.Source().protocol.Value(objOptions.jump_protocol.Value());
 		objDMZOptions.Source().host.Value(objOptions.jump_host.Value());
 		//oh 2014-10-30, add port otherwise -> jump login failed
