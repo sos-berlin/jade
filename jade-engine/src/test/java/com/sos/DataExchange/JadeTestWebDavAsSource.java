@@ -12,9 +12,9 @@ import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 
 public class JadeTestWebDavAsSource extends JadeTestBase {
 
-	protected final String			WEB_URI					= "https://mediacenter.gmx.net";
-	protected final String			WEB_USER				= "sos.apl@gmx.de";
-	protected final String			WEB_PASS				= "sosapl10629";
+	protected final String			WEB_URI					= "http://homer.sos/webdav";
+	protected final String			WEB_USER				= "test";
+	protected final String			WEB_PASS				= "12345";
 	protected final String			REMOTE_BASE_PATH		= "/home/kb/";
 
 	public JadeTestWebDavAsSource() {
@@ -48,7 +48,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 		
 		objTestOptions.SourceDir.Value(REMOTE_BASE_PATH);
 		objTestOptions.Source().host.Value(WEB_URI);
-		objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4http);
+		objTestOptions.Source().port.value(8080);
 		objTestOptions.Source().user.Value(WEB_USER);
 		objTestOptions.Source().password.Value(WEB_PASS);
 		objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.url);
@@ -71,23 +71,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	public void testSend2file_spec() throws Exception {
 		super.testSend2file_spec();
 	}
-	
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testSendfile_specSwissCom() throws Exception {
-		objTestOptions.SourceDir.Value("Test");
-		objTestOptions.Source().host.Value("https://filestation.creditmaster.ch");
-		objTestOptions.Source().port.value(6006);
-		objTestOptions.Source().user.Value("SwissTest");
-		objTestOptions.Source().password.Value("PE8UKgKKFxDGOnbp9CD");
-		objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.url);
-		sourceBehindProxy();
-		objTestOptions.file_spec.Value("\\.txt$");
-		objTestOptions.TargetDir.Value(strTestPathName+"SwissCom");
-		super.testSendFileSpec2();
-	}
-	
-	
+		
 	@Override
 	@Test
 	@Ignore("Test set to Ignore for later examination")

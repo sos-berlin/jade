@@ -12,9 +12,9 @@ import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 
 public class JadeTestWebDav extends JadeTestBase {
 
-	protected final String			WEB_URI					= "https://mediacenter.gmx.net";
-	protected final String			WEB_USER				= "sos.apl@gmx.de";
-	protected final String			WEB_PASS				= "sosapl10629";
+	protected final String			WEB_URI					= "http://homer.sos/webdav";
+	protected final String			WEB_USER				= "test";
+	protected final String			WEB_PASS				= "12345";
 //	protected final String			REMOTE_BASE_PATH		= "/home/kb/";
 	protected final String			REMOTE_BASE_PATH		= "/home/test/";
 	
@@ -50,7 +50,7 @@ public class JadeTestWebDav extends JadeTestBase {
 
 		objTestOptions.TargetDir.Value(REMOTE_BASE_PATH);
 		objTestOptions.Target().host.Value(WEB_URI);
-		objTestOptions.Target().port.value(SOSOptionPortNumber.conPortWebDav);
+		objTestOptions.Target().port.value(8080);
 		objTestOptions.Target().user.Value(WEB_USER);
 		objTestOptions.Target().password.Value(WEB_PASS);
 		objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.url);
