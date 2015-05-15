@@ -16,46 +16,46 @@ import org.apache.log4j.PropertyConfigurator;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtilities {
-	private final static String	conClassName	= "SOSDataExchangeEngine4DMZMain";
+	private final static String	conClassName	= SOSDataExchangeEngine4DMZMain.class.getSimpleName();
 	
 	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngine4DMZMain.class);
-	protected JADEOptions		objOptions		= null;
 
-	public final static void main(final String[] pstrArgs) {
+	/**
+	 * 
+	 * @param args
+	 */
+	public final static void main(final String[] args) {
 
-		SOSDataExchangeEngine4DMZMain objEngine = new SOSDataExchangeEngine4DMZMain();
-	 	objEngine.Execute(pstrArgs);
-		System.exit(0);
+		SOSDataExchangeEngine4DMZMain main = new SOSDataExchangeEngine4DMZMain();
+	 	main.execute(args);
 	}
 
-	protected SOSDataExchangeEngine4DMZMain() {
-		super("SOSDataExchange");
-	}
+	/**
+	 * 
+	 * @param args
+	 */
+	private void execute(final String[] args) {
 
-
-	private void Execute(final String[] pstrArgs) {
-
-		final String conMethodName = conClassName + "::Execute";
+		final String conMethodName = conClassName + "::execute";
 		int exitCode = 0;
-
+		Jade4DMZ jade4dmz = null;
+		
 		try {
-			Jade4DMZ objM = new Jade4DMZ();
-			JADEOptions objO = objM.Options();
+			jade4dmz = new Jade4DMZ();
+			JADEOptions options = jade4dmz.Options();
 
-			objM.setJSJobUtilites(this);
-			objO.SendTransferHistory.value(true);
-			objO.CommandLineArgs(pstrArgs);
+			jade4dmz.setJSJobUtilites(this);
+			options.SendTransferHistory.value(true);
+			options.CommandLineArgs(args);
 
 			try {
-				if (objO.log4jPropertyFileName.isDirty()) {
-					File log4jPropFile = new File(objO.log4jPropertyFileName.Value());
-					if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
-						PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
+				if (options.log4jPropertyFileName.isDirty()) {
+					File log4j = new File(options.log4jPropertyFileName.Value());
+					if (log4j.isFile() && log4j.canRead()) {
+						PropertyConfigurator.configure(log4j.getAbsolutePath());
 					}
 				}
-			} catch (Exception e) {
-				//
-			}
+			} catch (Exception e) {}
 			
 			//if rootLogger gets basis configuration if it doesn't have already an appender 
 			if( !Logger.getRootLogger().getAllAppenders().hasMoreElements() ) {
@@ -66,19 +66,17 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 			logger.info(getMsg(SOSDX_Intro));
 			
 			//objO.CheckMandatory();//is made in Execute method
-			objM.Execute();
+			jade4dmz.Execute();
 			logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
 		}
 
 		catch (Exception e) {
 			exitCode = 99;
 			logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode));
-			System.exit(exitCode);
 		}
-		
 		System.exit(exitCode);
-	} // private void Execute
-
+	} 
+	
 	@I18NMessages(value = { @I18NMessage("JADE4DMZ client - Main routine started ..."), //
 			@I18NMessage(value = "JADE4DMZ client", locale = "en_UK", //
 			explanation = "JADE4DMZ client" //

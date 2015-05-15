@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import sos.net.SOSMail;
 import sos.net.mail.options.SOSSmtpMailOptions;
 import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
+import sos.util.SOSString;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -674,23 +675,24 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	} // private void makeDirs()
 
-	private boolean makeDirs(final String pstrPath) {
+	private boolean makeDirs(final String path) {
 		boolean cd = true;
 		try {
-			boolean flgMakeDirs = objOptions.makeDirs.value();
-			String strTargetDir = pstrPath;
-			if (flgMakeDirs) {
-				if (objDataTargetClient.changeWorkingDirectory(strTargetDir)) {
+			if (objOptions.makeDirs.value()) {
+				if(SOSString.isEmpty(path)){
+					throw new Exception("objOptions.TargetDir is empty");
+				}
+				if (objDataTargetClient.changeWorkingDirectory(path)) {
 					cd = true;
 				}
 				else {
-					objDataTargetClient.mkdir(strTargetDir);
-					cd = objDataTargetClient.changeWorkingDirectory(strTargetDir);
+					objDataTargetClient.mkdir(path);
+					cd = objDataTargetClient.changeWorkingDirectory(path);
 				}
 			}
 			else {
-				if (strTargetDir != null && strTargetDir.length() > 0) {
-					cd = objDataTargetClient.changeWorkingDirectory(strTargetDir);
+				if (path != null && path.length() > 0) {
+					cd = objDataTargetClient.changeWorkingDirectory(path);
 				}
 			}
 			// TODO alternative_remote_dir, wozu und wie gehen wir damit um?
@@ -1014,6 +1016,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				String strRemoteDir = objOptions.TargetDir.Value();
 				long lngStartPollingServer = System.currentTimeMillis() / 1000;
 				lngNoOfPollingServerFiles = 0;
+				
+				executePreTransferCommands();
+				
 				PollingServerLoop:
 				while (true) {
 					if (objOptions.isFilePollingEnabled() == true) {
@@ -1073,14 +1078,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 									objSourceFileList.objDataTargetClient = objDataTargetClient;
 									makeDirs();
 								}
+								
 								sendFiles(objSourceFileList);
 								// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
 								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
 								objSourceFileList.renameAtomicTransferFiles();
 								
-								executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
-								executePostTransferCommands(objDataTargetClient, objOptions.Target().PostTransferCommands);
-								executePostTransferCommands(objDataSourceClient, objOptions.Source().PostTransferCommands);
+								executePostTransferCommands();
 								
 								objSourceFileList.DeleteSourceFiles();
 								if (objOptions.TransactionMode.isTrue()) {
@@ -1088,6 +1092,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 									sendTransferHistory();
 								}
 							}
+							
 						}
 						// -----
 						if (objOptions.PollingServer.isFalse() || objOptions.skip_transfer.isTrue()) {
@@ -1143,17 +1148,66 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	private void executePreTransferCommands() throws Exception{
+		executeTransferCommands("objOptions.PreTransferCommands",objDataTargetClient, objOptions.PreTransferCommands);
+		executeTransferCommands("objOptions.Target().PreTransferCommands",objDataTargetClient, objOptions.Target().PreTransferCommands);
+		executeTransferCommands("objOptions.Source().PreTransferCommands",objDataSourceClient, objOptions.Source().PreTransferCommands);
+	}
 	
-	private void executePostTransferCommands(final ISOSVfsFileTransfer objVfsFileTransfer, final SOSOptionCommandString postTransferCommands) throws Exception {
-		if (postTransferCommands.IsNotEmpty()) {
+	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	private void executePostTransferCommands() throws Exception{
+		executeTransferCommands("objOptions.PostTransferCommands",objDataTargetClient, objOptions.PostTransferCommands);
+		executeTransferCommands("objOptions.Target().PostTransferCommands",objDataTargetClient, objOptions.Target().PostTransferCommands);
+		executeTransferCommands("objOptions.Source().PostTransferCommands",objDataSourceClient, objOptions.Source().PostTransferCommands);
+	}
+	
+	/**
+	 * 
+	 * @param command
+	 * @throws Exception
+	 */
+	public void executeCommandOnTarget(String command) throws Exception{
+		if(objDataTargetClient == null){
+			throw new Exception("objDataTargetClient is NULL");
+		}
+		objDataTargetClient.getHandler().ExecuteCommand(command);
+	}
+	
+	/**
+	 * 
+	 * @param command
+	 * @throws Exception
+	 */
+	public void executeCommandOnSource(String command) throws Exception{
+		if(objDataSourceClient == null){
+			throw new Exception("objDataSourceClient is NULL");
+		}
+		objDataSourceClient.getHandler().ExecuteCommand(command);
+	}
+	
+	/**
+	 * @param commandCallerMethod
+	 * @param fileTransfer
+	 * @param commands
+	 * @throws Exception
+	 */
+	private void executeTransferCommands(String commandCallerMethod,final ISOSVfsFileTransfer fileTransfer, final SOSOptionCommandString commands) throws Exception {
+		if (commands.IsNotEmpty()) {
+			logger.info(commandCallerMethod);
 			// TODO Command separator as global option
-			for (String strCmd : postTransferCommands.split()) {
-				strCmd = objOptions.replaceVars(strCmd);
-				objVfsFileTransfer.getHandler().ExecuteCommand(strCmd);
+			for (String command : commands.split()) {
+				fileTransfer.getHandler().ExecuteCommand(objOptions.replaceVars(command));
 			}
 		}
 	}
-	
 
 	private long selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
 			final SOSOptionBoolean poptRecurseFolders) throws Exception {
