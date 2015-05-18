@@ -156,16 +156,17 @@ public class Jade4DMZTest {
 		Jade4DMZ objJ = new Jade4DMZ();
 		objO = objJ.Options();
 
-		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
+		objO.settings.Value(strPathOfTestInis + "jade_jumpHost_re.ini");
 		objO.profile.Value("jump_test_send");
+		objO.profile.Value("jump_test_receive");
+		
+		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
+		objO.profile.Value("jump_test_copy_from_internet_socks5_proxy");
+		objO.profile.Value("jump_test_copy_to_internet");
+		
+		
 		objO.ReadSettingsFile();
 
-	/*	objO.jump_ssh_auth_method.Value(enuAuthenticationMethods.password);
-		objO.jump_host.Value("wilma.sos");
-		objO.jump_user.Value("test");
-		objO.jump_password.Value("12345");
-		objO.jump_command.Value("/home/test/jade/bin/jade.sh");
-*/
 		objJ.Execute();
 	}
 
