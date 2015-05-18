@@ -283,6 +283,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * @return
 	 */
 	private String getJadeOnDMZCommand(JADEOptions options) {
+		// https://change.sos-berlin.com/browse/JADE-297
+		options.user.DefaultValue("");
+		options.Source().user.DefaultValue("");
+		options.Target().user.DefaultValue("");
+		
 		StringBuffer command = new StringBuffer(objOptions.jump_command.Value()+ " ");
 		command.append("-SendTransferHistory=false ");
 		command.append(options.getOptionsAsQuotedCommandLine());
