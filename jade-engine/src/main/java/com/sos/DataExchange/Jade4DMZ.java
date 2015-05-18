@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
@@ -18,6 +19,7 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	private final String className = Jade4DMZ.class.getSimpleName();
 	private static final Logger logger = Logger.getLogger(Jade4DMZ.class);
+	private SOSFileList		fileList   = null;
 
 	private enum Operation {
 		copyToInternet, copyFromInternet
@@ -69,9 +71,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 				operation, dir));
 
 		JadeEngine jade = null;
+		fileList = null;
 		try {
 			jade = new JadeEngine(getTransferOptions(operation, dir));
 			jade.Execute();
+			fileList = jade.getFileList();
 		} 
 		catch (Exception e) {
 			throw new JobSchedulerException("Transfer failed", e);
@@ -326,6 +330,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		else{
 			return "rm -f -R " + dir;
 		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public SOSFileList getFileList(){
+		return fileList;
 	}
 	
 	/**
