@@ -213,7 +213,7 @@ public abstract class JadeTestBase extends JSToolBox {
 	private void checkFilesOnTarget(final SOSFileList objFileList) throws Exception {
 		for (SOSFileListEntry objEntry : objFileList.List()) {
 			String strName = objEntry.TargetFileName();
-			boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(objOptions.TargetDir.Value() + strName).FileExists();
+			boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + strName).FileExists();
 			assertTrue(String.format("File '%1$s' must exist", strName), flgResult);
 		}
 	}
@@ -426,7 +426,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objJadeEngine.Execute();
 		SOSOptionRegExp objRE = new SOSOptionRegExp(null, "test", "TestOption", replacing, "", false);
 		String expectedRemoteFile = strKBHome + objRE.doReplace(strTestFileName, replacement);
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(expectedRemoteFile).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(expectedRemoteFile).FileExists();
 		objJadeEngine.Logout();
 		assertTrue(String.format("File '%1$s' does not exist", expectedRemoteFile), flgResult);
 	}
@@ -895,7 +895,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.makeDirs.setTrue();
 		objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(objOptions.TargetDir.Value() + "/subdir").isDirectory();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + "/subdir").isDirectory();
 		assertTrue("Folder '/subdir' must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -1406,7 +1406,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		logger.debug(objOptions.DirtyString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(objOptions.TargetDir.Value() + "/" + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + "/" + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -1636,7 +1636,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle("/kb/" + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/kb/" + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -1679,7 +1679,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(strKBHome + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(strKBHome + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -1700,9 +1700,9 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.operation.Value("send");
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
-		flgResult = objJadeEngine.DataTargetClient().getFileHandle(strKBHome + strTestFileName).delete();
+		flgResult = objJadeEngine.getTargetClient().getFileHandle(strKBHome + strTestFileName).delete();
 		objJadeEngine.Execute();
-		flgResult = objJadeEngine.DataTargetClient().getFileHandle(strKBHome + strTestFileName).FileExists();
+		flgResult = objJadeEngine.getTargetClient().getFileHandle(strKBHome + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -1801,10 +1801,10 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.operation.Value("send");
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
-		objJadeEngine.DataTargetClient().getHandler().ExecuteCommand("OPTS UTF8 ON");
+		objJadeEngine.getTargetClient().getHandler().ExecuteCommand("OPTS UTF8 ON");
 		objJadeEngine.Execute();
 		// boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(strKBHome + strFileName).FileExists();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(strFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(strFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -1954,7 +1954,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.operation.Value("send");
 		objOptions.verbose.value(9);
 		startTransfer(objOptions);
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -2009,7 +2009,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.CheckMandatory();
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -2031,7 +2031,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle("/home/kb/" + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/home/kb/" + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		objJadeEngine.Logout();
 	}
@@ -2059,7 +2059,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		// logger.info(objOptions.toString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle("/home/kb/relative/" + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/home/kb/relative/" + strTestFileName).FileExists();
 		assertTrue("File must exist", flgResult);
 		// flgResult = objJadeEngine.objDataTargetClient.getFileHandle("./relative/" + strTestFileName).FileExists();
 		// assertTrue("File must exist", flgResult);
@@ -2228,7 +2228,7 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.Target().Pre_Command.Value("touch $TargetFileName");
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
-		boolean flgResult = objJadeEngine.objDataTargetClient.getFileHandle("/home/kb/" + strTestFileName).FileExists();
+		boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/home/kb/" + strTestFileName).FileExists();
 		assertFalse("File must not exist", flgResult);
 		objJadeEngine.Logout();
 	}

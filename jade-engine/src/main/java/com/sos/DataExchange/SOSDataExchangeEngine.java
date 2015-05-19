@@ -40,96 +40,123 @@ import java.util.concurrent.TimeUnit;
 import static com.sos.DataExchange.SOSJadeMessageCodes.*;
 
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
-	private static final String		conKeyWordLAST_ERROR			= "last_error";
-	private static final String		conKeywordSTATE					= "state";
-	private static final String		conKeywordSUCCESSFUL_TRANSFERS	= "successful_transfers";
-	private static final String		conKeywordFAILED_TRANSFERS		= "failed_transfers";
-	private static final String		conKeywordSKIPPED_TRANSFERS		= "skipped_transfers";
-	private static final String		conKeywordSTATUS				= "status";
-	private final String			conClassName					= "SOSDataExchangeEngine";
 	public final String				conSVNVersion					= "$Id$";
+	
+	private ISOSVfsFileTransfer		targetClient					= null;
+	private ISOSVfsFileTransfer		sourceClient					= null;
+	
+	private final String			className						= SOSDataExchangeEngine.class.getSimpleName();
 	private final Logger			logger							= Logger.getLogger(SOSDataExchangeEngine.class);
-	final String					strLoggerName					= "JadeReportLog";
-	private final Logger			objJadeReportLogger				= Logger.getLogger(strLoggerName);
-	private ISOSVFSHandler			objVfs4Target					= null;
-	private final ISOSVFSHandler	objVfs4Source					= null;
-	public ISOSVfsFileTransfer		objDataTargetClient				= null;
-	public ISOSVfsFileTransfer		objDataSourceClient				= null;
-	private SOSFileList				objSourceFileList				= null;
-	/** notification by e-mail in case of transfer of empty files. */
-	// private boolean sameConnection = false;
-	@SuppressWarnings("unused")
-	private final boolean			testmode						= false;
-	private SOSVfsConnectionFactory	objConFactory					= null;
-	private long					lngNoOfPollingServerFiles		= 0;
+	private final String			jadeLoggerName					= "JadeReportLog";
+	private final Logger			jadeReportLogger				= Logger.getLogger(jadeLoggerName);
+	private ISOSVFSHandler			targetHandler					= null;
+	private SOSFileList				sourceFileList					= null;
+	private SOSVfsConnectionFactory	factory							= null;
+	private long					countPollingServerFiles			= 0;
+	private long					countHistoryRecordsSent			= 0;
 
+	private static final String		KEYWORD_LAST_ERROR				= "last_error";
+	private static final String		KEYWORD_STATE					= "state";
+	private static final String		KEYWORD_SUCCESSFUL_TRANSFERS	= "successful_transfers";
+	private static final String		KEYWORD_FAILED_TRANSFERS		= "failed_transfers";
+	private static final String		KEYWORD_SKIPPED_TRANSFERS		= "skipped_transfers";
+	private static final String		KEYWORD_STATUS					= "status";
+
+	/**
+	 * 
+	 * @throws Exception
+	 */
 	public SOSDataExchangeEngine() throws Exception {
 	}
 
-	public SOSDataExchangeEngine(final HashMap<String, String> pobjJSSettings) throws Exception {
+	/**
+	 * 
+	 * @param settings
+	 * @throws Exception
+	 */
+	public SOSDataExchangeEngine(final HashMap<String, String> settings) throws Exception {
 		this.Options();
-		objOptions.setAllOptions(pobjJSSettings);
+		objOptions.setAllOptions(settings);
 	}
 
-	public SOSDataExchangeEngine(final Properties pobjProperties) throws Exception {
+	/**
+	 * TODO Properties in die OptionsClasse weiterreichen
+	 * objOptions.setAllOptions(properties)
+	 * 
+	 * @param properties
+	 * @throws Exception
+	 */
+	public SOSDataExchangeEngine(final Properties properties) throws Exception {
 		this.Options();
-		// TODO Properties in die OptionsClasse weiterreichen
-		// objOptions.setAllOptions(pobjProperties);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public SOSFileEntries getSOSFileEntries(){
-	    return objDataSourceClient.getSOSFileEntries();
+	    return sourceClient.getSOSFileEntries();
 	}
 
-	public SOSDataExchangeEngine(final JADEOptions pobjOptions) throws Exception {
-		super(pobjOptions);
-		objOptions = pobjOptions;
+	/**
+	 * 
+	 * @param jadeOptions
+	 * @throws Exception
+	 */
+	public SOSDataExchangeEngine(final JADEOptions jadeOptions) throws Exception {
+		super(jadeOptions);
+		objOptions = jadeOptions;
 		if (objOptions.settings.isDirty()) {
 			objOptions.ReadSettingsFile();
 		}
 	}
 
-	// TODO in die DataSource verlagern? Oder in die FileList? Multithreaded ausführen?
+	/**
+	 * TODO in die DataSource verlagern? Oder in die FileList? Multithreaded ausführen?
+	 * 
+	 * @return
+	 */
 	public boolean checkSteadyStateOfFiles() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::checkSteadyStateOfFiles";
-		boolean flgAllFilesAreSteady = true;
-		if (objOptions.CheckSteadyStateOfFiles.isTrue() && objSourceFileList != null) {
-			long lngCheckSteadyStateInterval = objOptions.CheckSteadyStateInterval.getTimeAsSeconds();
-			long lngSteadyCount = objOptions.CheckSteadyCount.value();
+		boolean isAllFilesAreSteady = true;
+		if (objOptions.CheckSteadyStateOfFiles.isTrue() && sourceFileList != null) {
+			long checkSteadyStateInterval = objOptions.CheckSteadyStateInterval.getTimeAsSeconds();
+			long checkSteadyCount = objOptions.CheckSteadyCount.value();
 			setInfo("checking file(s) for steady state");
-			for (int i = 0; i < lngSteadyCount; i++) {
-				flgAllFilesAreSteady = true;
-				for (SOSFileListEntry objFile : objSourceFileList.List()) {
-					if (objFile.isSteady() == false) {
-						long lastFileLength = objDataSourceClient.getFileHandle(objFile.SourceFileName()).getFileSize();
-						logger.debug(String.format("waiting %1$d for steady check", lngCheckSteadyStateInterval));
-						doSleep(lngCheckSteadyStateInterval);
-						long lngActFileLength = objDataSourceClient.getFileHandle(objFile.SourceFileName()).getFileSize();
-						logger.debug(String.format("Last file length %1$d, actual file length %2$d", lastFileLength, lngActFileLength));
-						if (lastFileLength != lngActFileLength) {
-							flgAllFilesAreSteady = false;
-							logger.info(String.format("File '%1$s' changed during checking steady state", objFile.SourceFileName()));
-							objFile.setSteady(false);
+			for (int i = 0; i < checkSteadyCount; i++) {
+				isAllFilesAreSteady = true;
+				for (SOSFileListEntry entry : sourceFileList.List()) {
+					if (entry.isSteady() == false) {
+						long lastFileLength = sourceClient.getFileHandle(entry.SourceFileName()).getFileSize();
+						logger.debug(String.format("waiting %1$d for steady check", checkSteadyStateInterval));
+						
+						doSleep(checkSteadyStateInterval);
+						
+						long currentFileLength = sourceClient.getFileHandle(entry.SourceFileName()).getFileSize();
+						logger.debug(String.format("Last file length %1$d, actual file length %2$d", lastFileLength, currentFileLength));
+						if (lastFileLength != currentFileLength) {
+							isAllFilesAreSteady = false;
+							logger.info(String.format("File '%1$s' changed during checking steady state", entry.SourceFileName()));
+							entry.setSteady(false);
 						}
 						else {
-							objFile.setSteady(true);
-							logger.info(String.format("File '%1$s' was not changed during checking steady state", objFile.SourceFileName()));
+							entry.setSteady(true);
+							logger.info(String.format("File '%1$s' was not changed during checking steady state", entry.SourceFileName()));
 						}
-						objFile.setParent(objSourceFileList); // this is changing the filesize info in the object
+						entry.setParent(sourceFileList); // this is changing the filesize info in the object
 					}
 				} // For
-				if (flgAllFilesAreSteady == false) {
-					logger.debug(String.format("waiting %1$d for steady check", lngCheckSteadyStateInterval));
-					doSleep(lngCheckSteadyStateInterval);
+				if (isAllFilesAreSteady == false) {
+					logger.debug(String.format("waiting %1$d for steady check", checkSteadyStateInterval));
+					doSleep(checkSteadyStateInterval);
 				}
 				else {
 					break;
 				}
 			}
-			if (flgAllFilesAreSteady == false) {
-				String strM = "not all files are steady";
-				logger.error(strM);
-				for (SOSFileListEntry objFile : objSourceFileList.List()) {
+			if (isAllFilesAreSteady == false) {
+				String msg = "not all files are steady";
+				logger.error(msg);
+				for (SOSFileListEntry objFile : sourceFileList.List()) {
 					if (objFile.isSteady() == false) {
 						logger.info(String.format("File '%1$s' is not steady", objFile.SourceFileName()));
 					}
@@ -138,96 +165,111 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					objJSJobUtilities.setNextNodeState(objOptions.SteadyStateErrorState.Value());
 				}
 				else {
-					throw new JobSchedulerException(strM);
+					throw new JobSchedulerException(msg);
 				}
 			}
 		}
-		return flgAllFilesAreSteady;
-	} // private boolean checkSteadyStateOfFiles
-
-	private void doLogout(ISOSVfsFileTransfer pobjClient) throws Exception {
-		if (pobjClient != null) {
-			pobjClient.logout();
-			pobjClient.disconnect();
-			pobjClient.close();
-			pobjClient = null;
+		return isAllFilesAreSteady;
+	}
+	
+	/**
+	 * 
+	 * @param client
+	 * @throws Exception
+	 */
+	private void doLogout(ISOSVfsFileTransfer client) throws Exception {
+		if (client != null) {
+			client.logout();
+			client.disconnect();
+			client.close();
+			client = null;
 		}
 	}
 
-	// TODO multi threaded approach
-	// TODO move to SOSFileList
+	/**
+	 * TODO multi threaded approach
+	 * TODO move to SOSFileList
+	 * 
+	 * @return
+	 */
 	private String[] doPollingForFiles() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::doPollingForFiles";
-		String[] strFileList = null;
+		String[] fileList = null;
 		if (objOptions.isFilePollingEnabled()) {
-			long lngPollTimeOut = getPollTimeout();
-			long lngCurrentPollingTime = 0;
-			long lngNoOfFilesFound = 0;
-			String strSourceDir = objOptions.SourceDir.Value();
-			long lngPollInterval = objOptions.poll_interval.getTimeAsSeconds();
-			long lngCurrentNoOfFilesFound = objSourceFileList.size();
-			String strRegExp4FileNames = objOptions.file_spec.Value();
-			boolean flgSourceDirFound = false;
-			ISOSVirtualFile objSourceFile = null;
+			long pollTimeout = getPollTimeout();
+			long pollInterval = objOptions.poll_interval.getTimeAsSeconds();
+			long currentPollingTime = 0;
+			
+			String sourceDir = objOptions.SourceDir.Value();
+			boolean isSourceDirFounded = false;
+			
+			long filesCount = 0;
+			long currentFilesCount = sourceFileList.size();
+			ISOSVirtualFile sourceFile = null;
+			
 			PollingLoop:
 			while (true) {
-				if (lngCurrentPollingTime > lngPollTimeOut) { // time exceeded ?
+				if (currentPollingTime > pollTimeout) { // time exceeded ?
 					setInfo(String.format("file-polling: time '%1$s' is over. polling terminated", getPollTimeoutText()));
 					break PollingLoop;
 				}
-				if (flgSourceDirFound == false) {
-					objSourceFile = objDataSourceClient.getFileHandle(strSourceDir);
+				if (isSourceDirFounded == false) {
+					sourceFile = sourceClient.getFileHandle(sourceDir);
 					if (objOptions.pollingWait4SourceFolder.isFalse()) {
-						flgSourceDirFound = true; // To keep the previous behaviour
+						isSourceDirFounded = true; // To keep the previous behaviour
 					}
 					else {
 						try { // Test, wether the source folder is available. if not and polling is active, wait for the folder
-							if (objSourceFile.notExists() == true) {
-								logger.info(String.format("directory %1$s not found. Wait for the directory due to polling mode.", strSourceDir));
+							if (sourceFile.notExists() == true) {
+								logger.info(String.format("directory %1$s not found. Wait for the directory due to polling mode.", sourceDir));
 							}
 							else {
-								flgSourceDirFound = true;
+								isSourceDirFounded = true;
 							}
 						}
 						catch (Exception e) {
-							flgSourceDirFound = false;
+							isSourceDirFounded = false;
 						}
 					}
 				}
-				if (flgSourceDirFound == true) {
+				if (isSourceDirFounded == true) {
 					try {
 						if (objOptions.OneOrMoreSingleFilesSpecified() == true) {
-							lngCurrentNoOfFilesFound = 0;
-							objOptions.poll_minfiles.value(objSourceFileList.count());
-							for (SOSFileListEntry objItem : objSourceFileList.List()) {
+							currentFilesCount = 0;
+							objOptions.poll_minfiles.value(sourceFileList.count());
+							for (SOSFileListEntry objItem : sourceFileList.List()) {
 								if (objItem.SourceFileExists()) {
-									lngCurrentNoOfFilesFound++;
-									objItem.setParent(objSourceFileList); // to reinit the file-size
+									currentFilesCount++;
+									objItem.setParent(sourceFileList); // to reinit the file-size
 								}
 							}
 						}
 						else {
-							selectFilesOnSource(objSourceFile, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
-							lngCurrentNoOfFilesFound = objSourceFileList.count();
+							selectFilesOnSource(sourceFile, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
+							currentFilesCount = sourceFileList.count();
 						}
 					}
 					catch (Exception e) {
 						logger.error(e.getLocalizedMessage());
 					}
-					if (objOptions.poll_minfiles.isNotDirty() && lngCurrentNoOfFilesFound > 0) { // amount
+					if (objOptions.poll_minfiles.isNotDirty() && currentFilesCount > 0) { // amount
 						break PollingLoop; // minfiles not specified and one/some files found
 					}
-					if (objOptions.poll_minfiles.isDirty() && lngCurrentNoOfFilesFound >= objOptions.poll_minfiles.value()) { // amount
+					if (objOptions.poll_minfiles.isDirty() && currentFilesCount >= objOptions.poll_minfiles.value()) { // amount
 						break PollingLoop;
 					}
 				}
 				//
-				setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", lngPollInterval, strRegExp4FileNames));
-				doSleep(lngPollInterval);
-				lngCurrentPollingTime += lngPollInterval;
-				setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", lngCurrentNoOfFilesFound, strRegExp4FileNames,
-						strSourceDir));
-				if (lngNoOfFilesFound >= lngCurrentNoOfFilesFound && lngNoOfFilesFound != 0) { // no additional file found
+				setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", 
+						pollInterval, 
+						objOptions.file_spec.Value()));
+				doSleep(pollInterval);
+				currentPollingTime += pollInterval;
+				setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", 
+						currentFilesCount, 
+						objOptions.file_spec.Value(),
+						sourceDir));
+				
+				if (filesCount >= currentFilesCount && filesCount != 0) { // no additional file found
 					if (objOptions.WaitingForLateComers.isTrue()) { // just wait a round for latecommers
 						objOptions.WaitingForLateComers.setFalse();
 					}
@@ -237,82 +279,83 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 			} // while
 		}
-		return strFileList;
-	} // private void doPollingForFiles
-
-	private void doProcessMail(final enuMailClasses penuMailClass) {
-		SOSSmtpMailOptions objO = objOptions.getMailOptions();
-		SOSSmtpMailOptions objMOS = objO.getOptions(penuMailClass);
-		if (objMOS == null || objMOS.FileNotificationTo.isDirty() == false) {
-			objMOS = objO;
-		}
-		processSendMail(objMOS);
+		return fileList;
 	}
 
-	private void doSleep(final long lngTime2Sleep) {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::doSleep";
+	/**
+	 * 
+	 * @param mailClasses
+	 */
+	private void doProcessMail(final enuMailClasses mailClasses) {
+		SOSSmtpMailOptions mailOptions = objOptions.getMailOptions();
+		SOSSmtpMailOptions mailOptionsWithMailClasses = mailOptions.getOptions(mailClasses);
+		if (mailOptionsWithMailClasses == null || mailOptionsWithMailClasses.FileNotificationTo.isDirty() == false) {
+			mailOptionsWithMailClasses = mailOptions;
+		}
+		processSendMail(mailOptionsWithMailClasses);
+	}
+
+	/**
+	 * 
+	 * @param time
+	 */
+	private void doSleep(final long time) {
 		try {
-			Thread.sleep(lngTime2Sleep * 1000);
+			Thread.sleep(time * 1000);
 		}
 		catch (InterruptedException e) {
 		} // wait some seconds
-	} // private void doSleep
+	}
 
-	/* (non-Javadoc)
-	 * @see com.sos.DataExchange.IJadeEngine#Execute()
+	/**
+	 * 
 	 */
-	@Override 
-	public boolean Execute() throws Exception {
-//		long startTime = System.currentTimeMillis();
-		//		long startTime = System.nanoTime();
-		VFSFactory.setParentLogger(strLoggerName);
-		int intVerbose = objOptions.verbose.value();
-		if (intVerbose <= 1) {
+	private void setLogger(){
+		VFSFactory.setParentLogger(jadeLoggerName);
+		
+		int verbose = objOptions.verbose.value();
+		if (verbose <= 1) {
 			Logger.getRootLogger().setLevel(Level.INFO);
 		}
 		else {
-			if (intVerbose > 8) {
+			if (verbose > 8) {
 				Logger.getRootLogger().setLevel(Level.TRACE);
 				logger.setLevel(Level.TRACE);
-				logger.debug("set loglevel to TRACE due to option verbose = " + intVerbose);
+				logger.debug("set loglevel to TRACE due to option verbose = " + verbose);
 			}
 			else {
 				Logger.getRootLogger().setLevel(Level.DEBUG);
-				logger.debug("set loglevel to DEBUG due to option verbose = " + intVerbose);
+				logger.debug("set loglevel to DEBUG due to option verbose = " + verbose);
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	@Override 
+	public boolean Execute() throws Exception {
+		
+		setLogger();
+		
 		objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
-		objOptions.log_filename.setLogger(objJadeReportLogger);
-//		objOptions.remote_dir.SetIfNotDirty(objOptions.TargetDir);
-//		objOptions.local_dir.SetIfNotDirty(objOptions.SourceDir);
-//		objOptions.host.SetIfNotDirty(objOptions.Target().host);
-//		String strT = "";
-//		if (objOptions.banner_header.isDirty()) {
-//			strT = objOptions.banner_header.JSFile().getContent();
-//		}
-//		else {
-//			strT = SOSJADE_T_0010.get(); // LogFile Header
-//		}
-//		strT = objOptions.replaceVars(strT);
-//		objJadeReportLogger.info(strT);
-//		logger.info(strT);
-		boolean flgOK = false;
+		objOptions.log_filename.setLogger(jadeReportLogger);
+		
+		boolean ok = false;
 		try {
 			JobSchedulerException.LastErrorMessage = "";
 			try {
 				Options().CheckMandatory();
 			}
-			catch (JobSchedulerException e) {
-				throw e;
-			}
-			catch (Exception e) {
-				throw new JobSchedulerException(e.getLocalizedMessage());
-			}
-			finally {
+			catch (JobSchedulerException e) {throw e;}
+			catch (Exception e) {throw new JobSchedulerException(e.getLocalizedMessage());}
+			finally{
 				showBanner();
 			}
-			flgOK = this.transfer();
-			if (JobSchedulerException.LastErrorMessage.length() > 0) {
+			
+			ok = transfer();
+			
+			if(JobSchedulerException.LastErrorMessage.length() > 0) {
 				throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
 			}
 		}
@@ -323,120 +366,121 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			throw new JobSchedulerException(e.getLocalizedMessage());
 		}
 		finally {
-//			long stopTime = System.currentTimeMillis();
-//			long elapsedTime = stopTime - startTime;
-//			long intNoOfFilesTransferred = getSuccessfulTransfers();
-//			if (intNoOfFilesTransferred <= 0) {
-//				intNoOfFilesTransferred = 1;
-//			}
-//			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
-//					+ getSuccessfulTransfers());
 			showResult();
 			sendNotifications();
 		}
-		return flgOK;
+		return ok;
 	}
 	
-	
+	/**
+	 * 
+	 */
 	private void showResult() {
-		String strT = "";
+		String msg = "";
 		if (objOptions.banner_footer.isDirty()) {
-			strT = objOptions.banner_footer.JSFile().getContent();
+			msg = objOptions.banner_footer.JSFile().getContent();
 		}
 		else {
-			strT = SOSJadeMessageCodes.SOSJADE_T_0011.get();
+			msg = SOSJadeMessageCodes.SOSJADE_T_0011.get();
 		}
 		setTextProperties();
-		strT = objOptions.replaceVars(strT);
-		objJadeReportLogger.info(strT);
-		logger.info(strT);
+		msg = objOptions.replaceVars(msg);
+		jadeReportLogger.info(msg);
+		logger.info(msg);
 	}
 	
-	
-	private String showBannerHeaderSource(SOSConnection2OptionsAlternate objConn, boolean isSource) {
-		String strT = "";
+	/**
+	 * 
+	 * @param options
+	 * @param isSource
+	 * @return
+	 */
+	private String showBannerHeaderSource(SOSConnection2OptionsAlternate options, boolean isSource) {
+		StringBuffer sb = new StringBuffer();
 		String pattern4String 	= "  | %-22s= %s%n";
 		String pattern4Bool 	= "  | %-22s= %b%n";
 		String pattern4Rename 	= "  | %-22s= %s -> %s%n";
-		strT += String.format(pattern4String, "Protocol", objConn.protocol.Value());
-		strT += String.format(pattern4String, "Host", objConn.host.Value());
-		if (!objConn.protocol.isLocal()) {
-			strT += String.format(pattern4String, "User", objConn.user.Value());
-			if (objConn.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && objConn.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
-				strT += String.format(pattern4String, "AuthMethod", objConn.ssh_auth_method.Value());
+		sb.append(String.format(pattern4String, "Protocol", options.protocol.Value()));
+		sb.append(String.format(pattern4String, "Host", options.host.Value()));
+		if (!options.protocol.isLocal()) {
+			sb.append(String.format(pattern4String, "User", options.user.Value()));
+			if (options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
+				sb.append(String.format(pattern4String, "AuthMethod", options.ssh_auth_method.Value()));
 			}
-			if (objConn.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp && !objConn.ssh_auth_method.Value().equals(enuAuthenticationMethods.password)) {
-				strT += String.format(pattern4String, "AuthFile", "***");
+			if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp && !options.ssh_auth_method.Value().equals(enuAuthenticationMethods.password)) {
+				sb.append(String.format(pattern4String, "AuthFile", "***"));
 			}
 			else {
-				strT += String.format(pattern4String, "Password", "***");
+				sb.append(String.format(pattern4String, "Password", "***"));
 			}
-			if (objConn.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.ftp) {
-				strT += String.format(pattern4Bool, "Passive", objConn.passive_mode.value());
-				strT += String.format(pattern4String, "TransferMode", objConn.transfer_mode.Value());
+			if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.ftp) {
+				sb.append(String.format(pattern4Bool, "Passive", options.passive_mode.value()));
+				sb.append(String.format(pattern4String, "TransferMode", options.transfer_mode.Value()));
 			}
 		}
 		
 		if (isSource) {
-			if (objConn.Directory.isDirty()) {
-				strT += String.format(pattern4String, "Directory", objConn.Directory.Value());
+			if (options.Directory.isDirty()) {
+				sb.append(String.format(pattern4String, "Directory", options.Directory.Value()));
 			}
 			if (Options().file_path.isDirty()) {
-				strT += String.format(pattern4String, "FilePath", Options().file_path.Value());
+				sb.append(String.format(pattern4String, "FilePath", Options().file_path.Value()));
 			}
 			if (Options().FileListName.isDirty()) {
-				strT += String.format(pattern4String, "FileList", Options().FileListName.Value());
+				sb.append(String.format(pattern4String, "FileList", Options().FileListName.Value()));
 			}
 			if (Options().file_spec.isDirty()) {
-				strT += String.format(pattern4String, "FileSpec", Options().file_spec.Value());
+				sb.append(String.format(pattern4String, "FileSpec", Options().file_spec.Value()));
 			}
-			strT += String.format(pattern4Bool, "ErrorWhenNoFilesFound", Options().force_files.value());
-			strT += String.format(pattern4Bool, "Recursive", Options().recursive.value());
+			sb.append(String.format(pattern4Bool, "ErrorWhenNoFilesFound", Options().force_files.value()));
+			sb.append(String.format(pattern4Bool, "Recursive", Options().recursive.value()));
 			if (Options().skip_transfer.isFalse()) {
-				strT += String.format(pattern4Bool, "Remove", Options().remove_files.value());
+				sb.append(String.format(pattern4Bool, "Remove", Options().remove_files.value()));
 				if (Options().poll_interval.isDirty() || Options().poll_timeout.isDirty() || Options().poll_minfiles.isDirty()) {
-					strT += String.format(pattern4String, "PollingInterval", Options().poll_interval.Value());
-					strT += String.format(pattern4String, "PollingTimeout", Options().poll_timeout.Value());
-					strT += String.format(pattern4String, "PollingMinFiles", Options().poll_minfiles.Value());
+					sb.append(String.format(pattern4String, "PollingInterval", Options().poll_interval.Value()));
+					sb.append(String.format(pattern4String, "PollingTimeout", Options().poll_timeout.Value()));
+					sb.append(String.format(pattern4String, "PollingMinFiles", Options().poll_minfiles.Value()));
 				}
 				if (Options().CheckSteadyStateOfFiles.isTrue()) {
-					strT += String.format(pattern4String, "CheckSteadyInterval", Options().CheckSteadyStateInterval.Value());
-					strT += String.format(pattern4String, "CheckSteadyCount", Options().CheckSteadyCount.Value());
+					sb.append(String.format(pattern4String, "CheckSteadyInterval", Options().CheckSteadyStateInterval.Value()));
+					sb.append(String.format(pattern4String, "CheckSteadyCount", Options().CheckSteadyCount.Value()));
 				}
 			}
 		}
 		else {
-			strT += String.format(pattern4String, "Directory", objConn.Directory.Value());
-			strT += String.format(pattern4Bool, "OverwriteFiles", Options().overwrite_files.value());
+			sb.append(String.format(pattern4String, "Directory", options.Directory.Value()));
+			sb.append(String.format(pattern4Bool, "OverwriteFiles", Options().overwrite_files.value()));
 			if (Options().append_files.isTrue()) {
-				strT += String.format(pattern4Bool, "AppendFiles", Options().append_files.value());
+				sb.append(String.format(pattern4Bool, "AppendFiles", Options().append_files.value()));
 			}
 			if (Options().compress_files.isTrue()) {
-				strT += String.format(pattern4Bool, "CompressFiles", Options().compress_files.value());
+				sb.append(String.format(pattern4Bool, "CompressFiles", Options().compress_files.value()));
 			}
 			if (Options().CumulateFiles.isTrue()) {
-				strT += String.format(pattern4Bool, "CumulateFiles", Options().CumulateFiles.value());
-				strT += String.format(pattern4Bool, "CumulateFileName", Options().CumulativeFileName.Value());
+				sb.append(String.format(pattern4Bool, "CumulateFiles", Options().CumulateFiles.value()));
+				sb.append(String.format(pattern4Bool, "CumulateFileName", Options().CumulativeFileName.Value()));
 			}
 			if (Options().atomic_prefix.isDirty()) {
-				strT += String.format(pattern4String, "AtomicPrefix", Options().atomic_prefix.Value());
+				sb.append(String.format(pattern4String, "AtomicPrefix", Options().atomic_prefix.Value()));
 			}
 			if (Options().atomic_suffix.isDirty()) {
-				strT += String.format(pattern4String, "AtomicSuffix", Options().atomic_suffix.Value());
+				sb.append(String.format(pattern4String, "AtomicSuffix", Options().atomic_suffix.Value()));
 			}
 		}
-		if (objConn.replacement.isDirty() && objConn.replacing.isDirty()) {
-			strT += String.format(pattern4Rename, "Rename", objConn.replacing.Value(), objConn.replacement.Value());
+		if (options.replacement.isDirty() && options.replacing.isDirty()) {
+			sb.append(String.format(pattern4Rename, "Rename", options.replacing.Value(), options.replacement.Value()));
 		}
-		return strT;
+		return sb.toString();
 	}
 
+	/**
+	 * 
+	 */
 	private void showBanner() {
-		String strT = "";
+		StringBuffer sb = new StringBuffer();
 		if (objOptions.banner_header.isDirty()) {
 			//this parameter should deprecated
-			strT = objOptions.banner_header.JSFile().getContent();
-			strT = objOptions.replaceVars(strT);
+			sb = new StringBuffer(objOptions.replaceVars(objOptions.banner_header.JSFile().getContent()));
 		}
 		else {
 			String timestamp = "";
@@ -449,212 +493,240 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			String pattern4String 	= "  %-24s= %s%n";
 			String pattern4Bool 	= "  %-24s= %b%n";
 			String pattern4SourceTarget 	= "%n  +------------%s------------%n";
-			strT += String.format("%n%072d%n", 0).replace('0', '*');
-			strT += String.format("*%70s*%n", " ");
-			strT += String.format("*%20s%-50s*%n", "JADE", " - JobScheduler Advanced Data Exchange");
-			strT += String.format("*%37s%-33s*%n", "---www.sos-berlin.com", "---------------------");
-			strT += String.format("*%70s*%n", " ");
-			strT += String.format("%072d%n", 0).replace('0', '*');
-			strT += String.format(pattern4String, "Version", VersionInfo.VERSION_STRING);
-			strT += String.format(pattern4String, "Date", timestamp);
+			sb.append(String.format("%n%072d%n", 0).replace('0', '*'));
+			sb.append(String.format("*%70s*%n", " "));
+			sb.append(String.format("*%20s%-50s*%n", "JADE", " - JobScheduler Advanced Data Exchange"));
+			sb.append(String.format("*%37s%-33s*%n", "---www.sos-berlin.com", "---------------------"));
+			sb.append(String.format("*%70s*%n", " "));
+			sb.append(String.format("%072d%n", 0).replace('0', '*'));
+			sb.append(String.format(pattern4String, "Version", VersionInfo.VERSION_STRING));
+			sb.append(String.format(pattern4String, "Date", timestamp));
 			if (Options().settings.isDirty()) {
-				strT += String.format(pattern4String, "SettingsFile", Options().settings.Value());
+				sb.append(String.format(pattern4String, "SettingsFile", Options().settings.Value()));
 			}
 			if (Options().profile.isDirty()) {
-				strT += String.format(pattern4String, "Profile", Options().profile.Value());
+				sb.append(String.format(pattern4String, "Profile", Options().profile.Value()));
 			}
-			strT += String.format(pattern4String, "Operation", Options().operation.Value());
-			strT += String.format(pattern4Bool, "Transactional", Options().transactional.value());
+			sb.append(String.format(pattern4String, "Operation", Options().operation.Value()));
+			sb.append(String.format(pattern4Bool, "Transactional", Options().transactional.value()));
 			if (Options().skip_transfer.isDirty()) {
-				strT += String.format(pattern4Bool, "SkipTransfer", Options().skip_transfer.value());
+				sb.append(String.format(pattern4Bool, "SkipTransfer", Options().skip_transfer.value()));
 			}
 			if (Options().history.isDirty()) {
-				strT += String.format(pattern4String, "History", Options().history.Value());
+				sb.append(String.format(pattern4String, "History", Options().history.Value()));
 			}
 			if (Options().log_filename.isDirty()) {
-				strT += String.format(pattern4String, "LogFile", Options().log_filename.Value());
+				sb.append(String.format(pattern4String, "LogFile", Options().log_filename.Value()));
 			}
-			strT += String.format(pattern4SourceTarget, "Source");
-			strT += showBannerHeaderSource(Options().Source(), true);
+			sb.append(String.format(pattern4SourceTarget, "Source"));
+			sb.append(showBannerHeaderSource(Options().Source(), true));
 			if (objOptions.NeedTargetClient()) {
-				strT += String.format(pattern4SourceTarget, "Target");
-				strT += showBannerHeaderSource(Options().Target(), false);
+				sb.append(String.format(pattern4SourceTarget, "Target"));
+				sb.append(showBannerHeaderSource(Options().Target(), false));
 			}
-			strT += "\n";
+			sb.append("\n");
 		}
-		objJadeReportLogger.info(strT);
-		logger.info(strT);
+		jadeReportLogger.info(sb.toString());
+		logger.info(sb.toString());
 	}
 
-	private void fillFileList(final String[] strFileList, final String strSourceDir) {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::fillFileList";
-		if (objOptions.MaxFiles.isDirty() == true && strFileList.length > objOptions.MaxFiles.value()) {
+	/**
+	 * 
+	 * @param fileList
+	 * @param sourceDir
+	 */
+	private void fillFileList(final String[] fileList, final String sourceDir) {
+		if (objOptions.MaxFiles.isDirty() == true && fileList.length > objOptions.MaxFiles.value()) {
 			for (int i = 0; i < objOptions.MaxFiles.value(); i++) {
-				objSourceFileList.add(strFileList[i]);
+				sourceFileList.add(fileList[i]);
 			}
 		}
 		else {
-			objSourceFileList.add(strFileList, strSourceDir);
+			sourceFileList.add(fileList, sourceDir);
 		}
-	} // private void fillFileList
+	}
 
-	/* (non-Javadoc)
-	 * @see com.sos.DataExchange.IJadeEngine#getFileList()
+	/**
+	 * 
+	 * @return
 	 */
 	public SOSFileList getFileList() {
-		return objSourceFileList;
+		return sourceFileList;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private long getPollTimeout() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::getPollTimeout";
-		long lngPollTimeOut = 0;
+		long pollTimeout = 0;
 		if (objOptions.poll_timeout.isDirty()) {
-			lngPollTimeOut = objOptions.poll_timeout.value() * 60; // convert to seconds, poll_timeout is defined in minutes
+			pollTimeout = objOptions.poll_timeout.value() * 60; // convert to seconds, poll_timeout is defined in minutes
 		}
 		else {
-			lngPollTimeOut = objOptions.PollingDuration.getTimeAsSeconds();
+			pollTimeout = objOptions.PollingDuration.getTimeAsSeconds();
 		}
-		return lngPollTimeOut;
-	} // private long getPollTimeout
+		return pollTimeout;
+	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private String getPollTimeoutText() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::getPollTimeoutText";
-		String strPollTimeOut = "";
+		String pollTimeout = "";
 		if (objOptions.poll_timeout.isDirty()) {
-			strPollTimeOut = objOptions.poll_timeout.Value();
+			pollTimeout = objOptions.poll_timeout.Value();
 		}
 		else {
-			strPollTimeOut = objOptions.PollingDuration.Value();
+			pollTimeout = objOptions.PollingDuration.Value();
 		}
-		return strPollTimeOut;
-	} // private long getPollTimeoutText
+		return pollTimeout;
+	} 
 
+	/**
+	 * 
+	 * @return
+	 */
 	private String[] getSingleFileNames() {
-		final String conMethodName = conClassName + "::getSingleFileNames";
-		Vector<String> filelist = new Vector<String>();
+		final String method = className + "::getSingleFileNames";
+		
+		Vector<String> fileList = new Vector<String>();
 		if (objOptions.file_path.IsNotEmpty() == true) {
 			String filePath = objOptions.file_path.Value();
 			logger.debug(String.format("single file(s) specified : '%1$s'", filePath));
+			
 			try {
 				String localDir = objOptions.SourceDir.ValueWithFileSeparator();
 				// TODO separator-char variable as Option
-				String[] strSingleFileNameArray = filePath.split(";");
-				for (String strSingleFileName : strSingleFileNameArray) {
-					strSingleFileName = strSingleFileName.trim();
-					if (strSingleFileName.length() > 0) {
+				String[] arr = filePath.split(";");
+				for (String name : arr) {
+					name = name.trim();
+					if (name.length() > 0) {
 						if (localDir.trim().length() > 0) {
-							if (isAPathName(strSingleFileName) == false) {
+							if (isAPathName(name) == false) {
 								/**
 								 * Problem with folders, when pgs run on Windows, but has to
 								 * create a path for unix-systems.
 								 */
 								// strT = new File(localDir, strT).getAbsolutePath();
-								strSingleFileName = localDir + strSingleFileName;
+								name = localDir + name;
 							}
 						}
-						filelist.add(strSingleFileName);
+						fileList.add(name);
 					}
 				}
 			}
 			catch (Exception e) {
-				String strM = String.format("error in  %1$s", conMethodName);
-				logger.error(strM + e);
-				throw new JobSchedulerException(strM, e);
+				String msg = String.format("error in  %1$s", method);
+				logger.error(msg + e);
+				throw new JobSchedulerException(msg, e);
 			}
 		}
 		if (objOptions.FileListName.IsNotEmpty() == true) {
-			String strFileListName = objOptions.FileListName.Value();
-			JSFile objF = new JSFile(strFileListName);
-			if (objF.exists() == true) {
+			String fileListName = objOptions.FileListName.Value();
+			JSFile file = new JSFile(fileListName);
+			if (file.exists() == true) {
 				// TODO create method in JSFile: File2Array
 				StringBuffer strRec = null;
-				while ((strRec = objF.GetLine()) != null) {
-					filelist.add(strRec.toString());
+				while ((strRec = file.GetLine()) != null) {
+					fileList.add(strRec.toString());
 				}
 				try {
-					objF.close();
+					file.close();
 				}
 				catch (IOException e) {
 				}
 			}
 		}
-		String[] strA = { "" };
-		if (filelist.size() > 0) {
-			strA = filelist.toArray(new String[filelist.size()]);
+		String[] arr = { "" };
+		if (fileList.size() > 0) {
+			arr = fileList.toArray(new String[fileList.size()]);
 		}
-		return strA;
+		return arr;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sos.DataExchange.IJadeEngine#getState()
+	/**
+	 * 
 	 */
 	@Override public String getState() {
-		String state = (String) objOptions.getTextProperties().get(conKeywordSTATE);
-		return state;
+		return (String) objOptions.getTextProperties().get(KEYWORD_STATE);
 	}
 
 	@SuppressWarnings("unused") private ISOSVFSHandler getVFS() throws Exception {
-		if (objVfs4Target == null) {
-			objVfs4Target = VFSFactory.getHandler(objOptions.getDataTargetType());
+		if (targetHandler == null) {
+			targetHandler = VFSFactory.getHandler(objOptions.getDataTargetType());
 		}
-		return objVfs4Target;
+		return targetHandler;
 	}
 
+	/**
+	 * 
+	 */
 	private void handleZeroByteFiles() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::handleZeroByteFiles";
 		if (objOptions.TransferZeroByteFilesNo() == true) {
-			if (objSourceFileList.size() > 0) {
-				boolean flgTransferZeroByteFilesNo = false;
-				for (SOSFileListEntry objEntry : objSourceFileList.List()) {
-					if (objEntry.getFileSize() > 0) { // zero byte size file
-						flgTransferZeroByteFilesNo = true;
+			if (sourceFileList.size() > 0) {
+				boolean hasNotZeroByteFiles = false;
+				for (SOSFileListEntry entry : sourceFileList.List()) {
+					if (entry.getFileSize() > 0) { // zero byte size file
+						hasNotZeroByteFiles = true;
 					}
 					else {
-						objSourceFileList.lngNoOfZeroByteSizeFiles++;
+						sourceFileList.lngNoOfZeroByteSizeFiles++;
 					}
 				}
-				if (flgTransferZeroByteFilesNo == false) { // all files are zbs files
+				if (hasNotZeroByteFiles == false) { // all files are zbs files
 					throw new JobSchedulerException("All files have zero byte size, transfer aborted");
 				}
 			}
 		}
-		Vector<SOSFileListEntry> objResultListClone = new Vector<SOSFileListEntry>();
-		for (SOSFileListEntry objEntry : objSourceFileList.List()) { // just to avoid concurrent modification exception
-			objResultListClone.add(objEntry);
+		Vector<SOSFileListEntry> cloneList = new Vector<SOSFileListEntry>();
+		for (SOSFileListEntry entry : sourceFileList.List()) { // just to avoid concurrent modification exception
+			cloneList.add(entry);
 		}
-		for (SOSFileListEntry objEntry : objResultListClone) {
-			if (objEntry.getFileSize() <= 0) { // zero byte size file
+		for (SOSFileListEntry entry : cloneList) {
+			if (entry.getFileSize() <= 0) { // zero byte size file
 				if (objOptions.TransferZeroByteFilesStrict() == true) {
-					throw new JobSchedulerException(String.format("zero byte size file detected: %1$s", objEntry.getSourceFilename()));
+					throw new JobSchedulerException(String.format("zero byte size file detected: %1$s", entry.getSourceFilename()));
 				}
-				objEntry.setTransferSkipped();
+				entry.setTransferSkipped();
 				if (objOptions.remove_files.isTrue()) {
-					objEntry.DeleteSourceFile();
+					entry.DeleteSourceFile();
 				}
-				objSourceFileList.lngNoOfZeroByteSizeFiles++;
-				objSourceFileList.List().remove(objEntry);
+				sourceFileList.lngNoOfZeroByteSizeFiles++;
+				sourceFileList.List().remove(entry);
 			}
 			else {
 				// TODO Datei (nicht mehr) da? Fehler auslösen, weil in Liste enthalten.
 			}
 		}
-	} // private void handleZeroByteFiles
-
-	protected boolean isAPathName(final String pstrFileAndPathName) {
-		boolean flgOK = false;
-		String lstrPathName = pstrFileAndPathName.replaceAll("\\\\", "/");
-		if (lstrPathName.startsWith("./") || lstrPathName.startsWith("../")) { // relative to localdir
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	protected boolean isAPathName(final String path) {
+		boolean ok = false;
+		String aPath = path.replaceAll("\\\\", "/");
+		if (aPath.startsWith("./") || aPath.startsWith("../")) { // relative to localdir
+		
 		}
 		else {
-			     //drive:/, protocol:/, /, ~/, $ (Unix Env), %...% (Windows Env)                      
-			if (lstrPathName.matches("^[a-zA-Z]+:/.*") || lstrPathName.startsWith("/") || lstrPathName.startsWith("~/") || lstrPathName.startsWith("$") || lstrPathName.matches("^%[a-zA-Z_0-9.-]+%.*")) {
-				flgOK = true;
+			//drive:/, protocol:/, /, ~/, $ (Unix Env), %...% (Windows Env)                      
+			if (aPath.matches("^[a-zA-Z]+:/.*") 
+				|| aPath.startsWith("/") 
+				|| aPath.startsWith("~/") 
+				|| aPath.startsWith("$") 
+				|| aPath.matches("^%[a-zA-Z_0-9.-]+%.*")) {
+				ok = true;
 			}
 			else {
 				// flgOK = (lstrPathName.contains("/") == true);
 			}
 		}
-		return flgOK;
+		return ok;
 	}
 
 	/* (non-Javadoc)
@@ -662,19 +734,27 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 */
 	@Override public void Logout() {
 		try {
-			doLogout(objDataTargetClient);
-			doLogout(objDataSourceClient);
+			doLogout(targetClient);
+			doLogout(sourceClient);
 		}
 		catch (Exception e) {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void makeDirs() {
 		if (objOptions.skip_transfer.isFalse()) {
 			makeDirs(objOptions.TargetDir.Value());
 		}
-	} // private void makeDirs()
+	}
 
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
 	private boolean makeDirs(final String path) {
 		boolean cd = true;
 		try {
@@ -682,24 +762,24 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				if(SOSString.isEmpty(path)){
 					throw new Exception("objOptions.TargetDir is empty");
 				}
-				if (objDataTargetClient.changeWorkingDirectory(path)) {
+				if (targetClient.changeWorkingDirectory(path)) {
 					cd = true;
 				}
 				else {
-					objDataTargetClient.mkdir(path);
-					cd = objDataTargetClient.changeWorkingDirectory(path);
+					targetClient.mkdir(path);
+					cd = targetClient.changeWorkingDirectory(path);
 				}
 			}
 			else {
 				if (path != null && path.length() > 0) {
-					cd = objDataTargetClient.changeWorkingDirectory(path);
+					cd = targetClient.changeWorkingDirectory(path);
 				}
 			}
 			// TODO alternative_remote_dir, wozu und wie gehen wir damit um?
 			if (cd == false && objOptions.alternative_remote_dir.IsNotEmpty()) {// alternative Parameter
 				String alternativeRemoteDir = objOptions.alternative_remote_dir.Value();
 				logger.debug("..try with alternative parameter [remoteDir=" + alternativeRemoteDir + "]");
-				cd = objDataTargetClient.changeWorkingDirectory(alternativeRemoteDir);
+				cd = targetClient.changeWorkingDirectory(alternativeRemoteDir);
 				objOptions.TargetDir.Value(alternativeRemoteDir);
 			}
 		}
@@ -709,47 +789,55 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return cd;
 	}
 
-	private long OneOrMoreSingleFilesSpecified(final String strSourceDir) {
-		long lngNoOfFilesFound = 0;
+	/**
+	 * 
+	 * @param sourceDir
+	 * @return
+	 */
+	private long OneOrMoreSingleFilesSpecified(final String sourceDir) {
+		long founded = 0;
 		//if (objOptions.skip_transfer.isFalse()) {
-			objSourceFileList.add(getSingleFileNames(), strSourceDir, true);
+			sourceFileList.add(getSingleFileNames(), sourceDir, true);
+			
 			if (objOptions.isFilePollingEnabled() == true) {
-				long lngCurrentPollingTime = 0;
-				long lngPollInterval = objOptions.poll_interval.getTimeAsSeconds();
-				long lngCurrentNumberOfFilesFound = objSourceFileList.size();
-				long lngPollTimeOut = getPollTimeout();
+				long currentFounded = sourceFileList.size();
+				long currentPollingTime = 0;
+				long pollInterval = objOptions.poll_interval.getTimeAsSeconds();
+				long pollTimeout = getPollTimeout();
 				while (true) {
-					lngNoOfFilesFound = 0;
-					if (lngCurrentPollingTime > lngPollTimeOut) { // time exceeded ?
-						logger.info(String.format("polling: time '%1$s' is over. polling terminated", getPollTimeoutText()));
+					founded = 0;
+					if (currentPollingTime > pollTimeout) { // time exceeded ?
+						logger.info(String.format("polling: time '%1$s' is over. polling terminated", 
+								getPollTimeoutText()));
 						break;
 					}
-					for (SOSFileListEntry objItem : objSourceFileList.List()) {
-						// long lngFileSize = objItem.getFileSize();
+					for (SOSFileListEntry objItem : sourceFileList.List()) {
 						if (objItem.SourceFileExists()) {
-							lngNoOfFilesFound++;
-							objItem.setParent(objSourceFileList); // to reinit the file-size
+							founded++;
+							objItem.setParent(sourceFileList); // to reinit the file-size
 						}
 					}
-					if (lngNoOfFilesFound == lngCurrentNumberOfFilesFound) {
+					if (founded == currentFounded) {
 						break;
 					}
-					if (objOptions.poll_minfiles.value() > 0 && lngNoOfFilesFound >= objOptions.poll_minfiles.value()) {
+					if (objOptions.poll_minfiles.value() > 0 && founded >= objOptions.poll_minfiles.value()) {
 						break;
 					}
-					String strM = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", lngPollInterval,
-							lngNoOfFilesFound, lngCurrentNumberOfFilesFound);
+					String strM = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", 
+							pollInterval,
+							founded, 
+							currentFounded);
 					setInfo(strM);
-					doSleep(lngPollInterval);
-					lngCurrentPollingTime += lngPollInterval;
+					doSleep(pollInterval);
+					currentPollingTime += pollInterval;
 				}
 			}
 		//}
-		return lngNoOfFilesFound;
+		return founded;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sos.DataExchange.IJadeEngine#Options()
+	/**
+	 * 
 	 */
 	@Override public JADEOptions Options() {
 		if (objOptions == null) {
@@ -762,6 +850,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		objOptions = (JADEOptions) pobjOptions;
 	}
 
+	/**
+	 * 
+	 * @param rc
+	 * @return
+	 * @throws Exception
+	 */
 	private boolean printState(boolean rc) throws Exception {
 		String state = "processing successful ended";
 
@@ -772,93 +866,101 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		} else {
 			state = SOSJADE_E_0100.params(objOptions.file_spec.Value());
 		}
-		if (objSourceFileList.size() == 0) {
+		if (sourceFileList.size() == 0) {
 			if (objOptions.force_files.isTrue()) {
-				objOptions.getTextProperties().put(conKeywordSTATE, state);
+				objOptions.getTextProperties().put(KEYWORD_STATE, state);
 				throw new JobSchedulerException(state);
 			}
 		} else {
-			long intNoOfFilesTransferred = getSuccessfulTransfers();
-			long intNoOfSkippedTransferred = getSkippedTransfers();
-			int zeroByteCount = objSourceFileList.getZeroByteCount();
-			if (intNoOfFilesTransferred == 1) {
+			long countSuccess = getSuccessfulTransfers();
+			int countZeroByte = sourceFileList.getZeroByteCount();
+			long countSkipped = getSkippedTransfers();
+			if (countSuccess == 1) {
 				state = SOSJADE_I_0100.get();
 			} else {
-				state = SOSJADE_I_0101.params(intNoOfFilesTransferred);
+				state = SOSJADE_I_0101.params(countSuccess);
 			}
-			if (zeroByteCount > 0) {
-				state += " " + SOSJADE_I_0102.params(zeroByteCount);
+			if (countZeroByte > 0) {
+				state += " " + SOSJADE_I_0102.params(countZeroByte);
 			}
-			if (intNoOfSkippedTransferred > 0) {
-				state += " " + SOSJADE_I_0103.params(intNoOfSkippedTransferred);
+			if (countSkipped > 0) {
+				state += " " + SOSJADE_I_0103.params(countSkipped);
 			}
 		}
 
 		logger.info(state);
-		objJadeReportLogger.info(state);
-		objOptions.getTextProperties().put(conKeywordSTATE, state);
+		jadeReportLogger.info(state);
+		objOptions.getTextProperties().put(KEYWORD_STATE, state);
+		
 		if (getFailedTransfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0) {
 			return false;
 		}
 		return true;
 	}
 
-	private void processSendMail(final SOSSmtpMailOptions pobjO) {
-		if (pobjO != null && pobjO.FileNotificationTo.isDirty() == true) {
+	/**
+	 * 
+	 * @param mailOptions
+	 */
+	private void processSendMail(final SOSSmtpMailOptions mailOptions) {
+		if (mailOptions != null && mailOptions.FileNotificationTo.isDirty() == true) {
 			try {
-				String strA = pobjO.attachment.Value();
-				if (pobjO.attachment.isDirty()) {
-					strA += ";";
+				StringBuffer attachment = new StringBuffer(mailOptions.attachment.Value());
+				if (mailOptions.attachment.isDirty()) {
+					attachment.append(";");
 				}
 				if (objOptions.log_filename.isDirty() == true) {
-					String strF = objOptions.log_filename.getHtmlLogFileName();
-					if (strF.length() > 0) {
-						strA += strF;
+					String logFileName = objOptions.log_filename.getHtmlLogFileName();
+					if (logFileName.length() > 0) {
+						attachment.append(logFileName);
 					}
-					strF = objOptions.log_filename.Value();
-					if (strF.length() > 0) {
-						if (strA.length() > 0) {
-							strA += ";";
+					logFileName = objOptions.log_filename.Value();
+					if (logFileName.length() > 0) {
+						if (attachment.length() > 0) {
+							attachment.append(";");
 						}
-						strA += strF;
+						attachment.append(logFileName);
 					}
-					if (strA.length() > 0) {
-						pobjO.attachment.Value(strA);
+					if (attachment.length() > 0) {
+						mailOptions.attachment.Value(attachment.toString());
 					}
 				}
-				if (pobjO.subject.isDirty() == false) {
-					String strT = "JADE: ";
-					pobjO.subject.Value(strT);
+				if (mailOptions.subject.isDirty() == false) {
+					mailOptions.subject.Value("JADE: ");
 				}
-				String strM = pobjO.subject.Value();
-				pobjO.subject.Value(objOptions.replaceVars(strM));
-//				http://www.sos-berlin.com/jira/browse/SOSFTP-201
-				strM = pobjO.body.Value();
-				strM = objOptions.replaceVars(strM);
-				strM += "\n" + "List of transferred Files:" + "\n";
-				for (SOSFileListEntry objListItem : objSourceFileList.List()) {
-					String strSourceFileName = objListItem.getSourceFilename();
-					strM += strSourceFileName.replaceAll("\\\\", "/") + "\n";
+				StringBuffer subject = new StringBuffer(mailOptions.subject.Value());
+				mailOptions.subject.Value(objOptions.replaceVars(subject.toString()));
+				//http://www.sos-berlin.com/jira/browse/SOSFTP-201
+				
+				StringBuffer body = new StringBuffer(objOptions.replaceVars(mailOptions.body.Value()));
+				body.append("\n")
+				.append("List of transferred Files:")
+				.append("\n");
+				
+				for(SOSFileListEntry entry : sourceFileList.List()) {
+					body.append(entry.getSourceFilename().replaceAll("\\\\", "/"))
+					.append("\n");
 				}
-				pobjO.body.Value(strM);
-				if (pobjO.from.isDirty() == false) {
-					pobjO.from.Value("JADE@sos-berlin.com");
+				mailOptions.body.Value(body.toString());
+				
+				if (mailOptions.from.isDirty() == false) {
+					mailOptions.from.Value("JADE@sos-berlin.com");
 				}
-				SOSMail objMail = new SOSMail(pobjO.host.Value());
-				logger.debug(pobjO.dirtyString());
-				objMail.sendMail(pobjO);
+				
+				SOSMail mail = new SOSMail(mailOptions.host.Value());
+				logger.debug(mailOptions.dirtyString());
+				mail.sendMail(mailOptions);
 			}
 			catch (Exception e) {
 				logger.error(e.getLocalizedMessage());
 			}
 		}
-	} // private void sendMail
-
-	/* (non-Javadoc)
-	 * @see com.sos.DataExchange.IJadeEngine#run()
+	} 
+	
+	/**
+	 * 
 	 */
 	@Override public void run() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::Run";
 		try {
 			this.Execute();
 		}
@@ -867,122 +969,154 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 
+	/**
+	 * 
+	 * @param fileList
+	 */
 	// TODO prüfen, ob eine Verlagerung in SOSFileList die bessere Lösung ist. Stichwort: Multithreading
-	private void sendFiles(final SOSFileList pobjFileList) {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::sendFiles";
-		int intMaxParallelTransfers = 0;
+	private void sendFiles(final SOSFileList fileList) {
+		
+		int maxParallelTransfers = 0;
 		if (objOptions.ConcurrentTransfer.isTrue()) {
 			// TODO resolve problem with apache ftp client in multithreading mode
 			//			intMaxParallelTransfers = objOptions.MaxConcurrentTransfers.value();
 		}
-		int intNoOfFiles2Transfer = (int) pobjFileList.size();
-		int intFileCount = 0;
-		if (intMaxParallelTransfers <= 0 || objOptions.CumulateFiles.isTrue()) {
-			for (SOSFileListEntry objSourceFile : pobjFileList.List()) {
-				objSourceFile.Options(objOptions);
-				objSourceFile.setDataSourceClient(objDataSourceClient);
-				objSourceFile.setDataTargetClient(objDataTargetClient);
-				objSourceFile.setConnectionPool4Source(objConFactory.getSourcePool());
-				objSourceFile.setConnectionPool4Target(objConFactory.getTargetPool());
-				intFileCount = intFileCount + 1;
-				objSourceFile.run();
+		if (maxParallelTransfers <= 0 || objOptions.CumulateFiles.isTrue()) {
+			for (SOSFileListEntry entry : fileList.List()) {
+				entry.Options(objOptions);
+				entry.setDataSourceClient(sourceClient);
+				entry.setDataTargetClient(targetClient);
+				entry.setConnectionPool4Source(factory.getSourcePool());
+				entry.setConnectionPool4Target(factory.getTargetPool());
+				entry.run();
 			}
 		}
 		else {
-			SOSThreadPoolExecutor objTPE = new SOSThreadPoolExecutor(intMaxParallelTransfers);
-			for (SOSFileListEntry objSourceFile : pobjFileList.List()) {
-				objSourceFile.Options(objOptions);
-				objSourceFile.setConnectionPool4Source(objConFactory.getSourcePool());
-				objSourceFile.setConnectionPool4Target(objConFactory.getTargetPool());
-				intFileCount = intFileCount + 1;
-				objTPE.runTask(objSourceFile);
+			SOSThreadPoolExecutor executor = new SOSThreadPoolExecutor(maxParallelTransfers);
+			for (SOSFileListEntry entry : fileList.List()) {
+				entry.Options(objOptions);
+				entry.setConnectionPool4Source(factory.getSourcePool());
+				entry.setConnectionPool4Target(factory.getTargetPool());
+				executor.runTask(entry);
 			}
 			try {
-				objTPE.shutDown();
-				objTPE.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
+				executor.shutDown();
+				executor.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
 			}
 			catch (InterruptedException e) {
 				logger.error(e.getLocalizedMessage());
 			}
 		}
 		if (objOptions.transactional.isFalse()) {
-			pobjFileList.EndTransaction();
+			fileList.EndTransaction();
 			sendTransferHistory();
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void sendNotifications() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::sendNotifications";
 		// TODO Nagios anbinden
 		// TODO Status über MQ senden
 		// TODO Fehler an JIRA, Peregrine, etc. senden. Ticket aufmachen.
-		SOSSmtpMailOptions objO = objOptions.getMailOptions();
-		if (objOptions.mail_on_success.isTrue() && objSourceFileList.FailedTransfers() <= 0 || objO.FileNotificationTo.isDirty() == true) {
+		SOSSmtpMailOptions mailOptions = objOptions.getMailOptions();
+		if (objOptions.mail_on_success.isTrue() && sourceFileList.FailedTransfers() <= 0 
+			|| mailOptions.FileNotificationTo.isDirty() == true) {
 			doProcessMail(enuMailClasses.MailOnSuccess);
 		}
-		if (objOptions.mail_on_error.isTrue() && (objSourceFileList.FailedTransfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0)) {
+		if (objOptions.mail_on_error.isTrue() && (sourceFileList.FailedTransfers() > 0 
+				|| JobSchedulerException.LastErrorMessage.length() > 0)) {
 			doProcessMail(enuMailClasses.MailOnError);
 		}
-		if (objOptions.mail_on_empty_files.isTrue() && objSourceFileList.getZeroByteCount() > 0) {
+		if (objOptions.mail_on_empty_files.isTrue() && sourceFileList.getZeroByteCount() > 0) {
 			doProcessMail(enuMailClasses.MailOnEmptyFiles);
 		}
 	}
 
-	private void setInfo(final String strInfoText) {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::setInfo";
-		logger.info(strInfoText);
-		objJSJobUtilities.setStateText(strInfoText);
-	} // private void setInfo
+	/**
+	 * 
+	 * @param msg
+	 */
+	private void setInfo(final String msg) {
+		logger.info(msg);
+		objJSJobUtilities.setStateText(msg);
+	}
 
+	/**
+	 * 
+	 */
 	private void setTextProperties() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::setTextProperties";
 		// TODO das muß beim JobScheduler-Job in die Parameter zurück, aber nur da
 		// siehe hierzu das Interface ...
-		objOptions.getTextProperties().put(conKeywordSUCCESSFUL_TRANSFERS, String.valueOf(getSuccessfulTransfers()));
-		objOptions.getTextProperties().put(conKeywordFAILED_TRANSFERS, String.valueOf(getFailedTransfers()));
-		objOptions.getTextProperties().put(conKeywordSKIPPED_TRANSFERS, String.valueOf(getSkippedTransfers()));
+		objOptions.getTextProperties().put(KEYWORD_SUCCESSFUL_TRANSFERS, String.valueOf(getSuccessfulTransfers()));
+		objOptions.getTextProperties().put(KEYWORD_FAILED_TRANSFERS, String.valueOf(getFailedTransfers()));
+		objOptions.getTextProperties().put(KEYWORD_SKIPPED_TRANSFERS, String.valueOf(getSkippedTransfers()));
 		// return the number of transferred files
 		if (JobSchedulerException.LastErrorMessage.length() <= 0) {
-			objOptions.getTextProperties().put(conKeywordSTATUS, SOSJADE_T_0012.get());
+			objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0012.get());
 		}
 		else {
-			objOptions.getTextProperties().put(conKeywordSTATUS, SOSJADE_T_0013.get());
+			objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0013.get());
 		}
-		objOptions.getTextProperties().put(conKeyWordLAST_ERROR, JobSchedulerException.LastErrorMessage);
-	} // private void setTextProperties
+		objOptions.getTextProperties().put(KEYWORD_LAST_ERROR, JobSchedulerException.LastErrorMessage);
+	} 
 
+	/**
+	 * 
+	 * @return
+	 */
 	private long getSuccessfulTransfers() {
-		long lngTransfers = 0;
-		if (objSourceFileList != null) {
-			lngTransfers = objSourceFileList.SuccessfulTransfers();
-			if (lngNoOfPollingServerFiles > 0) {
-				lngTransfers = lngNoOfPollingServerFiles;
+		long count = 0;
+		if (sourceFileList != null) {
+			count = sourceFileList.SuccessfulTransfers();
+			if (countPollingServerFiles > 0) {
+				count = countPollingServerFiles;
 			}
 		}
-		return lngTransfers;
+		return count;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	private long getSkippedTransfers() {
-		long lngTransfers = 0;
-		if (objSourceFileList != null) {
-			lngTransfers = objSourceFileList.SkippedTransfers();
+		long count = 0;
+		if (sourceFileList != null) {
+			count = sourceFileList.SkippedTransfers();
 		}
-		return lngTransfers;
+		return count;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private long getFailedTransfers() {
-		long lngTransfers = 0;
-		if (objSourceFileList != null) {
-			lngTransfers = objSourceFileList.FailedTransfers();
+		long count = 0;
+		if (sourceFileList != null) {
+			count = sourceFileList.FailedTransfers();
 		}
-		return lngTransfers;
+		return count;
 	}
 
-	public ISOSVfsFileTransfer DataTargetClient() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::DataTargetClient";
-		return objDataTargetClient;
-	} // private ISOSVfsFileTransfer DataTargetClient
+	/**
+	 * 
+	 * @return
+	 */
+	public ISOSVfsFileTransfer getTargetClient() {
+		return targetClient;
+	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public ISOSVfsFileTransfer getSourceClient() {
+		return sourceClient;
+	}
+	
 	/**
 	 * Send files by  .... from source to a target
 	 *
@@ -990,32 +1124,35 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @throws Exception
 	 */
 	public boolean transfer() throws Exception {
-		boolean flgReturnCode = false;
+		boolean rc = false;
 		try { // to connect, authenticate and execute commands
 			Options().CheckMandatory();
+			
 			logger.debug(Options().dirtyString());
 			logger.debug("Source : " + Options().Source().dirtyString());
 			logger.debug("Target : " + Options().Target().dirtyString());
 			setTextProperties();
-			objSourceFileList = new SOSFileList(objVfs4Target);
-			objSourceFileList.Options(objOptions);
-			objSourceFileList.StartTransaction();
+			
+			sourceFileList = new SOSFileList(targetHandler);
+			sourceFileList.Options(objOptions);
+			sourceFileList.StartTransaction();
 			// TODO separate Operations: (1) connect and (2) authenticate
 			//			if (objConFactory == null) {
-			objConFactory = new SOSVfsConnectionFactory(objOptions);
+			factory = new SOSVfsConnectionFactory(objOptions);
 			//			}
 			if (objOptions.LazyConnectionMode.isFalse() && objOptions.NeedTargetClient()) {
-				objDataTargetClient = (ISOSVfsFileTransfer) objConFactory.getTargetPool().getUnused();
-				objSourceFileList.objDataTargetClient = objDataTargetClient;
+				targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();
+				sourceFileList.objDataTargetClient = targetClient;
 				makeDirs();
 			}
 			try {
-				objDataSourceClient = (ISOSVfsFileTransfer) objConFactory.getSourcePool().getUnused();
-				objSourceFileList.objDataSourceClient = objDataSourceClient;
-				String strSourceDir = objOptions.SourceDir.Value();
-				String strRemoteDir = objOptions.TargetDir.Value();
-				long lngStartPollingServer = System.currentTimeMillis() / 1000;
-				lngNoOfPollingServerFiles = 0;
+				sourceClient = (ISOSVfsFileTransfer) factory.getSourcePool().getUnused();
+				sourceFileList.objDataSourceClient = sourceClient;
+				
+				String sourceDir = objOptions.SourceDir.Value();
+				String targetDir = objOptions.TargetDir.Value();
+				long startPollingServer = System.currentTimeMillis() / 1000;
+				countPollingServerFiles = 0;
 				
 				executePreTransferCommands();
 				
@@ -1023,32 +1160,32 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				while (true) {
 					if (objOptions.isFilePollingEnabled() == true) {
 						doPollingForFiles();
-						if (objSourceFileList.size() <= 0 && objOptions.PollingServer.isFalse()) {
+						if (sourceFileList.size() <= 0 && objOptions.PollingServer.isFalse()) {
 							if (objOptions.PollErrorState.isDirty()) {
-								String strPollErrorState = objOptions.PollErrorState.Value();
-								logger.info("set order-state to " + strPollErrorState);
-								setNextNodeState(strPollErrorState);
+								String pollErrorState = objOptions.PollErrorState.Value();
+								logger.info("set order-state to " + pollErrorState);
+								setNextNodeState(pollErrorState);
 								break PollingServerLoop;
 							}
 						}
 					}
 					else {
 						if (objOptions.OneOrMoreSingleFilesSpecified()) {
-							OneOrMoreSingleFilesSpecified(strSourceDir);
+							OneOrMoreSingleFilesSpecified(sourceDir);
 						}
 						else {
-							objDataSourceClient.changeWorkingDirectory(strSourceDir);
-							ISOSVirtualFile objLocFile = objDataSourceClient.getFileHandle(strSourceDir);
-							String strM = "";
+							sourceClient.changeWorkingDirectory(sourceDir);
+							ISOSVirtualFile fileHandle = sourceClient.getFileHandle(sourceDir);
+							String msg = "";
 							if (objOptions.NeedTargetClient() == true) {
-								strM = "source directory/file: " + strSourceDir + ", target directory: " + strRemoteDir + ", file regexp: "
+								msg = "source directory/file: " + sourceDir + ", target directory: " + targetDir + ", file regexp: "
 										+ objOptions.file_spec.Value();
 							}
 							else {
-								strM = SOSJADE_D_0200.params(strSourceDir, objOptions.file_spec.Value());
+								msg = SOSJADE_D_0200.params(sourceDir, objOptions.file_spec.Value());
 							}
-							logger.debug(strM);
-							selectFilesOnSource(objLocFile, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
+							logger.debug(msg);
+							selectFilesOnSource(fileHandle, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
 						}
 					}
 					// TODO checkSteadyStateOfFiles in FileListEntry einbauen
@@ -1060,35 +1197,35 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					} // (zeroByteFiles == false)
 					try {
 						if (objOptions.operation.isOperationGetList()) {
-							String strM = SOSJADE_I_0115.get();
-							logger.info(strM);
-							objJadeReportLogger.info(strM);
+							String msg = SOSJADE_I_0115.get();
+							logger.info(msg);
+							jadeReportLogger.info(msg);
 							objOptions.remove_files.setFalse();
 							objOptions.force_files.setFalse();
-							objSourceFileList.logFileList();
-							objSourceFileList.CreateResultSetFile();
+							sourceFileList.logFileList();
+							sourceFileList.CreateResultSetFile();
 						}
 						else {
 							if (objOptions.CreateSecurityHashFile.isTrue() || objOptions.CheckSecurityHash.isTrue()) {
-								objSourceFileList.createHashFileEntries(objOptions.SecurityHashType.Value());
+								sourceFileList.createHashFileEntries(objOptions.SecurityHashType.Value());
 							}
-							if (objSourceFileList.size() > 0 && objOptions.skip_transfer.isFalse()) {
+							if (sourceFileList.size() > 0 && objOptions.skip_transfer.isFalse()) {
 								if (objOptions.LazyConnectionMode.isTrue()) {
-									objDataTargetClient = (ISOSVfsFileTransfer) objConFactory.getTargetPool().getUnused();
-									objSourceFileList.objDataTargetClient = objDataTargetClient;
+									targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();
+									sourceFileList.objDataTargetClient = targetClient;
 									makeDirs();
 								}
 								
-								sendFiles(objSourceFileList);
+								sendFiles(sourceFileList);
 								// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
 								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
-								objSourceFileList.renameAtomicTransferFiles();
+								sourceFileList.renameAtomicTransferFiles();
 								
 								executePostTransferCommands();
 								
-								objSourceFileList.DeleteSourceFiles();
+								sourceFileList.DeleteSourceFiles();
 								if (objOptions.TransactionMode.isTrue()) {
-									objSourceFileList.EndTransaction();
+									sourceFileList.EndTransaction();
 									sendTransferHistory();
 								}
 							}
@@ -1097,16 +1234,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						// -----
 						if (objOptions.PollingServer.isFalse() || objOptions.skip_transfer.isTrue()) {
 							if (objOptions.NeedTargetClient() == true) {
-								objDataTargetClient.close();
+								targetClient.close();
 							}
-							objDataSourceClient.close();
+							sourceClient.close();
 							break PollingServerLoop;
 						}
 						else {
 							if (objOptions.pollingServerDuration.isDirty() && objOptions.PollingServerPollForever.isFalse()) {
-								long lngActTime = System.currentTimeMillis() / 1000;
-								long lngDuration = lngActTime - lngStartPollingServer;
-								if (lngDuration >= objOptions.pollingServerDuration.getTimeAsSeconds()) {
+								long currentTime = System.currentTimeMillis() / 1000;
+								long duration = currentTime - startPollingServer;
+								if (duration >= objOptions.pollingServerDuration.getTimeAsSeconds()) {
 									logger.debug("PollingServerMode: time elapsed. terminate polling server");
 									break PollingServerLoop;
 								}
@@ -1115,24 +1252,24 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							// TODO check external end signal for Polling server
 							// TODO end-time for polling server as an option
 							//							sendNotifications();
-							lngNoOfPollingServerFiles += objSourceFileList.size();
-							objSourceFileList.clearFileList();
+							countPollingServerFiles += sourceFileList.size();
+							sourceFileList.clearFileList();
 						}
 					}
 					catch (JobSchedulerException e) {
-						String strM = TRANSACTION_ABORTED.get(e);
+						String msg = TRANSACTION_ABORTED.get(e);
 						//logger.error(strM, e);
-						logger.error(strM);
-						objJadeReportLogger.error(strM);
-						objSourceFileList.Rollback();
+						logger.error(msg);
+						jadeReportLogger.error(msg);
+						sourceFileList.Rollback();
 						throw e;
 					}
 				} // end while (true)
-				flgReturnCode = printState(flgReturnCode);
-				return flgReturnCode;
+				rc = printState(rc);
+				return rc;
 			}
 			catch (Exception e) {
-				flgReturnCode = false;
+				rc = false;
 				throw e;
 			}
 			finally {
@@ -1141,9 +1278,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 		catch (Exception e) {
 			setTextProperties();
-			objOptions.getTextProperties().put(conKeywordSTATUS, SOSJADE_T_0013.get());
-			String strM = SOSJADE_E_0101.params(e.getLocalizedMessage());
-			objJadeReportLogger.info(strM, e);
+			objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0013.get());
+			jadeReportLogger.info(SOSJADE_E_0101.params(e.getLocalizedMessage()), e);
 			throw e;
 		}
 	}
@@ -1153,9 +1289,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @throws Exception
 	 */
 	private void executePreTransferCommands() throws Exception{
-		executeTransferCommands("objOptions.PreTransferCommands",objDataTargetClient, objOptions.PreTransferCommands);
-		executeTransferCommands("objOptions.Target().PreTransferCommands",objDataTargetClient, objOptions.Target().PreTransferCommands);
-		executeTransferCommands("objOptions.Source().PreTransferCommands",objDataSourceClient, objOptions.Source().PreTransferCommands);
+		executeTransferCommands("objOptions.PreTransferCommands",targetClient, objOptions.PreTransferCommands);
+		executeTransferCommands("objOptions.Target().PreTransferCommands",targetClient, objOptions.Target().PreTransferCommands);
+		executeTransferCommands("objOptions.Source().PreTransferCommands",sourceClient, objOptions.Source().PreTransferCommands);
 	}
 	
 	
@@ -1164,9 +1300,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @throws Exception
 	 */
 	private void executePostTransferCommands() throws Exception{
-		executeTransferCommands("objOptions.PostTransferCommands",objDataTargetClient, objOptions.PostTransferCommands);
-		executeTransferCommands("objOptions.Target().PostTransferCommands",objDataTargetClient, objOptions.Target().PostTransferCommands);
-		executeTransferCommands("objOptions.Source().PostTransferCommands",objDataSourceClient, objOptions.Source().PostTransferCommands);
+		executeTransferCommands("objOptions.PostTransferCommands",targetClient, objOptions.PostTransferCommands);
+		executeTransferCommands("objOptions.Target().PostTransferCommands",targetClient, objOptions.Target().PostTransferCommands);
+		executeTransferCommands("objOptions.Source().PostTransferCommands",sourceClient, objOptions.Source().PostTransferCommands);
 	}
 	
 	/**
@@ -1175,10 +1311,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @throws Exception
 	 */
 	public void executeCommandOnTarget(String command) throws Exception{
-		if(objDataTargetClient == null){
+		if(targetClient == null){
 			throw new Exception("objDataTargetClient is NULL");
 		}
-		objDataTargetClient.getHandler().ExecuteCommand(command);
+		targetClient.getHandler().ExecuteCommand(command);
 	}
 	
 	/**
@@ -1187,10 +1323,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @throws Exception
 	 */
 	public void executeCommandOnSource(String command) throws Exception{
-		if(objDataSourceClient == null){
+		if(sourceClient == null){
 			throw new Exception("objDataSourceClient is NULL");
 		}
-		objDataSourceClient.getHandler().ExecuteCommand(command);
+		sourceClient.getHandler().ExecuteCommand(command);
 	}
 	
 	/**
@@ -1209,31 +1345,39 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 
-	private long selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
-			final SOSOptionBoolean poptRecurseFolders) throws Exception {
-		if (objLocFile.isDirectory() == true) {
-			if (objDataSourceClient instanceof ISOSVfsFileTransfer2) {
-				ISOSVfsFileTransfer2 objF = (ISOSVfsFileTransfer2) objDataSourceClient;
-				objF.clearFileListEntries();
-				objSourceFileList = objF.getFileListEntries(objSourceFileList, pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), poptRecurseFolders.value());
+	/**
+	 * 
+	 * @param localeFile
+	 * @param sourceDir
+	 * @param regExp
+	 * @param recursive
+	 * @return
+	 * @throws Exception
+	 */
+	private long selectFilesOnSource(final ISOSVirtualFile localeFile, 
+			final SOSOptionFolderName sourceDir, 
+			final SOSOptionRegExp regExp,
+			final SOSOptionBoolean recursive) throws Exception {
+		if (localeFile.isDirectory() == true) {
+			if (sourceClient instanceof ISOSVfsFileTransfer2) {
+				ISOSVfsFileTransfer2 ft = (ISOSVfsFileTransfer2) sourceClient;
+				ft.clearFileListEntries();
+				sourceFileList = ft.getFileListEntries(sourceFileList, sourceDir.Value(), regExp.Value(), recursive.value());
 			}
 			else {
- 				String[] strFileList = objDataSourceClient.getFilelist(pobjSourceDir.Value(), pobjRegExp4FileNames.Value(), 0, poptRecurseFolders.value());
-				fillFileList(strFileList, pobjSourceDir.Value());
+ 				String[] fileList = sourceClient.getFilelist(sourceDir.Value(), regExp.Value(), 0, recursive.value());
+				fillFileList(fileList, sourceDir.Value());
 			}
-			setInfo(String.format("%1$d files found for regexp '%2$s'.", objSourceFileList.size(), pobjRegExp4FileNames.Value()));
+			setInfo(String.format("%1$d files found for regexp '%2$s'.", sourceFileList.size(), regExp.Value()));
 		}
 		else { // not a directory, seems to be a filename
-			objSourceFileList.add(pobjSourceDir.Value());
+			sourceFileList.add(sourceDir.Value());
 		}
-		return objSourceFileList.size();
+		return sourceFileList.size();
 	}
 	
 	
-	@SuppressWarnings("unused")
-	private final SOSFileList	objParent							= null;
-	long						lngNoOfTransferHistoryRecordsSent	= 0;
-
+	
 	/**
 	 *
 	 * \brief sendTransferHistory
@@ -1245,11 +1389,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 *
 	 */
 	public void sendTransferHistory() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::sendTransferHistory";
 		if (objOptions.SendTransferHistory.isTrue()) {
-			String strBackgroundServiceHostName = objOptions.scheduler_host.Value();
-			if (isEmpty(strBackgroundServiceHostName)) {
+			String schedulerHost = objOptions.scheduler_host.Value();
+			if (isEmpty(schedulerHost)) {
 				logger.debug("No data sent to the background service due to missing host name");
 				return;
 			}
@@ -1258,13 +1400,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				return;
 			}
 
-			for (SOSFileListEntry objEntry : objSourceFileList.List()) {
-				if (sendTransferHistory4File(objEntry)) {
-					lngNoOfTransferHistoryRecordsSent++;
+			for (SOSFileListEntry entry : sourceFileList.List()) {
+				if (sendTransferHistory4File(entry)) {
+					countHistoryRecordsSent++;
 				}
 			}
 			// TODO I18N
-			logger.debug(String.format("%1$d transfer history records sent to background service", lngNoOfTransferHistoryRecordsSent));
+			logger.debug(String.format("%1$d transfer history records sent to background service", countHistoryRecordsSent));
 		}
 		else {
 			logger.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
@@ -1273,20 +1415,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	
 	SchedulerObjectFactory	objFactory	= null;
 
+	
 	/**
-	 *
-	 * \brief sendTransferHistory
-	 *
-	 * \details
-	 * This methods sends for each file the needed informations about the transfer history
-	 * to the background service (JobScheduler).
-	 *
-	 * \return void
-	 *
+	 * 
+	 * @param entry
+	 * @return
 	 */
-	private boolean sendTransferHistory4File(final SOSFileListEntry pobjEntry) {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::sendTransferHistory";
-		Properties objSchedulerOrderParameterSet = pobjEntry.getFileAttributesAsProperties();
+	private boolean sendTransferHistory4File(final SOSFileListEntry entry) {
+		Properties fileProperties = entry.getFileAttributesAsProperties();
 		// TODO custom-fields einbauen
 		/**
 		 * bei SOSFTP ist es mï¿½glich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
@@ -1302,14 +1438,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			objFactory.Options().PortNumber.Value(objOptions.scheduler_port.Value());
 			objFactory.Options().ServerName.Value(objOptions.scheduler_host.Value());
 		}
-		JSCmdAddOrder objOrder = objFactory.createAddOrder();
-		objOrder.setJobChain(objOptions.scheduler_job_chain.Value() /* "scheduler_sosftp_history" */);
-		//		objOrder.setTitle(SOSVfs_Title_276.get());
-		Params objParams = objFactory.setParams(objSchedulerOrderParameterSet);
-		objOrder.setParams(objParams);
-		//		logger.debug(objOrder.toXMLString());
-		objOrder.run();
-		boolean flgRet = true;
-		return flgRet;
+		JSCmdAddOrder addOrder = objFactory.createAddOrder();
+		addOrder.setJobChain(objOptions.scheduler_job_chain.Value() /* "scheduler_sosftp_history" */);
+		//objOrder.setTitle(SOSVfs_Title_276.get());
+		Params params = objFactory.setParams(fileProperties);
+		addOrder.setParams(params);
+		//logger.debug(objOrder.toXMLString());
+		addOrder.run();
+		return true;
 	} // private void sendTransferHistory
 }
