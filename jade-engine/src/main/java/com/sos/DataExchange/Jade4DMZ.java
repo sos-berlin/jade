@@ -249,10 +249,18 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		JADEOptions obj2DMZ = objOptions.getClone();
 
 		SOSConnection2OptionsAlternate objSource = objOptions.Source();
+		
+		//https://change.sos-berlin.com/browse/JADE-297
+		objSource.user.DefaultValue("");
+		
 		String strD = objSource.getOptionsAsQuotedCommandLine();
 
 		logger.debug(obj2DMZ.DirtyString());
 		setDMZasTarget4Receive(obj2DMZ);
+		
+		//https://change.sos-berlin.com/browse/JADE-297
+		obj2DMZ.user.DefaultValue("");
+				
 		String strC = obj2DMZ.getOptionsAsQuotedCommandLine();
 		
 		//Why -log_filename and -createResultSet=true -ResultSetFileName= ?
@@ -468,6 +476,9 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		objDMZOptions.Scheduler_Transfer_Method = objOptions.Scheduler_Transfer_Method;
 		objDMZOptions.verbose = objOptions.verbose;
 		
+		//https://change.sos-berlin.com/browse/JADE-297
+		objDMZOptions.user.DefaultValue("");
+		
  		String cmd = "-source_protocol=local -source_host=" + objOptions.jump_host.Value() + " ";
  		//without background-service
  		//if (isEmpty(objDMZOptions.scheduler_host.Value())) {
@@ -478,7 +489,9 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	}
 
 	private void StartTransferFromDMZ2Inet() {
-
+		//https://change.sos-berlin.com/browse/JADE-297
+		objOptions.Target().user.DefaultValue("");
+		
 		final String conMethodName = conClassName + "::StartTransferFromDMZ2Inet";
 		logger.trace(conMethodName);
 		//removeSecurityHashFiles();
