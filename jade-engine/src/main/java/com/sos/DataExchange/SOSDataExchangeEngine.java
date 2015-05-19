@@ -52,8 +52,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private ISOSVFSHandler			targetHandler					= null;
 	private SOSFileList				sourceFileList					= null;
 	private SOSVfsConnectionFactory	factory							= null;
+	private SchedulerObjectFactory	schedulerFactory	            = null;
 	private long					countPollingServerFiles			= 0;
-	private long					countHistoryRecordsSent			= 0;
+	private long					countSentHistoryRecords			= 0;
 
 	private static final String		KEYWORD_LAST_ERROR				= "last_error";
 	private static final String		KEYWORD_STATE					= "state";
@@ -262,8 +263,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", 
 						pollInterval, 
 						objOptions.file_spec.Value()));
+				
 				doSleep(pollInterval);
 				currentPollingTime += pollInterval;
+				
 				setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", 
 						currentFilesCount, 
 						objOptions.file_spec.Value(),
@@ -303,8 +306,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		try {
 			Thread.sleep(time * 1000);
 		}
-		catch (InterruptedException e) {
-		} // wait some seconds
+		catch (InterruptedException e) {} 
 	}
 
 	/**
@@ -628,17 +630,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			JSFile file = new JSFile(fileListName);
 			if (file.exists() == true) {
 				// TODO create method in JSFile: File2Array
-				StringBuffer strRec = null;
-				while ((strRec = file.GetLine()) != null) {
-					fileList.add(strRec.toString());
+				StringBuffer line = null;
+				while ((line = file.GetLine()) != null) {
+					fileList.add(line.toString());
 				}
 				try {
 					file.close();
 				}
-				catch (IOException e) {
-				}
+				catch (IOException e) {}
 			}
 		}
+		
 		String[] arr = { "" };
 		if (fileList.size() > 0) {
 			arr = fileList.toArray(new String[fileList.size()]);
@@ -649,15 +651,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	/**
 	 * 
 	 */
-	@Override public String getState() {
+	@Override 
+	public String getState() {
 		return (String) objOptions.getTextProperties().get(KEYWORD_STATE);
-	}
-
-	@SuppressWarnings("unused") private ISOSVFSHandler getVFS() throws Exception {
-		if (targetHandler == null) {
-			targetHandler = VFSFactory.getHandler(objOptions.getDataTargetType());
-		}
-		return targetHandler;
 	}
 
 	/**
@@ -729,10 +725,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return ok;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sos.DataExchange.IJadeEngine#Logout()
+	/**
+	 * 
 	 */
-	@Override public void Logout() {
+	@Override 
+	public void Logout() {
 		try {
 			doLogout(targetClient);
 			doLogout(sourceClient);
@@ -794,7 +791,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @param sourceDir
 	 * @return
 	 */
-	private long OneOrMoreSingleFilesSpecified(final String sourceDir) {
+	private long oneOrMoreSingleFilesSpecified(final String sourceDir) {
 		long founded = 0;
 		//if (objOptions.skip_transfer.isFalse()) {
 			sourceFileList.add(getSingleFileNames(), sourceDir, true);
@@ -811,10 +808,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								getPollTimeoutText()));
 						break;
 					}
-					for (SOSFileListEntry objItem : sourceFileList.List()) {
-						if (objItem.SourceFileExists()) {
+					for (SOSFileListEntry entry : sourceFileList.List()) {
+						if (entry.SourceFileExists()) {
 							founded++;
-							objItem.setParent(sourceFileList); // to reinit the file-size
+							entry.setParent(sourceFileList); // to reinit the file-size
 						}
 					}
 					if (founded == currentFounded) {
@@ -823,11 +820,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					if (objOptions.poll_minfiles.value() > 0 && founded >= objOptions.poll_minfiles.value()) {
 						break;
 					}
-					String strM = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", 
+					String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", 
 							pollInterval,
 							founded, 
 							currentFounded);
-					setInfo(strM);
+					setInfo(msg);
 					doSleep(pollInterval);
 					currentPollingTime += pollInterval;
 				}
@@ -839,15 +836,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	/**
 	 * 
 	 */
-	@Override public JADEOptions Options() {
+	@Override 
+	public JADEOptions Options() {
 		if (objOptions == null) {
 			objOptions = new JADEOptions();
 		}
 		return objOptions;
 	}
 
-	@Override public void setJadeOptions(final JSOptionsClass pobjOptions) {
-		objOptions = (JADEOptions) pobjOptions;
+	@Override 
+	public void setJadeOptions(final JSOptionsClass options) {
+		objOptions = (JADEOptions)options;
 	}
 
 	/**
@@ -960,7 +959,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	/**
 	 * 
 	 */
-	@Override public void run() {
+	@Override 
+	public void run() {
 		try {
 			this.Execute();
 		}
@@ -970,16 +970,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	}
 
 	/**
+	 * TODO prüfen, ob eine Verlagerung in SOSFileList die bessere Lösung ist. Stichwort: Multithreading
 	 * 
 	 * @param fileList
 	 */
-	// TODO prüfen, ob eine Verlagerung in SOSFileList die bessere Lösung ist. Stichwort: Multithreading
 	private void sendFiles(final SOSFileList fileList) {
 		
 		int maxParallelTransfers = 0;
 		if (objOptions.ConcurrentTransfer.isTrue()) {
 			// TODO resolve problem with apache ftp client in multithreading mode
-			//			intMaxParallelTransfers = objOptions.MaxConcurrentTransfers.value();
+			// maxParallelTransfers = objOptions.MaxConcurrentTransfers.value();
 		}
 		if (maxParallelTransfers <= 0 || objOptions.CumulateFiles.isTrue()) {
 			for (SOSFileListEntry entry : fileList.List()) {
@@ -1044,11 +1044,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	}
 
 	/**
+	 * TODO das muß beim JobScheduler-Job in die Parameter zurück, aber nur da
+	 * siehe hierzu das Interface ...
 	 * 
 	 */
 	private void setTextProperties() {
-		// TODO das muß beim JobScheduler-Job in die Parameter zurück, aber nur da
-		// siehe hierzu das Interface ...
 		objOptions.getTextProperties().put(KEYWORD_SUCCESSFUL_TRANSFERS, String.valueOf(getSuccessfulTransfers()));
 		objOptions.getTextProperties().put(KEYWORD_FAILED_TRANSFERS, String.valueOf(getFailedTransfers()));
 		objOptions.getTextProperties().put(KEYWORD_SKIPPED_TRANSFERS, String.valueOf(getSkippedTransfers()));
@@ -1171,7 +1171,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					}
 					else {
 						if (objOptions.OneOrMoreSingleFilesSpecified()) {
-							OneOrMoreSingleFilesSpecified(sourceDir);
+							oneOrMoreSingleFilesSpecified(sourceDir);
 						}
 						else {
 							sourceClient.changeWorkingDirectory(sourceDir);
@@ -1200,8 +1200,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							String msg = SOSJADE_I_0115.get();
 							logger.info(msg);
 							jadeReportLogger.info(msg);
+							
 							objOptions.remove_files.setFalse();
 							objOptions.force_files.setFalse();
+							
 							sourceFileList.logFileList();
 							sourceFileList.CreateResultSetFile();
 						}
@@ -1330,6 +1332,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	}
 	
 	/**
+	 * TODO Command separator as global option
+	 * 
 	 * @param commandCallerMethod
 	 * @param fileTransfer
 	 * @param commands
@@ -1338,7 +1342,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private void executeTransferCommands(String commandCallerMethod,final ISOSVfsFileTransfer fileTransfer, final SOSOptionCommandString commands) throws Exception {
 		if (commands.IsNotEmpty()) {
 			logger.info(commandCallerMethod);
-			// TODO Command separator as global option
 			for (String command : commands.split()) {
 				fileTransfer.getHandler().ExecuteCommand(objOptions.replaceVars(command));
 			}
@@ -1358,6 +1361,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			final SOSOptionFolderName sourceDir, 
 			final SOSOptionRegExp regExp,
 			final SOSOptionBoolean recursive) throws Exception {
+		
 		if (localeFile.isDirectory() == true) {
 			if (sourceClient instanceof ISOSVfsFileTransfer2) {
 				ISOSVfsFileTransfer2 ft = (ISOSVfsFileTransfer2) sourceClient;
@@ -1402,49 +1406,45 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 			for (SOSFileListEntry entry : sourceFileList.List()) {
 				if (sendTransferHistory4File(entry)) {
-					countHistoryRecordsSent++;
+					countSentHistoryRecords++;
 				}
 			}
 			// TODO I18N
-			logger.debug(String.format("%1$d transfer history records sent to background service", countHistoryRecordsSent));
+			logger.debug(String.format("%1$d transfer history records sent to background service", countSentHistoryRecords));
 		}
 		else {
 			logger.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
 		}
-	} // private void sendTransferHistory
-	
-	SchedulerObjectFactory	objFactory	= null;
-
-	
+	}
+		
 	/**
+	 * TODO custom-fields einbauen
+	 * bei SOSFTP ist es mï¿½glich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
+	 * Damit man diese Felder identifizieren kann, werden hier Parameter defininiert, die beim Auftrag dabei sind, aber keine
+	 * "custom" Felder sind
+	 *
+	 * ? alternativ Metadaten der Tabelle lesen (Spalten) und mit den Auftragsparameter vergleichen
 	 * 
 	 * @param entry
 	 * @return
 	 */
 	private boolean sendTransferHistory4File(final SOSFileListEntry entry) {
 		Properties fileProperties = entry.getFileAttributesAsProperties();
-		// TODO custom-fields einbauen
-		/**
-		 * bei SOSFTP ist es mï¿½glich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
-		 * Damit man diese Felder identifizieren kann, werden hier Parameter defininiert, die beim Auftrag dabei sind, aber keine
-		 * "custom" Felder sind
-		 *
-		 * ? alternativ Metadaten der Tabelle lesen (Spalten) und mit den Auftragsparameter vergleichen
-		 */
-		if (objFactory == null) {
-			objFactory = new SchedulerObjectFactory(objOptions.scheduler_host.Value(), objOptions.scheduler_port.value());
-			objFactory.initMarshaller(Spooler.class);
-			objFactory.Options().TransferMethod.Value(objOptions.Scheduler_Transfer_Method.Value());
-			objFactory.Options().PortNumber.Value(objOptions.scheduler_port.Value());
-			objFactory.Options().ServerName.Value(objOptions.scheduler_host.Value());
+		if (schedulerFactory == null) {
+			schedulerFactory = new SchedulerObjectFactory(objOptions.scheduler_host.Value(), objOptions.scheduler_port.value());
+			schedulerFactory.initMarshaller(Spooler.class);
+			schedulerFactory.Options().TransferMethod.Value(objOptions.Scheduler_Transfer_Method.Value());
+			schedulerFactory.Options().PortNumber.Value(objOptions.scheduler_port.Value());
+			schedulerFactory.Options().ServerName.Value(objOptions.scheduler_host.Value());
 		}
-		JSCmdAddOrder addOrder = objFactory.createAddOrder();
+		JSCmdAddOrder addOrder = schedulerFactory.createAddOrder();
 		addOrder.setJobChain(objOptions.scheduler_job_chain.Value() /* "scheduler_sosftp_history" */);
 		//objOrder.setTitle(SOSVfs_Title_276.get());
-		Params params = objFactory.setParams(fileProperties);
+		
+		Params params = schedulerFactory.setParams(fileProperties);
 		addOrder.setParams(params);
-		//logger.debug(objOrder.toXMLString());
+		
 		addOrder.run();
 		return true;
-	} // private void sendTransferHistory
+	}
 }
