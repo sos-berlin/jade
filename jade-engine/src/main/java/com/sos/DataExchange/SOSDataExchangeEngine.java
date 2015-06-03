@@ -81,44 +81,46 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	// TODO in die DataSource verlagern? Oder in die FileList? Multithreaded ausführen?
 	public boolean checkSteadyStateOfFiles() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::checkSteadyStateOfFiles";
-		boolean flgAllFilesAreSteady = true;
+		boolean allFilesAreSteady = true;
 		if (objOptions.CheckSteadyStateOfFiles.isTrue() && objSourceFileList != null) {
-			long lngCheckSteadyStateInterval = objOptions.CheckSteadyStateInterval.getTimeAsSeconds();
-			long lngSteadyCount = objOptions.CheckSteadyCount.value();
+			long interval = objOptions.CheckSteadyStateInterval.getTimeAsSeconds();
 			setInfo("checking file(s) for steady state");
-			for (int i = 0; i < lngSteadyCount; i++) {
-				flgAllFilesAreSteady = true;
-				for (SOSFileListEntry objFile : objSourceFileList.List()) {
-					if (objFile.isSteady() == false) {
-						long lastFileLength = objDataSourceClient.getFileHandle(objFile.SourceFileName()).getFileSize();
-						logger.debug(String.format("waiting %1$d for steady check", lngCheckSteadyStateInterval));
-						doSleep(lngCheckSteadyStateInterval);
-						long lngActFileLength = objDataSourceClient.getFileHandle(objFile.SourceFileName()).getFileSize();
-						logger.debug(String.format("Last file length %1$d, actual file length %2$d", lastFileLength, lngActFileLength));
-						if (lastFileLength != lngActFileLength) {
-							flgAllFilesAreSteady = false;
-							logger.info(String.format("File '%1$s' changed during checking steady state", objFile.SourceFileName()));
-							objFile.setSteady(false);
+			for (int i = 0; i < objOptions.CheckSteadyCount.value(); i++) {
+				allFilesAreSteady = true;
+				String msg = String.format("steady check (%s of %s).",(i+1),objOptions.CheckSteadyCount.value());
+				
+				logger.info(String.format("%s waiting %ss.",msg,interval));
+				doSleep(interval);
+				
+				for (SOSFileListEntry entry : objSourceFileList.List()) {
+					if (entry.isSteady() == false) {
+						//initialize property with the first file size
+						if(entry.getLastCheckedFileSize() < 0){
+							entry.setLastCheckedFileSize(entry.getFileSize());
 						}
-						else {
-							objFile.setSteady(true);
-							logger.info(String.format("File '%1$s' was not changed during checking steady state", objFile.SourceFileName()));
+						//current file size
+						entry.setSourceFileProperties(objDataSourceClient.getFileHandle(entry.SourceFileName()));
+						
+						if(entry.getLastCheckedFileSize().equals(entry.getFileSize())){
+							entry.setSteady(true);
+							logger.info(String.format("%s Not changed. file size: %s bytes. '%s'",msg,entry.getLastCheckedFileSize(),entry.SourceFileName()));
 						}
-						objFile.setParent(objSourceFileList); // this is changing the filesize info in the object
+						else{
+							allFilesAreSteady = false;
+							logger.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'",msg, entry.getFileSize(),entry.getLastCheckedFileSize(), entry.SourceFileName()));
+							
+						}
+						entry.setLastCheckedFileSize(entry.getFileSize());
 					}
-				} // For
-				if (flgAllFilesAreSteady == false) {
-					logger.debug(String.format("waiting %1$d for steady check", lngCheckSteadyStateInterval));
-					doSleep(lngCheckSteadyStateInterval);
 				}
-				else {
+				if(allFilesAreSteady){
+					logger.info(String.format("%s break steady check. all files are steady.",msg));
 					break;
 				}
 			}
-			if (flgAllFilesAreSteady == false) {
-				String strM = "not all files are steady";
-				logger.error(strM);
+			if (allFilesAreSteady == false) {
+				String msg = "not all files are steady";
+				logger.error(msg);
 				for (SOSFileListEntry objFile : objSourceFileList.List()) {
 					if (objFile.isSteady() == false) {
 						logger.info(String.format("File '%1$s' is not steady", objFile.SourceFileName()));
@@ -128,12 +130,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					objJSJobUtilities.setNextNodeState(objOptions.SteadyStateErrorState.Value());
 				}
 				else {
-					throw new JobSchedulerException(strM);
+					throw new JobSchedulerException(msg);
 				}
 			}
 		}
-		return flgAllFilesAreSteady;
-	} // private boolean checkSteadyStateOfFiles
+		return allFilesAreSteady;
+	}
 
 	private void doLogout(ISOSVfsFileTransfer pobjClient) throws Exception {
 		if (pobjClient != null) {
