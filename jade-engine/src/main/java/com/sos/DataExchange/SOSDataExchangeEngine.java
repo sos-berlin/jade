@@ -140,12 +140,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						
 						if(entry.getLastCheckedFileSize().equals(entry.getFileSize())){
 							entry.setSteady(true);
-							logger.info(String.format("%s Not changed. '%s'",msg,entry.SourceFileName()));
+							logger.info(String.format("%s Not changed. file size: %s bytes. '%s'",msg,entry.getLastCheckedFileSize(),entry.SourceFileName()));
 						}
 						else{
 							allFilesAreSteady = false;
-							logger.info(String.format("%s Changed. '%s'",msg, entry.SourceFileName()));
-							
+							logger.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'",msg, entry.getFileSize(),entry.getLastCheckedFileSize(), entry.SourceFileName()));
 						}
 						entry.setLastCheckedFileSize(entry.getFileSize());
 					}
