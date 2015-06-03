@@ -118,43 +118,44 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @return
 	 */
 	public boolean checkSteadyStateOfFiles() {
-		boolean isAllFilesAreSteady = true;
+		boolean allFilesAreSteady = true;
 		if (objOptions.CheckSteadyStateOfFiles.isTrue() && sourceFileList != null) {
-			long checkSteadyStateInterval = objOptions.CheckSteadyStateInterval.getTimeAsSeconds();
-			long checkSteadyCount = objOptions.CheckSteadyCount.value();
+			long interval = objOptions.CheckSteadyStateInterval.getTimeAsSeconds();
 			setInfo("checking file(s) for steady state");
-			for (int i = 0; i < checkSteadyCount; i++) {
-				isAllFilesAreSteady = true;
+			for (int i = 0; i < objOptions.CheckSteadyCount.value(); i++) {
+				allFilesAreSteady = true;
+				String msg = String.format("steady check (%s of %s).",(i+1),objOptions.CheckSteadyCount.value());
+				
+				logger.info(String.format("%s waiting %ss.",msg,interval));
+				doSleep(interval);
+				
 				for (SOSFileListEntry entry : sourceFileList.List()) {
 					if (entry.isSteady() == false) {
-						long lastFileLength = sourceClient.getFileHandle(entry.SourceFileName()).getFileSize();
-						logger.debug(String.format("waiting %1$d for steady check", checkSteadyStateInterval));
-						
-						doSleep(checkSteadyStateInterval);
-						
-						long currentFileLength = sourceClient.getFileHandle(entry.SourceFileName()).getFileSize();
-						logger.debug(String.format("Last file length %1$d, actual file length %2$d", lastFileLength, currentFileLength));
-						if (lastFileLength != currentFileLength) {
-							isAllFilesAreSteady = false;
-							logger.info(String.format("File '%1$s' changed during checking steady state", entry.SourceFileName()));
-							entry.setSteady(false);
+						//initialize property with the first file size
+						if(entry.getLastCheckedFileSize() < 0){
+							entry.setLastCheckedFileSize(entry.getFileSize());
 						}
-						else {
+						//current file size
+						entry.setSourceFileProperties(sourceClient.getFileHandle(entry.SourceFileName()));
+						
+						if(entry.getLastCheckedFileSize().equals(entry.getFileSize())){
 							entry.setSteady(true);
-							logger.info(String.format("File '%1$s' was not changed during checking steady state", entry.SourceFileName()));
+							logger.info(String.format("%s Not changed. '%s'",msg,entry.SourceFileName()));
 						}
-						entry.setParent(sourceFileList); // this is changing the filesize info in the object
+						else{
+							allFilesAreSteady = false;
+							logger.info(String.format("%s Changed. '%s'",msg, entry.SourceFileName()));
+							
+						}
+						entry.setLastCheckedFileSize(entry.getFileSize());
 					}
-				} // For
-				if (isAllFilesAreSteady == false) {
-					logger.debug(String.format("waiting %1$d for steady check", checkSteadyStateInterval));
-					doSleep(checkSteadyStateInterval);
 				}
-				else {
+				if(allFilesAreSteady){
+					logger.info(String.format("%s break steady check. all files are steady.",msg));
 					break;
 				}
 			}
-			if (isAllFilesAreSteady == false) {
+			if (allFilesAreSteady == false) {
 				String msg = "not all files are steady";
 				logger.error(msg);
 				for (SOSFileListEntry objFile : sourceFileList.List()) {
@@ -170,7 +171,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 			}
 		}
-		return isAllFilesAreSteady;
+		return allFilesAreSteady;
 	}
 	
 	/**
