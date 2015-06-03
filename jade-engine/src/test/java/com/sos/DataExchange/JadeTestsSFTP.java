@@ -37,6 +37,13 @@ public class JadeTestsSFTP extends JadeTestBase{
 	}
 
 	@Test
+	public void testLocal2sftpCheckSteady() throws Exception {
+		options.profile.Value("local_2_sftp_check_steady");
+		
+		this.execute(options);
+	}
+	
+	@Test
 	public void testHttpProxyLocal2sftp() throws Exception {
 		options.profile.Value("http_proxy_local_2_sftp");
 		
