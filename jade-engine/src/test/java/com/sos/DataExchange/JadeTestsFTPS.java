@@ -70,6 +70,13 @@ public class JadeTestsFTPS extends JadeTestBase{
 	}
 	
 	@Test
+	public void testLocal2ImplicitFtps() throws Exception {
+		options.profile.Value("local_2_implicit_ftps");
+		
+		this.execute(options);
+	}
+	
+	@Test
 	public void testLocal2ExplicitFtpsKeystore() throws Exception {
 		options.profile.Value("local_2_explicit_ftps_keystore");
 		
