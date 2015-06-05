@@ -262,7 +262,7 @@ public class JadeTestFtp extends JadeTestBase {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::copy_local2ftp";
 		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("copy_passive2ftp");
+		objOptions.profile.Value("copy_to_homer_sftp");
 		super.testUseProfileWOCreatingTestFiles();
 	}
 
