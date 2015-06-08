@@ -409,7 +409,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			if (options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
 				sb.append(String.format(pattern4String, "AuthMethod", options.ssh_auth_method.Value()));
 			}
-			if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp && !options.ssh_auth_method.Value().equals(enuAuthenticationMethods.password)) {
+			if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp && !options.ssh_auth_method.Value().equalsIgnoreCase("password")) {
 				sb.append(String.format(pattern4String, "AuthFile", "***"));
 			}
 			else {
@@ -503,10 +503,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			sb.append(String.format("%072d%n", 0).replace('0', '*'));
 			sb.append(String.format(pattern4String, "Version", VersionInfo.VERSION_STRING));
 			sb.append(String.format(pattern4String, "Date", timestamp));
-			if (Options().settings.isDirty()) {
+			if (Options().settings.IsNotEmpty()) {
 				sb.append(String.format(pattern4String, "SettingsFile", Options().settings.Value()));
 			}
-			if (Options().profile.isDirty()) {
+			if (Options().profile.IsNotEmpty()) {
 				sb.append(String.format(pattern4String, "Profile", Options().profile.Value()));
 			}
 			sb.append(String.format(pattern4String, "Operation", Options().operation.Value()));
@@ -759,26 +759,26 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				if(SOSString.isEmpty(path)){
 					throw new Exception("objOptions.TargetDir is empty");
 				}
-				if (targetClient.changeWorkingDirectory(path)) {
+				if (targetClient.isDirectory(path)) {
 					cd = true;
 				}
 				else {
 					targetClient.mkdir(path);
-					cd = targetClient.changeWorkingDirectory(path);
+					cd = targetClient.isDirectory(path);
 				}
 			}
 			else {
 				if (path != null && path.length() > 0) {
-					cd = targetClient.changeWorkingDirectory(path);
+					cd = targetClient.isDirectory(path);
 				}
 			}
 			// TODO alternative_remote_dir, wozu und wie gehen wir damit um?
-			if (cd == false && objOptions.alternative_remote_dir.IsNotEmpty()) {// alternative Parameter
+			/*if (cd == false && objOptions.alternative_remote_dir.IsNotEmpty()) {// alternative Parameter
 				String alternativeRemoteDir = objOptions.alternative_remote_dir.Value();
 				logger.debug("..try with alternative parameter [remoteDir=" + alternativeRemoteDir + "]");
-				cd = targetClient.changeWorkingDirectory(alternativeRemoteDir);
+				cd = targetClient.isDirectory(alternativeRemoteDir);
 				objOptions.TargetDir.Value(alternativeRemoteDir);
-			}
+			}*/
 		}
 		catch (Exception e) {
 			throw new JobSchedulerException("..error in makeDirs: " + e, e);
@@ -1174,7 +1174,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							oneOrMoreSingleFilesSpecified(sourceDir);
 						}
 						else {
-							sourceClient.changeWorkingDirectory(sourceDir);
+							//sourceClient.changeWorkingDirectory(sourceDir);
 							ISOSVirtualFile fileHandle = sourceClient.getFileHandle(sourceDir);
 							String msg = "";
 							if (objOptions.NeedTargetClient() == true) {
