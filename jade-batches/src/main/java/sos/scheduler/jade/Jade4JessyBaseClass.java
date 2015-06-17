@@ -84,7 +84,9 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 		int intLogLevel = spooler_log.level();
 		if (intLogLevel < 0) {
 			objO.verbose.value(-1*intLogLevel);
-			logger.debug(objO.toString());
+			// JITL-145: commented to prevent logging of passwords, toString-Method of JSOptionClass calls getAllOptionsAsString 
+			// which itself aggregates a String with all Options without checking, to log that String can result in clear passwords being logged
+//			logger.debug(objO.toString());
 		}
 		logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.Value()));
 		objR.setJSJobUtilites(this);
