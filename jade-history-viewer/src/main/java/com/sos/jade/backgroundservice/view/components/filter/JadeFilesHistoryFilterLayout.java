@@ -14,7 +14,7 @@ import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sos.ftphistory.JadeFilesHistoryFilter;
+import sos.jadehistory.JadeFilesHistoryFilter;
 
 import com.sos.jade.backgroundservice.JADEHistoryViewerUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;

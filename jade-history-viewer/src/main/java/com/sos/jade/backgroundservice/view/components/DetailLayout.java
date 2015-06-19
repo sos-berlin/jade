@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import sos.ftphistory.db.JadeFilesHistoryDBItem;
+import sos.jadehistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.vaadin.ui.Alignment;

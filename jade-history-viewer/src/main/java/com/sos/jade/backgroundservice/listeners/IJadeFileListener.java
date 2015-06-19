@@ -1,6 +1,6 @@
 package com.sos.jade.backgroundservice.listeners;
 
-import sos.ftphistory.JadeFilesHistoryFilter;
+import sos.jadehistory.JadeFilesHistoryFilter;
 
 public interface IJadeFileListener {
 

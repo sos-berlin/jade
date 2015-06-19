@@ -13,10 +13,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sos.ftphistory.JadeFilesHistoryFilter;
-import sos.ftphistory.db.JadeFilesDBLayer;
-import sos.ftphistory.db.JadeFilesHistoryDBItem;
-import sos.ftphistory.db.JadeFilesHistoryDBLayer;
+import sos.jadehistory.JadeFilesHistoryFilter;
+import sos.jadehistory.db.JadeFilesDBLayer;
+import sos.jadehistory.db.JadeFilesHistoryDBItem;
+import sos.jadehistory.db.JadeFilesHistoryDBLayer;
 
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;

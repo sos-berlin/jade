@@ -22,6 +22,7 @@
 	<modules>
 		<module>jade-batches</module>
 		<module>jade-engine</module>
+		<module>jade-history</module>
 		<module>jade-history-viewer</module>
 		<!-- z.Zt. nicht in der Auslieferung -->
 		<module>jade-file-watcher</module>

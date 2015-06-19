@@ -2,7 +2,7 @@ package com.sos.jade.backgroundservice.enums;
 
 import java.util.Date;
 
-import sos.ftphistory.db.JadeFilesDBItem;
+import sos.jadehistory.db.JadeFilesDBItem;
 
 public enum JadeHistoryFileColumns {
 	GUID("guid", String.class, ""), SOSFTP_ID("sosftpId", Long.class, 0), OPERATION("operation", String.class, ""), 

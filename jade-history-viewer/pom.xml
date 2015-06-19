@@ -193,6 +193,33 @@
 										<ignore />
 									</action>
 								</pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>exec-maven-plugin</artifactId>
+                                        <versionRange>[1.2.1,)</versionRange>
+                                        <goals>
+                                            <goal>java</goal>
+                                            <goal>exec</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+						                <groupId>org.codehaus.mojo</groupId>
+						                <artifactId>license-maven-plugin</artifactId>
+                                        <versionRange>[1.7,)</versionRange>
+                                        <goals>
+                                            <goal>add-third-party</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>
@@ -266,8 +293,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.sos-berlin.jobscheduler</groupId>
-			<artifactId>ftp-history</artifactId>
+			<groupId>com.sos-berlin.jade</groupId>
+			<artifactId>jade-history</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

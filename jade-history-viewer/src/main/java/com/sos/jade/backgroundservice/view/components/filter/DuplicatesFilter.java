@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import sos.ftphistory.db.JadeFilesHistoryDBItem;
+import sos.jadehistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
 import com.vaadin.data.Container;
