@@ -15,12 +15,15 @@ import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer2;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVirtualFile;
+import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
 import com.sos.scheduler.model.objects.Spooler;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 import sos.net.SOSMail;
 import sos.net.mail.options.SOSSmtpMailOptions;
 import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
@@ -535,12 +538,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 			}
 			// TODO alternative_remote_dir, wozu und wie gehen wir damit um?
-			if (cd == false && objOptions.alternative_remote_dir.IsNotEmpty()) {// alternative Parameter
+			/*if (cd == false && objOptions.alternative_remote_dir.IsNotEmpty()) {// alternative Parameter
 				String alternativeRemoteDir = objOptions.alternative_remote_dir.Value();
 				logger.debug("..try with alternative parameter [remoteDir=" + alternativeRemoteDir + "]");
 				cd = objDataTargetClient.changeWorkingDirectory(alternativeRemoteDir);
 				objOptions.TargetDir.Value(alternativeRemoteDir);
-			}
+			}*/
 		}
 		catch (Exception e) {
 			throw new JobSchedulerException("..error in makeDirs: " + e, e);
@@ -918,9 +921,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
 								objSourceFileList.renameAtomicTransferFiles();
 								
-								executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
-								executePostTransferCommands(objDataTargetClient, objOptions.Target().PostTransferCommands);
-								executePostTransferCommands(objDataSourceClient, objOptions.Source().PostTransferCommands);
+								executePostTransferCommands();
 								
 								objSourceFileList.DeleteSourceFiles();
 								if (objOptions.TransactionMode.isTrue()) {
@@ -980,6 +981,25 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			String strM = SOSJADE_E_0101.params(e.getLocalizedMessage());
 			objJadeReportLogger.info(strM, e);
 			throw e;
+		}
+	}
+	
+	
+	private void executePostTransferCommands()  throws Exception {
+		SOSConnection2OptionsAlternate target = objOptions.Target();
+		if (target.AlternateOptionsUsed.isTrue()) {
+			executePostTransferCommands(objDataTargetClient, target.Alternatives().PostTransferCommands);
+		}
+		else {
+			executePostTransferCommands(objDataTargetClient, objOptions.PostTransferCommands);
+			executePostTransferCommands(objDataTargetClient, target.PostTransferCommands);
+		}
+		SOSConnection2OptionsAlternate source = objOptions.Source();
+		if (source.AlternateOptionsUsed.isTrue()) {
+			executePostTransferCommands(objDataTargetClient, source.Alternatives().PostTransferCommands);
+		}
+		else {
+			executePostTransferCommands(objDataTargetClient, source.PostTransferCommands);
 		}
 	}
 	
