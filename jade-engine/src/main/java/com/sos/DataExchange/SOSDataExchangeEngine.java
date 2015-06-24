@@ -996,10 +996,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 		SOSConnection2OptionsAlternate source = objOptions.Source();
 		if (source.AlternateOptionsUsed.isTrue()) {
-			executePostTransferCommands(objDataTargetClient, source.Alternatives().PostTransferCommands);
+			executePostTransferCommands(objDataSourceClient, source.Alternatives().PostTransferCommands);
 		}
 		else {
-			executePostTransferCommands(objDataTargetClient, source.PostTransferCommands);
+			executePostTransferCommands(objDataSourceClient, source.PostTransferCommands);
 		}
 	}
 	
