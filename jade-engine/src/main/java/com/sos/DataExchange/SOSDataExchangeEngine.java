@@ -4,7 +4,6 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.*;
-import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.io.Files.JSFile;
@@ -1286,14 +1285,27 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 	
+	
 	/**
 	 * 
 	 * @throws Exception
 	 */
-	private void executePreTransferCommands() throws Exception{
-		executeTransferCommands("objOptions.PreTransferCommands",targetClient, objOptions.PreTransferCommands);
-		executeTransferCommands("objOptions.Target().PreTransferCommands",targetClient, objOptions.Target().PreTransferCommands);
-		executeTransferCommands("objOptions.Source().PreTransferCommands",sourceClient, objOptions.Source().PreTransferCommands);
+	private void executePreTransferCommands() throws Exception {
+		SOSConnection2OptionsAlternate target = objOptions.Target();
+		if (target.AlternateOptionsUsed.isTrue()) {
+			executeTransferCommands("alternative_target_pre_transfer_commands",targetClient, target.Alternatives().PreTransferCommands);
+		}
+		else {
+			executeTransferCommands("pre_transfer_commands",targetClient, objOptions.PreTransferCommands);
+			executeTransferCommands("target_pre_transfer_commands",targetClient, target.PreTransferCommands);
+		}
+		SOSConnection2OptionsAlternate source = objOptions.Source();
+		if (source.AlternateOptionsUsed.isTrue()) {
+			executeTransferCommands("alternative_source_pre_transfer_commands",sourceClient, source.Alternatives().PreTransferCommands);
+		}
+		else {
+			executeTransferCommands("source_pre_transfer_commands",sourceClient, source.PreTransferCommands);
+		}
 	}
 	
 	
@@ -1301,10 +1313,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * 
 	 * @throws Exception
 	 */
-	private void executePostTransferCommands() throws Exception{
-		executeTransferCommands("objOptions.PostTransferCommands",targetClient, objOptions.PostTransferCommands);
-		executeTransferCommands("objOptions.Target().PostTransferCommands",targetClient, objOptions.Target().PostTransferCommands);
-		executeTransferCommands("objOptions.Source().PostTransferCommands",sourceClient, objOptions.Source().PostTransferCommands);
+	private void executePostTransferCommands() throws Exception {
+		SOSConnection2OptionsAlternate target = objOptions.Target();
+		if (target.AlternateOptionsUsed.isTrue()) {
+			executeTransferCommands("alternative_target_post_transfer_commands",targetClient, target.Alternatives().PostTransferCommands);
+		}
+		else {
+			executeTransferCommands("post_transfer_commands",targetClient, objOptions.PostTransferCommands);
+			executeTransferCommands("target_post_transfer_commands",targetClient, target.PostTransferCommands);
+		}
+		SOSConnection2OptionsAlternate source = objOptions.Source();
+		if (source.AlternateOptionsUsed.isTrue()) {
+			executeTransferCommands("alternative_source_post_transfer_commands",sourceClient, source.Alternatives().PostTransferCommands);
+		}
+		else {
+			executeTransferCommands("source_post_transfer_commands",sourceClient, source.PostTransferCommands);
+		}
 	}
 	
 	/**
