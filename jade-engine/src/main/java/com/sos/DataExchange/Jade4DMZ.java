@@ -1,5 +1,6 @@
 package com.sos.DataExchange;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import sos.net.ssh.SOSSSHJobOptions;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
@@ -69,7 +71,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	private final boolean		RemoveFilesOnDMZ			= false;
 	private boolean				RemoveTempFolderOnDMZ		= false;
 	private boolean				RemoveFilesOnIntranet		= false;
-	private boolean 		    RemoveFilesOnInet = false;
+	private boolean 		    RemoveFilesOnInet 			= false;
+	private JadeEngine 			jadeEngine 					= null;
 	
 	private SOSFileList lstFilesTransferredFromIntranet = null;
 	private long lngNoOfFilesTransferredFromIntranet = -1;
@@ -133,7 +136,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		 */
 		VFSFactory.sFTPHandlerClassName = "com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft";
 
-		logger.info(conClassName + " --- " + conSVNVersion);
+//		logger.info(conClassName + " --- " + conSVNVersion);
 		objM = new SOSSSHJob2();
 		objM.keepConnected = true;
 		objO = objM.Options();
@@ -223,22 +226,29 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	}
 
 	private void StartTransferFromDMZ2Intranet() {
-		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
+		JADEOptions obj2DMZ = objOptions.getClone();
 		
  		setDMZasSource4Receive(obj2DMZ);
-		  
+ 		jadeEngine = null;  
 		try {
-			JadeEngine objJade = new JadeEngine(obj2DMZ);
-			objJade.Execute();
-			transfFiles = objJade.getFileList(); 
-			objJade.Logout();
+			jadeEngine = new JadeEngine(obj2DMZ);
+			jadeEngine.Execute();
+			transfFiles = jadeEngine.getFileList(); 
 
-			lstFilesTransferredFromIntranet = objJade.getFileList();
+//			lstFilesTransferredFromIntranet = jadeEngine.getFileList();
 //			lngNoOfFilesTransferredFromIntranet = lstFilesTransferredFromIntranet.count();
 			StartTransferFromDMZ2Intranet = true;
 		}
+		catch (JobSchedulerException e) {
+			throw e;
+		}
 		catch (Exception e) {
 			throw new JobSchedulerException("Transfer failed", e);
+		}
+		finally {
+			if(jadeEngine != null) {
+				jadeEngine.Logout();
+			}
 		}
 
 	} 
@@ -246,7 +256,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	
 	private void StartTransferFromInet2DMZ() {
 
-		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
+		JADEOptions obj2DMZ = objOptions.getClone();
 
 		SOSConnection2OptionsAlternate objSource = objOptions.Source();
 		
@@ -310,21 +320,38 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		final String conMethodName = conClassName + "::StartTransferToDMZ";
 		logger.trace(conMethodName);
 
-		JADEOptions obj2DMZ = (JADEOptions) objOptions.getClone();
+		JADEOptions obj2DMZ = objOptions.getClone();
 		setDMZasTarget(obj2DMZ);
         logger.debug(obj2DMZ.Target().host.Value());
 		logger.debug(obj2DMZ.DirtyString());
+		jadeEngine = null;
+		lstFilesTransferredFromIntranet = null;
+		boolean hasError = false;
 		try {
-			JadeEngine objJade = new JadeEngine(obj2DMZ);
-			objJade.Execute();
-			transfFiles = objJade.getFileList(); 
-			objJade.Logout();
-			lstFilesTransferredFromIntranet = objJade.getFileList();
-			lngNoOfFilesTransferredFromIntranet = lstFilesTransferredFromIntranet.count();
+			jadeEngine = new JadeEngine(obj2DMZ);
+			jadeEngine.Execute();
+			transfFiles = jadeEngine.getFileList(); 
+//			jadeEngine.Logout();
+			lstFilesTransferredFromIntranet = jadeEngine.getFileList();
+//			lngNoOfFilesTransferredFromIntranet = lstFilesTransferredFromIntranet.count();
 			StartTransferToDMZ = true;
 		}
+		catch (JobSchedulerException e) {
+			throw e;
+		}
 		catch (Exception e) {
+			hasError = true;
 			throw new JobSchedulerException("Transfer failed", e);
+		}
+		finally {
+			if (jadeEngine != null) {
+				if (!hasError && hasFilesOnIntranet2Remove()) {
+					jadeEngine.logoutTarget();
+				}
+				else {
+					jadeEngine.Logout();
+				}
+			}
 		}
 	} // private void StartTransferToDMZ
 
@@ -535,9 +562,6 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 	private void executeSSHCommand(final String pstrCommand) {
 
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::executeCommand";
-
 		try {
 			logger.debug(pstrCommand);
 			//TODO: Log4j konfiguration
@@ -562,25 +586,47 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 	private void RemoveFilesOnIntranet() {
 
-		final String conMethodName = conClassName + "::RemoveFilesFromIntranet";
-		logger.debug(conMethodName);
-
-		if (objOptions.remove_files.value() == true) {
-			for (SOSFileListEntry objFile : lstFilesTransferredFromIntranet.List()) {
-				if (objFile.FileExists() == true) {
-					objFile.DeleteSourceFile();
+		if (hasFilesOnIntranet2Remove()) {
+			if (jadeEngine != null && jadeEngine.objDataSourceClient != null && jadeEngine.objDataSourceClient.isConnected()) {
+				logger.info(String.format("Remove files on source \"%s\"", objOptions.Source().host.Value()));
+				for (SOSFileListEntry objFile : lstFilesTransferredFromIntranet.List()) {
+					if (objFile.SourceFileExists() == true) {
+						objFile.DeleteSourceFile();
+					}
+				}
+				jadeEngine.logoutSource();
+			}
+			else {
+				SOSConnection2OptionsAlternate source = objOptions.Source();
+				if (source.AlternateOptionsUsed.isTrue()) {
+					source = source.Alternatives();
+				}
+				// https://change.sos-berlin.com/browse/JADE-297
+				source.user.DefaultValue("");
+				JADEOptions options4remove = new JADEOptions();
+				options4remove.CommandLineArgs(source.getOptionsAsCommandLine());
+				options4remove.operation.Value("delete");
+				options4remove.FileListName.Value(CreateFileList());
+				jadeEngine = null;
+				try {
+					jadeEngine = new JadeEngine(options4remove);
+					jadeEngine.Execute();
+				} catch (Exception e) {
+					throw new JobSchedulerException("Delete source files failed", e);
+				}
+				finally {
+					if (jadeEngine != null) {
+						jadeEngine.Logout();
+					}
 				}
 			}
 		}
 		RemoveFilesOnIntranet = true;
-	} // private void RemoveFilesFromIntranet
+	}
 
 	private void CheckJumpSettings() {
 
-		final String conMethodName = conClassName + "::CheckJumpSettings";
-		logger.trace(conMethodName);
-
-	} // private void CheckJumpSettings
+	}
 
 	private void EstablishSSHConnection() {
 
@@ -594,7 +640,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			objO.password = objOptions.getjump_password();
 			objO.port = objOptions.getjump_port();
 
-			logger.info(objO.toString());
+			logger.info(objO.dirtyString());
 
 			// TODO: connect as method in SSHJob2
 
@@ -610,6 +656,34 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		return transfFiles;
 	}
  
- 
 	
+	/**
+	 * 
+	 * @return String filename of temporary file with source file list
+	 */
+	private String CreateFileList() {
+		String filename = "";
+		try {
+			File tmpFile = File.createTempFile("jade-", null);
+			filename = tmpFile.getAbsolutePath();
+			JSFile file = new JSFile(filename);
+			for (SOSFileListEntry objFile : lstFilesTransferredFromIntranet.List()) {
+				file.WriteLine(objFile.SourceFileName());
+			}
+			file.close();
+			file.deleteOnExit();
+			return filename;
+		} catch (Exception e) {
+			throw new JobSchedulerException(String.format("Problems occured creating file list in file \"%s\"", filename), e);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	private boolean hasFilesOnIntranet2Remove() {
+		return objOptions.remove_files.value() == true && lstFilesTransferredFromIntranet != null && lstFilesTransferredFromIntranet.count() > 0;
+	}
 }
