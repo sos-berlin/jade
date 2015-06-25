@@ -511,6 +511,28 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		catch (Exception e) {
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	public void logoutSource() {
+		try {
+			doLogout(objDataSourceClient);
+		}
+		catch (Exception e) {
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void logoutTarget() {
+		try {
+			doLogout(objDataTargetClient);
+		}
+		catch (Exception e) {
+		}
+	}
 
 	private void makeDirs() {
 		if (objOptions.skip_transfer.isFalse()) {
