@@ -73,6 +73,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	private boolean				RemoveFilesOnIntranet		= false;
 	private boolean 		    RemoveFilesOnInet 			= false;
 	private JadeEngine 			jadeEngine 					= null;
+	private String 				sourceListFilename			= "";
 	
 	private SOSFileList lstFilesTransferredFromIntranet = null;
 	private long lngNoOfFilesTransferredFromIntranet = -1;
@@ -214,13 +215,14 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	private void RemoveFilesFromINet() {
 
 		if (objOptions.remove_files.value() == true) {
-//			JSFile fleFileList = new JSFile.get;
-//			lstFilesTransferredFromDMZ2Intranet.Write2File();
-			/**
-			 * 1) File übertragen ins temp-Verzeichnis
-			 * 2) starten client auf dmz mit delete-option und parameter filelist=
-			 */
-
+			SOSConnection2OptionsAlternate objSource = objOptions.Source();
+			//https://change.sos-berlin.com/browse/JADE-297
+			objSource.user.DefaultValue("");
+			String strD = objSource.getOptionsAsQuotedCommandLine();
+			String strC = "-operation=delete -file_list_name=\""+sourceListFilename+"\"";
+			String command = objOptions.jump_command.Value() + " " + strC + " " + strD + "; rm \"" + sourceListFilename + "\"";
+			logger.debug(String.format("Command on DMZ: %s",command));
+	 		executeSSHCommand(command);
 		}
 		RemoveFilesOnInet = true;
 	}
@@ -277,7 +279,10 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		//see https://change.sos-berlin.com/browse/JADE-226
 
 		//strC += " -log_filename=" + getUniqueFileName("log");
-		//strC += " -createResultSet=true -ResultSetFileName=" + getUniqueFileName("fls");
+		if (objOptions.remove_files.value()) {
+			sourceListFilename = getUniqueFileName("source.tmp");
+			strC += " -createResultSet=true -ResultSetFileName=" + sourceListFilename;
+		}
 		strC += " -target_protocol=local";
 		
 		String command = objOptions.jump_command.Value() + " " + strC + " " + strD;
@@ -337,6 +342,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			StartTransferToDMZ = true;
 		}
 		catch (JobSchedulerException e) {
+			hasError = true;
 			throw e;
 		}
 		catch (Exception e) {
@@ -587,39 +593,18 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	private void RemoveFilesOnIntranet() {
 
 		if (hasFilesOnIntranet2Remove()) {
-			if (jadeEngine != null && jadeEngine.objDataSourceClient != null && jadeEngine.objDataSourceClient.isConnected()) {
-				logger.info(String.format("Remove files on source \"%s\"", objOptions.Source().host.Value()));
-				for (SOSFileListEntry objFile : lstFilesTransferredFromIntranet.List()) {
-					if (objFile.SourceFileExists() == true) {
-						objFile.DeleteSourceFile();
-					}
-				}
-				jadeEngine.logoutSource();
+			SOSConnection2OptionsAlternate source = objOptions.Source();
+			if (source.AlternateOptionsUsed.isTrue()) {
+				source = source.Alternatives();
 			}
-			else {
-				SOSConnection2OptionsAlternate source = objOptions.Source();
-				if (source.AlternateOptionsUsed.isTrue()) {
-					source = source.Alternatives();
-				}
-				// https://change.sos-berlin.com/browse/JADE-297
-				source.user.DefaultValue("");
-				JADEOptions options4remove = new JADEOptions();
-				options4remove.CommandLineArgs(source.getOptionsAsCommandLine());
-				options4remove.operation.Value("delete");
-				options4remove.FileListName.Value(CreateFileList());
-				jadeEngine = null;
-				try {
-					jadeEngine = new JadeEngine(options4remove);
-					jadeEngine.Execute();
-				} catch (Exception e) {
-					throw new JobSchedulerException("Delete source files failed", e);
-				}
-				finally {
-					if (jadeEngine != null) {
-						jadeEngine.Logout();
-					}
+			logger.info(String.format("Remove files on source \"%s\"", source.host.Value()));
+			reconnect(source);
+			for (SOSFileListEntry objFile : lstFilesTransferredFromIntranet.List()) {
+				if (objFile.SourceFileExists() == true) {
+					objFile.DeleteSourceFile();
 				}
 			}
+			jadeEngine.logoutSource();
 		}
 		RemoveFilesOnIntranet = true;
 	}
@@ -659,31 +644,29 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 	
 	/**
 	 * 
-	 * @return String filename of temporary file with source file list
-	 */
-	private String CreateFileList() {
-		String filename = "";
-		try {
-			File tmpFile = File.createTempFile("jade-", null);
-			filename = tmpFile.getAbsolutePath();
-			JSFile file = new JSFile(filename);
-			for (SOSFileListEntry objFile : lstFilesTransferredFromIntranet.List()) {
-				file.WriteLine(objFile.SourceFileName());
-			}
-			file.close();
-			file.deleteOnExit();
-			return filename;
-		} catch (Exception e) {
-			throw new JobSchedulerException(String.format("Problems occured creating file list in file \"%s\"", filename), e);
-		}
-	}
-	
-	
-	/**
-	 * 
 	 * @return boolean
 	 */
 	private boolean hasFilesOnIntranet2Remove() {
 		return objOptions.remove_files.value() == true && lstFilesTransferredFromIntranet != null && lstFilesTransferredFromIntranet.count() > 0;
+	}
+	
+	
+	private void reconnect(SOSConnection2OptionsAlternate options) {
+		if (!jadeEngine.objDataSourceClient.isConnected()) {
+			try {
+				jadeEngine.objDataSourceClient.getHandler().Connect(options);
+				jadeEngine.objDataSourceClient.getHandler().Authenticate(options);
+				if (options.passive_mode.value()) {
+					jadeEngine.objDataSourceClient.passive();
+				}
+				if (options.transfer_mode.isDirty() && options.transfer_mode.IsNotEmpty()) {
+					jadeEngine.objDataSourceClient.TransferMode(options.transfer_mode);
+				}
+			} catch (JobSchedulerException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new JobSchedulerException(e);
+			}
+		}
 	}
 }
