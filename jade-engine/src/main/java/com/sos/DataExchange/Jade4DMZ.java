@@ -89,7 +89,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	}
 	
 	/**
-	 * Transfer from Intanet/Internet to DMZ
+	 * Transfer from Intranet/Internet to DMZ
 	 * 
 	 * @param operation
 	 * @param dir
@@ -101,7 +101,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
 		// Source oder Target Options
 		SOSConnection2OptionsAlternate destinationOptions = new SOSConnection2OptionsAlternate();
-		destinationOptions.protocol.Value(objOptions.jump_protocol.Value());
+		//destinationOptions.protocol.Value(objOptions.jump_protocol.Value());
+		destinationOptions.protocol.Value("sftp"); //It works only with sftp
 		destinationOptions.host.Value(objOptions.jump_host.Value());
 		destinationOptions.port.Value(objOptions.jump_port.Value());
 		destinationOptions.user.Value(objOptions.jump_user.Value());
@@ -218,6 +219,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.file_spec.Value(".*");
 		options.file_path.Value("");
 		options.force_files.value(false);
+		options.verbose.value(objOptions.verbose.value());
 		
 		options.settings.Value("");
 		options.profile.Value("");
@@ -253,13 +255,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.TargetDir.Value(targetDir);
 		
 		options.transactional.value(true);
-		options.remove_files.value(false);
+		options.remove_files.value(objOptions.remove_files.value());
 		options.compress_files.value(false);
 		options.append_files.value(false);
 		options.CreateSecurityHashFile.value(false);
 		options.createFoldersOnTarget.value(true);
 		options.replacement.Value("");
 		options.replacing.Value("");
+		options.verbose.value(objOptions.verbose.value());
 				
 		options.file_spec.Value(objOptions.file_spec.Value());
 		options.file_path.Value(objOptions.file_path.Value());

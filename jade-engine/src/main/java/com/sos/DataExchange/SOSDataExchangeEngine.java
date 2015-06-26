@@ -1293,6 +1293,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private void executePreTransferCommands() throws Exception {
 		SOSConnection2OptionsAlternate target = objOptions.Target();
 		if (target.AlternateOptionsUsed.isTrue()) {
+			target = target.Alternatives();
 			executeTransferCommands("alternative_target_pre_transfer_commands",targetClient, target.Alternatives().PreTransferCommands);
 		}
 		else {
@@ -1306,6 +1307,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		else {
 			executeTransferCommands("source_pre_transfer_commands",sourceClient, source.PreTransferCommands);
 		}
+		//with JADE4DMZ it could be that the source.PreTransferCommands 
+		//needs more time than the target connection is still established
+		if (objOptions.NeedTargetClient()) {
+			targetClient.reconnect(target);
+		}
 	}
 	
 	
@@ -1316,19 +1322,24 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private void executePostTransferCommands() throws Exception {
 		SOSConnection2OptionsAlternate target = objOptions.Target();
 		if (target.AlternateOptionsUsed.isTrue()) {
-			executeTransferCommands("alternative_target_post_transfer_commands",targetClient, target.Alternatives().PostTransferCommands);
+			target = target.Alternatives();
+			executeTransferCommands("alternative_target_post_transfer_commands",targetClient, target.PostTransferCommands);
 		}
 		else {
 			executeTransferCommands("post_transfer_commands",targetClient, objOptions.PostTransferCommands);
 			executeTransferCommands("target_post_transfer_commands",targetClient, target.PostTransferCommands);
 		}
+		
 		SOSConnection2OptionsAlternate source = objOptions.Source();
+		String caller = "source_post_transfer_commands";
 		if (source.AlternateOptionsUsed.isTrue()) {
-			executeTransferCommands("alternative_source_post_transfer_commands",sourceClient, source.Alternatives().PostTransferCommands);
+			source = source.Alternatives();
+			caller = "alternative_" + caller;
 		}
-		else {
-			executeTransferCommands("source_post_transfer_commands",sourceClient, source.PostTransferCommands);
-		}
+		//with JADE4DMZ it could be that the target.PostTransferCommands 
+		//needs more time than the source connection is still established
+		sourceClient.reconnect(source);
+		executeTransferCommands(caller,sourceClient, source.PostTransferCommands);
 	}
 	
 	/**
