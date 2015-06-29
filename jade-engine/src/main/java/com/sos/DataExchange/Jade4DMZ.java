@@ -1,6 +1,5 @@
 package com.sos.DataExchange;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
@@ -12,7 +11,6 @@ import sos.net.ssh.SOSSSHJobOptions;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
@@ -220,7 +218,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			objSource.user.DefaultValue("");
 			String strD = objSource.getOptionsAsQuotedCommandLine();
 			String strC = "-operation=delete -file_list_name=\""+sourceListFilename+"\"";
-			String command = objOptions.jump_command.Value() + " " + strC + " " + strD + "; rm \"" + sourceListFilename + "\"";
+			String command = objOptions.jump_command.Value() + " " + strC + " " + strD;
 			logger.debug(String.format("Command on DMZ: %s",command));
 	 		executeSSHCommand(command);
 		}
@@ -237,8 +235,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 			jadeEngine.Execute();
 			transfFiles = jadeEngine.getFileList(); 
 
-//			lstFilesTransferredFromIntranet = jadeEngine.getFileList();
-//			lngNoOfFilesTransferredFromIntranet = lstFilesTransferredFromIntranet.count();
+			lstFilesTransferredFromIntranet = jadeEngine.getFileList();
+			lngNoOfFilesTransferredFromIntranet = lstFilesTransferredFromIntranet.count();
 			StartTransferFromDMZ2Intranet = true;
 		}
 		catch (JobSchedulerException e) {
@@ -280,8 +278,8 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 
 		//strC += " -log_filename=" + getUniqueFileName("log");
 		if (objOptions.remove_files.value()) {
-			sourceListFilename = getUniqueFileName("source.tmp");
-			strC += " -createResultSet=true -ResultSetFileName=" + sourceListFilename;
+			sourceListFilename = strTempFolderNameOnDMZ + ".source.tmp";
+			strC += " -ResultSetFileName=" + sourceListFilename;
 		}
 		strC += " -target_protocol=local";
 		
@@ -560,7 +558,7 @@ public class Jade4DMZ extends  JadeBaseEngine implements Runnable {
 		final String conMethodName = conClassName + "::RemoveTempFolderOnDMZ";
 		logger.trace(conMethodName);
 		if (CreateTempFolderOnDMZ == true) {
-			executeSSHCommand("rm -f -R " + strTempFolderNameOnDMZ);
+			executeSSHCommand("rm -f -R " + strTempFolderNameOnDMZ + "*");
 			CreateTempFolderOnDMZ = false;
 			RemoveTempFolderOnDMZ = true;
 		}
