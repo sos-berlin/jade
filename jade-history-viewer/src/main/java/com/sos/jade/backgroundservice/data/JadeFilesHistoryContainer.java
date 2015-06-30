@@ -40,8 +40,8 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 				}
 				Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
 				mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
-				Property transferTimestamp = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName());
-				transferTimestamp.setValue(historyItem.getTransferTimestamp());
+				Property transferTimestamp = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_START.getName());
+				transferTimestamp.setValue(historyItem.getTransferStart());
 				Property operation = item.getItemProperty(JadeHistoryFileColumns.OPERATION.getName());
 				operation.setValue(historyItem.getOperation());
 				Property protocol = item.getItemProperty(JadeHistoryFileColumns.PROTOCOL.getName());
@@ -67,9 +67,9 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 		addContainerProperty(JadeFileColumns.MANDATOR.getName(), 
 				JadeFileColumns.MANDATOR.getType(), 
 				JadeFileColumns.MANDATOR.getDefaultValue());
-		addContainerProperty(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), 
-				JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getType(), 
-				JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getDefaultValue());
+		addContainerProperty(JadeHistoryFileColumns.TRANSFER_START.getName(), 
+				JadeHistoryFileColumns.TRANSFER_START.getType(), 
+				JadeHistoryFileColumns.TRANSFER_START.getDefaultValue());
 		addContainerProperty(JadeHistoryFileColumns.OPERATION.getName(), 
 				JadeHistoryFileColumns.OPERATION.getType(), 
 				JadeHistoryFileColumns.OPERATION.getDefaultValue());

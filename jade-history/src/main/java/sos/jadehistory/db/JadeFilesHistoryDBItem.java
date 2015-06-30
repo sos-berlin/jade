@@ -51,14 +51,15 @@ import com.sos.hibernate.classes.DbItem;
  */
 
 @Entity
-@Table(name="SOSFTP_FILES_HISTORY")
+@Table(name="JADE_FILES_HISTORY")
              
 public class JadeFilesHistoryDBItem extends DbItem{
 
 	 private String guid;
-	 private Long sosftpId;
+	 private Long jadeId;
 	 private String operation;
-	 private Date transferTimestamp;
+	 private Date transferStart;
+	 private Date transferEnd;
 	 private Integer pid;
      private Integer ppid;
      private String targetHost;
@@ -89,7 +90,7 @@ public class JadeFilesHistoryDBItem extends DbItem{
      
 	
 	@ManyToOne (optional=true, fetch=FetchType.LAZY)
-	@JoinColumn(name="`SOSFTP_ID`", nullable=true)
+	@JoinColumn(name="`JADE_ID`", nullable=true)
 	public JadeFilesDBItem getJadeFilesDBItem() {
 	  return this.jadeFilesDBItem;	
 	}
@@ -109,14 +110,14 @@ public class JadeFilesHistoryDBItem extends DbItem{
 		this.guid = guid;
 	}
 
-   @Column(name="`SOSFTP_ID`",nullable=false,updatable=false,insertable=false)
-	public Long getSosftpId() {
-		return sosftpId;
+   @Column(name="`JADE_ID`",nullable=false,updatable=false,insertable=false)
+	public Long getJadeId() {
+		return jadeId;
 	}
 
-   @Column(name="`SOSFTP_ID`",nullable=false,updatable=false,insertable=false)
-	public void setSosftpId(Long softpId) {
-		this.sosftpId=softpId;
+   @Column(name="`JADE_ID`",nullable=false,updatable=false,insertable=false)
+	public void setJadeId(Long jadeId) {
+		this.jadeId=jadeId;
 	}
 
    
@@ -132,16 +133,28 @@ public class JadeFilesHistoryDBItem extends DbItem{
 		this.operation = operation;
 	}
 
-   @Column(name="`TRANSFER_TIMESTAMP`",nullable=false)
+   @Column(name="`TRANSFER_START`",nullable=false)
    @Temporal(TemporalType.TIMESTAMP)
-   public Date getTransferTimestamp() {
-		return transferTimestamp;
+   public Date getTransferStart() {
+		return transferStart;
 	}
 
-   @Column(name="`TRANSFER_TIMESTAMP`",nullable=false)
+   @Column(name="`TRANSFER_START`",nullable=false)
    @Temporal(TemporalType.TIMESTAMP)
-	public void setTransferTimestamp(Date transferTimestamp) {
-		this.transferTimestamp = transferTimestamp;
+	public void setTransferStart(Date transferStart) {
+		this.transferStart = transferStart;
+	}
+
+   @Column(name="`TRANSFER_END`",nullable=false)
+   @Temporal(TemporalType.TIMESTAMP)
+   public Date getTransferEnd() {
+		return transferEnd;
+	}
+
+   @Column(name="`TRANSFER_END`",nullable=false)
+   @Temporal(TemporalType.TIMESTAMP)
+	public void setTransferEnd(Date transferEnd) {
+		this.transferEnd = transferEnd;
 	}
 
    @Column(name="`PID`",nullable=false)
@@ -374,16 +387,25 @@ public class JadeFilesHistoryDBItem extends DbItem{
 
 
    @Transient 
-   public String getTransferTimestampIso() {
-		if (this.getTransferTimestamp() == null) {
+   public String getTransferStartIso() {
+		if (this.getTransferStart() == null) {
 			return "";
 		}else{
 		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-		    String transferTimestampIso = formatter.format(this.getTransferTimestamp());
-		    return transferTimestampIso;
+		    String transferStartIso = formatter.format(this.getTransferStart());
+		    return transferStartIso;
 		}
 	}
 
-
+   @Transient 
+   public String getTransferEndIso() {
+		if (this.getTransferEnd() == null) {
+			return "";
+		}else{
+		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+		    String transferEndIso = formatter.format(this.getTransferEnd());
+		    return transferEndIso;
+		}
+	}
 
 }

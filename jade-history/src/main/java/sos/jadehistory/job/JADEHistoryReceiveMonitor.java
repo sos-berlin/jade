@@ -9,7 +9,7 @@ import sos.util.SOSSchedulerLogger;
 public class JADEHistoryReceiveMonitor extends Monitor_impl {
 
 	@SuppressWarnings("unused")
-	private final String		conClassName					= "SOSFTPHistoryReceiveMonitor";
+	private final String		conClassName					= "JADEHistoryReceiveMonitor";
 	public final String			conSVNVersion					= "$Id: SOSDataExchangeEngine.java 19091 2013-02-08 12:49:32Z kb $";
 
     /**
@@ -29,7 +29,7 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
           }*/
 
           spooler_task.order().params().set_var("replacing","[.]csv");
-          // siehe SOSFTPHistoryReceiveMonitor.fillPosition#remoteFilename
+          // siehe JADEHistoryReceiveMonitor.fillPosition#remoteFilename
           spooler_task.order().params().set_var("replacement","{sos[date:yyyyMMddHHmmssSSS]sos}.csv");
 
         return true;
@@ -141,7 +141,7 @@ public boolean spooler_process_after(final boolean arg0) throws Exception {
 
 
       String lastLocalFileName = conn.getSingleValue(sql.toString());
-      //FileSize wird in SOSFTPHistoryJob.importFile() gesetzt
+      //FileSize wird in JADEHistoryJob.importFile() gesetzt
       if(lastLocalFileName == null || lastLocalFileName.length() == 0){
         sql = new StringBuffer("insert into "+JADEHistory.TABLE_FILES_POSITIONS+"(\"HOST\",\"REMOTE_DIR\",\"REMOTE_FILENAME\",\"LOCAL_FILENAME\",\"FILE_SIZE\",\"POSITION\") ")
             .append("values('"+JADEHistory.getNormalizedField(conn,host,128)+"','"+JADEHistory.getNormalizedField(conn,remoteDir,255)+"','"+JADEHistory.getNormalizedField(conn,remoteFilename,255)+"','"+JADEHistory.getNormalizedField(conn,localFilename,255)+"',0,0)");

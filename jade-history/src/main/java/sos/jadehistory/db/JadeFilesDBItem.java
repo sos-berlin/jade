@@ -37,7 +37,7 @@ import com.sos.hibernate.classes.DbItem;
  */
 
 @Entity
-@Table(name="SOSFTP_FILES")
+@Table(name="JADE_FILES")
 public class JadeFilesDBItem extends DbItem {
 	
 	 private Long id;

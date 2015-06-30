@@ -638,7 +638,7 @@ public class JadeMenuBar extends MenuBar {
 		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName());
 		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PORT.getName());
 		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName());
-		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName());
+		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_START.getName());
 		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PID.getName());
 		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PPID.getName());
 		keys.add(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LOG_FILENAME.getName());

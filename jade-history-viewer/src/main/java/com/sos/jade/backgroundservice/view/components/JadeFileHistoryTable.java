@@ -39,7 +39,7 @@ public class JadeFileHistoryTable extends Table{
 	
 	private static final Object[] visibleColumns = new String[] {
 		JadeHistoryFileColumns.STATUS.getName(), JadeFileColumns.MANDATOR.getName(),
-		JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), JadeHistoryFileColumns.OPERATION.getName(),
+		JadeHistoryFileColumns.TRANSFER_START.getName(), JadeHistoryFileColumns.TRANSFER_END.getName(), JadeHistoryFileColumns.OPERATION.getName(),
 		JadeHistoryFileColumns.PROTOCOL.getName(), JadeHistoryFileColumns.TARGET_FILENAME.getName(), 
 		JadeFileColumns.FILE_SIZE.getName(), JadeFileColumns.SOURCE_HOST.getName(), 
 		JadeHistoryFileColumns.TARGET_HOST.getName()};
@@ -129,8 +129,10 @@ public class JadeFileHistoryTable extends Table{
 				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName()));
 		setColumnHeader(JadeFileColumns.MANDATOR.getName(), 
 				messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()));
-		setColumnHeader(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), 
-				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName()));
+		setColumnHeader(JadeHistoryFileColumns.TRANSFER_START.getName(), 
+				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_START.getName()));
+		setColumnHeader(JadeHistoryFileColumns.TRANSFER_END.getName(), 
+				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_END.getName()));
 		setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), 
 				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()));
 		setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), 
@@ -154,8 +156,10 @@ public class JadeFileHistoryTable extends Table{
 				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName(), locale));
 		setColumnHeader(JadeFileColumns.MANDATOR.getName(), 
 				messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
-		setColumnHeader(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), 
-				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), locale));
+		setColumnHeader(JadeHistoryFileColumns.TRANSFER_START.getName(), 
+				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_START.getName(), locale));
+		setColumnHeader(JadeHistoryFileColumns.TRANSFER_END.getName(), 
+				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_END.getName(), locale));
 		setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), 
 				messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName(), locale));
 		setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), 

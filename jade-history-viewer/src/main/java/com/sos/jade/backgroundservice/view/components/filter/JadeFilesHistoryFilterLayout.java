@@ -62,10 +62,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	@SuppressWarnings("unused")
 	private static final String MESSAGE_RESOURCE_HISTORY = "fileHistory.";
 	private VerticalLayout vlMain;
-	private Date timestampFrom;
-	private Date timestampTo;
-	private DateField dfTimestampFrom;
-	private DateField dfTimestampTo;
+	private Date startFrom;
+	private Date startTo;
+	private DateField dfStartFrom;
+	private DateField dfStartTo;
 	private String mandator;
 	private String sourceFile;
 	private String sourceHost;
@@ -225,8 +225,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		HorizontalLayout hlButtons = initHLayout();
 		vlMain.addComponent(hlButtons);
 		
-		dfTimestampFrom = initDateField(messages.getValue("FilterLayout.from"), timestampFrom);
-		dfTimestampTo = initDateField(messages.getValue("FilterLayout.to"), timestampTo);
+		dfStartFrom = initDateField(messages.getValue("FilterLayout.from"), startFrom);
+		dfStartTo = initDateField(messages.getValue("FilterLayout.to"), startTo);
 		tfMandator = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()), mandator);
 		tfSourceFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName()), sourceFile);
 		tfSourceHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()), sourceHost);
@@ -264,9 +264,9 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		hlForth.addComponents(nsProtocol, tfTargetHost);
 		hlForth.setExpandRatio(nsProtocol, 1);
 		hlForth.setExpandRatio(tfTargetHost, 1);
-		hlFifth.addComponents(dfTimestampFrom, dfTimestampTo);
-		hlFifth.setExpandRatio(dfTimestampFrom, 1);
-		hlFifth.setExpandRatio(dfTimestampTo, 1);
+		hlFifth.addComponents(dfStartFrom, dfStartTo);
+		hlFifth.setExpandRatio(dfStartFrom, 1);
+		hlFifth.setExpandRatio(dfStartTo, 1);
 		hlButtons.addComponents(btnDiscard, btnCommit);
 		hlButtons.setComponentAlignment(btnDiscard, Alignment.MIDDLE_LEFT);
 		hlButtons.setComponentAlignment(btnCommit, Alignment.MIDDLE_LEFT);
@@ -301,8 +301,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	
 	private JadeFilesHistoryFilter createJadeFilesHistoryFilter(){
 		JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
-		filter.setTransferTimestampFrom(dfTimestampFrom.getValue());
-		filter.setTransferTimestampTo(dfTimestampTo.getValue());
+		filter.setTransferStartFrom(dfStartFrom.getValue());
+		filter.setTransferStartTo(dfStartTo.getValue());
 		if(nsProtocol.getValue() != null && !"".equals(nsProtocol.getValue()))
 			filter.setProtocol(nsProtocol.getValue().toString());
 		if(nsStatus.getValue() != null && !"".equals(nsStatus.getValue()))
@@ -318,13 +318,13 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	}
 	
 	private void saveFilterPreferences(){
-		if(dfTimestampFrom.getValue() != null){
+		if(dfStartFrom.getValue() != null){
 			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, dfTimestampFrom.getValue().getTime());
+			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, dfStartFrom.getValue().getTime());
 		}
-		if(dfTimestampTo.getValue() != null){
+		if(dfStartTo.getValue() != null){
 			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, dfTimestampTo.getValue().getTime());
+			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, dfStartTo.getValue().getTime());
 		}
 		if(nsProtocol.getValue() != null && !"".equals(nsProtocol.getValue())){
 			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
@@ -373,14 +373,14 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		}
 		if (lastUsed){
 			Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, 0L);
+					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, 0L);
 			if(timeFrom != 0L){
-				dfTimestampFrom.setValue(new Date(timeFrom));
+				dfStartFrom.setValue(new Date(timeFrom));
 			}
 			Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, 0L); 
+					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L); 
 			if(timeTo != 0L){
-				dfTimestampTo.setValue(new Date(timeTo));
+				dfStartTo.setValue(new Date(timeTo));
 			}
 			String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
 					.get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
@@ -427,8 +427,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	}
 	
 	public void refreshCaptions(Locale locale){
-		dfTimestampFrom.setCaption(messages.getValue("FilterLayout.from", locale));
-		dfTimestampTo.setCaption(messages.getValue("FilterLayout.to", locale));
+		dfStartFrom.setCaption(messages.getValue("FilterLayout.from", locale));
+		dfStartTo.setCaption(messages.getValue("FilterLayout.to", locale));
 		tfMandator.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
 		tfMandator.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
 		nsProtocol.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));

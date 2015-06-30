@@ -35,7 +35,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 	    - sample for JDBC:             -in jdbc -class=oracle.jdbc.driver.OracleDriver jdbc:oracle:thin:@localhost:1521:orcl -user=appman -password=appman SELECT <FIELDS> FROM <TABLE>
 	*/
 	@SuppressWarnings("unused")
-	private final String					conClassName					= "SOSFTPHistoryJob";
+	private final String					conClassName					= "JADEHistoryJob";
 	public final String						conSVNVersion					= "$Id: SOSDataExchangeEngine.java 19091 2013-02-08 12:49:32Z kb $";
 
 	private String							_filePath						= "";
@@ -149,7 +149,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 	}
 
 	/**
-	 * bei SOSFTP ist es möglich "custom" Felder zu definieren, die bei UDP als Auftragsparameter mitgeschickt werden.
+	 * bei JADE ist es möglich "custom" Felder zu definieren, die bei UDP als Auftragsparameter mitgeschickt werden.
 	 * Damit man diese Felder identifizieren kann, werden hier Parameter defininiert, die beim Auftrag dabei sind, aber keine
 	 * "custom" Felder sind
 	 *
@@ -295,7 +295,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			}
 			else {
 				// erwartet wird eine <filename>{sos[date:yyyyMMddHHmmssSSS]sos}.csv Datei
-				// siehe SOSFTPHistoryReceiveMonitor.spooler_process_before()
+				// siehe JADEHistoryReceiveMonitor.spooler_process_before()
 				String fileName = parameters.value(_paramFileName);
 				if (fileName == null || fileName.length() == 0) {
 					throw new JobSchedulerException("missing parameter \"" + _paramFileName + "\" for importFile");
@@ -314,7 +314,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				localFilename = hwFile.getName().toLowerCase();
 				importFileSize = hwFile.length();
 				this.getLogger().info("getting file position for  local filename = " + localFilename + " (current import file size = " + importFileSize + ")");
-				// Position wurde in der SOSFTPHistoryReceiveMonitor.fillPosition() inserted
+				// Position wurde in der JADEHistoryReceiveMonitor.fillPosition() inserted
 				sql = new StringBuffer("select \"POSITION\",\"FILE_SIZE\" from " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("where \"LOCAL_FILENAME\" = '"
 						+ JADEHistory.getNormalizedField(getConnection(), localFilename, 255) + "'");
 				try {
@@ -646,7 +646,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			Insert_cmd insert2 = new Insert_cmd(getConnection(), getLogger(), JADEHistory.TABLE_FILES_HISTORY);
 			insert2.withQuote = true;
 			insert2.set("GUID", guid);
-			insert2.set("SOSFTP_ID", files_id);
+			insert2.set("JADE_ID", files_id);
 			insert2.set("OPERATION", operation);
 			insert2.set("TRANSFER_TIMESTAMP", transfer_timestamp);
 			insert2.set_num("PID", pid);

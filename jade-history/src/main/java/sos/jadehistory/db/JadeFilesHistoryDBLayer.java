@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
@@ -105,13 +106,23 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             and = " and ";
         }
 
-        if (filter.getTransferTimestampFrom() != null) {
-            where += and + " transferTimestamp >= :transferTimestampFrom";
+        if (filter.getTransferStartFrom() != null) {
+            where += and + " transferStart >= :transferStartFrom";
             and = " and ";
         }
 
-        if (filter.getTransferTimestampTo() != null) {
-            where += and + " transferTimestamp <= :transferTimestampTo";
+        if (filter.getTransferStartTo() != null) {
+            where += and + " transferStart <= :transferStartTo";
+            and = " and ";
+        }
+
+        if (filter.getTransferEndFrom() != null) {
+            where += and + " transferEnd >= :transferEndFrom";
+            and = " and ";
+        }
+
+        if (filter.getTransferEndTo() != null) {
+            where += and + " transferEnd <= :transferEndTo";
             and = " and ";
         }
 
@@ -195,8 +206,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             and = " and ";
         }
 
-        if (filter.getSosftpId() != null && !"".equals(filter.getSosftpId())) {
-            where += and + " sosftpId=:sosftpId";
+        if (filter.getJadeId() != null && !"".equals(filter.getJadeId())) {
+            where += and + " jadeId=:jadeId";
             and = " and ";
         }
 
@@ -317,20 +328,28 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             query.setText("guid", filter.getGuid());
         }
 
-        if (filter.getSosftpId() != null && !"".equals(filter.getSosftpId())) {
-            query.setLong("sosftpId", filter.getSosftpId());
+        if (filter.getJadeId() != null && !"".equals(filter.getJadeId())) {
+            query.setLong("jadeId", filter.getJadeId());
         }
 
         if (filter.getOperation() != null && !"".equals(filter.getOperation())) {
             query.setText("operation", filter.getOperation());
         }
 
-        if (filter.getTransferTimestampFrom() != null && !"".equals(filter.getTransferTimestampFrom())) {
-            query.setTimestamp("transferTimestampFrom", filter.getTransferTimestampFrom());
+        if (filter.getTransferStartFrom() != null && !"".equals(filter.getTransferStartFrom())) {
+            query.setTimestamp("transferStartFrom", filter.getTransferStartFrom());
         }
 
-        if (filter.getTransferTimestampTo() != null && !"".equals(filter.getTransferTimestampTo())) {
-            query.setTimestamp("transferTimestampTo", filter.getTransferTimestampTo());
+        if (filter.getTransferStartTo() != null && !"".equals(filter.getTransferStartTo())) {
+            query.setTimestamp("transferStartTo", filter.getTransferStartTo());
+        }
+
+        if (filter.getTransferEndFrom() != null && !"".equals(filter.getTransferEndFrom())) {
+            query.setTimestamp("transferEndFrom", filter.getTransferEndFrom());
+        }
+
+        if (filter.getTransferEndTo() != null && !"".equals(filter.getTransferEndTo())) {
+            query.setTimestamp("transferEndTo", filter.getTransferEndTo());
         }
 
         if (filter.getPid() != null && !"".equals(filter.getPid())) {
@@ -402,7 +421,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         }
 
         if (filter.getJadeFilesDBItem() != null && filter.getJadeFilesDBItem().getId() != null) {
-            query.setLong("sosftpId", filter.getJadeFilesDBItem().getId());
+            query.setLong("jadeId", filter.getJadeFilesDBItem().getId());
         }
 
         if (filter.getMandator() != null && !"".equals(filter.getMandator())) {
@@ -449,24 +468,24 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     
     
 
-    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long sosftpId) throws ParseException {
+    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws ParseException {
         Session session = getSession();
 
         Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery("  from JadeFilesHistoryDBItem where sosftpId=:sosftpId");
-        query.setLong("sosftpId", sosftpId);
+        Query query = session.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
+        query.setLong("jadeId", jadeId);
         List<JadeFilesHistoryDBItem> resultset = query.list();
 
         transaction.commit();
         return resultset;
     }
     
-    public JadeFilesDBItem getJadeFileItemById(Long sosftpId) throws ParseException {
+    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws ParseException {
         Session session = getSession();
 
         Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery("  from JadeFilesDBItem where id=:sosftpId");
-        query.setLong("sosftpId", sosftpId);
+        Query query = session.createQuery("  from JadeFilesDBItem where id=:jadeId");
+        query.setLong("jadeId", jadeId);
         List<JadeFilesDBItem> resultset = query.list();
 
         transaction.commit();
@@ -493,7 +512,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         Session session = getSession();
 
         Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferTimestamp desc");
+        Query query = session.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferStart desc");
         setWhere(query);
         List<JadeFilesHistoryDBItem> resultset = query.list();
 
@@ -540,6 +559,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
 
     @Override
     public List<DbItem> getListOfItemsToDelete()  {
+        TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
          return getFilesHistoryFromTo(filter.getCreatedFrom(),filter.getCreatedTo());
              
     }
@@ -547,7 +567,5 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     public long deleteInterval() {
          return 0;
     }
-
-
 
 }

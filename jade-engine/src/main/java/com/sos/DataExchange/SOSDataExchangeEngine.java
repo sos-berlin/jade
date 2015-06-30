@@ -1419,7 +1419,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		
 	/**
 	 * TODO custom-fields einbauen
-	 * bei SOSFTP ist es m�glich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
+	 * bei JADE ist es m�glich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
 	 * Damit man diese Felder identifizieren kann, werden hier Parameter defininiert, die beim Auftrag dabei sind, aber keine
 	 * "custom" Felder sind
 	 *

@@ -290,9 +290,9 @@ public class DetailLayout extends VerticalLayout {
 		this.historyItem = historyItem;
 		// JadeFilesHistoryDBItem properties
 		this.lblGuid.setValue(historyItem.getGuid());
-		this.lblSosftpId.setValue(historyItem.getSosftpId().toString());
+		this.lblSosftpId.setValue(historyItem.getJadeId().toString());
 		this.lblOperation.setValue(historyItem.getOperation()); 
-		this.lblTransferTimestamp.setValue(sdfOut.format(historyItem.getTransferTimestamp()));
+		this.lblTransferTimestamp.setValue(sdfOut.format(historyItem.getTransferStart()));
 		this.lblPid.setValue(historyItem.getPid().toString());
 		this.lblPpid.setValue(historyItem.getPPid().toString());
 		this.lblTargetHost.setValue(historyItem.getTargetHost());

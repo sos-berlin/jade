@@ -42,10 +42,12 @@ public class JadeFilesHistoryFilter extends SOSHibernateIntervalFilter implement
 	public final String			conSVNVersion					= "$Id: JadeFilesHistoryFilter.java 19091 2013-02-08 12:49:32Z kb $";
 
 	private String guid;
-	private Long sosftpId;
+	private Long jadeId;
 	private String operation;
-	private Date transferTimestampFrom;
-	private Date transferTimestampTo;
+	private Date transferStartFrom;
+	private Date transferStartTo;
+	private Date transferEndFrom;
+	private Date transferEndTo;
 	private Integer pid;
     private Integer ppid;
     private String targetHost;
@@ -69,8 +71,10 @@ public class JadeFilesHistoryFilter extends SOSHibernateIntervalFilter implement
     private Date   modifiedFrom;
     private Date   modifiedTo;
     private String modifiedBy;
-	private String transferTimestampFromIso;
-	private String transferTimestampToIso;
+	private String transferStartFromIso;
+	private String transferStartToIso;
+	private String transferEndFromIso;
+	private String transferEndToIso;
 	private String mandator;
 	private Integer fileSize;
 	private String sourceFile;
@@ -155,11 +159,11 @@ public class JadeFilesHistoryFilter extends SOSHibernateIntervalFilter implement
 	public String getTitle() {
 		String s = "";
 
-		if (transferTimestampFrom != null) {
-			s += String.format("From: %s ", date2Iso(transferTimestampFrom));
+		if (transferStartFrom != null) {
+			s += String.format("From: %s ", date2Iso(transferStartFrom));
 		}
-		if (transferTimestampTo != null) {
-			s += String.format("To: %s ", date2Iso(transferTimestampTo));
+		if (transferStartTo != null) {
+			s += String.format("To: %s ", date2Iso(transferStartTo));
 		}
 
 		String title = String.format("%1s ", s);
@@ -183,12 +187,12 @@ public class JadeFilesHistoryFilter extends SOSHibernateIntervalFilter implement
 
 	@Override
 	public void setIntervalFromDateIso(final String s) {
-		transferTimestampFromIso = s;
+		transferStartFromIso = s;
 	}
 
 	@Override
 	public void setIntervalToDateIso(final String s) {
-		transferTimestampToIso = s;
+		transferStartToIso = s;
 	}
 
 	public Date getModifiedFrom() {
@@ -251,54 +255,105 @@ public class JadeFilesHistoryFilter extends SOSHibernateIntervalFilter implement
 
 	}
 
-	public Date getTransferTimestampFrom() {
-		return transferTimestampFrom;
+	public Date getTransferStartFrom() {
+		return transferStartFrom;
 	}
 
-	public void setTransferTimestampFrom(final Date from) {
+	public void setTransferStartFrom(final Date from) {
 		if (from != null) {
 			SimpleDateFormat formatter = new SimpleDateFormat(
 					"yyyy-MM-dd 00:00:00");
 			String d = formatter.format(from);
 			try {
 				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				transferTimestampFrom = formatter.parse(d);
+				transferStartFrom = formatter.parse(d);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			transferTimestampFromIso = formatter.format(from);
+			transferStartFromIso = formatter.format(from);
 		}
 	}
 
-	public Date getTransferTimestampTo() {
-		return transferTimestampTo;
+	public Date getTransferStartTo() {
+		return transferStartTo;
 	}
 
-	public void setTransferTimestampTo(final String transferTimestampTo) throws ParseException {
-		if (transferTimestampTo.equals("")) {
-			this.transferTimestampTo = null;
+	public void setTransferStartTo(final String transferStartTo) throws ParseException {
+		if (transferStartTo.equals("")) {
+			this.transferStartTo = null;
 		}
 		else {
 			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat1);
-			Date d = formatter.parse(transferTimestampTo);
-			setTransferTimestampTo(d);
+			Date d = formatter.parse(transferStartTo);
+			setTransferStartTo(d);
 		}
 	}
 
-	public void setTransferTimestampTo(final Date to) {
+	public void setTransferStartTo(final Date to) {
 		if (to != null) {
 			SimpleDateFormat formatter = new SimpleDateFormat(
 					"yyyy-MM-dd 23:59:59");
 			String d = formatter.format(to);
 			try {
 				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				transferTimestampTo = formatter.parse(d);
+				transferStartTo = formatter.parse(d);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			transferTimestampFromIso = formatter.format(to);
+			transferStartFromIso = formatter.format(to);
+		}
+	}
+
+	public Date getTransferEndFrom() {
+		return transferEndFrom;
+	}
+
+	public void setTransferEndFrom(final Date from) {
+		if (from != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd 00:00:00");
+			String d = formatter.format(from);
+			try {
+				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				transferEndFrom = formatter.parse(d);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			transferEndFromIso = formatter.format(from);
+		}
+	}
+
+	public Date getTransferEndTo() {
+		return transferEndTo;
+	}
+
+	public void setTransferEndTo(final String transferEndTo) throws ParseException {
+		if (transferEndTo.equals("")) {
+			this.transferEndTo = null;
+		}
+		else {
+			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat1);
+			Date d = formatter.parse(transferEndTo);
+			setTransferEndTo(d);
+		}
+	}
+
+	public void setTransferEndTo(final Date to) {
+		if (to != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd 23:59:59");
+			String d = formatter.format(to);
+			try {
+				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				transferEndTo = formatter.parse(d);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			transferEndFromIso = formatter.format(to);
 		}
 	}
 
@@ -326,12 +381,12 @@ public class JadeFilesHistoryFilter extends SOSHibernateIntervalFilter implement
 		this.guid = guid;
 	}
 
-	public Long getSosftpId() {
-		return sosftpId;
+	public Long getJadeId() {
+		return jadeId;
 	}
 
-	public void setSosftpId(Long sosftpId) {
-		this.sosftpId = sosftpId;
+	public void setJadeId(Long jadeId) {
+		this.jadeId = jadeId;
 	}
 
 	public String getOperation() {

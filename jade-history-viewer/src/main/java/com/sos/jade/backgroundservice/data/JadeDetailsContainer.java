@@ -120,9 +120,9 @@ public class JadeDetailsContainer extends IndexedContainer {
 				historyItem.getOperation(), 
 				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
-				JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), 
-				historyItem.getTransferTimestamp(), 
-				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName()));
+				JadeHistoryFileColumns.TRANSFER_START.getName(), 
+				historyItem.getTransferStart(), 
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_START.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.PID.getName(), 
 				historyItem.getPid(), 

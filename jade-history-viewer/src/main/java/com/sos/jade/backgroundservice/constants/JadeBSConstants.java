@@ -31,8 +31,8 @@ public abstract class JadeBSConstants {
 	public static final String PREF_KEY_LAST_USED_FILTER				= "last_used_filter";
 	public static final String PREF_KEY_REMOVE_DUPLICATES				= "remove_duplicates";
 	public static final String PREF_KEY_AUTO_REFRESH					= "auto_refresh";
-	public static final String FILTER_OPTION_TRANSFER_TIMESTAMP_FROM 	= "transfer_timestamp_from"; 
-	public static final String FILTER_OPTION_TRANSFER_TIMESTAMP_TO 		= "transfer_timestamp_to"; 
+	public static final String FILTER_OPTION_TRANSFER_START_FROM 		= "transfer_start_from"; 
+	public static final String FILTER_OPTION_TRANSFER_START_TO 			= "transfer_start_to"; 
 	public static final String FILTER_OPTION_PROTOCOL 					= "protocol"; 
 	public static final String FILTER_OPTION_STATUS 					= "status"; 
 	public static final String FILTER_OPTION_OPERATION 					= "operation"; 
