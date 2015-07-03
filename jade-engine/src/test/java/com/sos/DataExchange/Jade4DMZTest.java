@@ -160,9 +160,9 @@ public class Jade4DMZTest {
 		objO.profile.Value("jump_test_send");
 		objO.profile.Value("jump_test_receive");
 		
-		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
-		objO.profile.Value("jump_test_copy_from_internet_socks5_proxy");
-		objO.profile.Value("jump_test_copy_to_internet");
+		//objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
+		//objO.profile.Value("jump_test_copy_from_internet_socks5_proxy");
+		//objO.profile.Value("jump_test_copy_to_internet");
 		
 		
 		objO.ReadSettingsFile();
