@@ -69,7 +69,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * @param dir
 	 */
 	private void transfer(Operation operation, String dir) {
-		logger.info(String.format("operation = %s, dir = %s",
+		logger.info(String.format("operation = %s, jump dir = %s",
 				operation, dir));
 
 		JadeEngine jade = null;
@@ -98,7 +98,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * @return
 	 */
 	private JADEOptions getTransferOptions(Operation operation, String dir) throws Exception{
-		logger.debug(String.format("operation = %s, dir = %s",
+		logger.debug(String.format("operation = %s, jump dir = %s",
 				operation, dir));
 
 		// Source oder Target Options
@@ -141,9 +141,12 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			//1) From Internet to DMZ as PreTransferCommands
 			JADEOptions jadeOnDMZOptions = createTransferToDMZOptions(dir);
 			jadeOnDMZOptions.log_filename.Value("");
+			
 			SOSConnection2OptionsAlternate jadeOnDMZSourceOptions = objOptions.Source();
 			jadeOnDMZSourceOptions.log_filename.Value("");
+			
 			SOSConnection2OptionsAlternate jadeOnDMZTargetOptions = setDestinationOptionsPrefix("target_",destinationOptions);
+			
 			jadeOnDMZOptions.getConnectionOptions().Source(jadeOnDMZSourceOptions);
 			jadeOnDMZOptions.getConnectionOptions().Target(jadeOnDMZTargetOptions);
 			
@@ -156,7 +159,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			
 			//2) From DMZ to Intranet
 			options = createTransferFromDMZOptions(dir);
-			options.TargetDir.Value(dir);
+			options.TargetDir = objOptions.Target().Directory;
 			destinationOptions.PreTransferCommands.Value(getJadeOnDMZCommand(jadeOnDMZOptions));
 			destinationOptions = setTransferFromDMZDestinationOptions("source_",destinationOptions, objOptions.Source());
 			destinationOptions = setDestinationOptionsPrefix("source_",destinationOptions);
