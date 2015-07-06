@@ -90,6 +90,68 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		}
 	}
 	
+	private SOSConnection2OptionsAlternate createJumpOptions(){
+		SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
+		//destinationOptions.protocol.Value(objOptions.jump_protocol.Value());
+		options.protocol.Value("sftp"); //It works only with sftp
+		options.host.Value(objOptions.jump_host.Value());
+		options.port.Value(objOptions.jump_port.Value());
+		options.user.Value(objOptions.jump_user.Value());
+		options.password.Value(objOptions.jump_password.Value());
+		options.ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
+		options.ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
+		
+		return options;
+	}
+	
+	private SOSConnection2OptionsAlternate setJumpProxy(SOSConnection2OptionsAlternate options){
+		options.proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
+		options.proxy_host.Value(objOptions.jump_proxy_host.Value().trim());
+		options.proxy_port.Value(objOptions.jump_proxy_port.Value().trim());
+		options.proxy_user.Value(objOptions.jump_proxy_user.Value().trim());
+		options.proxy_password.Value(objOptions.jump_proxy_password.Value());
+	
+		return options;
+	}
+	
+	
+	private JADEOptions createPostTransferOptions(String dir){
+		//From DMZ to Internet as PostTransferCommands
+		JADEOptions options = createTransferFromDMZOptions(dir);
+		options.TargetDir.Value("");
+		options.log_filename.Value("");
+		
+		SOSConnection2OptionsAlternate sourceOptions = setTransferFromDMZDestinationOptions("source_",new SOSConnection2OptionsAlternate(),objOptions.Source());
+		SOSConnection2OptionsAlternate targetOptions = objOptions.Target();
+		targetOptions.log_filename.Value("");
+		
+		options.getConnectionOptions().Source(sourceOptions);
+		options.getConnectionOptions().Target(targetOptions);
+		return options;
+	}
+	
+	
+	private JADEOptions createPreTransferOptions(String dir){
+		//From Internet to DMZ as PreTransferCommands
+		JADEOptions options = createTransferToDMZOptions(dir);
+		options.log_filename.Value("");
+		
+		SOSConnection2OptionsAlternate sourceOptions = objOptions.Source();
+		sourceOptions.log_filename.Value("");
+		SOSConnection2OptionsAlternate targetOptions = setDestinationOptionsPrefix("target_",createJumpOptions());
+		
+		options.getConnectionOptions().Source(sourceOptions);
+		options.getConnectionOptions().Target(targetOptions);
+		
+		//Remove source files at Internet as PostTransferCommands
+		options.remove_files.value(false);
+		if (objOptions.remove_files.value()) {
+			options.ResultSetFileName.Value(getSourceListFilename());
+		}
+		
+		return options;
+	}
+	
 	/**
 	 * Transfer from Intranet/Internet to DMZ
 	 * 
@@ -101,74 +163,40 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		logger.debug(String.format("operation = %s, jump dir = %s",
 				operation, dir));
 
-		// Source oder Target Options
-		SOSConnection2OptionsAlternate destinationOptions = new SOSConnection2OptionsAlternate();
-		//destinationOptions.protocol.Value(objOptions.jump_protocol.Value());
-		destinationOptions.protocol.Value("sftp"); //It works only with sftp
-		destinationOptions.host.Value(objOptions.jump_host.Value());
-		destinationOptions.port.Value(objOptions.jump_port.Value());
-		destinationOptions.user.Value(objOptions.jump_user.Value());
-		destinationOptions.password.Value(objOptions.jump_password.Value());
-		destinationOptions.ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
-		destinationOptions.ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
-
-		destinationOptions.proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
-		destinationOptions.proxy_host.Value(objOptions.jump_proxy_host.Value().trim());
-		destinationOptions.proxy_port.Value(objOptions.jump_proxy_port.Value().trim());
-		destinationOptions.proxy_user.Value(objOptions.jump_proxy_user.Value().trim());
-		destinationOptions.proxy_password.Value(objOptions.jump_proxy_password.Value());
-		
 		JADEOptions options = null;
+		JADEOptions jumpCommandOptions;
+		SOSConnection2OptionsAlternate jumpOptions = createJumpOptions();
+		jumpOptions = setJumpProxy(jumpOptions);
+		
 		if (operation.equals(Operation.copyToInternet)) {
-			//2) From DMZ to Internet as PostTransferCommands
-			JADEOptions jadeOnDMZOptions = createTransferFromDMZOptions(dir);
-			jadeOnDMZOptions.TargetDir.Value("");
-			jadeOnDMZOptions.log_filename.Value("");
-			SOSConnection2OptionsAlternate jadeOnDMZSourceOptions = setTransferFromDMZDestinationOptions("source_",new SOSConnection2OptionsAlternate(),objOptions.Source());
-			SOSConnection2OptionsAlternate jadeOnDMZTargetOptions = objOptions.Target();
-			jadeOnDMZTargetOptions.log_filename.Value("");
-			jadeOnDMZOptions.getConnectionOptions().Source(jadeOnDMZSourceOptions);
-			jadeOnDMZOptions.getConnectionOptions().Target(jadeOnDMZTargetOptions);
-			
-			//1) From Intranet to DMZ
 			options = createTransferToDMZOptions(dir);
-			destinationOptions.PostTransferCommands.Value(getJadeOnDMZCommand(jadeOnDMZOptions));
-			destinationOptions = setDestinationOptionsPrefix("target_",destinationOptions);
+			
+			jumpCommandOptions = createPostTransferOptions(dir);
+			jumpOptions.PostTransferCommands.Value(getJadeOnDMZCommand(jumpCommandOptions));
+			jumpOptions = setDestinationOptionsPrefix("target_",jumpOptions);
+			
 			options.getConnectionOptions().Source(objOptions.Source());
-			options.getConnectionOptions().Target(destinationOptions);
+			options.getConnectionOptions().Target(jumpOptions);
 		} 
 		else {
-			//1) From Internet to DMZ as PreTransferCommands
-			JADEOptions jadeOnDMZOptions = createTransferToDMZOptions(dir);
-			jadeOnDMZOptions.log_filename.Value("");
-			
-			SOSConnection2OptionsAlternate jadeOnDMZSourceOptions = objOptions.Source();
-			jadeOnDMZSourceOptions.log_filename.Value("");
-			
-			SOSConnection2OptionsAlternate jadeOnDMZTargetOptions = setDestinationOptionsPrefix("target_",destinationOptions);
-			
-			jadeOnDMZOptions.getConnectionOptions().Source(jadeOnDMZSourceOptions);
-			jadeOnDMZOptions.getConnectionOptions().Target(jadeOnDMZTargetOptions);
-			
-			//3) Remove source files at Internet as PostTransferCommands
-			jadeOnDMZOptions.remove_files.value(false);
-			if (objOptions.remove_files.value()) {
-				jadeOnDMZOptions.ResultSetFileName.Value(getSourceListFilename());
-				destinationOptions.PostTransferCommands.Value(getJadeOnDMZCommand4RemoveSource(jadeOnDMZOptions));
-			}
-			
-			//2) From DMZ to Intranet
 			options = createTransferFromDMZOptions(dir);
-			options.TargetDir = objOptions.Target().Directory;
-			destinationOptions.PreTransferCommands.Value(getJadeOnDMZCommand(jadeOnDMZOptions));
-			destinationOptions = setTransferFromDMZDestinationOptions("source_",destinationOptions, objOptions.Source());
-			destinationOptions = setDestinationOptionsPrefix("source_",destinationOptions);
-			options.getConnectionOptions().Source(destinationOptions);
+			
+			jumpCommandOptions = createPreTransferOptions(dir);
+			jumpOptions.PreTransferCommands.Value(getJadeOnDMZCommand(jumpCommandOptions));
+			if (objOptions.remove_files.value()) {
+				//Remove source files at Internet as PostTransferCommands.
+				//See createPreTransferOptions
+				jumpOptions.PostTransferCommands.Value(getJadeOnDMZCommand4RemoveSource(jumpCommandOptions));
+			}
+			jumpOptions = setDestinationOptionsPrefix("source_",jumpOptions);
+			
+			options.getConnectionOptions().Source(jumpOptions);
 			options.getConnectionOptions().Target(objOptions.Target());
 		}
 
 		return options;
 	}
+	
 	
 	/**
 	 * 
@@ -221,7 +249,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 */
 	private JADEOptions createTransferFromDMZOptions(String dir){
 		
-		JADEOptions options = objOptions.getClone();
+		JADEOptions options = new JADEOptions(); //objOptions.getClone();
 		options.operation.Value("copy");
 		options.protocol.Value("local");
 		options.host.Value(objOptions.jump_host.Value());
@@ -245,7 +273,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.ResultSetFileName.setNotDirty();
 		
 		options.settings.setNotDirty();
-		options.ClearJumpParameter();
+		//options.ClearJumpParameter();
 		
 		options.getConnectionOptions().Source(null);
 		options.getConnectionOptions().Target(null);
