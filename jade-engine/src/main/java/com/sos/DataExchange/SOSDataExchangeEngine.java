@@ -9,6 +9,7 @@ import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
+import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.HistoryRecordType;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
@@ -1263,6 +1264,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						logger.error(msg);
 						jadeReportLogger.error(msg);
 						sourceFileList.Rollback();
+						sendTransferHistory();
 						throw e;
 					}
 				} // end while (true)
@@ -1431,21 +1433,27 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		if (objOptions.SendTransferHistory.isTrue()) {
 			String schedulerHost = objOptions.scheduler_host.Value();
 			if (isEmpty(schedulerHost)) {
-				logger.debug("No data sent to the background service due to missing host name");
+				logger.info("No data sent to the background service due to missing host name");
 				return;
 			}
 			if (objOptions.scheduler_port.isNotDirty()) {
-				logger.debug("No data sent to the background service due to missing port number");
+				logger.info("No data sent to the background service due to missing port number");
 				return;
 			}
-
+			
 			for (SOSFileListEntry entry : sourceFileList.List()) {
 				if (sendTransferHistory4File(entry)) {
 					countSentHistoryRecords++;
 				}
 			}
 			// TODO I18N
-			logger.debug(String.format("%1$d transfer history records sent to background service", countSentHistoryRecords));
+			logger.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s", 
+					countSentHistoryRecords,
+					objOptions.scheduler_host.Value(),
+					objOptions.scheduler_port.Value(),
+					objOptions.scheduler_job_chain.Value(),
+					objOptions.Scheduler_Transfer_Method.Value()
+					));
 		}
 		else {
 			logger.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
@@ -1464,7 +1472,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @return
 	 */
 	private boolean sendTransferHistory4File(final SOSFileListEntry entry) {
-		Properties fileProperties = entry.getFileAttributesAsProperties();
+		Properties fileProperties = entry.getFileAttributesAsProperties(HistoryRecordType.XML);
 		if (schedulerFactory == null) {
 			schedulerFactory = new SchedulerObjectFactory(objOptions.scheduler_host.Value(), objOptions.scheduler_port.value());
 			schedulerFactory.initMarshaller(Spooler.class);
@@ -1478,8 +1486,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		
 		Params params = schedulerFactory.setParams(fileProperties);
 		addOrder.setParams(params);
-		
 		addOrder.run();
+		
 		return true;
 	}
 }
