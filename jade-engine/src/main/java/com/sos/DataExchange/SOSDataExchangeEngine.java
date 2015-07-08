@@ -1225,7 +1225,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								
 								executePostTransferCommands();
 								
-								sourceFileList.DeleteSourceFiles();
+								sourceFileList.deleteSourceFiles();
 								if (objOptions.TransactionMode.isTrue()) {
 									sourceFileList.EndTransaction();
 									sendTransferHistory();
@@ -1259,8 +1259,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						}
 					}
 					catch (JobSchedulerException e) {
-						String msg = TRANSACTION_ABORTED.get(e);
-						//logger.error(strM, e);
+						String msg = null;
+						if(objOptions.transactional.value()){
+							msg = TRANSACTION_ABORTED.get(e);
+						}
+						else{
+							msg = TRANSFER_ABORTED.get(e);
+						}
 						logger.error(msg);
 						jadeReportLogger.error(msg);
 						sourceFileList.Rollback();

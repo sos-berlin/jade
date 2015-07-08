@@ -32,6 +32,8 @@ public class SOSJadeMessageCodes extends JSToolBox {
 	 * \brief could not complete transaction, cause: %1$s
 	 */
 	public static final SOSMsgJade	TRANSACTION_ABORTED				= new SOSMsgJade("SOSDataExchangeEngine.TRANSACTION_ABORTED");
+	
+	public static final SOSMsgJade	TRANSFER_ABORTED				= new SOSMsgJade("SOSDataExchangeEngine.TRANSFER_ABORTED");
 	/*!
 	 * \var EXCEPTION_RAISED
 	 * \brief %1$s: Exception raised, cause: %2$s
