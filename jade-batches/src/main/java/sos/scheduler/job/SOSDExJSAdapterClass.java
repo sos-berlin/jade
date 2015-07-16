@@ -8,7 +8,6 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
-import sos.spooler.Job_chain;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
@@ -45,9 +44,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE	= "scheduler_SOSFileOperations_ResultSetSize";
 	public static final String	conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT		= "scheduler_SOSFileOperations_file_count";
 	
-	private SOSFileList		transfFiles		= null;
-	private SOSFTPOptions	objJadeOptions	= null;
-	private JadeEngine		objJadeEngine	= null;
+	private SOSFileList		transfFiles	= null;
+	private SOSFTPOptions	jadeOptions	= null;
+	private JadeEngine		jadeEngine	= null;
 	
 	public SOSDExJSAdapterClass() {
 		super();
@@ -71,130 +70,138 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
 	private void doProcessing() throws Exception {
 		
-		objJadeOptions = null;
-		objJadeEngine = new JadeEngine();
-		objJadeOptions = objJadeEngine.Options();
-		objJadeOptions.CurrentNodeName(getCurrentNodeName());
-		hsmParameters = getSchedulerParameterAsProperties(getJobOrOrderParameters());
-		objJadeOptions.setAllOptions(objJadeOptions.DeletePrefix(hsmParameters, "ftp_"));
+		jadeOptions = null;
+		jadeEngine = new JadeEngine();
+		jadeOptions = jadeEngine.Options();
+		jadeOptions.CurrentNodeName(getCurrentNodeName());
+		jadeOptions.setAllOptions(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
 		//objJadeOptions.CheckMandatory(); //is made in Execute method
-		int intLogLevel = spooler_log.level();
-		if (intLogLevel <= 0) {
-			objJadeOptions.verbose.value(-1*intLogLevel);
+		int intLogLevel = -1*spooler_log.level();
+		if (intLogLevel > jadeOptions.verbose.value()) {
+			jadeOptions.verbose.value(intLogLevel);
 		}
-		objJadeEngine.setJSJobUtilites(this);
+		jadeEngine.setJSJobUtilites(this);
 		try {
-			objJadeEngine.Execute();
+			jadeEngine.Execute();
 		} 
 		catch (Exception e) {
 			throw e;
 		}
 		finally {
-			objJadeEngine.Logout();
+			jadeEngine.Logout();
 		}
-		transfFiles = objJadeEngine.getFileList();
-		int intNoOfHitsInResultSet = transfFiles.List().size();
-		if (intNoOfHitsInResultSet <= 0 && isOrderJob()) {
-			if (objJadeOptions.PollErrorState.isDirty()) {
-				String strPollErrorState = objJadeOptions.PollErrorState.Value();
-				logger.info("set order-state to " + strPollErrorState);
-				setNextNodeState(strPollErrorState);
+		transfFiles = jadeEngine.getFileList();
+		int resultSetSize = transfFiles.List().size();
+		if (resultSetSize <= 0 && isOrderJob()) {
+			if (jadeOptions.PollErrorState.isDirty()) {
+				String pollErrorState = jadeOptions.PollErrorState.Value();
+				logger.info("set order-state to " + pollErrorState);
+				setNextNodeState(pollErrorState);
 				spooler_task.order().params().set_var(conVarname_ftp_result_error_message, "");
 				spooler_task.order().set_state_text("ended with no files found");
 			}
 		}
 		if (isJobchain()) {
-			String strOnEmptyResultSet = objJadeOptions.on_empty_result_set.Value();
-			if (isNotEmpty(strOnEmptyResultSet) && intNoOfHitsInResultSet <= 0) {
-				JSJ_I_0090.toLog(strOnEmptyResultSet);
-				spooler_task.order().set_state(strOnEmptyResultSet);
+			String onEmptyResultSetState = jadeOptions.on_empty_result_set.Value();
+			if (isNotEmpty(onEmptyResultSetState) && resultSetSize <= 0) {
+				JSJ_I_0090.toLog(onEmptyResultSetState);
+				spooler_task.order().set_state(onEmptyResultSetState);
 			}
 		}
-		String strRaiseErrorIfResultSetIs = objJadeOptions.raise_error_if_result_set_is.Value();
-		if (isNotEmpty(strRaiseErrorIfResultSetIs)) {
-			boolean flgR = objJadeOptions.expected_size_of_result_set.compare(strRaiseErrorIfResultSetIs, intNoOfHitsInResultSet);
+		String raiseErrorIfResultSetIs = jadeOptions.raise_error_if_result_set_is.Value();
+		if (isNotEmpty(raiseErrorIfResultSetIs)) {
+			boolean flgR = jadeOptions.expected_size_of_result_set.compare(raiseErrorIfResultSetIs, resultSetSize);
 			if (flgR == true) {
-				String strM = JSJ_E_0040.get(intNoOfHitsInResultSet, strRaiseErrorIfResultSetIs, objJadeOptions.expected_size_of_result_set.value());
+				String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expected_size_of_result_set.value());
 				logger.error(strM);
 				throw new JobSchedulerException(strM);
 			}
 		}
-		createOrderParameter(objJadeEngine);
-		if (intNoOfHitsInResultSet > 0 && objJadeOptions.create_order.isTrue()) {
-			String strOrderJobChainName = objJadeOptions.order_jobchain_name.Value();
-			if (objJadeOptions.create_orders_for_all_files.isTrue()) {
-				for (SOSFileListEntry objListItem : transfFiles.List()) {
-					createOrder(objListItem, strOrderJobChainName);
+		createOrderParameter(jadeEngine);
+		if (resultSetSize > 0 && jadeOptions.create_order.isTrue()) {
+			String jobChainName = jadeOptions.order_jobchain_name.Value();
+			if (jadeOptions.create_orders_for_all_files.isTrue()) {
+				for (SOSFileListEntry listItem : transfFiles.List()) {
+					createOrder(listItem, jobChainName);
 				}
 			}
 			else {
-				createOrder(transfFiles.List().get(0), strOrderJobChainName);
+				createOrder(transfFiles.List().get(0), jobChainName);
 			}
 		}
 	} // doProcessing
 
-	/**
-	 *
-	 * @param pstrOrderJobChainName
-	 */
-	protected void createOrder(final SOSFileListEntry pobjListItem, final String pstrOrderJobChainName) {
-		Order objOrder = spooler.create_order();
-		Variable_set objOrderParams = spooler.create_variable_set();
-		// kb: merge actual parameters into created order params (2012-07-25)
-		if (objJadeOptions.MergeOrderParameter.isTrue()) {
-			objOrderParams.merge(spooler_task.order().params());
-		}
-		String strTargetFileName = pobjListItem.TargetFileName();
-		objOrder.set_id(strTargetFileName);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_PATH, strTargetFileName);
-		String strT = new File(strTargetFileName).getParent();
-		if (strT == null) {
-			strT = "";
-		}
-		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_PARENT, strT);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_FILE_NAME, new File(strTargetFileName).getName());
-		objOrderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_PARENT, strT);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_NAME, new File(strTargetFileName).getName());
-		String strSourceFileName = pobjListItem.SourceFileName();
-		strT = new File(strSourceFileName).getParent();
-		if (strT == null) {
-			strT = "";
-		}
-		objOrderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_PARENT, strT);
-		objOrderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_NAME, new File(strSourceFileName).getName());
-		strT = JSJ_I_0018.get(strSourceFileName, pstrOrderJobChainName); // "Order '%1$s' created for JobChain '%2$s'."
-		if (changeOrderState() == true) {
-			String strNextState = objJadeOptions.next_state.Value();
-			objOrder.set_state(strNextState);
-			strT += " " + JSJ_I_0019.get(strNextState); // "Next State is '%1$s'."
-		}
-		objOrder.set_params(objOrderParams);
-		objOrder.set_title(JSJ_I_0017.get(spooler_task.job().name())); // "Order created by %1$s"
-		Job_chain objJobchain = spooler.job_chain(pstrOrderJobChainName);
-		objJobchain.add_order(objOrder);
-		logger.info(strT);
-	} // private void createOrder
-
+	
 	/**
 	 * 
-	*
-	* \brief changeOrderState
-	*
-	* \details
-	* 
-	* \return boolean
-	*
+	 * @param listItem
+	 * @param jobChainName
+	 */
+	protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
+		Order order = spooler.create_order();
+		Variable_set orderParams = spooler.create_variable_set();
+		// kb: merge actual parameters into created order params (2012-07-25)
+		if (jadeOptions.MergeOrderParameter.isTrue()) {
+			orderParams.merge(spooler_task.order().params());
+		}
+		String[] targetFile = getFilenameParts(jadeOptions.TargetDir.Value(),listItem.TargetFileName());
+		orderParams.set_value(conOrderParameterSCHEDULER_FILE_PATH, targetFile[0]);
+		orderParams.set_value(conOrderParameterSCHEDULER_FILE_PARENT, targetFile[1]);
+		orderParams.set_value(conOrderParameterSCHEDULER_FILE_NAME, targetFile[2]);
+		orderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_PARENT, targetFile[1]);
+		orderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_NAME, targetFile[2]);
+		String[] sourceFile = getFilenameParts(jadeOptions.SourceDir.Value(),listItem.SourceFileName());
+		orderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_PARENT, sourceFile[1]);
+		orderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_NAME, sourceFile[2]);
+		
+		String targetFilename = listItem.TargetFileName().replace('\\', '/');
+		order.set_id(targetFilename);
+		String strT = JSJ_I_0018.get(targetFilename, jobChainName); // "Order '%1$s' created for JobChain '%2$s'."
+		if (changeOrderState()) {
+			String nextState = jadeOptions.next_state.Value();
+			order.set_state(nextState);
+			strT += " " + JSJ_I_0019.get(nextState); // "Next State is '%1$s'."
+		}
+		order.set_params(orderParams);
+		order.set_title(JSJ_I_0017.get(spooler_task.job().name())); // "Order created by %1$s"
+		spooler.job_chain(jobChainName).add_order(order);
+		logger.info(strT);
+	}
+	
+	
+	/**
+	 * 
+	 * @param folder
+	 * @param filename
+	 * @return
+	 */
+	private String[] getFilenameParts(String folder, String filename) {
+		String[] file = {"","",""};
+		if (folder == null) {
+			folder = "";
+		}
+		folder = folder.replace('\\', '/').replaceFirst("/$", "");
+		if (filename == null) {
+			filename = "";
+		}
+		filename = filename.replace('\\', '/');
+		if (!filename.startsWith(folder)) {
+			filename = folder + "/" + filename;
+		}
+		File f = new File(filename);
+		file[0] = filename;
+		file[1] = f.getParent().replace('\\', '/');
+		file[2] = f.getName();
+		return file;
+	}
+	
+	/**
+	 * 
+	 * @return
 	 */
 	private boolean changeOrderState() {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::changeOrderState";
-		boolean flgR = false;
-		String strNextState = objJadeOptions.next_state.Value();
-		if (isNotEmpty(strNextState)) {
-			flgR = true;
-		}
-		return flgR;
-	} // private boolean changeOrderState
+		return isNotEmpty(jadeOptions.next_state.Value());
+	}
 	
 	private void createOrderParameter(final JadeEngine objR) throws Exception {
 		try {
