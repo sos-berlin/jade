@@ -425,7 +425,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			if (options.Directory.isDirty()) {
 				sb.append(String.format(pattern4String, "Directory", options.Directory.Value()));
 			}
-			if (Options().file_path.isDirty()) {
+			if (Options().file_path.IsNotEmpty()) {
 				sb.append(String.format(pattern4String, "FilePath", Options().file_path.Value()));
 			}
 			if (Options().FileListName.isDirty()) {
@@ -469,7 +469,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				sb.append(String.format(pattern4String, "AtomicSuffix", Options().atomic_suffix.Value()));
 			}
 		}
-		if (options.replacement.isDirty() && options.replacing.isDirty()) {
+		if (options.replacement.isDirty() && options.replacing.IsNotEmpty()) {
 			sb.append(String.format(pattern4Rename, "Rename", options.replacing.Value(), options.replacement.Value()));
 		}
 		return sb.toString();
