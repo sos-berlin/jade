@@ -29,6 +29,13 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 		SOSDataExchangeEngine4DMZMain main = new SOSDataExchangeEngine4DMZMain();
 	 	main.execute(args);
 	}
+	
+	/**
+	 * This constructor is necessary to find i18n messages
+	 */
+	protected SOSDataExchangeEngine4DMZMain() {
+		super("SOSDataExchange");
+	}
 
 	/**
 	 * 
