@@ -21,6 +21,9 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.scheduler.model.SchedulerObjectFactory;
+import com.sos.scheduler.model.commands.JSCmdAddOrder;
+import com.sos.scheduler.model.objects.Spooler;
 
 /**
  * \file SOSJade4DMZJSAdapter.java
@@ -56,7 +59,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
 	private SOSFileList		transfFiles	= null;
 	private SOSFTPOptions	jadeOptions	= null;
-
+	private SchedulerObjectFactory	jobSchedulerFactory	= null;
+	
 	
 	
 	public SOSJade4DMZJSAdapter() {
@@ -165,7 +169,74 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 	 * @param jobChainName
 	 */
 	protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
+		String feedback;
+		if (jadeOptions.order_jobscheduler_host.isNotEmpty()) {
+			feedback = createOrderOnRemoteJobScheduler(listItem, jobChainName);
+		}
+		else {
+			feedback = createOrderOnLocalJobScheduler(listItem, jobChainName);
+		}
+		logger.info(feedback);
+	}
+	
+	/**
+	 * 
+	 * @param listItem
+	 * @param jobChainName
+	 * @return
+	 */
+	protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
+		if (jobSchedulerFactory == null) {
+			jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.order_jobscheduler_host.Value(), jadeOptions.order_jobscheduler_port.value());
+			jobSchedulerFactory.initMarshaller(Spooler.class);
+			jobSchedulerFactory.Options().TransferMethod.Set(jadeOptions.Scheduler_Transfer_Method);
+			jobSchedulerFactory.Options().PortNumber.Set(jadeOptions.order_jobscheduler_port);
+			jobSchedulerFactory.Options().ServerName.Set(jadeOptions.order_jobscheduler_host);
+		}
+		JSCmdAddOrder order = jobSchedulerFactory.createAddOrder();
+		String targetFilename = listItem.TargetFileName().replace('\\', '/');;
+		order.setId(targetFilename);
+		order.setJobChain(jobChainName);
+		order.setParams(jobSchedulerFactory.setParams(buildOrderParams(listItem)));
+		//		logger.debug(objOrder.toXMLString());
+		String feedback = JSJ_I_0018.get(targetFilename, jobChainName); // "Order '%1$s' created for JobChain '%2$s'."
+		if (changeOrderState()) {
+			String strNextState = jadeOptions.next_state.Value();
+			order.setState(strNextState);
+			feedback += " " + JSJ_I_0019.get(strNextState); // "Next State is '%1$s'."
+		}
+		order.run();
+		return feedback;
+	}
+	
+	/**
+	 * 
+	 * @param listItem
+	 * @param jobChainName
+	 * @return
+	 */
+	protected String createOrderOnLocalJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
 		Order order = spooler.create_order();
+		String targetFilename = listItem.TargetFileName().replace('\\', '/');
+		order.set_id(targetFilename);
+		String feedback = JSJ_I_0018.get(targetFilename, jobChainName); // "Order '%1$s' created for JobChain '%2$s'."
+		if (changeOrderState()) {
+			String nextState = jadeOptions.next_state.Value();
+			order.set_state(nextState);
+			feedback += " " + JSJ_I_0019.get(nextState); // "Next State is '%1$s'."
+		}
+		order.set_params(buildOrderParams(listItem));
+		order.set_title(JSJ_I_0017.get(spooler_task.job().name())); // "Order created by %1$s"
+		spooler.job_chain(jobChainName).add_order(order);
+		return feedback;
+	}
+	
+	/**
+	 * 
+	 * @param listItem
+	 * @return
+	 */
+	private Variable_set buildOrderParams(SOSFileListEntry listItem) {
 		Variable_set orderParams = spooler.create_variable_set();
 		// kb: merge actual parameters into created order params (2012-07-25)
 		if (jadeOptions.MergeOrderParameter.isTrue()) {
@@ -180,19 +251,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 		String[] sourceFile = getFilenameParts(jadeOptions.SourceDir.Value(),listItem.SourceFileName());
 		orderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_PARENT, sourceFile[1]);
 		orderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_NAME, sourceFile[2]);
-		
-		String targetFilename = listItem.TargetFileName().replace('\\', '/');
-		order.set_id(targetFilename);
-		String strT = JSJ_I_0018.get(targetFilename, jobChainName); // "Order '%1$s' created for JobChain '%2$s'."
-		if (changeOrderState()) {
-			String nextState = jadeOptions.next_state.Value();
-			order.set_state(nextState);
-			strT += " " + JSJ_I_0019.get(nextState); // "Next State is '%1$s'."
-		}
-		order.set_params(orderParams);
-		order.set_title(JSJ_I_0017.get(spooler_task.job().name())); // "Order created by %1$s"
-		spooler.job_chain(jobChainName).add_order(order);
-		logger.info(strT);
+		return orderParams;
 	}
 	
 	
