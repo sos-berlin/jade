@@ -28,21 +28,14 @@ package sos.jadehistory.db;
 * Created on 15.06.2011 15:06:50
  */
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -50,8 +43,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.sos.hibernate.classes.DbItem;
+
 //oh 18.04.14 No runnable methods [SP]
-@Ignore("Test set to Ignore for later examination")
+@Ignore("Test set to Ignore for later examination") //comment this to run tests locally
+//11.08.15 runnable test methods added [SP] 
 public class TestJadeFilesHistorie {
  
 	private String configurationFilename = "c:/temp/hibernate.cfg.xml";
@@ -79,7 +75,32 @@ public class TestJadeFilesHistorie {
 	public void tearDown() throws Exception {
 	}
 
+	@Test
+	public void testPartialSearchword(){
+		JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFile);
+		Session session = layer.getSession();
+		Transaction transaction = session.beginTransaction();
+        Query query = layer.createQuery(" from JadeFilesDBItem where sourceFilename like '%Mass%'");
+        List<DbItem> resultset = query.list();
+        assertNotNull(resultset);
+        for(DbItem item : resultset){
+        	System.out.println("**** sourceFilename: " + ((JadeFilesDBItem)item).getSourceFilename() + "****");
+        }
+        transaction.commit();
+	}
 
- 
+	@Test
+	public void testCompleteSearchword(){
+		JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFile);
+		Session session = layer.getSession();
+		Transaction transaction = session.beginTransaction();
+        Query query = layer.createQuery(" from JadeFilesDBItem where sourceFilename = 'Masstest00001.txt'");
+        List<DbItem> resultset = query.list();
+        assertNotNull(resultset);
+        for(DbItem item : resultset){
+        	System.out.println("**** sourceFilename: " + ((JadeFilesDBItem)item).getSourceFilename() + "****");
+        }
+        transaction.commit();
+	}
 
 }

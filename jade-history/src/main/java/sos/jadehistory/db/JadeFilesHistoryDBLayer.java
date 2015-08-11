@@ -217,7 +217,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         }
 
         if (filter.getTargetFilename() != null && !"".equals(filter.getTargetFilename())) {
-            where += and + " targetFilename=:targetFilename";
+            where += and + " targetFilename like :targetFilename";
             and = " and ";
         }
 
@@ -247,7 +247,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         }
 
         if (filter.getSourceFile() != null && !"".equals(filter.getSourceFile())) {
-            where += and + " history.jadeFilesDBItem.sourceFilename=:sourceFilename";
+            where += and + " history.jadeFilesDBItem.sourceFilename like :sourceFilename";
             and = " and ";
         }
 
