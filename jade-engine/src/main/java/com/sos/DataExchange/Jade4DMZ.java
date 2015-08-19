@@ -97,6 +97,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.password.Value(objOptions.jump_password.Value());
 		options.ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
 		options.ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
+		options.strictHostKeyChecking.value(objOptions.jump_strict_hostkey_checking.value());
 		
 		return options;
 	}
