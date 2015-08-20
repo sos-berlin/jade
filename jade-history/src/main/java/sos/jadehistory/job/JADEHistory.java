@@ -51,7 +51,7 @@ public class JADEHistory {
 	public static String	TABLE_FILES				= "JADE_FILES";
 	public static String	TABLE_FILES_HISTORY		= "JADE_FILES_HISTORY";
 	public static String	TABLE_FILES_POSITIONS	= "JADE_FILES_POSITIONS";
-	public static String	SEQ_TABLE_FILES			= "SOSFTP_FILES_ID_SEQ";
+	public static String	SEQ_TABLE_FILES			= "JADE_FILES_ID_SEQ";
 
 	/** Testausgaben zulassen: siehe JADEHistory.debugParams() */
 	private static boolean	_doDebug				= false;

@@ -128,7 +128,9 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 		_mappings.put("mapping_md5", "md5");
 		_mappings.put("mapping_file_size", "file_size");
 		_mappings.put("mapping_guid", "guid");
-		_mappings.put("mapping_transfer_timestamp", "transfer_timestamp");
+//		_mappings.put("mapping_transfer_timestamp", "transfer_timestamp");
+		_mappings.put("mapping_transfer_start", "transfer_start");
+		_mappings.put("mapping_transfer_end", "transfer_end");
 		_mappings.put("mapping_pid", "pid");
 		_mappings.put("mapping_ppid", "ppid");
 		_mappings.put("mapping_target_host", "remote_host");
@@ -556,8 +558,12 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			doLineDebug(isOrder, "record " + _recordFoundCount + ": file_size = " + file_size);
 			String guid = getRecordValue(hstRecordFields, "mapping_guid");
 			doLineDebug(isOrder, "record " + _recordFoundCount + ": guid = " + guid);
-			String transfer_timestamp = getRecordValue(hstRecordFields, "mapping_transfer_timestamp");
-			doLineDebug(isOrder, "record " + _recordFoundCount + ": transfer_timestamp = " + transfer_timestamp);
+//			String transfer_timestamp = getRecordValue(hstRecordFields, "mapping_transfer_timestamp");
+//			doLineDebug(isOrder, "record " + _recordFoundCount + ": transfer_timestamp = " + transfer_timestamp);
+			String transfer_start = getRecordValue(hstRecordFields, "mapping_transfer_start");
+			doLineDebug(isOrder, "record " + _recordFoundCount + ": transfer_start = " + transfer_start);
+			String transfer_end = getRecordValue(hstRecordFields, "mapping_transfer_end");
+			doLineDebug(isOrder, "record " + _recordFoundCount + ": transfer_end = " + transfer_end);
 			String pid = getRecordValue(hstRecordFields, "mapping_pid");
 			doLineDebug(isOrder, "record " + _recordFoundCount + ": pid = " + pid);
 			String ppid = getRecordValue(hstRecordFields, "mapping_ppid");
@@ -648,7 +654,9 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			insert2.set("GUID", guid);
 			insert2.set("JADE_ID", files_id);
 			insert2.set("OPERATION", operation);
-			insert2.set("TRANSFER_TIMESTAMP", transfer_timestamp);
+//			insert2.set("TRANSFER_TIMESTAMP", transfer_timestamp);
+			insert2.set("TRANSFER_START", transfer_start);
+			insert2.set("TRANSFER_END", transfer_end);
 			insert2.set_num("PID", pid);
 			insert2.set_num("PPID", ppid);
 			insert2.set("TARGET_HOST", target_host);
@@ -820,7 +828,18 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			if (attr_val.length() == 0) {
 				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
 			}
-		} else if (mappingName.equals("mapping_transfer_timestamp")) {
+		} 
+//		else if (mappingName.equals("mapping_transfer_timestamp")) {
+//			if (attr_val.length() == 0) {
+//				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
+//			}
+//			try {
+//				SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
+//			} catch (Exception e) {
+//				throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
+//			}
+//		} 
+		else if (mappingName.equals("mapping_transfer_start")) {
 			if (attr_val.length() == 0) {
 				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
 			}
@@ -829,7 +848,18 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			} catch (Exception e) {
 				throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
 			}
-		} else if (mappingName.equals("mapping_file_size") || mappingName.equals("mapping_pid") || mappingName.equals("mapping_ppid")) {
+		} 
+		else if (mappingName.equals("mapping_transfer_end")) {
+			if (attr_val.length() == 0) {
+				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
+			}
+			try {
+				SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
+			} catch (Exception e) {
+				throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
+			}
+		} 
+		else if (mappingName.equals("mapping_file_size") || mappingName.equals("mapping_pid") || mappingName.equals("mapping_ppid")) {
 			if (attr_val.length() == 0) {
 				attr_val = "0";
 			} else {
