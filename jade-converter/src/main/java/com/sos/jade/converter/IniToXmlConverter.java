@@ -21,6 +21,8 @@ import javax.xml.bind.Marshaller;
 import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.JSHelper.Options.SOSOptionJadeOperation;
+import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
@@ -213,10 +215,10 @@ public class IniToXmlConverter {
 					Copy copy = new Copy();
 					operation.setCopy(copy);
 						// CopySource
-						CopySource copySource = createCopySource(options, protocolFragments);
+						CopySource copySource = createCopySource(options, protocolFragments, false);
 						copy.setCopySource(copySource);
 						// CopyTarget
-						CopyTarget copyTarget = createCopyTarget(protocolFragments, options);
+						CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
 						copy.setCopyTarget(copyTarget);
 						// TransferOptions
 						if (isTransferOptionsSpecified(options)) {
@@ -228,14 +230,16 @@ public class IniToXmlConverter {
 					Move move = new Move();
 					operation.setMove(move);
 						// MoveSource
-						MoveSource moveSource = createMoveSource(protocolFragments, options);
+						MoveSource moveSource = createMoveSource(protocolFragments, options, false);
 						move.setMoveSource(moveSource);
 						// MoveTarget
-						MoveTarget moveTarget = createMoveTarget(protocolFragments, options);
+						MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
 						move.setMoveTarget(moveTarget);
 						// TransferOptions
-						TransferOptions transferOptions = createTransferOptions(options);
-						move.setTransferOptions(transferOptions);
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							move.setTransferOptions(transferOptions);								
+						}
 				} else if (operationValue.equalsIgnoreCase("remove")) {
 					// Remove
 					Remove remove = new Remove();
@@ -250,11 +254,146 @@ public class IniToXmlConverter {
 						// GetListSource
 						GetListSource getListSource = createGetListSource(protocolFragments, options);
 						getList.setGetListSource(getListSource);
+				} else if (operationValue.equalsIgnoreCase("copytointernet")) {
+					if (options.remove_files.isTrue()) {
+						// Move
+						Move move = new Move();
+						operation.setMove(move);
+							// MoveSource
+							MoveSource moveSource = createMoveSource(protocolFragments, options, false);
+							move.setMoveSource(moveSource);
+							// MoveTarget
+							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, true); // Jump
+							move.setMoveTarget(moveTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								move.setTransferOptions(transferOptions);								
+							}
+					} else {
+						// Copy
+						Copy copy = new Copy();
+						operation.setCopy(copy);
+							// CopySource
+							CopySource copySource = createCopySource(options, protocolFragments, false);
+							copy.setCopySource(copySource);
+							// CopyTarget
+							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, true); // Jump
+							copy.setCopyTarget(copyTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								copy.setTransferOptions(transferOptions);
+							}
+					}
+				} else if (operationValue.equalsIgnoreCase("copyfrominternet")) {
+					if (options.remove_files.isTrue()) {
+						// Move
+						Move move = new Move();
+						operation.setMove(move);
+							// MoveSource
+							MoveSource moveSource = createMoveSource(protocolFragments, options, true); // Jump
+							move.setMoveSource(moveSource);
+							// MoveTarget
+							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
+							move.setMoveTarget(moveTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								move.setTransferOptions(transferOptions);								
+							}
+					} else {
+						// Copy
+						Copy copy = new Copy();
+						operation.setCopy(copy);
+							// CopySource
+							CopySource copySource = createCopySource(options, protocolFragments, true); // Jump
+							copy.setCopySource(copySource);
+							// CopyTarget
+							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
+							copy.setCopyTarget(copyTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								copy.setTransferOptions(transferOptions);
+							}
+					}
+				} else if (operationValue.equalsIgnoreCase("send")) {
+					convertFromSendOperation(options);
+					if (options.remove_files.isTrue()) {
+						logger.info("Operation 'send' is deprecated. Trying to convert to a profile with operation 'move'.");
+						// Move
+						Move move = new Move();
+						operation.setMove(move);
+							// MoveSource
+							MoveSource moveSource = createMoveSource(protocolFragments, options, false);
+							move.setMoveSource(moveSource);
+							// MoveTarget
+							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
+							move.setMoveTarget(moveTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								move.setTransferOptions(transferOptions);								
+							}
+					} else {
+						logger.info("Operation 'send' is deprecated. Trying to convert to a profile with operation 'copy'.");
+						// Copy
+						Copy copy = new Copy();
+						operation.setCopy(copy);
+							// CopySource
+							CopySource copySource = createCopySource(options, protocolFragments, false);
+							copy.setCopySource(copySource);
+							// CopyTarget
+							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
+							copy.setCopyTarget(copyTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								copy.setTransferOptions(transferOptions);
+							}
+					}
+				} else if (operationValue.equalsIgnoreCase("receive")) {
+					convertFromReceiveOperation(options);
+					if (options.remove_files.isTrue()) {
+						logger.info("Operation 'receive' is deprecated. Trying to convert to a profile with operation 'move'.");
+						// Move
+						Move move = new Move();
+						operation.setMove(move);
+							// MoveSource
+							MoveSource moveSource = createMoveSource(protocolFragments, options, false);
+							move.setMoveSource(moveSource);
+							// MoveTarget
+							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
+							move.setMoveTarget(moveTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								move.setTransferOptions(transferOptions);								
+							}
+					} else {
+						logger.info("Operation 'receive' is deprecated. Trying to convert to a profile with operation 'copy'.");
+						// Copy
+						Copy copy = new Copy();
+						operation.setCopy(copy);
+							// CopySource
+							CopySource copySource = createCopySource(options, protocolFragments, false);
+							copy.setCopySource(copySource);
+							// CopyTarget
+							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
+							copy.setCopyTarget(copyTarget);
+							// TransferOptions
+							if (isTransferOptionsSpecified(options)) {
+								TransferOptions transferOptions = createTransferOptions(options);
+								copy.setTransferOptions(transferOptions);
+							}
+					}
 				} else if (operationValue.equalsIgnoreCase("zip")) {
-					logger.info("Value 'zip' is currently not allowed for parameter 'operation'.");
+					logger.info("Value 'zip' is not allowed for parameter 'operation'.");
 					logger.info("----- Skipped conversion of profile '" + profilename + "' -----");
 					continue;
 				}
+				
 				// Client
 					if(options.mandator.isDirty()) {
 						logger.info("Using 'mandator=" + options.mandator.Value() + "' for both 'SupplyingClient' and 'ReceivingClient'.");
@@ -275,7 +414,8 @@ public class IniToXmlConverter {
 					} else if (isCreateOrderSpecified(options)) {
 						logger.info("Skipping grouping element 'JobScheduler' as parameter 'create_order' is set to false or not specified.");
 					}
-						
+				/**
+				TODO This does not work yet. The SOSSMTPMailOptionsClass (options.getMailOptions()) doesn't seem to provide any parameters.
 				// Notifications
 				if (isNotificationsSpecified(options)) {
 					Notifications notifications = new Notifications();
@@ -297,7 +437,7 @@ public class IniToXmlConverter {
 							notificationTriggers.setOnEmptyFiles(options.mail_on_empty_files.value());
 						}
 					}
-					// NotificationFragmentRefs TODO This does not work yet. The SOSSMTPMailOptionsClass (options.getMailOptions()) doesn't seem to provide any parameters.
+					// NotificationFragmentRefs
 					if (isNotificationFragmentSpecified(options)) {
 						String fragmentId = getRandomFragmentId();
 						// there currently are only MailFragments, no other NotificationFragments need to be considered for conversion
@@ -316,6 +456,7 @@ public class IniToXmlConverter {
 							notificationFragments.getMailFragment().add(mailFragment);
 					}
 				}
+				**/
 				// CredentialStore
 				if (isCredentialStoreFragmentSpecified(options)) {
 					// CredentialStoreFragmentRef (...)
@@ -340,6 +481,158 @@ public class IniToXmlConverter {
 		return configurations;	
 	}
 	
+	/**
+	 * Operation 'send' is deprecated but has to be supported by the converter. The converter is supposed to create a profile with operation 'copy' or 'move' instead.
+	 * Since the parameters are not prefixed when using the operation 'send', they have to be prefixed by using this method.
+	 * @param options
+	 */
+	private void convertFromSendOperation(JADEOptions options) {
+		SOSConnection2OptionsAlternate sourceOptions = options.Source();
+		SOSConnection2OptionsAlternate targetOptions = options.Target();
+		sourceOptions.protocol.Value(SOSOptionTransferType.enuTransferTypes.local);
+		if (options.remove_files.isTrue()) {
+			options.operation.Value(SOSOptionJadeOperation.enuJadeOperations.move);
+		} else {
+			options.operation.Value(SOSOptionJadeOperation.enuJadeOperations.copy);
+		}
+		if (options.Pre_Command.isDirty()) {
+			targetOptions.Pre_Command.Value(options.Pre_Command.Value());
+		}
+		if (options.PreTransferCommands.isDirty()) {
+			targetOptions.PreTransferCommands.Value(options.PreTransferCommands.Value());
+		}
+		if (options.Post_Command.isDirty()) {
+			targetOptions.Post_Command.Value(options.Post_Command.Value());
+		}
+		if (options.PostTransferCommands.isDirty()) {
+			targetOptions.PostTransferCommands.Value(options.PostTransferCommands.Value());
+		}
+		if (options.TFN_Post_Command.isDirty()) {
+			targetOptions.TFN_Post_Command.Value(options.TFN_Post_Command.Value());
+		}
+		if (options.replacement.isDirty()) {
+			targetOptions.replacement.Value(options.replacement.Value());
+		}
+		if (options.replacing.isDirty()) {
+			targetOptions.replacing.Value(options.replacing.Value());
+		}
+		if (options.local_dir.isDirty()) {
+			sourceOptions.Directory.Value(options.local_dir.Value());
+		}
+		if (options.protocol.isDirty()) {
+			targetOptions.protocol.Value(options.protocol.Value());
+		}
+		if (options.host.isDirty()) {
+			targetOptions.host.Value(options.host.Value());
+		}
+		if (options.port.isDirty()) {
+			targetOptions.port.value(options.port.value());
+		}
+		if (options.user.isDirty()) {
+			targetOptions.user.Value(options.user.Value());
+		}
+		if (options.password.isDirty()) {
+			targetOptions.password.Value(options.password.Value());
+		}
+		if (options.passive_mode.isDirty()) {
+			targetOptions.passive_mode.value(options.passive_mode.value());
+		}
+		if (options.transfer_mode.isDirty()) {
+			targetOptions.transfer_mode.Value(options.transfer_mode.Value());
+		}
+		if (options.ssh_auth_method.isDirty()) {
+			targetOptions.ssh_auth_method.Value(options.ssh_auth_method.Value());
+		}
+		if (options.ssh_auth_file.isDirty()) {
+			targetOptions.ssh_auth_file.Value(options.ssh_auth_file.Value());
+		}
+		if (options.StrictHostKeyChecking.isDirty()) {
+			targetOptions.StrictHostKeyChecking.Value(options.StrictHostKeyChecking.Value());
+		}
+		if (options.remote_dir.isDirty()) {
+			targetOptions.Directory.Value(options.remote_dir.Value());
+		}
+		if (options.makeDirs.isDirty()) {
+			targetOptions.makeDirs.Value(options.makeDirs.Value());
+		}
+	}
+	
+	/**
+	 * Operation 'receive' is deprecated but has to be supported by the converter. The converter is supposed to create a profile with operation 'copy' or 'move' instead.
+	 * Since the parameters are not prefixed when using the operation 'receive', they have to be prefixed by using this method.
+	 * @param options
+	 */
+	private void convertFromReceiveOperation(JADEOptions options) {
+		SOSConnection2OptionsAlternate sourceOptions = options.Source();
+		SOSConnection2OptionsAlternate targetOptions = options.Target();
+		targetOptions.protocol.Value(SOSOptionTransferType.enuTransferTypes.local);
+		if (options.remove_files.isTrue()) {
+			options.operation.Value(SOSOptionJadeOperation.enuJadeOperations.move);
+		} else {
+			options.operation.Value(SOSOptionJadeOperation.enuJadeOperations.copy);
+		}
+		if (options.Pre_Command.isDirty()) {
+			targetOptions.Pre_Command.Value(options.Pre_Command.Value());
+		}
+		if (options.PreTransferCommands.isDirty()) {
+			targetOptions.PreTransferCommands.Value(options.PreTransferCommands.Value());
+		}
+		if (options.Post_Command.isDirty()) {
+			targetOptions.Post_Command.Value(options.Post_Command.Value());
+		}
+		if (options.PostTransferCommands.isDirty()) {
+			targetOptions.PostTransferCommands.Value(options.PostTransferCommands.Value());
+		}
+		if (options.TFN_Post_Command.isDirty()) {
+			targetOptions.TFN_Post_Command.Value(options.TFN_Post_Command.Value());
+		}
+		if (options.replacement.isDirty()) {
+			targetOptions.replacement.Value(options.replacement.Value());
+		}
+		if (options.replacing.isDirty()) {
+			targetOptions.replacing.Value(options.replacing.Value());
+		}
+		if (options.local_dir.isDirty()) {
+			targetOptions.Directory.Value(options.local_dir.Value());
+		}
+		if (options.protocol.isDirty()) {
+			sourceOptions.protocol.Value(options.protocol.Value());
+		}
+		if (options.host.isDirty()) {
+			sourceOptions.host.Value(options.host.Value());
+		}
+		if (options.port.isDirty()) {
+			sourceOptions.port.value(options.port.value());
+		}
+		if (options.user.isDirty()) {
+			sourceOptions.user.Value(options.user.Value());
+		}
+		if (options.password.isDirty()) {
+			sourceOptions.password.Value(options.password.Value());
+		}
+		if (options.passive_mode.isDirty()) {
+			sourceOptions.passive_mode.value(options.passive_mode.value());
+		}
+		if (options.transfer_mode.isDirty()) {
+			sourceOptions.transfer_mode.Value(options.transfer_mode.Value());
+		}
+		if (options.ssh_auth_method.isDirty()) {
+			sourceOptions.ssh_auth_method.Value(options.ssh_auth_method.Value());
+		}
+		if (options.ssh_auth_file.isDirty()) {
+			sourceOptions.ssh_auth_file.Value(options.ssh_auth_file.Value());
+		}
+		if (options.StrictHostKeyChecking.isDirty()) {
+			sourceOptions.StrictHostKeyChecking.Value(options.StrictHostKeyChecking.Value());
+		}
+		if (options.remote_dir.isDirty()) {
+			sourceOptions.Directory.Value(options.remote_dir.Value());
+		}
+		if (options.makeDirs.isDirty()) {
+			targetOptions.makeDirs.Value(options.makeDirs.Value());
+		}
+	}
+
 	private boolean isCreateOrderSpecified(JADEOptions options) {
 		boolean returnValue = false;
 		if (options.create_order.isTrue() || options.order_jobchain_name.isDirty() || options.create_orders_for_all_files.isDirty() || options.next_state.isDirty() ||
@@ -595,6 +888,19 @@ public class IniToXmlConverter {
 				mailOptions.attachment.isDirty() || mailOptions.body.isDirty() || mailOptions.content_type.isDirty() || mailOptions.encoding.isDirty() ||
 				mailOptions.host.isDirty() || mailOptions.port.isDirty() || mailOptions.smtp_user.isDirty() || mailOptions.smtp_password.isDirty()) {
 			returnValue = true;
+			System.out.println("#### from: " + mailOptions.from.Value());
+			System.out.println("#### to: " + mailOptions.to.Value());
+			System.out.println("#### cc: " + mailOptions.cc.Value());
+			System.out.println("#### bcc: " + mailOptions.bcc.Value());
+			System.out.println("#### subject: " + mailOptions.subject.Value());
+			System.out.println("#### attachment: " + mailOptions.attachment.Value());
+			System.out.println("#### body: " + mailOptions.body.Value());
+			System.out.println("#### content_type: " + mailOptions.content_type.Value());
+			System.out.println("#### encoding: " + mailOptions.encoding.Value());
+			System.out.println("#### host: " + mailOptions.host.Value());
+			System.out.println("#### port: " + mailOptions.port.Value());
+			System.out.println("#### smtp_user: " + mailOptions.smtp_user.Value());
+			System.out.println("#### smtp_password: " + mailOptions.smtp_password.Value());
 		}
 		return returnValue;
 	}
@@ -651,7 +957,7 @@ public class IniToXmlConverter {
 		GetListSource getListSource = new GetListSource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// GetListSourceFragmentRef
-		ReadableFragmentRefType getListSourceFragmentRefType = createReadableFragmentRefType(options, sourceConnectionOptions, protocolFragments);
+		ReadableFragmentRefType getListSourceFragmentRefType = createReadableFragmentRefType(options, sourceConnectionOptions, protocolFragments, false);
 		getListSource.setGetListSourceFragmentRef(getListSourceFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
@@ -659,13 +965,11 @@ public class IniToXmlConverter {
 		return getListSource;
 	}
 
-
-
-	private MoveTarget createMoveTarget(ProtocolFragments protocolFragments, JADEOptions options) {
+	private MoveTarget createMoveTarget(ProtocolFragments protocolFragments, JADEOptions options, boolean useJumpHost) {
 		MoveTarget moveTarget = new MoveTarget();
 		SOSConnection2OptionsAlternate targetConnectionOptions = options.Target();
 		// MoveTargetFragmentRef
-		WriteableFragmentRefType moveTargetFragmentRef = createWriteableFragmentRefType(options, targetConnectionOptions, protocolFragments);
+		WriteableFragmentRefType moveTargetFragmentRef = createWriteableFragmentRefType(options, targetConnectionOptions, protocolFragments, useJumpHost);
 		moveTarget.setMoveTargetFragmentRef(moveTargetFragmentRef);
 		// Directory
 		moveTarget.setDirectory(options.Target().Directory.Value());
@@ -683,7 +987,7 @@ public class IniToXmlConverter {
 		RemoveSource removeSource = new RemoveSource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// RemoveSourceFragmentRef
-		WriteableFragmentRefType writeableFragmentRefType = createWriteableFragmentRefType(options, sourceConnectionOptions, protocolFragments);
+		WriteableFragmentRefType writeableFragmentRefType = createWriteableFragmentRefType(options, sourceConnectionOptions, protocolFragments, false);
 		removeSource.setRemoveSourceFragmentRef(writeableFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
@@ -693,11 +997,11 @@ public class IniToXmlConverter {
 
 
 
-	private MoveSource createMoveSource(ProtocolFragments protocolFragments, JADEOptions options) {
+	private MoveSource createMoveSource(ProtocolFragments protocolFragments, JADEOptions options, boolean useJumpHost) {
 		MoveSource moveSource = new MoveSource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// MoveSourceFragmentRef
-		WriteableFragmentRefType writeableFragmentRefType = createWriteableFragmentRefType(options, sourceConnectionOptions, protocolFragments);
+		WriteableFragmentRefType writeableFragmentRefType = createWriteableFragmentRefType(options, sourceConnectionOptions, protocolFragments, useJumpHost);
 		moveSource.setMoveSourceFragmentRef(writeableFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
@@ -707,7 +1011,7 @@ public class IniToXmlConverter {
 
 
 
-	private WriteableFragmentRefType createWriteableFragmentRefType(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, ProtocolFragments protocolFragments) {
+	private WriteableFragmentRefType createWriteableFragmentRefType(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		String fragmentId = getRandomFragmentId();
 		WriteableFragmentRefType writeableFragmentRefType = new WriteableFragmentRefType();
 			// (Protocol)
@@ -717,14 +1021,14 @@ public class IniToXmlConverter {
 				FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, fragmentId); 
 				writeableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
 				// FTPFragment
-				FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, fragmentId, protocolFragments);
+				FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getFTPFragment().add(ftpFragment);
 			} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
 				// FTPSFragmentRef
 				FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, fragmentId); 
 				writeableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
 				// FTPSFragment
-				FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, fragmentId, protocolFragments);
+				FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getFTPSFragment().add(ftpsFragment);
 			}  else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
 				// LocalTarget
@@ -735,7 +1039,7 @@ public class IniToXmlConverter {
 				SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, fragmentId);
 				writeableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
 				// SFTPFragment
-				SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, fragmentId, protocolFragments);
+				SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getSFTPFragment().add(sftpFragment);
 			} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
 				// SMBFragmentRef
@@ -749,7 +1053,7 @@ public class IniToXmlConverter {
 				WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, fragmentId);
 				writeableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 				// WebDAVFragment
-				WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, fragmentId, protocolFragments);
+				WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getWebDAVFragment().add(webDAVFragment);
 			} // TODO WriteableAlternativeFragmentRef
 		return writeableFragmentRefType;
@@ -779,11 +1083,11 @@ public class IniToXmlConverter {
 
 
 
-	private CopyTarget createCopyTarget(ProtocolFragments protocolFragments, JADEOptions options) {
+	private CopyTarget createCopyTarget(ProtocolFragments protocolFragments, JADEOptions options, boolean useJumpHost) {
 		CopyTarget copyTarget = new CopyTarget();
 		SOSConnection2OptionsAlternate targetConnectionOptions = options.Target();
 		// CopyTargetFragmentRef
-		WriteableFragmentRefType copyTargetFragmentRef = createWriteableFragmentRefType(options, targetConnectionOptions, protocolFragments);
+		WriteableFragmentRefType copyTargetFragmentRef = createWriteableFragmentRefType(options, targetConnectionOptions, protocolFragments, useJumpHost);
 		copyTarget.setCopyTargetFragmentRef(copyTargetFragmentRef);
 		// Directory
 		copyTarget.setDirectory(options.Target().Directory.Value());
@@ -797,11 +1101,11 @@ public class IniToXmlConverter {
 
 
 
-	private CopySource createCopySource(JADEOptions options, ProtocolFragments protocolFragments) {
+	private CopySource createCopySource(JADEOptions options, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		CopySource copySource = new CopySource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// CopySourceFragmentRef
-		ReadableFragmentRefType readableFragmentRefType = createReadableFragmentRefType(options, sourceConnectionOptions, protocolFragments);
+		ReadableFragmentRefType readableFragmentRefType = createReadableFragmentRefType(options, sourceConnectionOptions, protocolFragments, useJumpHost);
 		copySource.setCopySourceFragmentRef(readableFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
@@ -811,7 +1115,7 @@ public class IniToXmlConverter {
 
 
 
-	private ReadableFragmentRefType createReadableFragmentRefType(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, ProtocolFragments protocolFragments) {
+	private ReadableFragmentRefType createReadableFragmentRefType(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		String fragmentId = getRandomFragmentId();
 		ReadableFragmentRefType readableFragmentRefType = new ReadableFragmentRefType();
 			// (Protocol)
@@ -821,30 +1125,32 @@ public class IniToXmlConverter {
 				FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, fragmentId); 
 				readableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
 				// FTPFragment
-				FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, fragmentId, protocolFragments);
+				FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getFTPFragment().add(ftpFragment);
 			} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
 				// FTPSFragmentRef
 				FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, fragmentId); 
 				readableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
 				// FTPSFragment
-				FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, fragmentId, protocolFragments);
+				FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getFTPSFragment().add(ftpsFragment);
 			} else if (sourceProtocolValue.equalsIgnoreCase("http")) {
-				// HTTPFragmentRef
-				HTTPFragmentRef httpFragmentRef = createHTTPFragmentRef(fragmentId);
-				readableFragmentRefType.setHTTPFragmentRef(httpFragmentRef);
-				// HTTPFragment
-				HTTPFragment httpFragment = createHTTPFragment(options, connectionOptions, fragmentId, protocolFragments);
-				protocolFragments.getHTTPFragment().add(httpFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("https")) { // TODO https is not a valid value for parameter 'protocol', only http is. to specify usage of https, the url has to start with https:// (see webdavFragment)
-				// HTTPSFragmentRef
-				HTTPSFragmentRef httpsFragmentRef = createHTTPSFragmentRef(fragmentId);
-				readableFragmentRefType.setHTTPSFragmentRef(httpsFragmentRef);
-				// HTTPSFragment
-				HTTPSFragment httpsFragment = createHTTPSFragment(options, connectionOptions, fragmentId, protocolFragments);
-				protocolFragments.getHTTPSFragment().add(httpsFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removes as a protocol, local is used instead with a boolean zip-parameter
+				if (isHTTPSFragment(connectionOptions)) {
+					// HTTPSFragmentRef
+					HTTPSFragmentRef httpsFragmentRef = createHTTPSFragmentRef(fragmentId);
+					readableFragmentRefType.setHTTPSFragmentRef(httpsFragmentRef);
+					// HTTPSFragment
+					HTTPSFragment httpsFragment = createHTTPSFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
+					protocolFragments.getHTTPSFragment().add(httpsFragment);
+				} else {
+					// HTTPFragmentRef
+					HTTPFragmentRef httpFragmentRef = createHTTPFragmentRef(fragmentId);
+					readableFragmentRefType.setHTTPFragmentRef(httpFragmentRef);
+					// HTTPFragment
+					HTTPFragment httpFragment = createHTTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
+					protocolFragments.getHTTPFragment().add(httpFragment);
+				}
+			} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
 				// LocalSource
 				LocalSource localSource = createLocalSource(options, connectionOptions);
 				readableFragmentRefType.setLocalSource(localSource);
@@ -853,7 +1159,7 @@ public class IniToXmlConverter {
 				SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, fragmentId);
 				readableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
 				// SFTPFragment
-				SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, fragmentId, protocolFragments);
+				SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getSFTPFragment().add(sftpFragment);
 			} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
 				// SMBFragmentRef
@@ -867,13 +1173,29 @@ public class IniToXmlConverter {
 				WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, fragmentId);
 				readableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 				// WebDAVFragment
-				WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, fragmentId, protocolFragments);
+				WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
 				protocolFragments.getWebDAVFragment().add(webDAVFragment);
 			} // TODO ReadableAlternativeFragmentRef
 		return readableFragmentRefType;
 	}
 
-
+	private boolean isHTTPSFragment(SOSConnection2OptionsAlternate connectionOptions) {
+		boolean returnValue = false;
+		if (connectionOptions.url.isDirty() || connectionOptions.host.isDirty()) {
+			URL url = null;
+			try {
+				if (connectionOptions.url.isDirty()) {
+					url = new URL(connectionOptions.url.Value());
+				} else if (connectionOptions.host.isDirty()) {
+					url = new URL(connectionOptions.host.Value());
+				}
+			} catch (MalformedURLException | RuntimeException e) {}
+			if (url.getProtocol().equalsIgnoreCase("https")) {
+				returnValue = true;
+			}
+		}
+		return returnValue;
+	}
 
 	private SourceFileOptions createSourceFileOptions(JADEOptions options) {
 		SourceFileOptions sourceFileOptions = new SourceFileOptions();
@@ -1087,7 +1409,7 @@ public class IniToXmlConverter {
 
 
 
-	private WebDAVFragment createWebDAVFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments) {
+	private WebDAVFragment createWebDAVFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		WebDAVFragment webDAVFragment = new WebDAVFragment();
 		webDAVFragment.setName(fragmentId);
 		// URLConnection
@@ -1101,7 +1423,7 @@ public class IniToXmlConverter {
 		BasicAuthenticationType basicAuthentication = createBasicAuthenticationForURLConnection(connectionOptions);
 		webDAVFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
-		if (isJumpFragmentSpecified(options)) {
+		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			String jumpFragmentId = getRandomFragmentId();
 			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
 			protocolFragments.getJumpFragment().add(jumpFragment);
@@ -1205,8 +1527,6 @@ public class IniToXmlConverter {
 		return webDAVFragmentRef;
 	}
 
-
-
 	private SMBFragment createSMBFragment(SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
 		SMBFragment smbFragment = new SMBFragment();
 		smbFragment.setName(fragmentId);
@@ -1224,8 +1544,6 @@ public class IniToXmlConverter {
 		return smbFragment;
 	}
 
-
-
 	private SMBFragmentRef createSMBFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
 		SMBFragmentRef smbFragmentRef = new SMBFragmentRef();
 		smbFragmentRef.setRef(fragmentId);
@@ -1237,9 +1555,7 @@ public class IniToXmlConverter {
 		return smbFragmentRef;
 	}
 
-
-
-	private SFTPFragment createSFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments) {
+	private SFTPFragment createSFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		SFTPFragment sftpFragment = new SFTPFragment();
 		sftpFragment.setName(fragmentId);
 		// BasicConnection
@@ -1249,7 +1565,7 @@ public class IniToXmlConverter {
 		SSHAuthenticationType sshAuthentication = createSSHAuthentication(connectionOptions);
 		sftpFragment.setSSHAuthentication(sshAuthentication);
 		// JumpFragmentRef
-		if (isJumpFragmentSpecified(options)) {
+		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			String jumpFragmentId = getRandomFragmentId();
 			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
 			protocolFragments.getJumpFragment().add(jumpFragment);
@@ -1321,6 +1637,7 @@ public class IniToXmlConverter {
 		if (options.jump_ssh_auth_method.Value().equalsIgnoreCase("password")) {
 			// AuthenticationMethodPassword
 			AuthenticationMethodPassword authenticationMethodPassword = new AuthenticationMethodPassword();
+			sshAuthenticationType.setAuthenticationMethodPassword(authenticationMethodPassword);
 			if (options.jump_password.isDirty()) {
 				authenticationMethodPassword.setPassword(options.jump_password.Value());
 			} else {
@@ -1329,7 +1646,7 @@ public class IniToXmlConverter {
 		} else if (options.jump_ssh_auth_method.Value().equalsIgnoreCase("publickey")) {
 			// AuthenticationMethodPublicKey
 			AuthenticationMethodPublickey authenticationMethodPublickey = new AuthenticationMethodPublickey();
-			jumpFragment.setSSHAuthentication(sshAuthenticationType);
+			sshAuthenticationType.setAuthenticationMethodPublickey(authenticationMethodPublickey);
 			if (options.jump_ssh_auth_file.isDirty()) {
 				authenticationMethodPublickey.setAuthenticationFile(options.jump_ssh_auth_file.Value());
 			} else {
@@ -1338,6 +1655,10 @@ public class IniToXmlConverter {
 			if (options.jump_password.isDirty()) {
 				authenticationMethodPublickey.setPassphrase(options.jump_password.Value());
 			}
+		}
+		// JumpCommand
+		if (options.jump_command.isDirty()) {
+			jumpFragment.setJumpCommand(options.jump_command.Value());
 		}
 		// JumpDirectory
 		if (options.jump_dir.isDirty()) {
@@ -1653,7 +1974,7 @@ public class IniToXmlConverter {
 
 
 
-	private HTTPSFragment createHTTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments) {
+	private HTTPSFragment createHTTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		HTTPSFragment httpsFragment = new HTTPSFragment();
 		httpsFragment.setName(fragmentId);
 		// URLConnection
@@ -1667,7 +1988,7 @@ public class IniToXmlConverter {
 		BasicAuthenticationType basicAuthentication = createBasicAuthenticationForURLConnection(connectionOptions);
 		httpsFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
-		if (isJumpFragmentSpecified(options)) {
+		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			String jumpFragmentId = getRandomFragmentId();
 			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
 			protocolFragments.getJumpFragment().add(jumpFragment);
@@ -1702,7 +2023,7 @@ public class IniToXmlConverter {
 
 
 
-	private HTTPFragment createHTTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments) {
+	private HTTPFragment createHTTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		HTTPFragment httpFragment = new HTTPFragment();
 		httpFragment.setName(fragmentId);
 		// URLConnection
@@ -1712,7 +2033,7 @@ public class IniToXmlConverter {
 		BasicAuthenticationType basicAuthentication = createBasicAuthenticationForURLConnection(connectionOptions);
 		httpFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
-		if (isJumpFragmentSpecified(options)) {
+		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			String jumpFragmentId = getRandomFragmentId();
 			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
 			protocolFragments.getJumpFragment().add(jumpFragment);
@@ -1822,7 +2143,7 @@ public class IniToXmlConverter {
 		return credentialStoreFragment;
 	}
 
-	private FTPSFragment createFTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments) {
+	private FTPSFragment createFTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		FTPSFragment ftpsFragment = new FTPSFragment();
 		ftpsFragment.setName(fragmentId);
 		// BasicConnection
@@ -1835,10 +2156,6 @@ public class IniToXmlConverter {
 		// BasicAuthentication
 		BasicAuthenticationType basicAuthentication = createBasicAuthentication(connectionOptions);
 		ftpsFragment.setBasicAuthentication(basicAuthentication);
-		// AcceptUntrustedCertificate
-		if (connectionOptions.accept_untrusted_certificate.isDirty()) {
-			ftpsFragment.setAcceptUntrustedCertificate(connectionOptions.accept_untrusted_certificate.value());
-		}
 		// FTPSClientSecurity
 		if (isFTPSClientSecuritySpecified(connectionOptions)) {
 			FTPSClientSecurityType ftpsClientSecurityType = new FTPSClientSecurityType();
@@ -1875,7 +2192,7 @@ public class IniToXmlConverter {
 			ftpsFragment.setFTPSProtocol(connectionOptions.FtpS_protocol.Value());
 		}
 		// JumpFragmentRef
-		if (isJumpFragmentSpecified(options)) {
+		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			String jumpFragmentId = getRandomFragmentId();
 			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
 			protocolFragments.getJumpFragment().add(jumpFragment);
@@ -2107,7 +2424,7 @@ public class IniToXmlConverter {
 
 
 
-	private FTPFragment createFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments) {
+	private FTPFragment createFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		FTPFragment ftpFragment = new FTPFragment();
 		ftpFragment.setName(fragmentId);
 		// BasicConnection
@@ -2121,7 +2438,7 @@ public class IniToXmlConverter {
 		BasicAuthenticationType basicAuthentication = createBasicAuthentication(connectionOptions);
 		ftpFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
-		if (isJumpFragmentSpecified(options)) {
+		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			String jumpFragmentId = getRandomFragmentId();
 			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
 			protocolFragments.getJumpFragment().add(jumpFragment);
@@ -2341,5 +2658,4 @@ public class IniToXmlConverter {
 		
 		return options;
 	}
-	
 }
