@@ -78,7 +78,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	
 	private void getFilesHistoryFromDb(){
         try {
-        	List<JadeFilesHistoryDBItem> received = jadeFilesHistoryDBLayer.getHistoryFilesOrderedByTimestamp();
+        	List<JadeFilesHistoryDBItem> received = jadeFilesHistoryDBLayer.getHistoryFilesOrderedByTransferEnd();
  			ui.setHistoryItems(received);
 		} catch (ParseException e) {
 			getException(e);
