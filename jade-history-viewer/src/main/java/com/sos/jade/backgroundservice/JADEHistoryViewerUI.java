@@ -48,8 +48,9 @@ public class JADEHistoryViewerUI extends UI {
     
 	@WebServlet(value = "/*", asyncSupported = true)
     /* productionMode = true doesn´t work when the web app ist started from an IDE integrated webserver! */
-    @VaadinServletConfiguration(productionMode = true, ui = JADEHistoryViewerUI.class)
-    public static class Servlet extends VaadinServlet {
+    @VaadinServletConfiguration(productionMode = false, ui = JADEHistoryViewerUI.class)
+	@Push
+	public static class Servlet extends VaadinServlet {
 			private static final long serialVersionUID = 1L;
     }
 
