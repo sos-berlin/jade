@@ -289,12 +289,12 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
  
 
-    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long sosftpId) throws ParseException {
+    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws ParseException {
         Session session = getSession();
 
         Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery("  from JadeFilesHistoryDBItem where sosftpId=:sosftpId");
-        query.setLong("sosftpId", sosftpId);
+        Query query = session.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
+        query.setLong("jadeId", jadeId);
         List<JadeFilesHistoryDBItem> resultset = query.list();
 
         transaction.commit();

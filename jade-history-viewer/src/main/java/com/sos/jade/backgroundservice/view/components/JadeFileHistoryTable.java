@@ -21,6 +21,7 @@ import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.data.JadeFilesHistoryContainer;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
+import com.sos.jade.backgroundservice.enums.TransferStatusValues;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
@@ -204,10 +205,10 @@ public class JadeFileHistoryTable extends Table{
 					if ("success".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
 						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusSuccessLabel");
 						return "jadeStatusSuccessLabel";
-					} else if ("error".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
+					} else if ("error".equals(((JadeFilesHistoryDBItem) itemId).getStatus()) || TransferStatusValues.transfer_aborted.name().equalsIgnoreCase(((JadeFilesHistoryDBItem) itemId).getStatus())) {
 						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusErrorLabel");
 						return "jadeStatusErrorLabel";
-					} else if ("transferring".equals(((JadeFilesHistoryDBItem) itemId).getStatus()) || "notOverwritten".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
+					} else /*if ("transferring".equals(((JadeFilesHistoryDBItem) itemId).getStatus()) || "notOverwritten".equals(((JadeFilesHistoryDBItem) itemId).getStatus()))*/ {
 						((Label)source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusTransferLabel");
 						return "jadeStatusTransferLabel";
 					}

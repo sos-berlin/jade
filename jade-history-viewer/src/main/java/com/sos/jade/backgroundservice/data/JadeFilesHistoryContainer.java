@@ -6,6 +6,7 @@ import sos.jadehistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
+import com.sos.jade.backgroundservice.enums.TransferStatusValues;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
@@ -33,15 +34,17 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 				// currently use is a css-styled Label
 				if("success".equals(historyItem.getStatus())){
 					status.setValue(new StatusSuccessLabel());
-				}else if("error".equals(historyItem.getStatus())){
+				}else if("error".equals(historyItem.getStatus()) || TransferStatusValues.transfer_aborted.name().equals(historyItem.getStatus())){
 					status.setValue(new StatusErrorLabel());
-				}else if("transferring".equals(historyItem.getStatus())){
+				}else/* if("transferring".equals(historyItem.getStatus()))*/{
 					status.setValue(new StatusTransferLabel());
 				}
 				Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
 				mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
-				Property transferTimestamp = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_START.getName());
-				transferTimestamp.setValue(historyItem.getTransferStart());
+				Property transferStart = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_START.getName());
+				transferStart.setValue(historyItem.getTransferStart());
+				Property transferEnd = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_END.getName());
+				transferEnd.setValue(historyItem.getTransferStart());
 				Property operation = item.getItemProperty(JadeHistoryFileColumns.OPERATION.getName());
 				operation.setValue(historyItem.getOperation());
 				Property protocol = item.getItemProperty(JadeHistoryFileColumns.PROTOCOL.getName());
@@ -70,6 +73,9 @@ public class JadeFilesHistoryContainer extends IndexedContainer{
 		addContainerProperty(JadeHistoryFileColumns.TRANSFER_START.getName(), 
 				JadeHistoryFileColumns.TRANSFER_START.getType(), 
 				JadeHistoryFileColumns.TRANSFER_START.getDefaultValue());
+		addContainerProperty(JadeHistoryFileColumns.TRANSFER_END.getName(), 
+				JadeHistoryFileColumns.TRANSFER_END.getType(), 
+				JadeHistoryFileColumns.TRANSFER_END.getDefaultValue());
 		addContainerProperty(JadeHistoryFileColumns.OPERATION.getName(), 
 				JadeHistoryFileColumns.OPERATION.getType(), 
 				JadeHistoryFileColumns.OPERATION.getDefaultValue());

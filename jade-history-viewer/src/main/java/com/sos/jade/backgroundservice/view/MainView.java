@@ -1,4 +1,4 @@
-package com.sos.jade.backgroundservice.view;
+ package com.sos.jade.backgroundservice.view;
 
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;

@@ -44,7 +44,8 @@ public class DetailLayout extends VerticalLayout {
 	private Label lblFileModified; 
 	private Label lblFileModifiedBy;
 	private Label lblOperation; 
-	private Label lblTransferTimestamp;
+	private Label lblTransferStart;
+	private Label lblTransferEnd;
 	private Label lblPid;
 	private Label lblPpid;
 	private Label lblTargetHost;
@@ -86,7 +87,8 @@ public class DetailLayout extends VerticalLayout {
 	private Label lblJumpPortCaption; 
 	private Label lblJumpProtocolCaption; 
 	private Label lblJumpUserCaption; 
-	private Label lblTransferTimestampCaption; 
+	private Label lblTransferStartCaption; 
+	private Label lblTransferEndCaption; 
 	private Label lblMd5Caption; 
 	private Label lblFileSizeCaption; 
 	private Label lblMandatorCaption; 
@@ -226,16 +228,22 @@ public class DetailLayout extends VerticalLayout {
 				initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
         this.detailLayouts.add(
     		initHlayout(
-				initHLabelLayout(lblTransferTimestampCaption, lblTransferTimestamp), 
+				initHLabelLayout(lblTransferStartCaption, lblTransferStart), 
+				initHLabelLayout(lblTransferEndCaption, lblTransferEnd), 
 				initHLabelLayout(lblMd5Caption, lblMd5), 
-        		initHLabelLayout(lblFileSizeCaption, lblFileSize), 
-        		initHLabelLayout(lblMandatorCaption, lblMandator)));
+        		initHLabelLayout(lblFileSizeCaption, lblFileSize)));
         this.detailLayouts.add(
     		initHlayout(
-				initHLabelLayout(lblFileCreatedCaption, lblFileCreated), 
+    			initHLabelLayout(lblMandatorCaption, lblMandator), 
+            	initHLabelLayout(lblFileCreatedCaption, lblFileCreated), 
 				initHLabelLayout(lblFileCreatedByCaption, lblFileCreatedBy), 
-        		initHLabelLayout(lblFileModifiedCaption, lblFileModified), 
-        		initHLabelLayout(lblFileModifiedByCaption, lblFileModifiedBy)));
+        		initHLabelLayout(lblFileModifiedCaption, lblFileModified)));
+        this.detailLayouts.add(
+    		initHlayout(
+				initHLabelLayout(lblFileModifiedByCaption, lblFileModifiedBy),
+				initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), 
+				initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel()), 
+				initHLabelLayout(initCaptionLabel("dummy3Caption", ""), initDummyValueLabel())));
         //unused: lblSourceHostIp; maybe needed if source host name is not available
         //unused: lblTargetHostIp; maybe needed if target host name is not available
         //unused: lblJumpHostIp; maybe needed if jump host name is not available
@@ -248,7 +256,8 @@ public class DetailLayout extends VerticalLayout {
 		this.lblGuid = initValueLabel("GUID");
 		this.lblSosftpId = initValueLabel("SosFtpId");
 		this.lblOperation = initValueLabel("Operation"); 
-		this.lblTransferTimestamp = initValueLabel("Timestamp");
+		this.lblTransferStart = initValueLabel("TransferStart");
+		this.lblTransferEnd = initValueLabel("TransferEnd");
 		this.lblPid = initValueLabel("PID");
 		this.lblPpid = initValueLabel("PPID");
 		this.lblTargetHost = initValueLabel("TargetHost");
@@ -292,7 +301,8 @@ public class DetailLayout extends VerticalLayout {
 		this.lblGuid.setValue(historyItem.getGuid());
 		this.lblSosftpId.setValue(historyItem.getJadeId().toString());
 		this.lblOperation.setValue(historyItem.getOperation()); 
-		this.lblTransferTimestamp.setValue(sdfOut.format(historyItem.getTransferStart()));
+		this.lblTransferStart.setValue(sdfOut.format(historyItem.getTransferStart()));
+		this.lblTransferEnd.setValue(sdfOut.format(historyItem.getTransferEnd()));
 		this.lblPid.setValue(historyItem.getPid().toString());
 		this.lblPpid.setValue(historyItem.getPPid().toString());
 		this.lblTargetHost.setValue(historyItem.getTargetHost());
@@ -364,7 +374,8 @@ public class DetailLayout extends VerticalLayout {
 		lblJumpPortCaption = initCaptionLabel("jumpPortCaption", messages.getValue("DetailLayout.jumpPort")); 
 		lblJumpProtocolCaption = initCaptionLabel("jumpProtocolCaption", messages.getValue("DetailLayout.jumpProtocol")); 
 		lblJumpUserCaption = initCaptionLabel("jumpUserCaption", messages.getValue("DetailLayout.jumpUser")); 
-		lblTransferTimestampCaption = initCaptionLabel("transferTimestampCaption", messages.getValue("DetailLayout.transferTimestamp")); 
+		lblTransferStartCaption = initCaptionLabel("transferStartCaption", messages.getValue("DetailLayout.transferStart")); 
+		lblTransferEndCaption = initCaptionLabel("transferEndCaption", messages.getValue("DetailLayout.transferEnd")); 
 		lblMd5Caption = initCaptionLabel("md5Caption", messages.getValue("DetailLayout.md5")); 
 		lblFileSizeCaption = initCaptionLabel("fileSizeCaption", messages.getValue("DetailLayout.fileSize")); 
 		lblMandatorCaption = initCaptionLabel("mandatorCaption", messages.getValue("DetailLayout.mandator")); 
@@ -409,7 +420,8 @@ public class DetailLayout extends VerticalLayout {
 		lblJumpPortCaption.setValue(messages.getValue("DetailLayout.jumpPort", locale)); 
 		lblJumpProtocolCaption.setValue(messages.getValue("DetailLayout.jumpProtocol", locale)); 
 		lblJumpUserCaption.setValue(messages.getValue("DetailLayout.jumpUser", locale)); 
-		lblTransferTimestampCaption.setValue(messages.getValue("DetailLayout.transferTimestamp", locale)); 
+		lblTransferStartCaption.setValue(messages.getValue("DetailLayout.transferStart", locale)); 
+		lblTransferEndCaption.setValue(messages.getValue("DetailLayout.transferEnd", locale)); 
 		lblMd5Caption.setValue(messages.getValue("DetailLayout.md5", locale)); 
 		lblFileSizeCaption.setValue(messages.getValue("DetailLayout.fileSize", locale)); 
 		lblMandatorCaption.setValue(messages.getValue("DetailLayout.mandator", locale)); 

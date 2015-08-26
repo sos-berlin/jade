@@ -124,6 +124,10 @@ public class JadeDetailsContainer extends IndexedContainer {
 				historyItem.getTransferStart(), 
 				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_START.getName()));
 		detailItems.add(new JadeHistoryDetailItem(this.messages,
+				JadeHistoryFileColumns.TRANSFER_END.getName(), 
+				historyItem.getTransferEnd(), 
+				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_END.getName()));
+		detailItems.add(new JadeHistoryDetailItem(this.messages,
 				JadeHistoryFileColumns.PID.getName(), 
 				historyItem.getPid(), 
 				MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PID.getName()));
@@ -276,7 +280,7 @@ public class JadeDetailsContainer extends IndexedContainer {
 			String messageKey = ((JadeHistoryDetailItem)itemId).getMessageKey();
 			item.getItemProperty("key").setValue(messages.getValue(messageKey, locale) + ":");
 			if(((messageKey.toLowerCase().contains("created") || messageKey.toLowerCase().contains("modified")) 
-					&& !messageKey.contains("By")) || messageKey.toLowerCase().contains("timestamp")){
+					&& !messageKey.contains("By")) || messageKey.toLowerCase().contains("transferStart") || messageKey.toLowerCase().contains("transferEnd")){
 				item.getItemProperty("value").setValue(dateConverter.convertToPresentation(
 						(Date)((JadeHistoryDetailItem)itemId).getValue(), String.class, locale));
 			}else if((MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.LAST_ERROR_MESSAGE.getName()).equalsIgnoreCase(messageKey) && "null".equalsIgnoreCase(this.historyItem.getLastErrorMessage())){
