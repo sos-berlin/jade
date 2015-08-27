@@ -46,6 +46,7 @@ import com.sos.jade.generated.CopySource;
 import com.sos.jade.generated.CopyTarget;
 import com.sos.jade.generated.CreateOrder;
 import com.sos.jade.generated.CredentialStoreFragment;
+import com.sos.jade.generated.CredentialStoreFragments;
 import com.sos.jade.generated.CumulateFiles;
 import com.sos.jade.generated.Directives;
 import com.sos.jade.generated.FTPFragment;
@@ -145,6 +146,8 @@ public class IniToXmlConverter {
 		converter.handleArguments(args);
 		if (converter.iniFilePath.isEmpty()) {
 			throw (new JobSchedulerException("No settings file was specified for conversion."));
+		} else if (!new JSIniFile(converter.iniFilePath).exists()) {
+			throw (new JobSchedulerException("The settings file specified for conversion could not be found."));
 		}
 		logger.info("The settings file specified for conversion is '" + converter.iniFilePath + "'");
 		String[] profilesToConvert = converter.detectProfiles();
@@ -202,9 +205,22 @@ public class IniToXmlConverter {
 				logger.info("----- Starting conversion of profile '" + profilename + "' -----");
 				JADEOptions options = loadIniFile(iniFilePath, profilename);
 				
+				// remove the @-prefix
+				// TODO this might be obsolete already, as the xml2iniConverter does not create prefixes for profiles anymore (only for fragments)
+				String profilenameWithoutPrefix = "";
+				if (profilename.contains("@")) {
+					profilenameWithoutPrefix = profilename.substring(profilename.indexOf("@") + 1);
+					String prefix = profilename.substring(0, profilename.indexOf("@") + 1);
+					logger.info("The profile name contains the invalid character '@'. I assume this is caused by conversion from .xml to .ini format. The prefix '" + prefix + "' will be removed.");
+				}
+				
 				Profile profile = new Profile();
-				profileList.add(profile); // in this case mandatory as well
-				profile.setProfileId(profilename);
+				profileList.add(profile);
+				if (profilenameWithoutPrefix.isEmpty()) {
+					profile.setProfileId(profilename);
+				} else {
+					profile.setProfileId(profilenameWithoutPrefix);
+				}
 				
 				// Operation
 				Operation operation = new Operation();
@@ -458,10 +474,19 @@ public class IniToXmlConverter {
 				}
 				**/
 				// CredentialStore
-				if (isCredentialStoreFragmentSpecified(options)) {
-					// CredentialStoreFragmentRef (...)
-					// TODO create CredentialStoreFragment + CredentialStoreFragmentRef with identical ID
-					// use_credential_store_options as trigger?
+				if (isCredentialStoreFragmentSpecified(options.Source()) || isCredentialStoreFragmentSpecified(options.Target())) {
+					// CredentialStoreFragmentRef
+					logger.info("Currently only the CredentialStoreFragment will be generated, but no references to it."); // TODO
+					CredentialStoreFragments credentialStoreFragments = new CredentialStoreFragments();
+					fragments.setCredentialStoreFragments(credentialStoreFragments);
+					if (isCredentialStoreFragmentSpecified(options.Source())) {
+						CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(options.Source(), getRandomFragmentId());
+						credentialStoreFragments.getCredentialStoreFragment().add(credentialStoreFragment);
+					}
+					if (isCredentialStoreFragmentSpecified(options.Target())) {
+						CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(options.Target(), getRandomFragmentId());
+						credentialStoreFragments.getCredentialStoreFragment().add(credentialStoreFragment);
+					}
 				}
 				logger.info("----- Finished conversion of profile: '" + profilename + "' -----");
 				if (missingMandatoryParameter) {
@@ -546,9 +571,6 @@ public class IniToXmlConverter {
 		if (options.ssh_auth_file.isDirty()) {
 			targetOptions.ssh_auth_file.Value(options.ssh_auth_file.Value());
 		}
-		if (options.StrictHostKeyChecking.isDirty()) {
-			targetOptions.StrictHostKeyChecking.Value(options.StrictHostKeyChecking.Value());
-		}
 		if (options.remote_dir.isDirty()) {
 			targetOptions.Directory.Value(options.remote_dir.Value());
 		}
@@ -621,9 +643,6 @@ public class IniToXmlConverter {
 		}
 		if (options.ssh_auth_file.isDirty()) {
 			sourceOptions.ssh_auth_file.Value(options.ssh_auth_file.Value());
-		}
-		if (options.StrictHostKeyChecking.isDirty()) {
-			sourceOptions.StrictHostKeyChecking.Value(options.StrictHostKeyChecking.Value());
 		}
 		if (options.remote_dir.isDirty()) {
 			sourceOptions.Directory.Value(options.remote_dir.Value());
@@ -873,10 +892,17 @@ public class IniToXmlConverter {
 
 
 
-	private boolean isCredentialStoreFragmentSpecified(JADEOptions options) {
-		// TODO
-		
-		return false;
+	private boolean isCredentialStoreFragmentSpecified(SOSConnection2OptionsAlternate connectionOptions) {
+		boolean returnValue = false;
+		SOSCredentialStoreOptions credentialStoreOptions = connectionOptions.getCredentialStore();
+		if (credentialStoreOptions.use_credential_Store.isDirty() || credentialStoreOptions.CS_FileName.isDirty() || credentialStoreOptions.CS_password.isDirty() ||
+				credentialStoreOptions.CS_KeyFileName.isDirty() || credentialStoreOptions.CS_AuthenticationMethod.isDirty() || credentialStoreOptions.CS_KeyPath.isDirty() ||
+				credentialStoreOptions.CS_ExportAttachment.isDirty() || credentialStoreOptions.CS_ExportAttachment2FileName.isDirty() ||
+				credentialStoreOptions.CS_DeleteExportedFileOnExit.isDirty() || credentialStoreOptions.CS_OverwriteExportedFile.isDirty() ||
+				credentialStoreOptions.CS_Permissions4ExportedFile.isDirty() || credentialStoreOptions.CS_StoreType.isDirty()) {
+			returnValue = true;
+		}
+		return returnValue;
 	}
 
 
@@ -1574,36 +1600,34 @@ public class IniToXmlConverter {
 		}
 		// ProxyForSFTP
 		if (isProxySpecified(connectionOptions)) {
-			if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks4") || connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks5") || connectionOptions.proxy_protocol.Value().isEmpty()) {
+			if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("http") || connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks4") ||
+					connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks5") || connectionOptions.proxy_protocol.Value().isEmpty()) {
 				ProxyForSFTP proxyForSFTP = new ProxyForSFTP();
 				sftpFragment.setProxyForSFTP(proxyForSFTP);
-				if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks4")) {
+				if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("http")) {
+					AuthenticatedProxyType httpProxy = new AuthenticatedProxyType();
+					proxyForSFTP.setHTTPProxy(httpProxy);
+				} else if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks4")) {
 					UnauthenticatedProxyType socks4Proxy = createUnauthenticatedProxyType(connectionOptions);
 					proxyForSFTP.setSOCKS4Proxy(socks4Proxy);
 				} else if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("socks5")) {
 					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyType(connectionOptions);
 					proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
 				} else if (connectionOptions.proxy_protocol.Value().isEmpty()) {
-					if (connectionOptions.proxy_user.isDirty()) {
-						logger.info("No value was specified for parameter '" + connectionOptions.getPrefix() + "proxy_protocol'. As you specified a value for parameter '" + connectionOptions.getPrefix() + "proxy_user' for authentication, I assume you meant 'socks5'.");
-						AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyType(connectionOptions);
-						proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
-					} else {
-						logger.info("Skipping grouping element 'ProxyForSFTP' as parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
-						sftpFragment.setProxyForSFTP(null);
-					}
+					logger.info("Skipping grouping element 'ProxyForSFTP' as parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
+					sftpFragment.setProxyForSFTP(null);
 				}
 			} else {
-				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only values 'socks4' and 'socks5' are allowed in combination with SFTP.");
+				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only values 'http','socks4' and 'socks5' are allowed in combination with SFTP.");
 			}
 		}
 		// StrictHostKeyChecking
-		if (connectionOptions.StrictHostKeyChecking.isDirty()) {
-			if (connectionOptions.StrictHostKeyChecking.Value().equalsIgnoreCase("yes")) {
+		if (connectionOptions.strictHostKeyChecking.isDirty()) {
+			if (connectionOptions.strictHostKeyChecking.Value().equalsIgnoreCase("yes")) {
 				sftpFragment.setStrictHostkeyChecking(true);
-			} else if (connectionOptions.StrictHostKeyChecking.Value().equalsIgnoreCase("no")) {
+			} else if (connectionOptions.strictHostKeyChecking.Value().equalsIgnoreCase("no")) {
 				sftpFragment.setStrictHostkeyChecking(false);
-			} else if (connectionOptions.StrictHostKeyChecking.Value().equalsIgnoreCase("ask")) {
+			} else if (connectionOptions.strictHostKeyChecking.Value().equalsIgnoreCase("ask")) {
 				logger.warn("Value 'ask' is no longer permitted for option '" + connectionOptions.getPrefix() + "StrictHostKeyChecking'. Use either 'yes' or 'no'.");
 			}
 		}
@@ -1666,54 +1690,25 @@ public class IniToXmlConverter {
 		}
 		// ProxyForSFTP
 		if (isJumpProxySpecified(options)) {
-			if (options.jump_proxy_protocol.Value().equalsIgnoreCase("socks4") || options.jump_proxy_protocol.Value().equalsIgnoreCase("socks5") || options.jump_proxy_protocol.Value().isEmpty()) {
+			if (options.jump_proxy_protocol.Value().equalsIgnoreCase("http") || options.jump_proxy_protocol.Value().equalsIgnoreCase("socks4") ||
+					options.jump_proxy_protocol.Value().equalsIgnoreCase("socks5") || options.jump_proxy_protocol.Value().isEmpty()) {
 				ProxyForSFTP proxyForSFTP = new ProxyForSFTP();
 				jumpFragment.setProxyForSFTP(proxyForSFTP);
-				if (options.jump_proxy_protocol.Value().equalsIgnoreCase("socks4")) {
+				if (options.jump_proxy_protocol.Value().equalsIgnoreCase("http")) {
+					AuthenticatedProxyType authenticatedProxyType = createAuthenticatedProxyTypeForJump(options);
+					proxyForSFTP.setHTTPProxy(authenticatedProxyType);
+				} else if (options.jump_proxy_protocol.Value().equalsIgnoreCase("socks4")) {
 					UnauthenticatedProxyType socks4Proxy = createUnauthenticatedProxyTypeForJump(options);
 					proxyForSFTP.setSOCKS4Proxy(socks4Proxy);
 				} else if (options.jump_proxy_protocol.Value().equalsIgnoreCase("socks5")) {
 					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyTypeForJump(options);
 					proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
 				} else if (options.jump_proxy_protocol.Value().isEmpty()) {
-					if (options.jump_proxy_user.isDirty()) {
-						logger.info("No value was specified for parameter 'jump_proxy_protocol'. As you specified a value for parameter 'jump_proxy_user' for authentication, I assume you meant 'socks5'.");
-						AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyTypeForJump(options);
-						proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
-					} else {
-						logger.info("Skipping grouping element 'ProxyForSFTP' as parameter 'jump_proxy_protocol' is not specified.");
-						jumpFragment.setProxyForSFTP(null);
-					}
+					logger.info("Skipping grouping element 'ProxyForSFTP' as parameter 'jump_proxy_protocol' is not specified.");
+					jumpFragment.setProxyForSFTP(null);
 				}
 			} else {
-				logger.warn("Invalid value specified for option 'jump_proxy_protocol'. Only values 'socks4' and 'socks5' are allowed in combination with Jump.");
-			}
-		}
-		
-		
-		if (isJumpProxySpecified(options)) {
-			ProxyForSFTP proxyForSFTP = new ProxyForSFTP();
-			jumpFragment.setProxyForSFTP(proxyForSFTP);
-			if (options.jump_proxy_protocol.isDirty()) {
-				if (options.jump_proxy_protocol.Value().equalsIgnoreCase("socks4")) {
-					UnauthenticatedProxyType socks4Proxy = createUnauthenticatedProxyTypeForJump(options);
-					proxyForSFTP.setSOCKS4Proxy(socks4Proxy);
-				} else if (options.jump_proxy_protocol.Value().equalsIgnoreCase("socks5")) {
-					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyTypeForJump(options);
-					proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
-				} else {
-					logger.warn("Invalid value specified for option 'jump_proxy_protocol'. Only values 'socks4' and 'socks5' are allowed.");
-				}
-			} else {
-				if (options.jump_proxy_user.isDirty()) {
-					logger.warn("No 'jump_proxy_protocol' was specified. As you specified a 'jump_proxy_user' for authentication, I assume you meant to use 'SOCKS5Proxy'.");
-					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyTypeForJump(options);
-					proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
-				} else {
-					logger.warn("No 'jump_proxy_protocol' was specified. As you did not specify a 'jump_proxy_user' for authentication either, I assume you meant to use 'SOCKS4Proxy'.");
-					UnauthenticatedProxyType socks4Proxy = createUnauthenticatedProxyTypeForJump(options);
-					proxyForSFTP.setSOCKS4Proxy(socks4Proxy);
-				}
+				logger.warn("Invalid value specified for option 'jump_proxy_protocol'. Only values 'http', 'socks4' and 'socks5' are allowed in combination with Jump.");
 			}
 		}
 		// StrictHostKeyChecking does not seem to be implemented
@@ -2068,78 +2063,83 @@ public class IniToXmlConverter {
 	}
 
 	private CredentialStoreFragment createCredentialStoreFragment(SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
-		CredentialStoreFragment credentialStoreFragment = new CredentialStoreFragment();
-		credentialStoreFragment.setName(fragmentId);
 		SOSCredentialStoreOptions credentialStoreOptions = connectionOptions.getCredentialStore();
-		// CSFile
-		if (credentialStoreOptions.CS_FileName.isDirty()) {
-			credentialStoreFragment.setCSFile(credentialStoreOptions.CS_FileName.Value());
-		} else {
-			reportMissingMandatoryParameter("CSFile");
-		}
-		// CSAuthentication
-		CSAuthentication csAuthentication = new CSAuthentication();
-		credentialStoreFragment.setCSAuthentication(csAuthentication);
-		// KeyFileAuthentication
-		if (credentialStoreOptions.CS_AuthenticationMethod.Value().equalsIgnoreCase("privatekey")) {
-			KeyFileAuthentication keyFileAuthentication = new KeyFileAuthentication();
-			csAuthentication.setKeyFileAuthentication(keyFileAuthentication);
-			// CSKeyFile
-			if (credentialStoreOptions.CS_KeyFileName.isDirty()) {
-				keyFileAuthentication.setCSKeyFile(credentialStoreOptions.CS_KeyFileName.Value());
+		CredentialStoreFragment credentialStoreFragment = null;
+		if (credentialStoreOptions.use_credential_Store.isTrue()) {
+			credentialStoreFragment = new CredentialStoreFragment();
+			credentialStoreFragment.setName(fragmentId);
+			// CSFile
+			if (credentialStoreOptions.CS_FileName.isDirty()) {
+				credentialStoreFragment.setCSFile(credentialStoreOptions.CS_FileName.Value());
 			} else {
-				reportMissingMandatoryParameter("CSKeyFile");
+				reportMissingMandatoryParameter("CSFile");
 			}
-			// CSPassword
-			if (credentialStoreOptions.CS_password.isDirty()) {
-				keyFileAuthentication.setCSPassword(credentialStoreOptions.CS_password.Value());
-			}
-		// PasswordAuthentication	
-		} else if (credentialStoreOptions.CS_AuthenticationMethod.Value().equalsIgnoreCase("password") || !credentialStoreOptions.CS_AuthenticationMethod.isDirty()) {
-			if (!credentialStoreOptions.CS_AuthenticationMethod.isDirty()) {
-				logger.warn("No value was specified for parameter 'CS_AuthenticationMethod'. I assume you intended to use vale 'password'.");
-			}
-			PasswordAuthentication passwordAuthentication = new PasswordAuthentication();
-			csAuthentication.setPasswordAuthentication(passwordAuthentication);
-			// CSPassword
-			if (credentialStoreOptions.CS_password.isDirty()) {
-				passwordAuthentication.setCSPassword(credentialStoreOptions.CS_password.Value());
+			// CSAuthentication
+			CSAuthentication csAuthentication = new CSAuthentication();
+			credentialStoreFragment.setCSAuthentication(csAuthentication);
+			// KeyFileAuthentication
+			if (credentialStoreOptions.CS_AuthenticationMethod.Value().equalsIgnoreCase("privatekey")) {
+				KeyFileAuthentication keyFileAuthentication = new KeyFileAuthentication();
+				csAuthentication.setKeyFileAuthentication(keyFileAuthentication);
+				// CSKeyFile
+				if (credentialStoreOptions.CS_KeyFileName.isDirty()) {
+					keyFileAuthentication.setCSKeyFile(credentialStoreOptions.CS_KeyFileName.Value());
+				} else {
+					reportMissingMandatoryParameter("CSKeyFile");
+				}
+				// CSPassword
+				if (credentialStoreOptions.CS_password.isDirty()) {
+					keyFileAuthentication.setCSPassword(credentialStoreOptions.CS_password.Value());
+				}
+			// PasswordAuthentication	
+			} else if (credentialStoreOptions.CS_AuthenticationMethod.Value().equalsIgnoreCase("password") || !credentialStoreOptions.CS_AuthenticationMethod.isDirty()) {
+				if (!credentialStoreOptions.CS_AuthenticationMethod.isDirty()) {
+					logger.info("No value was specified for parameter 'CS_AuthenticationMethod'. I assume you intended to use value 'password'.");
+				}
+				PasswordAuthentication passwordAuthentication = new PasswordAuthentication();
+				csAuthentication.setPasswordAuthentication(passwordAuthentication);
+				// CSPassword
+				if (credentialStoreOptions.CS_password.isDirty()) {
+					passwordAuthentication.setCSPassword(credentialStoreOptions.CS_password.Value());
+				} else {
+					reportMissingMandatoryParameter("CSPassword");
+				}
 			} else {
-				reportMissingMandatoryParameter("CSPassword");
+				logger.info("Skipping grouping element 'CSAuthentication' as parameter 'CS_AuthenticationMethod' is not valid.");
 			}
-		} else {
-			logger.info("Skipping grouping element 'CSAuthentication' as parameter 'CS_AuthenticationMethod' is not valid.");
-		}
-		// CSEntryPath
-		if (credentialStoreOptions.CS_KeyPath.isDirty()) {
-			credentialStoreFragment.setCSEntryPath(credentialStoreOptions.CS_KeyPath.Value());
-		} else {
-			reportMissingMandatoryParameter("CSEntryPath");
-		}
-		// CSExportAttachment
-		if (credentialStoreOptions.CS_ExportAttachment.isTrue()) {
-			CSExportAttachment csExportAttachment = new CSExportAttachment();
-			credentialStoreFragment.setCSExportAttachment(csExportAttachment);
-			// CSExportedFile
-			if (credentialStoreOptions.CS_ExportAttachment2FileName.isDirty()) {
-				csExportAttachment.setCSExportedFile(credentialStoreOptions.CS_ExportAttachment2FileName.Value());
+			// CSEntryPath
+			if (credentialStoreOptions.CS_KeyPath.isDirty()) {
+				credentialStoreFragment.setCSEntryPath(credentialStoreOptions.CS_KeyPath.Value());
 			} else {
-				reportMissingMandatoryParameter("CSExportedFile");
+				reportMissingMandatoryParameter("CSEntryPath");
 			}
-			// CSDeleteExportedFileOnExit
-			if (credentialStoreOptions.CS_DeleteExportedFileOnExit.isDirty()) {
-				csExportAttachment.setCSDeleteExportedFileOnExit(credentialStoreOptions.CS_DeleteExportedFileOnExit.value());
+			// CSExportAttachment
+			if (credentialStoreOptions.CS_ExportAttachment.isTrue()) {
+				CSExportAttachment csExportAttachment = new CSExportAttachment();
+				credentialStoreFragment.setCSExportAttachment(csExportAttachment);
+				// CSExportedFile
+				if (credentialStoreOptions.CS_ExportAttachment2FileName.isDirty()) {
+					csExportAttachment.setCSExportedFile(credentialStoreOptions.CS_ExportAttachment2FileName.Value());
+				} else {
+					reportMissingMandatoryParameter("CSExportedFile");
+				}
+				// CSDeleteExportedFileOnExit
+				if (credentialStoreOptions.CS_DeleteExportedFileOnExit.isDirty()) {
+					csExportAttachment.setCSDeleteExportedFileOnExit(credentialStoreOptions.CS_DeleteExportedFileOnExit.value());
+				}
+				// CSOverwriteExportedFile
+				if (credentialStoreOptions.CS_OverwriteExportedFile.isDirty()) {
+					csExportAttachment.setCSOverwriteExportedFile(credentialStoreOptions.CS_OverwriteExportedFile.value());
+				}
+				// CSPermissionsForExportedFile
+				if (credentialStoreOptions.CS_Permissions4ExportedFile.isDirty()) {
+					csExportAttachment.setCSPermissionsForExportedFile(credentialStoreOptions.CS_Permissions4ExportedFile.Value());
+				}
 			}
-			// CSOverwriteExportedFile
-			if (credentialStoreOptions.CS_OverwriteExportedFile.isDirty()) {
-				csExportAttachment.setCSOverwriteExportedFile(credentialStoreOptions.CS_OverwriteExportedFile.value());
-			}
-			// CSPermissionsForExportedFile
-			if (credentialStoreOptions.CS_Permissions4ExportedFile.isDirty()) {
-				csExportAttachment.setCSPermissionsForExportedFile(credentialStoreOptions.CS_Permissions4ExportedFile.Value());
-			}
+			// CSStoreType may be neglected as the only implemented StoreType currently is KeePass
+		} else {
+			logger.info("Skipping grouping element 'CredentialStoreFragment' as parameter '" + connectionOptions.getPrefix() + "use_credential_store' is set to false or not specified.");
 		}
-		// CSStoreType may be neglected as the only implemented StoreType currently is KeePass
 		return credentialStoreFragment;
 	}
 
@@ -2301,17 +2301,20 @@ public class IniToXmlConverter {
 			targetFileOptions.setCheckSize(options.check_size.value());
 		}
 		// CumulateFiles
-		if (options.CumulateFiles.isTrue()) {
-			CumulateFiles cumulateFiles = new CumulateFiles();
-			targetFileOptions.setCumulateFiles(cumulateFiles);
-			if (options.CumulativeFileSeparator.isDirty()) {
-				cumulateFiles.setCumulativeFileSeparator(options.CumulativeFileSeparator.Value());
-			}
-			if (options.CumulativeFileName.isDirty()) {
-				cumulateFiles.setCumulativeFilename(options.CumulativeFileName.Value());
-			}
-			if (options.CumulativeFileDelete.isDirty()) {
-				cumulateFiles.setCumulativeFileDelete(options.CumulativeFileDelete.value());
+//		if (options.CumulateFiles.isTrue()) {
+		if (isCumulateFilesSpecified(options)) {
+			if (options.CumulateFiles.isTrue()) {
+				CumulateFiles cumulateFiles = new CumulateFiles();
+				targetFileOptions.setCumulateFiles(cumulateFiles);
+				if (options.CumulativeFileSeparator.isDirty()) {
+					cumulateFiles.setCumulativeFileSeparator(options.CumulativeFileSeparator.Value());
+				}
+				if (options.CumulativeFileName.isDirty()) {
+					cumulateFiles.setCumulativeFilename(options.CumulativeFileName.Value());
+				}
+				if (options.CumulativeFileDelete.isDirty()) {
+					cumulateFiles.setCumulativeFileDelete(options.CumulativeFileDelete.value());
+				}
 			}
 		} else {
 			logger.info("Skipping grouping element 'CumulateFiles' as parameter 'CumulateFiles' is set to false or not specified.");
@@ -2324,8 +2327,8 @@ public class IniToXmlConverter {
 			}
 			targetFileOptions.setCompressFiles(compressFiles);
 		}
-		// TODO CheckIntegrityHash tbd
-		if (options.CheckSecurityHash.isTrue() || options.CreateSecurityHashFile.isTrue()) { // CreateSecurityHashFile wird nicht gesetzt
+		// CheckIntegrityHash
+		if (options.CheckSecurityHash.isTrue() || options.CreateSecurityHashFile.isTrue()) {
 			CheckIntegrityHash checkIntegrityHash = new CheckIntegrityHash();
 			if (options.CreateSecurityHashFile.isDirty()) {
 				checkIntegrityHash.setCreateIntegrityHashFile(options.CreateSecurityHashFile.value());
@@ -2352,19 +2355,23 @@ public class IniToXmlConverter {
 		return targetFileOptions;
 	}
 
-
-
-	private boolean isTargetFileOptionsSpecified(JADEOptions options) {
+	private boolean isCumulateFilesSpecified(JADEOptions options) {
 		boolean returnValue = false;
-		if (options.append_files.isDirty() || isAtomicitySpecified(options) || options.check_size.isDirty() || options.CumulateFiles.isDirty() || 
-				options.compress_files.isDirty() || options.CheckSecurityHash.isDirty() || options.KeepModificationDate.isDirty() || 
-				options.makeDirs.isDirty() || options.overwrite_files.isDirty()) {
+		if (options.CumulateFiles.isDirty() || options.CumulativeFileName.isDirty() || options.CumulativeFileSeparator.isDirty() || options.CumulativeFileDelete.isDirty()) {
 			returnValue = true;
 		}
 		return returnValue;
 	}
 
-
+	private boolean isTargetFileOptionsSpecified(JADEOptions options) {
+		boolean returnValue = false;
+		if (options.append_files.isDirty() || isAtomicitySpecified(options) || options.check_size.isDirty() || options.CumulateFiles.isDirty() || 
+				options.compress_files.isDirty() || options.CheckSecurityHash.isDirty() || options.CreateSecurityHashFile.isDirty() || options.KeepModificationDate.isDirty() || 
+				options.makeDirs.isDirty() || options.overwrite_files.isDirty()) {
+			returnValue = true;
+		}
+		return returnValue;
+	}
 
 	private boolean isAtomicitySpecified(JADEOptions options) {
 		boolean returnValue = false;
@@ -2373,7 +2380,6 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
 
 	private LocalPostProcessingType createLocalPostProcessing(SOSConnection2OptionsAlternate connectionOptions) {
 		LocalPostProcessingType localPostProcessing = new LocalPostProcessingType();
@@ -2389,8 +2395,6 @@ public class IniToXmlConverter {
 		return localPostProcessing;
 	}
 
-
-
 	private boolean isLocalPostProcessingSpecified(SOSConnection2OptionsAlternate connectionOptions) {
 		boolean returnValue = false;
 		if (connectionOptions.Post_Command.isDirty() || connectionOptions.PostTransferCommands.isDirty() || connectionOptions.TFN_Post_Command.isDirty()) {
@@ -2398,8 +2402,6 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
-
 
 	private LocalPreProcessingType createLocalPreProcessing(SOSConnection2OptionsAlternate connectionOptions) {
 		LocalPreProcessingType localPreProcessing = new LocalPreProcessingType();
@@ -2412,8 +2414,6 @@ public class IniToXmlConverter {
 		return localPreProcessing;
 	}
 
-
-
 	private boolean isLocalPreProcessingSpecified(SOSConnection2OptionsAlternate connectionOptions) {
 		boolean returnValue = false;
 		if (connectionOptions.Pre_Command.isDirty() || connectionOptions.PreTransferCommands.isDirty()) {
@@ -2421,8 +2421,6 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
-
 
 	private FTPFragment createFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
 		FTPFragment ftpFragment = new FTPFragment();
@@ -2484,8 +2482,6 @@ public class IniToXmlConverter {
 		return ftpFragment;
 	}
 
-
-
 	private FTPFragmentRef createFTPFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
 		FTPFragmentRef ftpFragmentRef = new FTPFragmentRef();
 		ftpFragmentRef.setRef(fragmentId);
@@ -2507,8 +2503,6 @@ public class IniToXmlConverter {
 		return ftpFragmentRef;
 	}
 
-
-
 	private boolean isUnprefixedRenameSpecified(JADEOptions options) {
 		boolean returnValue = false;
 		if (options.replacement.isDirty() || options.replacing.isDirty()) {
@@ -2516,8 +2510,6 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
-
 
 	private FTPPreProcessingType createFTPPreProcessing(SOSConnection2OptionsAlternate connectionOptions) {
 		FTPPreProcessingType ftpPreProcessing = new FTPPreProcessingType();
@@ -2530,8 +2522,6 @@ public class IniToXmlConverter {
 		return ftpPreProcessing;
 	}
 
-
-
 	private boolean isPreProcessingSpecified(SOSConnection2OptionsAlternate connectionOptions) {
 		boolean returnValue = false;
 		if (connectionOptions.Pre_Command.isDirty() || connectionOptions.PreTransferCommands.isDirty()) {
@@ -2539,8 +2529,6 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
-
 
 	private boolean isRenameSpecified(SOSConnection2OptionsAlternate connectionOptions) {
 		boolean returnValue = false;
@@ -2550,8 +2538,6 @@ public class IniToXmlConverter {
 		return returnValue;
 	}
 
-
-
 	private boolean isPostProcessingSpecified(SOSConnection2OptionsAlternate connectionOptions) {
 		boolean returnValue = false;
 		if (connectionOptions.Post_Command.isDirty() || connectionOptions.PostTransferCommands.isDirty() || connectionOptions.TFN_Post_Command.isDirty()) {
@@ -2559,8 +2545,6 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
-
 
 	private RenameType createRename(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions) {
 		RenameType rename = new RenameType();
@@ -2600,8 +2584,6 @@ public class IniToXmlConverter {
 		return rename;
 	}
 
-
-
 	private FTPPostProcessingType createFTPPostProcessing(SOSConnection2OptionsAlternate connectionOptions) {
 		FTPPostProcessingType ftpPostProcessing = new FTPPostProcessingType();
 		if (connectionOptions.Post_Command.isDirty()) {
@@ -2629,8 +2611,6 @@ public class IniToXmlConverter {
 		return UUID.randomUUID().toString();
 	}
 
-
-
 	private void writeXML(Object object, String outFilename) {
 		logger.info("Writing converted file '" + outFilename + "'");
 		try {
@@ -2648,14 +2628,12 @@ public class IniToXmlConverter {
 	}
 	
 	private JADEOptions loadIniFile(String filepath, String profilename) {
-		
 		JADEOptions options = new JADEOptions();
 		options.settings.Value(filepath);
 		options.profile.Value(profilename);
 		// Verhindert das Substituieren von Variablen (${USERPROFILE}, ${TEMP}, ...)
 		options.gflgSubsituteVariables = false;
 		options.ReadSettingsFile();
-		
 		return options;
 	}
 }
