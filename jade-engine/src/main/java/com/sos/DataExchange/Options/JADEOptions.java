@@ -84,7 +84,7 @@ public class JADEOptions extends SOSFTPOptions {
 			}
 		}
 		else {  // TODO any file extension is allowed for the ini-configuration file
-			super.ReadSettingsFile();
+			map = super.ReadSettingsFile();
 		}
 		return map;
 	}

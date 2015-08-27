@@ -78,7 +78,7 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 		objO = objR.Options();
 		objO.CurrentNodeName(getCurrentNodeName());
 		hsmParameters = getSchedulerParameterAsProperties(getParameters());
-		objO.setAllOptions(objO.DeletePrefix(hsmParameters, "ftp_"));
+		objO.setAllOptions2(objO.DeletePrefix(hsmParameters, "ftp_"));
 		objO.CheckMandatory();
 		setSpecialOptions();
 		int intLogLevel = spooler_log.level();
