@@ -92,7 +92,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 		jadeOptions = jade4DMZEngine.Options();
  		
 		jadeOptions.CurrentNodeName(getCurrentNodeName());
-		jadeOptions.setAllOptions(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
+		jadeOptions.setAllOptions2(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
 		int intLogLevel = -1*spooler_log.level();
 		if (intLogLevel > jadeOptions.verbose.value()) {
 			jadeOptions.verbose.value(intLogLevel);

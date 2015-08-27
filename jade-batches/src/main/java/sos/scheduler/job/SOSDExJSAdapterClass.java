@@ -78,7 +78,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 		jadeEngine = new JadeEngine();
 		jadeOptions = jadeEngine.Options();
 		jadeOptions.CurrentNodeName(getCurrentNodeName());
-		jadeOptions.setAllOptions(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
+		jadeOptions.setAllOptions2(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
 		//objJadeOptions.CheckMandatory(); //is made in Execute method
 		int intLogLevel = -1*spooler_log.level();
 		if (intLogLevel > jadeOptions.verbose.value()) {
