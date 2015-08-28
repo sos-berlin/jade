@@ -26,99 +26,7 @@ import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.io.Files.JSIniFile;
 import com.sos.JSHelper.io.Files.SOSProfileSection;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
-import com.sos.jade.generated.AtomicityType;
-import com.sos.jade.generated.AuthenticatedProxyType;
-import com.sos.jade.generated.AuthenticationMethodPassword;
-import com.sos.jade.generated.AuthenticationMethodPublickey;
-import com.sos.jade.generated.BasicAuthenticationType;
-import com.sos.jade.generated.BasicConnectionType;
-import com.sos.jade.generated.CSAuthentication;
-import com.sos.jade.generated.CSExportAttachment;
-import com.sos.jade.generated.CheckIntegrityHash;
-import com.sos.jade.generated.CheckResultSetSize;
-import com.sos.jade.generated.CheckSteadyState;
-import com.sos.jade.generated.Client;
-import com.sos.jade.generated.CompressFiles;
-import com.sos.jade.generated.ConcurrencyType;
-import com.sos.jade.generated.Configurations;
-import com.sos.jade.generated.Copy;
-import com.sos.jade.generated.CopySource;
-import com.sos.jade.generated.CopyTarget;
-import com.sos.jade.generated.CreateOrder;
-import com.sos.jade.generated.CredentialStoreFragment;
-import com.sos.jade.generated.CredentialStoreFragments;
-import com.sos.jade.generated.CumulateFiles;
-import com.sos.jade.generated.Directives;
-import com.sos.jade.generated.FTPFragment;
-import com.sos.jade.generated.FTPFragmentRef;
-import com.sos.jade.generated.FTPPostProcessingType;
-import com.sos.jade.generated.FTPPreProcessingType;
-import com.sos.jade.generated.FTPSClientSecurityType;
-import com.sos.jade.generated.FTPSFragment;
-import com.sos.jade.generated.FTPSFragmentRef;
-import com.sos.jade.generated.FileListSelection;
-import com.sos.jade.generated.FilePathSelection;
-import com.sos.jade.generated.FileSpecSelection;
-import com.sos.jade.generated.Fragments;
-import com.sos.jade.generated.GetList;
-import com.sos.jade.generated.GetListSource;
-import com.sos.jade.generated.HTTPFragment;
-import com.sos.jade.generated.HTTPFragmentRef;
-import com.sos.jade.generated.HTTPSFragment;
-import com.sos.jade.generated.HTTPSFragmentRef;
-import com.sos.jade.generated.Header;
-import com.sos.jade.generated.JobScheduler;
-import com.sos.jade.generated.JumpFragment;
-import com.sos.jade.generated.JumpFragmentRef;
-import com.sos.jade.generated.KeyFileAuthentication;
-import com.sos.jade.generated.LocalPostProcessingType;
-import com.sos.jade.generated.LocalPreProcessingType;
-import com.sos.jade.generated.LocalSource;
-import com.sos.jade.generated.LocalTarget;
-import com.sos.jade.generated.MailFragment;
-import com.sos.jade.generated.MailServer;
-import com.sos.jade.generated.Move;
-import com.sos.jade.generated.MoveSource;
-import com.sos.jade.generated.MoveTarget;
-import com.sos.jade.generated.NotificationFragmentRef;
-import com.sos.jade.generated.NotificationFragmentRefs;
-import com.sos.jade.generated.NotificationFragments;
-import com.sos.jade.generated.NotificationTriggers;
-import com.sos.jade.generated.Notifications;
-import com.sos.jade.generated.Operation;
-import com.sos.jade.generated.PasswordAuthentication;
-import com.sos.jade.generated.Polling;
-import com.sos.jade.generated.Profile;
-import com.sos.jade.generated.Profiles;
-import com.sos.jade.generated.ProtocolFragments;
-import com.sos.jade.generated.ProxyForFTP;
-import com.sos.jade.generated.ProxyForFTPS;
-import com.sos.jade.generated.ProxyForHTTP;
-import com.sos.jade.generated.ProxyForSFTP;
-import com.sos.jade.generated.ProxyForWebDAV;
-import com.sos.jade.generated.ReadableFragmentRefType;
-import com.sos.jade.generated.Remove;
-import com.sos.jade.generated.RemoveSource;
-import com.sos.jade.generated.RenameType;
-import com.sos.jade.generated.ResultSet;
-import com.sos.jade.generated.SFTPFragment;
-import com.sos.jade.generated.SFTPFragmentRef;
-import com.sos.jade.generated.SFTPPostProcessingType;
-import com.sos.jade.generated.SFTPPreProcessingType;
-import com.sos.jade.generated.SMBAuthentication;
-import com.sos.jade.generated.SMBFragment;
-import com.sos.jade.generated.SMBFragmentRef;
-import com.sos.jade.generated.SSHAuthenticationType;
-import com.sos.jade.generated.Selection;
-import com.sos.jade.generated.SourceFileOptions;
-import com.sos.jade.generated.TargetFileOptions;
-import com.sos.jade.generated.TransferOptions;
-import com.sos.jade.generated.URLConnectionType;
-import com.sos.jade.generated.UnauthenticatedProxyType;
-import com.sos.jade.generated.WebDAVFragment;
-import com.sos.jade.generated.WebDAVFragmentRef;
-import com.sos.jade.generated.WriteableFragmentRefType;
-import com.sos.jade.generated.ZlibCompression;
+import com.sos.jade.converter.generated.*;
 
 import sos.net.mail.options.SOSSmtpMailOptions;
 
@@ -130,6 +38,7 @@ public class IniToXmlConverter {
 	private boolean autoDetectProfiles = true;
 	private String[] ignoredProfiles = null;
 	private String[] forcedProfiles = null;
+	private File outputDir = null;
 	//*********************************************************************************************************************************************//
 	public static Logger logger = LoggerFactory.getLogger(IniToXmlConverter.class);
 	private HashSet<String> profilesMissingMandatoryParameters = new HashSet<>();
@@ -152,39 +61,57 @@ public class IniToXmlConverter {
 		logger.info("The settings file specified for conversion is '" + converter.iniFilePath + "'");
 		String[] profilesToConvert = converter.detectProfiles();
 		Object object = converter.convertIniFile(profilesToConvert);
-		converter.writeXML(object, converter.iniFilePath.replace(".ini", ".xml"));
+		File outFile = converter.getOutFile();
+		converter.writeXML(object, outFile);
 	}
 	
+	private File getOutFile() {
+		File iniFile = new File(iniFilePath);
+		String outFilePath = "";
+		if (outputDir != null) {
+			outFilePath = outputDir.getAbsolutePath() + "/" + iniFile.getName().replace(".ini", ".xml");
+		} else {
+			outFilePath = iniFile.getAbsolutePath().replace(".ini", ".xml");
+		}
+		return new File(outFilePath);
+	}
+
 	/**
 	 * Currently implemented arguments are:
 	 * -settings="filepath"
 	 * -autoDetectProfiles=false
 	 * -forcedProfiles="profile1;profile2"
 	 * -ignoredProfiles="profile3;profile4"
+	 * -outputDir="outpath"
 	 * @param args
 	 */
 	private void handleArguments(String[] args) {
 		for (String argument : args) {
-			// CommandLineOptions are supposed to start with a '-' and contain a '='
+			// CommandLineOptions are supposed to start with a '-' and contain a '=' (-arg=value)
 			if (argument.startsWith("-") && argument.contains("=")) {
 				int separatorPosition = argument.indexOf("=");
-				String optionName = argument.substring(1, separatorPosition);
-				String optionValue = argument.substring(separatorPosition+1);
+				String argName = argument.substring(1, separatorPosition);
+				String argValue = argument.substring(separatorPosition+1);
 				
-				if (optionName.equalsIgnoreCase("settings")) {
-					iniFilePath = optionValue;
-				} else if (optionName.equalsIgnoreCase("autoDetectProfiles")) {
-					if (optionValue.equalsIgnoreCase("false")) {
+				if (argName.equalsIgnoreCase("settings")) {
+					iniFilePath = argValue;
+				} else if (argName.equalsIgnoreCase("autoDetectProfiles")) {
+					if (argValue.equalsIgnoreCase("false")) {
 						autoDetectProfiles = false;
-					} else if (optionValue.equalsIgnoreCase("true")) {
+					} else if (argValue.equalsIgnoreCase("true")) {
 						autoDetectProfiles = true;
 					} else {
 						throw (new IllegalArgumentException("Invalid value specified for option 'autoDetectProfiles'"));
 					}
-				} else if (optionName.equalsIgnoreCase("ignoredProfiles") && optionValue.isEmpty() == false) {
-					ignoredProfiles = optionValue.split(";");
-				} else if (optionName.equalsIgnoreCase("forcedProfiles") && optionValue.isEmpty() == false) {
-					forcedProfiles = optionValue.split(";");
+				} else if (argName.equalsIgnoreCase("ignoredProfiles") && argValue.isEmpty() == false) {
+					ignoredProfiles = argValue.split(";");
+				} else if (argName.equalsIgnoreCase("forcedProfiles") && argValue.isEmpty() == false) {
+					forcedProfiles = argValue.split(";");
+				} else if (argName.equalsIgnoreCase("outputDir") && argValue.isEmpty() == false) {
+					File file = new File(argValue);
+					if (file.exists() && file.isDirectory()) {
+						outputDir = file;
+					}
 				}
 			}
 		}
@@ -412,11 +339,8 @@ public class IniToXmlConverter {
 				
 				// Client
 					if(options.mandator.isDirty()) {
-						logger.info("Using 'mandator=" + options.mandator.Value() + "' for both 'SupplyingClient' and 'ReceivingClient'.");
 						Client client = new Client();
 						profile.setClient(client);
-						// SupplyingClient
-						client.setSupplyingClient(options.mandator.Value());
 						// ReceivingClient
 						client.setReceivingClient(options.mandator.Value());
 					}
@@ -2611,8 +2535,8 @@ public class IniToXmlConverter {
 		return UUID.randomUUID().toString();
 	}
 
-	private void writeXML(Object object, String outFilename) {
-		logger.info("Writing converted file '" + outFilename + "'");
+	private void writeXML(Object object, File outFile) {
+		logger.info("Writing converted file '" + outFile.getAbsolutePath() + "'");
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -2620,7 +2544,7 @@ public class IniToXmlConverter {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, schemaLocation);
 
-			jaxbMarshaller.marshal(object, new File(outFilename) );
+			jaxbMarshaller.marshal(object, outFile);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
