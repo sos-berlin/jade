@@ -62,6 +62,9 @@ public class JadeFilesFilter extends SOSHibernateIntervalFilter implements ISOSH
 	
 	private Integer			fileSize;
 	
+	private Date			modificationDateFrom;
+	private Date			modificationDateTo;
+
 	public String getCreatedFromIso() {
 		return createdFromIso;
 	}
@@ -285,6 +288,67 @@ public class JadeFilesFilter extends SOSHibernateIntervalFilter implements ISOSH
 
 	}
 
+	public Date getModificationDateFrom() {
+		return modificationDateFrom;
+	}
+
+	public void setModificationDateFrom(final String modificationDateFrom) throws ParseException {
+		if (modificationDateFrom.equals("")) {
+			this.modificationDateFrom = null;
+		}
+		else {
+			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat1);
+			Date d = formatter.parse(modificationDateFrom);
+			setModificationDateFrom(d);
+		}
+	}
+
+	public Date getModificationDateTo() {
+		return modificationDateTo;
+	}
+
+	public void setModificationDateTo(final String modificationDateTo) throws ParseException {
+		if (modificationDateTo.equals("")) {
+			this.modificationDateTo = null;
+		}
+		else {
+			SimpleDateFormat formatter = new SimpleDateFormat(dateFormat1);
+			Date d = formatter.parse(modificationDateTo);
+			setModificationDateTo(d);
+		}
+	}
+
+	public void setModificationDateFrom(final Date from) {
+		if (from != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd 00:00:00");
+			String d = formatter.format(from);
+			try {
+				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				modificationDateFrom = formatter.parse(d);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public void setModificationDateTo(final Date to) {
+		if (to != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd 23:59:59");
+			String d = formatter.format(to);
+			try {
+				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				modificationDateTo = formatter.parse(d);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	
 	public String getCreatedBy() {
 		return createdBy;
 	}

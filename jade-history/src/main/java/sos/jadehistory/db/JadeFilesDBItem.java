@@ -53,6 +53,7 @@ public class JadeFilesDBItem extends DbItem {
      private String createdBy;
      private Date   modified;
      private String modifiedBy;
+     private Date   modificationDate;
     // private List <JadeFilesHistoryDBItem> jadeFilesHistoryDBItems = new ArrayList <JadeFilesHistoryDBItem>();
   //   private Session session;
 
@@ -220,6 +221,18 @@ public class JadeFilesDBItem extends DbItem {
    @Temporal(TemporalType.TIMESTAMP)
 	public void setModified(Date modified) {;
 		this.modified = modified;
+	}
+
+   @Column(name="`MODIFICATION_DATE`", nullable=true)
+   @Temporal(TemporalType.TIMESTAMP)
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+   @Column(name="`MODIFICATION_DATE`", nullable=true)
+   @Temporal(TemporalType.TIMESTAMP)
+	public void setModificationDate(Date modificationDate) {;
+		this.modificationDate = modificationDate;
 	}
 
    

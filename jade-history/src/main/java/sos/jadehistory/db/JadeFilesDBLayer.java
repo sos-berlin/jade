@@ -104,6 +104,16 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             and = " and ";
         }
 
+        if (filter.getModificationDateFrom() != null) {
+            where += and + " modificationDate >= :modificationDateFrom";
+            and = " and ";
+        }
+
+        if (filter.getModificationDateTo() != null) {
+            where += and + " modificationDate <= :modificationDateTo ";
+            and = " and ";
+        }
+
         if (filter.getMandator() != null && !filter.getMandator().equals("")) {
             where += and + " mandator=:mandator";
             and = " and ";
@@ -201,6 +211,14 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
         if (filter.getModifiedTo() != null && !filter.getModifiedTo().equals("")) {
             query.setTimestamp("modifiedTo", filter.getModifiedTo());
+        }
+
+        if (filter.getModificationDateFrom() != null && !filter.getModificationDateFrom().equals("")) {
+            query.setTimestamp("modificationDateFrom", filter.getModificationDateFrom());
+        }
+
+        if (filter.getModificationDateTo() != null && !filter.getModificationDateTo().equals("")) {
+            query.setTimestamp("modificationDateTo", filter.getModificationDateTo());
         }
 
         if (filter.getMandator() != null && !filter.getMandator().equals("")) {
