@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}JobSchedulerHostname"/>
- *         &lt;element ref="{}JobSchedulerPort" minOccurs="0"/>
+ *         &lt;element ref="{}BasicConnection"/>
+ *         &lt;element ref="{}BasicAuthentication" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,63 +37,63 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "jobSchedulerHostname",
-    "jobSchedulerPort"
+    "basicConnection",
+    "basicAuthentication"
 })
-@XmlRootElement(name = "CreateOrderOnRemoteJobScheduler")
-public class CreateOrderOnRemoteJobScheduler {
+@XmlRootElement(name = "MailHost")
+public class MailHost {
 
-    @XmlElement(name = "JobSchedulerHostname", required = true)
-    protected String jobSchedulerHostname;
-    @XmlElement(name = "JobSchedulerPort", defaultValue = "4444")
-    protected Integer jobSchedulerPort;
+    @XmlElement(name = "BasicConnection", required = true)
+    protected BasicConnectionType basicConnection;
+    @XmlElement(name = "BasicAuthentication")
+    protected BasicAuthenticationType basicAuthentication;
 
     /**
-     * Ruft den Wert der jobSchedulerHostname-Eigenschaft ab.
+     * Ruft den Wert der basicConnection-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link BasicConnectionType }
      *     
      */
-    public String getJobSchedulerHostname() {
-        return jobSchedulerHostname;
+    public BasicConnectionType getBasicConnection() {
+        return basicConnection;
     }
 
     /**
-     * Legt den Wert der jobSchedulerHostname-Eigenschaft fest.
+     * Legt den Wert der basicConnection-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link BasicConnectionType }
      *     
      */
-    public void setJobSchedulerHostname(String value) {
-        this.jobSchedulerHostname = value;
+    public void setBasicConnection(BasicConnectionType value) {
+        this.basicConnection = value;
     }
 
     /**
-     * Ruft den Wert der jobSchedulerPort-Eigenschaft ab.
+     * Ruft den Wert der basicAuthentication-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link BasicAuthenticationType }
      *     
      */
-    public Integer getJobSchedulerPort() {
-        return jobSchedulerPort;
+    public BasicAuthenticationType getBasicAuthentication() {
+        return basicAuthentication;
     }
 
     /**
-     * Legt den Wert der jobSchedulerPort-Eigenschaft fest.
+     * Legt den Wert der basicAuthentication-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link BasicAuthenticationType }
      *     
      */
-    public void setJobSchedulerPort(Integer value) {
-        this.jobSchedulerPort = value;
+    public void setBasicAuthentication(BasicAuthenticationType value) {
+        this.basicAuthentication = value;
     }
 
 }

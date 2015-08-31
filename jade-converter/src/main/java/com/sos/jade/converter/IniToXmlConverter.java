@@ -401,8 +401,11 @@ public class IniToXmlConverter {
 				if (isCredentialStoreFragmentSpecified(options.Source()) || isCredentialStoreFragmentSpecified(options.Target())) {
 					// CredentialStoreFragmentRef
 					logger.info("Currently only the CredentialStoreFragment will be generated, but no references to it."); // TODO
-					CredentialStoreFragments credentialStoreFragments = new CredentialStoreFragments();
-					fragments.setCredentialStoreFragments(credentialStoreFragments);
+					CredentialStoreFragments credentialStoreFragments = fragments.getCredentialStoreFragments();
+					if (credentialStoreFragments == null) {
+						credentialStoreFragments = new CredentialStoreFragments();
+						fragments.setCredentialStoreFragments(credentialStoreFragments);
+					}
 					if (isCredentialStoreFragmentSpecified(options.Source())) {
 						CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(options.Source(), getRandomFragmentId());
 						credentialStoreFragments.getCredentialStoreFragment().add(credentialStoreFragment);
@@ -411,6 +414,17 @@ public class IniToXmlConverter {
 						CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(options.Target(), getRandomFragmentId());
 						credentialStoreFragments.getCredentialStoreFragment().add(credentialStoreFragment);
 					}
+				}
+				// MailServer
+				if (isMailServerTypeSpecified(options.getMailOptions())) {
+					// MailServerFragments
+					MailServerFragments mailServerFragments = fragments.getMailServerFragments();
+					if (mailServerFragments == null) {
+						mailServerFragments = new MailServerFragments();
+						fragments.setMailServerFragments(mailServerFragments);
+					}
+					MailServerFragment mailServerFragment = createMailServerFragment(options, getRandomFragmentId());
+					mailServerFragments.getMailServerFragment().add(mailServerFragment);
 				}
 				logger.info("----- Finished conversion of profile: '" + profilename + "' -----");
 				if (missingMandatoryParameter) {
@@ -783,35 +797,59 @@ public class IniToXmlConverter {
 		if (mailOptions.encoding.isDirty()) {
 			mailFragment.setEncoding(mailOptions.encoding.Value());
 		}
+		return mailFragment;
+	}
+	
+	
+	private MailServerFragment createMailServerFragment(JADEOptions options, String fragmentId) {
+		MailServerFragment mailServerFragment = new MailServerFragment();
+		mailServerFragment.setName(fragmentId);
+		return mailServerFragment;
+	}
+	
+	//TODO prefixes on_error, on_empty, on_success 
+	private MailServerType createMailServerType(JADEOptions options) {
+		
+		MailServerType mailServerType = new MailServerType();
+		SOSSmtpMailOptions mailOptions = options.getMailOptions();
 		// MailServer
-		if (mailOptions.SMTPHost.isDirty()) {
-			MailServer mailServer = new MailServer();
+		if (isMailHostSpecified(mailOptions)) {
+			MailHost mailHost = new MailHost();
+			
+			mailServerType.setMailHost(mailHost);
+			
 			// BasicConnection
 			BasicConnectionType basicConnectionType = new BasicConnectionType();
-			mailServer.setBasicConnection(basicConnectionType);
-				// Hostname
+			mailHost.setBasicConnection(basicConnectionType);
+			// Hostname
+			if (mailOptions.host.isDirty()) {
 				basicConnectionType.setHostname(mailOptions.host.Value());
-				// Port
-				if (mailOptions.port.isDirty()) {
-					basicConnectionType.setPort(mailOptions.port.value());
-				}
+			} else {
+				reportMissingMandatoryParameter("mail_host");
+			}
+			// Port
+			if (mailOptions.port.isDirty()) {
+				basicConnectionType.setPort(mailOptions.port.value());
+			}
 			// BasicAuthentication
+			if (mailOptions.smtp_user.isDirty() || mailOptions.smtp_password.isDirty()) {
+				BasicAuthenticationType basicAuthenticationType = new BasicAuthenticationType();
+				mailHost.setBasicAuthentication(basicAuthenticationType);
+				// Account
 				if (mailOptions.smtp_user.isDirty()) {
-					BasicAuthenticationType basicAuthenticationType = new BasicAuthenticationType();
-					mailServer.setBasicAuthentication(basicAuthenticationType);
-					// Account
 					basicAuthenticationType.setAccount(mailOptions.smtp_user.Value());
-					// Password
-					if (mailOptions.smtp_password.isDirty()) {
-						basicAuthenticationType.setPassword(mailOptions.smtp_password.Value());
-					}
 				}
+				// Password
+				if (mailOptions.smtp_password.isDirty()) {
+					basicAuthenticationType.setPassword(mailOptions.smtp_password.Value());
+				}
+			}
+			// QueueDirectory
+			if (mailOptions.queue_directory.isDirty()) {
+				mailServerType.setQueueDirectory(mailOptions.queue_directory.Value());
+			}
 		}
-		// QueueDirectory
-		if (mailOptions.queue_directory.isDirty()) {
-			mailFragment.setQueueDirectory(mailOptions.queue_directory.Value());
-		}
-		return mailFragment;
+		return mailServerType;
 	}
 
 
@@ -874,7 +912,26 @@ public class IniToXmlConverter {
 		}
 		return returnValue;
 	}
-
+	
+	
+	
+	private boolean isMailServerTypeSpecified(SOSSmtpMailOptions mailOptions) {
+		boolean returnValue = false;
+		if (mailOptions.SMTPHost.isDirty() || mailOptions.queue_directory.isDirty() || mailOptions.port.isDirty() || mailOptions.smtp_user.isDirty() || mailOptions.smtp_password.isDirty()) {
+			returnValue = true;
+		}
+		return returnValue;
+	}
+	
+	
+	
+	private boolean isMailHostSpecified(SOSSmtpMailOptions mailOptions) {
+		boolean returnValue = false;
+		if (mailOptions.SMTPHost.isDirty() || mailOptions.port.isDirty() || mailOptions.smtp_user.isDirty() || mailOptions.smtp_password.isDirty()) {
+			returnValue = true;
+		}
+		return returnValue;
+	}
 
 
 	private CreateOrder createCreateOrder(JADEOptions options) {
