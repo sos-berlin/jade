@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.sos-berlin</groupId>
 		<artifactId>products</artifactId>
-        <version>1.10.0-TEST-SNAPSHOT</version>
+        <version>1.10.0-TEST</version>
 	</parent>
 
 	<artifactId>jade</artifactId>
