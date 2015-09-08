@@ -239,7 +239,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.operation.Value("send");
 		objOptions.log_filename.Value(objOptions.TempDir() + "test.log");
 		objOptions.profile.Value(conMethodName);
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.poll_interval.Value("0:30"); //
 		objOptions.PollingDuration.Value("05:00"); // for 5 minutes
 		// objOptions.force_files.value(flgForceFiles);
@@ -992,7 +991,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	private void runFilePathTest() throws Exception {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::runFilePathTest";
 		objOptions.operation.Value("send");
-		objOptions.CreateSecurityHash.setFalse();
 		logger.info(objOptions.dirtyString());
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);
 		objJadeEngine.Execute();
@@ -1660,7 +1658,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 		objOptions.file_path.Value("");
 		objOptions.FileNamePatternRegExp.Value("^.*\\.txt$");
 		objOptions.operation.Value("copy");
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.Target().Post_Command.Value("echo $TargetFileName");
 		objOptions.remove_files.value(true);
 		JadeEngine objJadeEngine = new JadeEngine(objOptions);

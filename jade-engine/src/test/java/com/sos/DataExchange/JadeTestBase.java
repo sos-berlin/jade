@@ -444,7 +444,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.operation.Value("copy");
 		objOptions.log_filename.Value(objOptions.TempDir() + "test.log");
 		objOptions.profile.Value(conMethodName);
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.poll_interval.Value("0:30"); //
 		objOptions.PollingDuration.Value("05:00"); // for 5 minutes
 		// objOptions.force_files.value(flgForceFiles);
@@ -559,7 +558,6 @@ public abstract class JadeTestBase extends JSToolBox {
 	private void setSourceAndTarget() {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::setSourceAndTarget";
 		objOptions.CheckSecurityHash.Set(objTestOptions.CheckSecurityHash);
-		objOptions.CreateSecurityHash.Set(objTestOptions.CreateSecurityHash);
 		objOptions.CreateSecurityHashFile.Set(objTestOptions.CreateSecurityHashFile);
 		objOptions.SecurityHashType.Set(objTestOptions.SecurityHashType);
 
@@ -712,7 +710,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.SourceDir.Value(objTestOptions.SourceDir.Value());
 		objOptions.TargetDir.Value(objTestOptions.TargetDir.Value());
 		objOptions.operation.Value(enuJadeOperations.copy);
-		objOptions.CreateSecurityHash.value(false);
 		//		objOptions.ConcurrentTransfer.setTrue();
 		//		objOptions.MaxConcurrentTransfers.value(4);
 		objOptions.KeepModificationDate.setTrue();
@@ -768,7 +765,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.operation.Value(enuJadeOperations.copy);
 		objOptions.TargetDir.Value(objTestOptions.TargetDir.Value() + "/SAVE[date:yyyyMMddHHmm]");
 		objOptions.makeDirs.value(true);
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.remove_files.value(false);
 		objOptions.CreateResultSet.value(true);
 		objOptions.ResultSetFileName.Value(strTestPathName + "/Resultset.dat");
@@ -793,7 +789,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.operation.Value(enuJadeOperations.copy);
 		objOptions.Source().replacing.Value("(.*)(.txt)");
 		objOptions.Source().replacement.Value("SAVE/\\1_[date:yyyyMMddHHmm];\\2");
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.remove_files.value(false);
 		objOptions.CreateResultSet.value(true);
 		objOptions.ResultSetFileName.Value(strTestPathName + "/Resultset.dat");
@@ -831,7 +826,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.Target().replacement.Value("\\1_[date:yyyyMMdd];\\2");
 		objOptions.replacing.Value("(.*)(.txt)");
 		objOptions.replacement.Value("\\1_[date:yyyyMMdd];\\2");
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.remove_files.value(false);
 		objOptions.CreateResultSet.value(true);
 		objOptions.ResultSetFileName.Value(strTestPathName + "/Resultset.dat");
@@ -847,7 +841,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.FileNamePatternRegExp.Value("^.*\\.txt$");
 		objOptions.operation.Value(enuJadeOperations.copy);
 		objOptions.atomic_suffix.Value(".tmp");
-		objOptions.CreateSecurityHash.setFalse();
 		//		objOptions.Target().Post_Command.Value("echo $TargetFileName");
 		//		objOptions.remove_files.value(true);
 		startTransfer(objOptions);
@@ -953,7 +946,6 @@ public abstract class JadeTestBase extends JSToolBox {
 		objOptions.file_path.Value("");
 		objOptions.FileNamePatternRegExp.Value("^.*\\.txt$");
 		objOptions.operation.Value(enuJadeOperations.getlist);
-		objOptions.CreateSecurityHash.value(false);
 		objOptions.CreateResultSet.value(true);
 		startTransfer(objOptions);
 	}
