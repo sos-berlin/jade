@@ -311,9 +311,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.verbose = objOptions.verbose;
 		options.zero_byte_transfer = objOptions.zero_byte_transfer;
 		
-		//not supported: options.CreateSecurityHash = objOptions.CreateSecurityHash;
-		//not supported: options.SecurityHashType = objOptions.SecurityHashType;
-
 		return options;
 	}
 	
@@ -346,10 +343,12 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.verbose = objOptions.verbose;
 		options.zero_byte_transfer = objOptions.zero_byte_transfer;
 		
-		//not supported: options.CheckSecurityHash = objOptions.CheckSecurityHash;
-		//not supported: options.CreateSecurityHashFile = objOptions.CreateSecurityHashFile;
-		//not supported: options.CreateSecurityHash = objOptions.CreateSecurityHash;
-		//not supported: options.SecurityHashType = objOptions.SecurityHashType;
+		options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
+		options.CreateIntegrityHashFile = objOptions.CreateIntegrityHashFile;
+		options.IntegrityHashType = objOptions.IntegrityHashType;
+//		options.CheckSecurityHash = objOptions.CheckSecurityHash;
+//		options.CreateSecurityHashFile = objOptions.CreateSecurityHashFile;
+//		options.SecurityHashType = objOptions.SecurityHashType;
 
 		return options;
 	}

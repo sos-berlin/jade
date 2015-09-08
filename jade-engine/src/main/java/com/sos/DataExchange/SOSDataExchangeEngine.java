@@ -1208,9 +1208,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							sourceFileList.CreateResultSetFile();
 						}
 						else {
-							if (objOptions.CreateSecurityHashFile.isTrue() || objOptions.CheckSecurityHash.isTrue()) {
-								sourceFileList.createHashFileEntries(objOptions.SecurityHashType.Value());
-							}
 							if (sourceFileList.size() > 0 && objOptions.skip_transfer.isFalse()) {
 								if (objOptions.LazyConnectionMode.isTrue()) {
 									targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();

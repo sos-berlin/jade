@@ -66,7 +66,7 @@ public class JadeTestsSFTP extends JadeTestBase{
 			throw ex;
 		}
 		finally{
-			objJadeEngine.Logout();	
+			if(objJadeEngine != null) objJadeEngine.Logout();	
 		}
 	}
 

@@ -304,7 +304,6 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	public void testSendAndCreateMd5Hash() throws Exception {
 		final String conMethodName = conClassName + "::testSend";
-		objTestOptions.CreateSecurityHash.setTrue();
 		objTestOptions.CreateSecurityHashFile.setTrue();
 		super.testSend();
 	}
@@ -312,7 +311,6 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	public void testSendAndCreatesha256Hash() throws Exception {
 		final String conMethodName = conClassName + "::testSend";
-		objTestOptions.CreateSecurityHash.setTrue();
 		objTestOptions.CreateSecurityHashFile.setTrue();
 		objTestOptions.SecurityHashType.Value("SHA-256");
 		super.testSend();
