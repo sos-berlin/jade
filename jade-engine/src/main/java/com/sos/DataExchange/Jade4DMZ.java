@@ -73,7 +73,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		fileList = null;
 		try {
 			jade = new JadeEngine(getTransferOptions(operation, dir));
+					
 			jade.Execute();
+			
+			if(operation.equals(Operation.copyFromInternet) && objOptions.remove_files.value()){
+				jade.executeCommandOnSource(getJadeOnDMZCommand4RemoveSource());
+			}
+			
 			fileList = jade.getFileList();
 		} 
 		catch (Exception e) {
@@ -160,6 +166,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			options = createTransferToDMZOptions(dir);
 			
 			jumpCommandOptions = createPostTransferOptions(dir);
+			
 			jumpOptions.PostTransferCommands.Value(getJadeOnDMZCommand(jumpCommandOptions));
 			jumpOptions = setDestinationOptionsPrefix("target_",jumpOptions);
 			
@@ -170,12 +177,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			options = createTransferFromDMZOptions(dir);
 			
 			jumpCommandOptions = createPreTransferOptions(dir);
+			
 			jumpOptions.PreTransferCommands.Value(getJadeOnDMZCommand(jumpCommandOptions));
-			if (objOptions.remove_files.value()) {
-				//Remove source files at Internet as PostTransferCommands.
-				//See createPreTransferOptions
-				jumpOptions.PostTransferCommands.Value(getJadeOnDMZCommand4RemoveSource(jumpCommandOptions));
-			}
 			jumpOptions = setDestinationOptionsPrefix("source_",jumpOptions);
 			
 			options.getConnectionOptions().Source(jumpOptions);
@@ -410,18 +413,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.user.DefaultValue("");
 		options.Source().user.DefaultValue("");
 		options.Target().user.DefaultValue("");
-		// Otherwise this command contains the getJadeOnDMZCommand4RemoveSource() command too.
-		boolean targetPostTransferCommandsIsDirty = options.Target().PostTransferCommands.isDirty();
-		options.Target().PostTransferCommands.setNotDirty();
 		
 		StringBuffer command = new StringBuffer(objOptions.jump_command.Value()+ " ");
 		command.append("-SendTransferHistory=false ");
 		command.append(options.getOptionsAsQuotedCommandLine());
 		command.append(options.Source().getOptionsAsQuotedCommandLine());
 		command.append(options.Target().getOptionsAsQuotedCommandLine());
-		
-		if(targetPostTransferCommandsIsDirty) options.Target().PostTransferCommands.setDirty();
-		
+				
 		return command.toString();
 	}
 	
@@ -430,21 +428,28 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * @param options
 	 * @return
 	 */
-	private String getJadeOnDMZCommand4RemoveSource(JADEOptions options) {
+	private String getJadeOnDMZCommand4RemoveSource() {
 		JADEOptions opts = new JADEOptions();
 		opts.operation.Value("delete");
-		opts.verbose = options.verbose;
+		opts.verbose = objOptions.verbose;
 		opts.FileListName.Value(getSourceListFilename());
 		// https://change.sos-berlin.com/browse/JADE-297
 		opts.user.DefaultValue("");
-		options.user.DefaultValue("");
-		options.Source().user.DefaultValue("");
-		options.Source().Directory.setNotDirty();
+		objOptions.user.DefaultValue("");
+		objOptions.Source().user.DefaultValue("");
+		objOptions.Source().Directory.setNotDirty();
+		objOptions.Source().Post_Command.setNotDirty();
+		objOptions.Source().PostTransferCommands.setNotDirty();
+		objOptions.Source().PostFtpCommands.setNotDirty();
+		objOptions.Source().Pre_Command.setNotDirty();
+		objOptions.Source().PreFtpCommands.setNotDirty();
+		objOptions.Source().PreTransferCommands.setNotDirty();
+		objOptions.Source().TFN_Post_Command.setNotDirty();
 		
 		StringBuffer command = new StringBuffer(objOptions.jump_command.Value()+ " ");
 		command.append("-SendTransferHistory=false ");
 		command.append(opts.getOptionsAsQuotedCommandLine());
-		command.append(options.Source().getOptionsAsQuotedCommandLine());
+		command.append(objOptions.Source().getOptionsAsQuotedCommandLine());
 		
 		return command.toString();
 	}
