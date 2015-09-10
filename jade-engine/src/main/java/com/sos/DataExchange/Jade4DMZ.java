@@ -311,6 +311,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.verbose = objOptions.verbose;
 		options.zero_byte_transfer = objOptions.zero_byte_transfer;
 		
+		options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
+		options.IntegrityHashType = objOptions.IntegrityHashType;
+		
 		return options;
 	}
 	

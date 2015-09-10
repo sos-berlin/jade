@@ -245,7 +245,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							}
 						}
 						else {
-							selectFilesOnSource(sourceFile, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
+							String integrityHashFileExtention = objOptions.CheckIntegrityHash.isTrue() ? "." + objOptions.IntegrityHashType.Value() : null;
+							selectFilesOnSource(sourceFile, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive, integrityHashFileExtention);
 							currentFilesCount = sourceFileList.count();
 						}
 					}
@@ -1185,7 +1186,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								msg = SOSJADE_D_0200.params(sourceDir, objOptions.file_spec.Value());
 							}
 							logger.debug(msg);
-							selectFilesOnSource(fileHandle, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
+							String integrityHashFileExtention = objOptions.CheckIntegrityHash.isTrue() ? "." + objOptions.IntegrityHashType.Value() : null;
+							selectFilesOnSource(fileHandle, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive, integrityHashFileExtention);
 						}
 					}
 					// TODO checkSteadyStateOfFiles in FileListEntry einbauen
@@ -1399,7 +1401,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private long selectFilesOnSource(final ISOSVirtualFile localeFile, 
 			final SOSOptionFolderName sourceDir, 
 			final SOSOptionRegExp regExp,
-			final SOSOptionBoolean recursive) throws Exception {
+			final SOSOptionBoolean recursive,
+			final String integrityHashFileExtention) throws Exception {
 		
 		if (localeFile.isDirectory() == true) {
 			if (sourceClient instanceof ISOSVfsFileTransfer2) {
@@ -1408,7 +1411,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				sourceFileList = ft.getFileListEntries(sourceFileList, sourceDir.Value(), regExp.Value(), recursive.value());
 			}
 			else {
- 				String[] fileList = sourceClient.getFilelist(sourceDir.Value(), regExp.Value(), 0, recursive.value());
+ 				String[] fileList = sourceClient.getFilelist(sourceDir.Value(), regExp.Value(), 0, recursive.value(), integrityHashFileExtention);
 				fillFileList(fileList, sourceDir.Value());
 			}
 			setInfo(String.format("%1$d files found for regexp '%2$s'.", sourceFileList.size(), regExp.Value()));
