@@ -54,31 +54,14 @@ public class JadeFilesDBItem extends DbItem {
      private Date   modified;
      private String modifiedBy;
      private Date   modificationDate;
-    // private List <JadeFilesHistoryDBItem> jadeFilesHistoryDBItems = new ArrayList <JadeFilesHistoryDBItem>();
-  //   private Session session;
-
-
-
-	/*@OneToMany(mappedBy="`sosftpId`")
-	public List<JadeFilesHistoryDBItem> getJadeFilesHistoryDBItems() {
-		return jadeFilesHistoryDBItems;
-	}
-
-
-	public void setJadeFilesHistoryDBItems(List<JadeFilesHistoryDBItem> jadeFilesHistoryDBItems) {
-		this.jadeFilesHistoryDBItems = jadeFilesHistoryDBItems;
-	}
-*/
 
 	public JadeFilesDBItem() {
 		 
 	}
-      
- 
      
     @Id
-    @GeneratedValue(generator="FTP_FILES_ID_GEN",strategy=GenerationType.AUTO)
-    @SequenceGenerator(name="FTP_FILES_ID_GEN", sequenceName="SOSFTP_FILES_ID_SEQ",allocationSize=1)
+    @GeneratedValue(generator="JADE_FILES_ID_GEN",strategy=GenerationType.AUTO)
+    @SequenceGenerator(name="JADE_FILES_ID_GEN", sequenceName="JADE_FILES_ID_SEQ",allocationSize=1)
     @Column(name="`ID`",nullable=false)
     public Long getId() {
 		return id;
