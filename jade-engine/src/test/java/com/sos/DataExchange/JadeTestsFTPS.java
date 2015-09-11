@@ -17,8 +17,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.Properties;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -34,6 +34,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import sos.configuration.SOSConfiguration;
+import sos.util.SOSLogger;
+import sos.util.SOSStandardLogger;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionProxyProtocol;
 import com.sos.VirtualFileSystem.FTPS.SOSVfsFtpSProxySelector;
@@ -41,7 +45,8 @@ import com.sos.VirtualFileSystem.FTPS.SOSVfsFtpSProxySelector;
 
 public class JadeTestsFTPS extends JadeTestBase{
 	private final Logger	logger			= Logger.getLogger(JadeTestsFTPS.class);
-
+	private final String BASE_PATH = "R://backup//sos//java//development//SOSDataExchange//examples//";
+	
 	private JADEOptions options;
 	
 	public JadeTestsFTPS() {
@@ -54,7 +59,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 	@Before
 	public void setUp() throws Exception {
 		options = new JADEOptions();
-		options.settings.Value("src/test/resources/examples/jade_ftps_settings.ini");
+		options.settings.Value(BASE_PATH+"jade_ftps_settings.ini");
 	}
 
 	@After
@@ -99,6 +104,26 @@ public class JadeTestsFTPS extends JadeTestBase{
 		this.execute(options);
 	}
 	
+	@Test
+	public void testLocal2HomerImplicitFtpsSocksProxy() throws Exception {
+		options.profile.Value("local_2_homer_implicit_ftps_socks_proxy");
+		
+		this.execute(options);
+	}
+	
+	@Test
+	public void testLocal2HomerExplicitFtpsHttpProxy() throws Exception {
+		options.profile.Value("local_2_homer_explicit_ftps_http_proxy");
+		
+		this.execute(options);
+	}
+	
+	@Test
+	public void testLocal2LocalFtpExplicitFtpsHttpProxy() throws Exception {
+		options.profile.Value("local_2_local_ftp_explicit_ftps_http_proxy");
+		
+		this.execute(options);
+	}
 	
 	@Test
 	public void testLocal2LocalImplicitFtps() throws Exception {
@@ -106,13 +131,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 		
 		this.execute(options);
 	}
-	
-	@Test
-	public void testLocal2ftp() throws Exception {
-		options.profile.Value("local_2_ftp");
-		
-		this.execute(options);
-	}
+
 	
 	/**
 	 * 
@@ -135,7 +154,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 	
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testLocalClientFTPS() throws Exception{
 		LocalFTPSClient cl = new LocalFTPSClient();
 		cl.execute();
@@ -153,51 +172,63 @@ public class JadeTestsFTPS extends JadeTestBase{
 		 * @throws Exception
 		 */
 		public void execute() throws Exception{
+			SOSLogger l = new SOSStandardLogger(0);
+			
+			SOSConfiguration confFtps = new SOSConfiguration(BASE_PATH+"ftps/not_jade_ftps_setting.ini","homer_ftps",l);
+			Properties propertiesFtps = confFtps.getParameterAsProperties();
+			
+			SOSConfiguration confProxySocks5 = new SOSConfiguration(BASE_PATH+"ftps/not_jade_ftps_setting.ini","homer_proxy_socks5",l);
+			Properties propertiesProxySocks5 = confProxySocks5.getParameterAsProperties();
+			
+			SOSConfiguration confProxyHttp = new SOSConfiguration(BASE_PATH+"ftps/not_jade_ftps_setting.ini","homer_proxy_http",l);
+			Properties propertiesProxyHttp = confProxyHttp.getParameterAsProperties();
+			
+			
 			FTPSClient cl = null;
 			
-			String host = "homer.sos";
-			int port = 21;
-			String user = "sos";
-			String pass = "sos";
-			String source = "R:/nobackup/junittests/testdata/JADE_Target_Dir/JADE.Manual.pdf";
-			String target = "/home/sos/jade/to_homer/re_unitest.pdf";
-			target = "re_unitest.pdf";
+			String host = propertiesFtps.getProperty("host");
+			int port = Integer.parseInt(propertiesFtps.getProperty("port_explicit"));
+			String user = propertiesFtps.getProperty("user");
+			String pass = propertiesFtps.getProperty("password");
+			String source = propertiesFtps.getProperty("source_file");
+			String target = propertiesFtps.getProperty("target_file");
 			
-			File keyStore = new File("D:/_temp/ftps/keys/1/keystore.jks");
-			String keyStorePass = "password";
+			File keyStore = new File(propertiesFtps.getProperty("key_store_file"));
+			String keyStorePass = propertiesFtps.getProperty("key_store_password");
 			
 			
 			////-Djava.net.preferIPv4Stack=true
 			//System.setProperty("java.net.preferIPv4Stack", "true");
 			
 			boolean implicit = false;
-			boolean useHttpProxy = false;
+			boolean useHttpProxy = true;
 				
 			boolean useSystemProperties = false;
-			boolean useProxySelector = true;
-			boolean useProxy = false;
+			boolean useProxySelector = false;
+			boolean useProxy = true;
 			
-			boolean useKeyStore = true;
+			boolean useKeyStore = false;
 			
 			SOSOptionProxyProtocol.Protocol proxyProtocol = SOSOptionProxyProtocol.Protocol.socks5;
-			String proxyHost = "homer.sos";
-			int proxyPort = 1080;
-			String proxyUser = "sos";
-			String proxyPassword = "sos";
+			
+			String proxyHost = propertiesProxySocks5.getProperty("host");
+			int proxyPort = Integer.parseInt(propertiesProxySocks5.getProperty("port"));
+			String proxyUser = propertiesProxySocks5.getProperty("user");
+			String proxyPassword = propertiesProxySocks5.getProperty("password");
 			
 			try{
 				if(implicit == true){
-					port = 990;
+					port = Integer.parseInt(propertiesFtps.getProperty("port_implicit"));
 				}
 				if(useHttpProxy){
 					proxyProtocol = SOSOptionProxyProtocol.Protocol.http;
-					proxyPort = 3128;
-					proxyUser = "proxy_user";
-					proxyPassword = "12345";
+					proxyPort = Integer.parseInt(propertiesProxyHttp.getProperty("port"));
+					proxyUser = propertiesProxyHttp.getProperty("user");
+					proxyPassword = propertiesProxyHttp.getProperty("password");
 				}
 				
 				if(useSystemProperties){
-					setSystemProperties(useHttpProxy);
+					setSystemProperties(useHttpProxy,propertiesProxyHttp,propertiesProxySocks5);
 				}
 				
 				if(useProxySelector){
@@ -218,8 +249,8 @@ public class JadeTestsFTPS extends JadeTestBase{
 				}
 				
 				if(useProxy){
-					Proxy p = (useHttpProxy) ? getHTTPProxy(proxyHost, proxyPort) : getSocksProxy(proxyHost, proxyPort);
-					cl.setProxy(p);
+					Proxy proxy = (useHttpProxy) ? getHTTPProxy(proxyHost, proxyPort,proxyUser,proxyPassword) : getSocksProxy(proxyHost, proxyPort,proxyUser,proxyPassword);
+					cl.setProxy(proxy);
 				}
 				
 				logger.info("do Connect");
@@ -232,7 +263,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 			    	logger.info("do Login");
 			    	if (cl.login(user, pass)) {
 			    		cl.setFileType(FTP.BINARY_FILE_TYPE);
-			            
+			        
 			    		// Set protection buffer size
 			            cl.execPBSZ(0);
 			            // Set data channel protection to private
@@ -250,9 +281,9 @@ public class JadeTestsFTPS extends JadeTestBase{
 			            cl.cwd("/home/sos/jade/to_homer");
 			            logger.info("cwd replay = "+cl.getReplyCode()+" = "+cl.getReplyString());
 								            
-			            storeFileAsStream(cl, source, target);
+			            //storeFileAsStream(cl, source, target);
 			            //storeFile(cl, source, target);
-			            logger.info("copied to "+target);
+			            //logger.info("copied to "+target);
 			    	}
 			    }
 			    
@@ -270,6 +301,7 @@ public class JadeTestsFTPS extends JadeTestBase{
 						clearSystemProperties(useHttpProxy);
 					}
 				}
+				logger.info("Finally");
 			}
 		}
 		
@@ -355,12 +387,14 @@ public class JadeTestsFTPS extends JadeTestBase{
 		 * 
 		 * @param proxyHost
 		 * @param proxyPort
+		 * @param proxyUser
+		 * @param proxyPassword
 		 * @return
 		 */
-		private Proxy getHTTPProxy(String proxyHost,int proxyPort){
+		private Proxy getHTTPProxy(String proxyHost,int proxyPort,String proxyUser,String proxyPassword){
 			Authenticator.setDefault(new Authenticator(){
 				  protected  PasswordAuthentication  getPasswordAuthentication(){
-					   PasswordAuthentication p = new PasswordAuthentication("proxy_user","12345".toCharArray());
+					   PasswordAuthentication p = new PasswordAuthentication(proxyUser,proxyPassword.toCharArray());
 					   return p;
 				  }
 				});
@@ -372,12 +406,14 @@ public class JadeTestsFTPS extends JadeTestBase{
 		 * 
 		 * @param proxyHost
 		 * @param proxyPort
+		 * @param proxyUser
+		 * @param proxyPassword
 		 * @return
 		 */
-		private Proxy getSocksProxy(String proxyHost,int proxyPort){
+		private Proxy getSocksProxy(String proxyHost,int proxyPort,String proxyUser,String proxyPassword){
 			Authenticator.setDefault(new Authenticator(){
 				  protected  PasswordAuthentication  getPasswordAuthentication(){
-					   PasswordAuthentication p = new PasswordAuthentication("sos","sos".toCharArray());
+					   PasswordAuthentication p = new PasswordAuthentication(proxyUser,proxyPassword.toCharArray());
 					   return p;
 				  }
 				});
@@ -389,51 +425,51 @@ public class JadeTestsFTPS extends JadeTestBase{
 		 * 
 		 * @param useHttpProxy
 		 */
-		private void setSystemProperties(boolean useHttpProxy){
+		private void setSystemProperties(boolean useHttpProxy,Properties http,Properties socks5){
 			if(useHttpProxy){
-				System.getProperties().put("https.proxyHost", "homer.sos");
-				System.getProperties().put("https.proxyPort", "3128");
-				System.getProperties().put("https.proxyUser", "proxy_user");
-				System.getProperties().put("https.proxyPassword", "12345");
+				System.getProperties().put("https.proxyHost", http.getProperty("host"));
+				System.getProperties().put("https.proxyPort", http.getProperty("port"));
+				System.getProperties().put("https.proxyUser", http.getProperty("user"));
+				System.getProperties().put("https.proxyPassword", http.getProperty("password"));
 				
 				System.getProperties().put("http.proxySet", "true");
-				System.getProperties().put("http.proxyHost", "homer.sos");
-				System.getProperties().put("http.proxyPort", "3128");
-				System.getProperties().put("http.proxyUser", "proxy_user");
-				System.getProperties().put("http.proxyPassword", "12345");
-				System.getProperties().put("http.nonProxyHosts", "localhost|RE-DELL|127.0.0.1");
+				System.getProperties().put("http.proxyHost", http.getProperty("host"));
+				System.getProperties().put("http.proxyPort", http.getProperty("port"));
+				System.getProperties().put("http.proxyUser", http.getProperty("user"));
+				System.getProperties().put("http.proxyPassword", http.getProperty("password"));
+				System.getProperties().put("http.nonProxyHosts", "localhost|127.0.0.1");
 				
 				System.getProperties().put("ftp.proxySet", "true");
-				System.getProperties().put("ftp.proxyHost", "homer.sos");
-				System.getProperties().put("ftp.proxyPort", "3128");
-				System.getProperties().put("ftp.proxyUser", "proxy_user");
-				System.getProperties().put("ftp.proxyPassword", "12345");
-				System.getProperties().put("ftp.nonProxyHosts", "localhost|RE-DELL|127.0.0.1");
+				System.getProperties().put("ftp.proxyHost", http.getProperty("host"));
+				System.getProperties().put("ftp.proxyPort", http.getProperty("port"));
+				System.getProperties().put("ftp.proxyUser", http.getProperty("user"));
+				System.getProperties().put("ftp.proxyPassword", http.getProperty("password"));
+				System.getProperties().put("ftp.nonProxyHosts", "localhost|127.0.0.1");
 							
 				System.getProperties().put("ftps.proxySet", "true");
-				System.getProperties().put("ftps.proxyHost", "homer.sos");
-				System.getProperties().put("ftps.proxyPort", "3128");
-				System.getProperties().put("ftps.proxyUser", "proxy_user");
-				System.getProperties().put("ftps.proxyPassword", "12345");
-				System.getProperties().put("ftps.nonProxyHosts", "localhost|RE-DELL|127.0.0.1");
+				System.getProperties().put("ftps.proxyHost", http.getProperty("host"));
+				System.getProperties().put("ftps.proxyPort", http.getProperty("port"));
+				System.getProperties().put("ftps.proxyUser", http.getProperty("user"));
+				System.getProperties().put("ftps.proxyPassword", http.getProperty("password"));
+				System.getProperties().put("ftps.nonProxyHosts", "localhost|127.0.0.1");
 				
 				Authenticator.setDefault(new Authenticator(){
 					  protected  PasswordAuthentication  getPasswordAuthentication(){
-						   PasswordAuthentication p = new PasswordAuthentication("proxy_user","12345".toCharArray());
+						   PasswordAuthentication p = new PasswordAuthentication(http.getProperty("user"),http.getProperty("password").toCharArray());
 						   return p;
 					  }
 					});
 
 			}
 			else{
-				System.getProperties().put( "socksProxyHost" ,"homer.sos");
-				System.getProperties().put( "socksProxyPort", "1080");
-				System.getProperties().put( "socksProxyUser", "sos");
-				System.getProperties().put( "socksProxyPassword" ,"sos");
+				System.getProperties().put( "socksProxyHost" ,socks5.getProperty("host"));
+				System.getProperties().put( "socksProxyPort", socks5.getProperty("port"));
+				System.getProperties().put( "socksProxyUser", socks5.getProperty("user"));
+				System.getProperties().put( "socksProxyPassword" ,socks5.getProperty("password"));
 				
 				Authenticator.setDefault(new Authenticator(){
 					  protected  PasswordAuthentication  getPasswordAuthentication(){
-						   PasswordAuthentication p = new PasswordAuthentication("sos","sos".toCharArray());
+						   PasswordAuthentication p = new PasswordAuthentication(socks5.getProperty("user"),socks5.getProperty("password").toCharArray());
 						   return p;
 					  }
 					});
