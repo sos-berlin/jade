@@ -417,14 +417,16 @@ public class JadeMenuBar extends MenuBar {
 				boolean refresh = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
 						.getBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, false);
 				smAutoRefresh.setChecked(refresh);
-				if(mainView != null)
+				if(mainView != null){
 					mainView.setAutoRefresh(refresh);
+				}
 			}
 		} catch (BackingStoreException e) {
 			log.warn("Unable to read from PreferenceStore, using defaults.");
 			smAutoRefresh.setChecked(false);
-			if(mainView != null)
+			if(mainView != null){
 				mainView.setAutoRefresh(false);
+			}
 		}
 	}
 	

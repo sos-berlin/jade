@@ -640,6 +640,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 				catch (IOException e) {}
 			}
+			else {
+				throw new JobSchedulerException(String.format("%1$s doesn't exist.", objOptions.FileListName.Value()));
+			}
 		}
 		
 		String[] arr = { "" };
@@ -796,9 +799,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		long founded = 0;
 		//if (objOptions.skip_transfer.isFalse()) {
 			sourceFileList.add(getSingleFileNames(), sourceDir, true);
-			
+			long currentFounded = sourceFileList.size();
 			if (objOptions.isFilePollingEnabled() == true) {
-				long currentFounded = sourceFileList.size();
 				long currentPollingTime = 0;
 				long pollInterval = objOptions.poll_interval.getTimeAsSeconds();
 				long pollTimeout = getPollTimeout();
@@ -830,6 +832,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					currentPollingTime += pollInterval;
 				}
 			}
+			else {
+				founded = currentFounded;
+			}
+			setInfo(String.format("%1$d files found.", sourceFileList.size()));
 		//}
 		return founded;
 	}
@@ -1008,10 +1014,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				logger.error(e.getLocalizedMessage());
 			}
 		}
-		if (objOptions.transactional.isFalse()) {
-			fileList.EndTransaction();
-			sendTransferHistory();
-		}
+//		if (objOptions.transactional.isFalse()) {
+//			fileList.EndTransaction();
+//			sendTransferHistory();
+//		}
 	}
 
 	/**
@@ -1225,10 +1231,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								executePostTransferCommands();
 								
 								sourceFileList.deleteSourceFiles();
-								if (objOptions.TransactionMode.isTrue()) {
+//								if (objOptions.TransactionMode.isTrue()) {
 									sourceFileList.EndTransaction();
 									sendTransferHistory();
-								}
+//								}
 							}
 							
 						}
