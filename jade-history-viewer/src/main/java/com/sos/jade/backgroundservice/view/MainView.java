@@ -323,6 +323,10 @@ public class MainView extends CustomComponent implements View{
 		messages.setLocale(locale);
 		currentLocale = locale;
 		lblTitle.setValue(messages.getValue("MainView.title", locale));
+		if(lblEntryCount == null){
+			lblEntryCount = new Label();
+			lblEntryCount.addStyleName("jadeEntryCountLabel");
+		}
 		if(historyItems == null || (historyItems != null && historyItems.size() == 0)){
 			lblEntryCount.setValue(messages.getValue("MainView.noEntries", locale));
 		}else{
@@ -405,8 +409,10 @@ public class MainView extends CustomComponent implements View{
 		hlResetAndProgress.setComponentAlignment(progress, Alignment.MIDDLE_CENTER);
 		hlResetAndProgress.setExpandRatio(progress, 1);
 		progress.setVisible(false);
-		lblEntryCount = new Label();
-		lblEntryCount.addStyleName("jadeEntryCountLabel");
+		if(lblEntryCount == null){
+			lblEntryCount = new Label();
+			lblEntryCount.addStyleName("jadeEntryCountLabel");
+		}
 		if(historyItems == null || (historyItems != null && historyItems.size() == 0)){
 			lblEntryCount.setValue(messages.getValue("MainView.noEntries", currentLocale));
 		}else{
@@ -621,7 +627,15 @@ public class MainView extends CustomComponent implements View{
 			UI.getCurrent().access(new Runnable() {
 				@Override
 				public void run() {
-					lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());
+					if(lblEntryCount == null){
+						lblEntryCount = new Label();
+						lblEntryCount.addStyleName("jadeEntryCountLabel");
+					}
+					if(historyItems == null || (historyItems != null && historyItems.size() == 0)){
+						lblEntryCount.setValue(messages.getValue("MainView.noEntries", currentLocale));
+					}else{
+						lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());
+					}
  					refreshButtonVisibility();
 					disableCurrentLocaleIcon();
 					markAsDirty();
