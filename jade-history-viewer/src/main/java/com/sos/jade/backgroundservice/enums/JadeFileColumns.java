@@ -10,7 +10,7 @@ public enum JadeFileColumns {
 	SOURCE_FILENAME("sourceFilename", String.class, ""), MD5("md5", String.class, ""),
 	FILE_SIZE("fileSize", Integer.class, 0), CREATED("created", Date.class, null), 
 	CREATED_BY("createdBy", String.class, ""), JADE_FILE_MODIFIED("modified", Date.class, ""), 
-	JADE_FILE_MODIFIED_BY("modifiedBy", String.class, "");
+	JADE_FILE_MODIFIED_BY("modifiedBy", String.class, "")/*, JADE_FILE_MODIFICATION_DATE("modificationDate", Date.class, "")*/;
 
 	private String name;
 	private Class<?> type;
