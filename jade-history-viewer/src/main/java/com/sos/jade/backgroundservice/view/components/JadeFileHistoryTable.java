@@ -424,6 +424,17 @@ public class JadeFileHistoryTable extends Table{
          */
         public void columnCollapse(ColumnCollapseEvent event);
     }
+    
+    private void setItemDescriptionGenerator(){
+    	setItemDescriptionGenerator(new ItemDescriptionGenerator() {
+			
+			@Override
+			public String generateDescription(Component source, Object itemId, Object propertyId) {
+				JadeFilesHistoryDBItem item = (JadeFilesHistoryDBItem)itemId;
+				return item.getLastErrorMessage();
+			}
+		});
+    }
 }
 
 
