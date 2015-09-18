@@ -13,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -87,7 +88,7 @@ public class JadeFilesHistoryDBItem extends DbItem{
 	 
 	}
      
-	@ManyToOne (optional=true, fetch=FetchType.LAZY)
+	@ManyToOne (optional=true, fetch=FetchType.EAGER)
 	@JoinColumn(name="`JADE_ID`", nullable=true)
 	public JadeFilesDBItem getJadeFilesDBItem() {
 	  return this.jadeFilesDBItem;	

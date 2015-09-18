@@ -194,7 +194,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 				        mainView.getTblFileHistory().populateDatasource(mainView.getHistoryItems());
 				        mainView.getTblFileHistory().markAsDirty();
 				        mainView.getLblEntryCount().setValue((messages.getValue("MainView.entryCount", mainView.getCurrentLocale()) + " " + mainView.getHistoryItems().size()));
-						listener.closeJadeFilesHistoryDbSession();
 						mainView.getProgress().setPrimaryStyleName("jadeProgressBar");
 				        mainView.getProgress().setVisible(false);
 					}

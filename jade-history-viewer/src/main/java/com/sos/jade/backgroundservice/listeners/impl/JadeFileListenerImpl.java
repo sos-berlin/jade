@@ -17,7 +17,9 @@ import sos.jadehistory.JadeFilesHistoryFilter;
 import sos.jadehistory.db.JadeFilesDBLayer;
 import sos.jadehistory.db.JadeFilesHistoryDBItem;
 import sos.jadehistory.db.JadeFilesHistoryDBLayer;
+import sos.jadehistory.db.JadeHistoryDBLayer;
 
+import com.sos.hibernate.classes.SOSHibernateConnection;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
 import com.vaadin.server.VaadinService;
@@ -25,11 +27,13 @@ import com.vaadin.ui.UI;
 
 public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 	private static final long serialVersionUID = 1L;
-	private JadeFilesDBLayer jadeFilesDBLayer;
-	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
+//	private JadeFilesDBLayer jadeFilesDBLayer;
+//	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
 	public MainView ui;
 	private Logger log = LoggerFactory.getLogger(JadeFileListenerImpl.class);
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+	private JadeHistoryDBLayer historyDBLayer;
+	private SOSHibernateConnection connection;
 	
 	public JadeFileListenerImpl(MainView ui){
 		this.ui = ui;
@@ -38,8 +42,9 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 			jadeBsOptions.hibernateConfigurationFileName.Value(hibernateConfigFile);
 		}
  		jadeBsOptions.hibernateConfigurationFileName.CheckMandatory();
-		this.jadeFilesDBLayer = new JadeFilesDBLayer(new File(hibernateConfigFile));
-		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(new File(hibernateConfigFile));
+ 		connect();
+//		this.jadeFilesDBLayer = new JadeFilesDBLayer(new File(hibernateConfigFile));
+//		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(new File(hibernateConfigFile));
 	}
 
 	@Override
@@ -47,69 +52,48 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 		e.printStackTrace();
 	}
 
+	private void connect(){
+ 		try {
+			this.connection = new SOSHibernateConnection(hibernateConfigFile);
+			connection.connect();
+	 		// TODO: DBLayer mit connection instanziieren
+			this.historyDBLayer = new JadeHistoryDBLayer(connection);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void disconnect(){
+		connection.disconnect();
+	}
+	
 	@Override
 	public void getFileHistoryByIdFromLayer(Long id) {
-		initJadeFilesDbSession();
-		getFileHistoryFromDb(id);
-		closeJadeFilesDbSession();
+		connect();
+		try {
+			List<JadeFilesHistoryDBItem> received = this.historyDBLayer.getFilesHistoryById(id);
+			ui.setHistoryItems(received);
+		} catch (Exception e) {
+			getException(e);
+		}
+		disconnect();
 	}
 	
 	@Override
 	public void filterJadeFilesHistory(JadeFilesHistoryFilter filter) {
+		connect();
 		if(filter != null){
-			this.jadeFilesHistoryDBLayer.setFilter(filter);
+			this.historyDBLayer.setFilesHistoryFilter(filter);
 		}
-		getFilteredFilesHistory();
-	}
-	
-	private void getFilteredFilesHistory(){
-		initJadeFilesHistoryDbSession();
-		getFilesHistoryFromDb();
-	}
-	
-	private void getFileHistoryFromDb(Long id){
-		try {
-			List<JadeFilesHistoryDBItem> received = this.jadeFilesDBLayer.getFilesHistoryById(id);
-			ui.setHistoryItems(received);
-		} catch (ParseException e) {
-			getException(e);
-		}
-	}
-	
-	private void getFilesHistoryFromDb(){
         try {
-        	List<JadeFilesHistoryDBItem> received = jadeFilesHistoryDBLayer.getHistoryFilesOrderedByTransferEnd();
+        	List<JadeFilesHistoryDBItem> received = historyDBLayer.getHistoryFilesOrderedByTransferEnd();
  			ui.setHistoryItems(received);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			getException(e);
 		}
+		disconnect();
 	}
-
-	private void initJadeFilesDbSession(){
-        jadeFilesDBLayer.initSession();
-	}
-
-	private void closeJadeFilesDbSession(){
-        jadeFilesDBLayer.closeSession();
-	}
-
-	private void initJadeFilesHistoryDbSession(){
-        try {
-			jadeFilesHistoryDBLayer.initSession();
-		} catch (Exception e) {
-			try {
-				log.error("Exception occurred while initializing Session for the first time" + e);
-				// retry
-				jadeFilesHistoryDBLayer.initSession();
-			} catch (Exception e1) {
-				log.error("Exception occurred while initializing Session for the second time" + e1);
-			}
-		}
-	}
-
-	@Override
-	public void closeJadeFilesHistoryDbSession(){
-		jadeFilesHistoryDBLayer.closeSession();
-	}
-
+	
 }

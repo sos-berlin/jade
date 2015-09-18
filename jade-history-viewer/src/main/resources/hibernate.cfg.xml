@@ -13,8 +13,8 @@
   <property name="hibernate.format_sql">true</property>
   <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
   <property name="javax.persistence.validation.mode">none</property>
-  <mapping class="sos.ftphistory.db.JadeFilesDBItem"/>
-  <mapping class="sos.ftphistory.db.JadeFilesHistoryDBItem"/>
+  <mapping class="sos.jadehistory.db.JadeFilesDBItem"/>
+  <mapping class="sos.jadehistory.db.JadeFilesHistoryDBItem"/>
  </session-factory>
 </hibernate-configuration>
  

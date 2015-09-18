@@ -18,5 +18,4 @@ public interface IJadeFileListener {
 
 	void getException(Exception e);
 	
-	void closeJadeFilesHistoryDbSession();
 }

@@ -602,7 +602,6 @@ public class MainView extends CustomComponent implements View{
 						jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
 					}
 					tblFileHistory.populateDatasource(historyItems);
-					fileListener.closeJadeFilesHistoryDbSession();
 					if(checkRemoveDuplicatesSettings()){
 						duplicatesFilter.setHistoryItems(historyItems);
 						((IndexedContainer)tblFileHistory.getContainerDataSource()).addContainerFilter(duplicatesFilter);
