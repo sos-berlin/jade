@@ -8,7 +8,7 @@ public enum JadeFileColumns {
 	SOURCE_HOST("sourceHost", String.class, ""), SOURCE_HOST_IP("sourceHostIp", String.class, ""),
 	SOURCE_USER("sourceUser", String.class, ""), SOURCE_DIR("sourceDir", String.class, ""), 
 	SOURCE_FILENAME("sourceFilename", String.class, ""), MD5("md5", String.class, ""),
-	FILE_SIZE("fileSize", Integer.class, 0), CREATED("created", Date.class, null), 
+	FILE_SIZE("fileSize", Long.class, 0), CREATED("created", Date.class, null), 
 	CREATED_BY("createdBy", String.class, ""), JADE_FILE_MODIFIED("modified", Date.class, ""), 
 	JADE_FILE_MODIFIED_BY("modifiedBy", String.class, "")/*, JADE_FILE_MODIFICATION_DATE("modificationDate", Date.class, "")*/;
 
