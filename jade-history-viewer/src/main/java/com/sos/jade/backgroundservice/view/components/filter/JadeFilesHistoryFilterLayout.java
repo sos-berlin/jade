@@ -20,6 +20,9 @@ import com.sos.jade.backgroundservice.JADEHistoryViewerUI;
 import com.sos.jade.backgroundservice.constants.JadeBSConstants;
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
+import com.sos.jade.backgroundservice.enums.OperationValues;
+import com.sos.jade.backgroundservice.enums.ProtocolValues;
+import com.sos.jade.backgroundservice.enums.TransferStatusValues;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.listeners.impl.JadeFileListenerProxy;
 import com.sos.jade.backgroundservice.util.JadeBSMessages;
@@ -44,17 +47,6 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private static final String STATUS_SUCCESS = "success";
-	private static final String STATUS_ERROR = "error";
-	private static final String OPERATION_SEND = "send";
-	private static final String OPERATION_RECEIVE = "receive";
-	private static final String OPERATION_COPY = "copy";
-	private static final String PROTOCOL_FTP = "ftp";
-	private static final String PROTOCOL_SFTP = "sftp";
-  private static final String PROTOCOL_LOCAL = "local";
-  private static final String PROTOCOL_HTTP = "http";
-  private static final String PROTOCOL_HTTPS = "https";
-  private static final String PROTOCOL_WEBDAV = "webdav";
 	private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
 	private static final float DROPDOWN_WIDTH = 75.0f;
 	@SuppressWarnings("unused")
@@ -76,7 +68,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 	private TextField tfSourceHost;
 	private TextField tfTargetFile;
 	private TextField tfTargetHost;
-//	private TextField tfProtocol;
 	private NativeSelect nsStatus;
 	private NativeSelect nsOperation;
 	private NativeSelect nsProtocol;
@@ -232,21 +223,19 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 		tfTargetFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName()), targetFile);
 		tfTargetHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()), targetHost);
 		List<String> statusList = new ArrayList<String>();
-		statusList.add(STATUS_SUCCESS);
-		statusList.add(STATUS_ERROR);
+		for(TransferStatusValues transferStatus : TransferStatusValues.values()){
+			statusList.add(transferStatus.name());
+		}
 		nsStatus = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName()), statusList);
 		List<String> operationList = new ArrayList<String>();
-		operationList.add(OPERATION_COPY);
-		operationList.add(OPERATION_SEND);
-		operationList.add(OPERATION_RECEIVE);
+		for(OperationValues operation : OperationValues.values()){
+			operationList.add(operation.name());
+		}
 		nsOperation = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()), operationList);
 		List<String> protocolList = new ArrayList<String>();
-		protocolList.add(PROTOCOL_FTP);
-		protocolList.add(PROTOCOL_SFTP);
-    protocolList.add(PROTOCOL_HTTP);
-    protocolList.add(PROTOCOL_HTTPS);
-    protocolList.add(PROTOCOL_WEBDAV);
-    protocolList.add(PROTOCOL_LOCAL);
+		for(ProtocolValues protocol : ProtocolValues.values()){
+			protocolList.add(protocol.name());
+		}
 		nsProtocol = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()), protocolList);
 		btnCommit = new Button(messages.getValue("FilterLayout.ok"));
 		btnDiscard = new Button(messages.getValue("FilterLayout.discard"));
