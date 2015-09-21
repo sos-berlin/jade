@@ -11,6 +11,7 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
+import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer2;
@@ -1039,6 +1040,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	private long selectFilesOnSource(final ISOSVirtualFile objLocFile, final SOSOptionFolderName pobjSourceDir, final SOSOptionRegExp pobjRegExp4FileNames,
 			final SOSOptionBoolean poptRecurseFolders) throws Exception {
+		if (objDataSourceClient instanceof SOSVfsHTTP) {
+			throw new JobSchedulerException("a file spec selection is not supported with http(s) protocol");
+		}
 		if (objLocFile.isDirectory() == true) {
 			if (objDataSourceClient instanceof ISOSVfsFileTransfer2) {
 				ISOSVfsFileTransfer2 objF = (ISOSVfsFileTransfer2) objDataSourceClient;
