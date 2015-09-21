@@ -1404,7 +1404,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			final SOSOptionFolderName sourceDir, 
 			final SOSOptionRegExp regExp,
 			final SOSOptionBoolean recursive) throws Exception {
-		if (objDataSourceClient instanceof SOSVfsHTTP) {
+		if (sourceClient instanceof SOSVfsHTTP) {
 			throw new JobSchedulerException("a file spec selection is not supported with http(s) protocol");
 		}
 		if (localeFile.isDirectory() == true) {
