@@ -12,6 +12,7 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.HistoryRecordType;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
+import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer2;
@@ -1409,7 +1410,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			final SOSOptionRegExp regExp,
 			final SOSOptionBoolean recursive,
 			final String integrityHashFileExtention) throws Exception {
-		
+		if (objDataSourceClient instanceof SOSVfsHTTP) {
+			throw new JobSchedulerException("a file spec selection is not supported with http(s) protocol");
+		}
 		if (localeFile.isDirectory() == true) {
 			if (sourceClient instanceof ISOSVfsFileTransfer2) {
 				ISOSVfsFileTransfer2 ft = (ISOSVfsFileTransfer2) sourceClient;
@@ -1473,7 +1476,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		
 	/**
 	 * TODO custom-fields einbauen
-	 * bei JADE ist es m�glich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
+	 * bei JADE ist es moeglich "custom" Felder zu definieren, die in der Transfer History als Auftragsparameter mitgeschickt werden.
 	 * Damit man diese Felder identifizieren kann, werden hier Parameter defininiert, die beim Auftrag dabei sind, aber keine
 	 * "custom" Felder sind
 	 *
