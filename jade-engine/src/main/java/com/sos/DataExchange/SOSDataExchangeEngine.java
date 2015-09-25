@@ -9,6 +9,7 @@ import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
+import com.sos.VirtualFileSystem.DataElements.SOSTransferStateCounts;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
 import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
@@ -311,10 +312,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			long elapsedTime = stopTime - startTime;
 			long intNoOfFilesTransferred = getSuccessfulTransfers();
 			if (intNoOfFilesTransferred <= 0) {
-				intNoOfFilesTransferred = 1;
+				logger.info("Elapsed time = " + elapsedTime);
 			}
-			logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred + ", total bytes = "
-					+ getSuccessfulTransfers());
+			else {
+				logger.info("Elapsed time = " + elapsedTime + ", per File = " + elapsedTime / intNoOfFilesTransferred);
+			}
 			if (objOptions.banner_footer.isDirty()) {
 				strT = objOptions.banner_footer.JSFile().getContent();
 			}
@@ -444,45 +446,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return objVfs4Target;
 	}
 
-	private void handleZeroByteFiles() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::handleZeroByteFiles";
-		if (objOptions.TransferZeroByteFilesNo() == true) {
-			if (objSourceFileList.size() > 0) {
-				boolean flgTransferZeroByteFilesNo = false;
-				for (SOSFileListEntry objEntry : objSourceFileList.List()) {
-					if (objEntry.getFileSize() > 0) { // zero byte size file
-						flgTransferZeroByteFilesNo = true;
-					}
-					else {
-						objSourceFileList.lngNoOfZeroByteSizeFiles++;
-					}
-				}
-				if (flgTransferZeroByteFilesNo == false) { // all files are zbs files
-					throw new JobSchedulerException("All files have zero byte size, transfer aborted");
-				}
-			}
-		}
-		Vector<SOSFileListEntry> objResultListClone = new Vector<SOSFileListEntry>();
-		for (SOSFileListEntry objEntry : objSourceFileList.List()) { // just to avoid concurrent modification exception
-			objResultListClone.add(objEntry);
-		}
-		for (SOSFileListEntry objEntry : objResultListClone) {
-			if (objEntry.getFileSize() <= 0) { // zero byte size file
-				if (objOptions.TransferZeroByteFilesStrict() == true) {
-					throw new JobSchedulerException(String.format("zero byte size file detected: %1$s", objEntry.getSourceFilename()));
-				}
-				objEntry.setTransferSkipped();
-				if (objOptions.remove_files.isTrue()) {
-					objEntry.DeleteSourceFile();
-				}
-				objSourceFileList.lngNoOfZeroByteSizeFiles++;
-				objSourceFileList.List().remove(objEntry);
-			}
-			else {
-				// TODO Datei (nicht mehr) da? Fehler auslösen, weil in Liste enthalten.
-			}
-		}
-	} // private void handleZeroByteFiles
 
 	protected boolean isAPathName(final String pstrFileAndPathName) {
 		boolean flgOK = false;
@@ -637,15 +600,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		} else {
 			state = SOSJADE_E_0100.params(objOptions.file_spec.Value());
 		}
+		SOSTransferStateCounts counts = getTransferCounts();
 		if (objSourceFileList.size() == 0) {
 			if (objOptions.force_files.isTrue()) {
 				objOptions.getTextProperties().put(conKeywordSTATE, state);
 				throw new JobSchedulerException(state);
 			}
 		} else {
-			long intNoOfFilesTransferred = getSuccessfulTransfers();
-			long intNoOfSkippedTransferred = getSkippedTransfers();
-			int zeroByteCount = objSourceFileList.getZeroByteCount();
+			long intNoOfFilesTransferred = counts.getSuccessTransfers();
+			long intNoOfSkippedTransferred = counts.getSkippedTransfers();
+			long zeroByteCount = counts.getZeroBytesTransfers();
 			if (intNoOfFilesTransferred == 1) {
 				state = SOSJADE_I_0100.get();
 			} else {
@@ -662,7 +626,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		logger.info(state);
 		objJadeReportLogger.info(state);
 		objOptions.getTextProperties().put(conKeywordSTATE, state);
-		if (getFailedTransfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0) {
+		if (counts.getFailedTranfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0) {
 			return false;
 		}
 		return true;
@@ -801,12 +765,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	private void setTextProperties() {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::setTextProperties";
-		// TODO das muß beim JobScheduler-Job in die Parameter zurück, aber nur da
+		// TODO das muss beim JobScheduler-Job in die Parameter zurueck, aber nur da
 		// siehe hierzu das Interface ...
-		objOptions.getTextProperties().put(conKeywordSUCCESSFUL_TRANSFERS, String.valueOf(getSuccessfulTransfers()));
-		objOptions.getTextProperties().put(conKeywordFAILED_TRANSFERS, String.valueOf(getFailedTransfers()));
-		objOptions.getTextProperties().put(conKeywordSKIPPED_TRANSFERS, String.valueOf(getSkippedTransfers()));
-		// return the number of transferred files
+		SOSTransferStateCounts counts = getTransferCounts();
+		objOptions.getTextProperties().put(conKeywordSUCCESSFUL_TRANSFERS, String.valueOf(counts.getSuccessTransfers()));
+		objOptions.getTextProperties().put(conKeywordFAILED_TRANSFERS, String.valueOf(counts.getFailedTranfers()));
+		objOptions.getTextProperties().put(conKeywordSKIPPED_TRANSFERS, String.valueOf(counts.getSkippedTransfers() + counts.getZeroBytesTransfers()));
 		if (JobSchedulerException.LastErrorMessage.length() <= 0) {
 			objOptions.getTextProperties().put(conKeywordSTATUS, SOSJADE_T_0012.get());
 		}
@@ -827,22 +791,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return lngTransfers;
 	}
 	
-	private long getSkippedTransfers() {
-		long lngTransfers = 0;
+	private SOSTransferStateCounts getTransferCounts() {
+		SOSTransferStateCounts counts = new SOSTransferStateCounts();
 		if (objSourceFileList != null) {
-			lngTransfers = objSourceFileList.SkippedTransfers();
+			counts = objSourceFileList.countTransfers();
+			if (lngNoOfPollingServerFiles > 0) {
+				counts.setSuccessTransfers(lngNoOfPollingServerFiles);
+			}
 		}
-		return lngTransfers;
+		return counts;
 	}
-
-	private long getFailedTransfers() {
-		long lngTransfers = 0;
-		if (objSourceFileList != null) {
-			lngTransfers = objSourceFileList.FailedTransfers();
-		}
-		return lngTransfers;
-	}
-
+	
 	public ISOSVfsFileTransfer DataTargetClient() {
 		@SuppressWarnings("unused") final String conMethodName = conClassName + "::DataTargetClient";
 		return objDataTargetClient;
@@ -917,9 +876,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					if (checkSteadyStateOfFiles() == false) { // not all files are steady ...
 						break PollingServerLoop;
 					}
-					if (objOptions.TransferZeroByteFiles() == false) {
-						handleZeroByteFiles();
-					} // (zeroByteFiles == false)
+					objSourceFileList.handleZeroByteFiles();
 					try {
 						if (objOptions.operation.isOperationGetList()) {
 							String strM = SOSJADE_I_0115.get();
