@@ -899,7 +899,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								sendFiles(objSourceFileList);
 								// execute postTransferCommands after renameAtomicTransferFiles (transactional=true)-Problem
 								// http://www.sos-berlin.com/jira/browse/SOSFTP-186
-								objSourceFileList.renameAtomicTransferFiles();
+								objSourceFileList.renameTargetAndSourceFiles();
 								
 								executePostTransferCommands();
 								
