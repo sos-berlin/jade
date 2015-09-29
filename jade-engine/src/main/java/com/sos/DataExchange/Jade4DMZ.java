@@ -139,7 +139,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		
 		//Remove source files at Internet as PostTransferCommands
 		options.remove_files.value(false);
-		if (objOptions.remove_files.value()) {
+		if (objOptions.remove_files.value() || objOptions.ResultSetFileName.isDirty()) {
 			options.ResultSetFileName.Value(getSourceListFilename());
 		}
 		
@@ -183,6 +183,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			options.getConnectionOptions().Source(jumpOptions);
 			options.getConnectionOptions().Target(objOptions.Target());
 		}
+		
+
+		options.setDmzOption("operation", operation.name());
+		options.setDmzOption("resultfile", getSourceListFilename());
 
 		return options;
 	}
@@ -309,7 +313,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		
 		options.skip_transfer = objOptions.skip_transfer;
 		//special handling: options.remove_files = objOptions.remove_files;
-		options.keep_modification_date = objOptions.keep_modification_date;
+		options.KeepModificationDate = objOptions.KeepModificationDate;
 		options.verbose = objOptions.verbose;
 		options.zero_byte_transfer = objOptions.zero_byte_transfer;
 		
@@ -371,6 +375,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.BackgroundServiceHost = objOptions.BackgroundServiceHost;
 		options.BackgroundServiceJobChainName = objOptions.BackgroundServiceJobChainName;
 		options.BackgroundServicePort = objOptions.BackgroundServicePort;
+		options.scheduler_host = objOptions.scheduler_host;
+		options.scheduler_job_chain = objOptions.scheduler_job_chain;
+		options.scheduler_port = objOptions.scheduler_port;
 		options.Scheduler_Transfer_Method = objOptions.Scheduler_Transfer_Method;
 		options.history = objOptions.history;
 		options.history_repeat = objOptions.history_repeat;
@@ -391,9 +398,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.log_filename = objOptions.log_filename;
 		options.log4jPropertyFileName = objOptions.log4jPropertyFileName;
 		
+		options.ResultSetFileName = objOptions.ResultSetFileName;
+		
 		//not supported: options.result_list_file = objOptions.result_list_file;
 		//not supported: options.CreateResultSet = objOptions.CreateResultSet;
-		//not supported: options.ResultSetFileName = objOptions.ResultSetFileName; 
 
 		return options;
 	}
@@ -485,7 +493,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 */
 	private String getRemoveDirCommand(String dir){
 		if(objOptions.jump_platform.isWindows()) {
-			return "if exist \"" + getSourceListFilename() + "\" del \"" + getSourceListFilename() + "\";rmdir \""+dir+"\" /s /q";
+			String sourceListFilename = getSourceListFilename().replace('/', '\\');
+			dir = dir.replace('/', '\\');
+			return "rmdir \""+dir+"\" /s /q;del /F /Q " + dir + "* 2>nul";
 		}
 		else {
 			return "rm -f -R " + dir + "*";
