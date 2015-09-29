@@ -116,11 +116,13 @@ public class JadeFileHistoryTable extends Table{
 	}
 	
 	private void setPreferencesColumnsWidth(){
-		for(Object key : visibleColumns){
-			int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
-			if (width != 0){
-				setColumnWidth(key.toString(), width);
-//				log.debug("setting width of column {} to {}", key.toString(), String.valueOf(width));
+		if (parentNodeName != null) {
+			for (Object key : visibleColumns) {
+				int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
+				if (width != 0) {
+					setColumnWidth(key.toString(), width);
+					//				log.debug("setting width of column {} to {}", key.toString(), String.valueOf(width));
+				}
 			}
 		}
 	}
