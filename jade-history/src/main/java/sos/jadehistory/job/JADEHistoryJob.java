@@ -294,8 +294,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				//				this.getLogger().debug("opening database source: " + filePrefix);
 				//				hwFile.open(filePrefix);
 				throw new JSNotImplementedException("Database queries not supported anymore");
-			}
-			else {
+			} else {
 				// erwartet wird eine <filename>{sos[date:yyyyMMddHHmmssSSS]sos}.csv Datei
 				// siehe JADEHistoryReceiveMonitor.spooler_process_before()
 				String fileName = parameters.value(_paramFileName);
@@ -326,8 +325,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 							positionRepeatCount = _positionRepeatCount;
 						}
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					positionRepeatCount = _positionRepeatCount;
 				}
 				try {
@@ -337,8 +335,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 							positionRepeatInterval = _positionRepeatInterval;
 						}
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					positionRepeatInterval = _positionRepeatInterval;
 				}
 				for (int p = 0; p < positionRepeatCount; p++) {
@@ -350,21 +347,18 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 									"last found file position in database: " + recordPos.get("position").toString()
 											+ " (position will be not used : current import file size(" + importFileSize + ") < db file size(" + fileSize
 											+ ") )");
-						}
-						else {
+						} else {
 							position = Long.parseLong(recordPos.get("position").toString());
 							this.getLogger().debug1("last found file position in database: " + position + " (position will be used)");
 						}
 						foundPosition = true;
-					}
-					else {
+					} else {
 						this.getLogger().debug1(
 								"not found file position for \"" + localFilename + "\" in database : try in " + positionRepeatInterval + "s again");
 					}
 					if (foundPosition) {
 						break;
-					}
-					else {
+					} else {
 						Thread.sleep(positionRepeatInterval * 1000);
 					}
 				}
@@ -398,8 +392,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 					}
 					if (_mappings.containsValue(strFieldName)) {
 						hshRecordFields.put(strFieldName, val);
-					}
-					else {
+					} else {
 						hshRecordExtraFields.put(strFieldName.toUpperCase(), val);
 					}
 				}
@@ -409,14 +402,12 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 						getConnection().commit();
 						getLogger().debug1("record " + _recordFoundCount + " imported");
 						recordCount++;
-					}
-					else {
+					} else {
 						getConnection().rollback();
 						_recordSkippedCount++;
 						getLogger().debug1("record " + _recordFoundCount + " skipped");
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					_recordSkippedErrorCount++;
 					getLogger().error(
 							"error occurred importing file line " + (_recordFoundCount + 1) + " (record " + _recordFoundCount + ") : " + e.getMessage());
@@ -439,16 +430,13 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 							.append("where \"LOCAL_FILENAME\" = '" + JADEHistory.getNormalizedField(getConnection(), localFilename, 255) + "'");
 					getConnection().execute(sql.toString());
 					getConnection().commit();
-				}
-				catch (Exception ee) {
+				} catch (Exception ee) {
 					getConnection().rollback();
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new JobSchedulerException(SOSClassUtil.getMethodName() + " : " + e.getMessage(),e);
-		}
-		finally {
+		} finally {
 			if (hwFile != null)
 				try {
 					hwFile.close();
@@ -483,14 +471,12 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 							if (checkedField.equals("1")) {
 								paramsExtra.put(field, val);
 							}
-						}
-						else {
+						} else {
 							getConnection().getSingleValue("select \"" + field + "\" from " + JADEHistory.TABLE_FILES_HISTORY + " where 1=2");
 							paramsExtra.put(field, val);
 							_recordExtraParameterNames.put(field, "1");
 						}
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						_recordExtraParameterNames.put(field, "0");
 						if (getConnection() instanceof SOSPgSQLConnection) {
 							getConnection().rollback();
@@ -498,8 +484,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 					}
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			paramsExtra = null;
 		}
 		return paramsExtra;
@@ -514,8 +499,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 	private void doLineDebug(final boolean isOrder, final String msg) throws Exception {
 		if (isOrder) {
 			getLogger().debug2(msg);
-		}
-		else {
+		} else {
 			getLogger().debug9(msg);
 		}
 	}
@@ -558,8 +542,6 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			doLineDebug(isOrder, "record " + _recordFoundCount + ": file_size = " + file_size);
 			String guid = getRecordValue(hstRecordFields, "mapping_guid");
 			doLineDebug(isOrder, "record " + _recordFoundCount + ": guid = " + guid);
-//			String transfer_timestamp = getRecordValue(hstRecordFields, "mapping_transfer_timestamp");
-//			doLineDebug(isOrder, "record " + _recordFoundCount + ": transfer_timestamp = " + transfer_timestamp);
 			String transfer_start = getRecordValue(hstRecordFields, "mapping_transfer_start");
 			doLineDebug(isOrder, "record " + _recordFoundCount + ": transfer_start = " + transfer_start);
 			String transfer_end = getRecordValue(hstRecordFields, "mapping_transfer_end");
@@ -602,11 +584,6 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 					String entry = phshRecordCustomFields.get(key);
 					doLineDebug(isOrder, "record " + _recordFoundCount + ": " + key.toLowerCase() + " = " + entry);
 				}
-//				Iterator<?> it = phshRecordCustomFields.entrySet().iterator();
-//				while (it.hasNext()) {
-//					Map.Entry entry = (Map.Entry) it.next();
-//					doLineDebug(isOrder, "record " + _recordFoundCount + ": " + entry.getKey().toString().toLowerCase() + " = " + entry.getValue());
-//				}
 			}
 			sql.append("select \"ID\" ")
 					.append("from " + JADEHistory.TABLE_FILES + " ")
@@ -639,8 +616,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 
 				if (getConnection() instanceof SOSDB2Connection) {
 					files_id = getConnection().getSingleValue("values identity_val_local()");
-				}
-				else {
+				} else {
 					files_id = getConnection().getLastSequenceValue(JADEHistory.SEQ_TABLE_FILES);
 				}
 				if (files_id == null || files_id.length() == 0 || files_id.equals("0")) {
@@ -654,7 +630,6 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			insert2.set("GUID", guid);
 			insert2.set("JADE_ID", files_id);
 			insert2.set("OPERATION", operation);
-//			insert2.set("TRANSFER_TIMESTAMP", transfer_timestamp);
 			insert2.set("TRANSFER_START", transfer_start);
 			insert2.set("TRANSFER_END", transfer_end);
 			insert2.set_num("PID", pid);
@@ -682,8 +657,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 					String val = entry.getValue();
 					if (val == null || val.length() == 0) {
 						val = "NULL";
-					}
-					else {
+					} else {
 						val = JADEHistory.getNormalizedField(getConnection(), val, 255);
 					}
 					insert2.set(entry.getKey(), val);
@@ -698,8 +672,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				insert2.set("CREATED_BY", _createdBy);
 				getConnection().execute(insert2.make_cmd());
 				return true;
-			}
-			else {
+			} else {
 				if (isOrder) {
 					Update_cmd update1 = new Update_cmd(getConnection(), getLogger(), JADEHistory.TABLE_FILES_HISTORY);
 					update1.withQuote = true;
@@ -714,8 +687,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				}
 				// bei order warning, bei file skip
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new JobSchedulerException(SOSClassUtil.getMethodName() + " : " + e.getMessage());
 		}
 		return false;
@@ -829,34 +801,22 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
 			}
 		} 
-//		else if (mappingName.equals("mapping_transfer_timestamp")) {
-//			if (attr_val.length() == 0) {
-//				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-//			}
-//			try {
-//				SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
-//			} catch (Exception e) {
-//				throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
-//			}
-//		} 
 		else if (mappingName.equals("mapping_transfer_start")) {
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
-			try {
-				SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
-			} catch (Exception e) {
-				throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
+			if (attr_val.length() > 0){
+				try {
+					SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
+				} catch (Exception e) {
+					throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
+				}
 			}
 		} 
 		else if (mappingName.equals("mapping_transfer_end")) {
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
-			try {
-				SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
-			} catch (Exception e) {
-				throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
+			if (attr_val.length() > 0){
+				try {
+					SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
+				} catch (Exception e) {
+					throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
+				}
 			}
 		} 
 		else if (mappingName.equals("mapping_file_size") || mappingName.equals("mapping_pid") || mappingName.equals("mapping_ppid")) {
@@ -952,13 +912,13 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			len = 255;
 		} else if (mappingName.equals("mapping_jump_host")) {
 			len = 128;
-		} else if (mappingName.equals("mapping_jump_user")) {
-			len = 128;
 		} else if (mappingName.equals("mapping_jump_host_ip")) {
 			len = 30;
+		} else if (mappingName.equals("mapping_jump_user")) {
+			len = 128;
 		} else if (mappingName.equals("mapping_jump_protocol")) {
 			len = 10;
-		}
+		} 
 		return len > 0 ? JADEHistory.getNormalizedField(getConnection(), attr_val, len) : attr_val;
 	}
 
