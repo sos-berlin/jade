@@ -404,6 +404,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		StringBuffer sb = new StringBuffer();
 		String pattern4String 	= "  | %-22s= %s%n";
 		String pattern4Bool 	= "  | %-22s= %b%n";
+		String pattern4IntegrityHash 	= "  | %-22s= %b (%s)%n";
 		String pattern4Rename 	= "  | %-22s= %s -> %s%n";
 		sb.append(String.format(pattern4String, "Protocol", options.protocol.Value()));
 		sb.append(String.format(pattern4String, "Host", options.host.Value()));
@@ -451,6 +452,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					sb.append(String.format(pattern4String, "CheckSteadyCount", Options().CheckSteadyCount.Value()));
 				}
 			}
+			if (Options().CheckIntegrityHash.isDirty()) {
+				sb.append(String.format(pattern4IntegrityHash, "CheckIntegrity", Options().CheckIntegrityHash.value(), Options().IntegrityHashType.Value()));
+			}
 		}
 		else {
 			sb.append(String.format(pattern4String, "Directory", options.Directory.Value()));
@@ -470,6 +474,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 			if (Options().atomic_suffix.isDirty()) {
 				sb.append(String.format(pattern4String, "AtomicSuffix", Options().atomic_suffix.Value()));
+			}
+			if (Options().CreateIntegrityHashFile.isDirty()) {
+				sb.append(String.format(pattern4IntegrityHash, "CreateIntegrityFile", Options().CreateIntegrityHashFile.value(), Options().IntegrityHashType.Value()));
 			}
 		}
 		if (options.replacement.isDirty() && options.replacing.IsNotEmpty()) {
