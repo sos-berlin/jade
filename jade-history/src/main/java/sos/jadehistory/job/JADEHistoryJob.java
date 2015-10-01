@@ -898,7 +898,8 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
 					attr_val = _nullValue;
 				} else {
-					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
+					attr_val = "N/A";
+					//throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
 				}
 			}
 		} else if (mappingName.equals("mapping_status")) {
