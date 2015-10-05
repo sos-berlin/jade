@@ -35,6 +35,7 @@ import sos.util.SOSString;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -1442,7 +1443,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @return
 	 */
 	private boolean sendTransferHistory4File(final SOSFileListEntry entry) {
-		Properties fileProperties = entry.getFileAttributesAsProperties(HistoryRecordType.XML);
+		Map<String,String> fileProperties = entry.getFileAttributes(HistoryRecordType.XML);
 		if (schedulerFactory == null) {
 			schedulerFactory = new SchedulerObjectFactory(objOptions.scheduler_host.Value(), objOptions.scheduler_port.value());
 			schedulerFactory.initMarshaller(Spooler.class);
