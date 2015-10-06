@@ -84,7 +84,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 
-	// TODO in die DataSource verlagern? Oder in die FileList? Multithreaded ausführen?
+	// TODO in die DataSource verlagern? Oder in die FileList? Multithreaded ausfuehren?
 	public boolean checkSteadyStateOfFiles() {
 		boolean allFilesAreSteady = true;
 		if (objOptions.CheckSteadyStateOfFiles.isTrue() && objSourceFileList != null) {
@@ -92,33 +92,30 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			setInfo("checking file(s) for steady state");
 			for (int i = 0; i < objOptions.CheckSteadyCount.value(); i++) {
 				allFilesAreSteady = true;
-				String msg = String.format("steady check (%s of %s).",(i+1),objOptions.CheckSteadyCount.value());
+				String msg = String.format("steady check (%s of %s):",(i+1),objOptions.CheckSteadyCount.value());
 				
 				logger.info(String.format("%s waiting %ss.",msg,interval));
 				doSleep(interval);
 				
 				for (SOSFileListEntry entry : objSourceFileList.List()) {
-					if (entry.isSteady() == false) {
-						//initialize property with the first file size
-						if(entry.getLastCheckedFileSize() < 0){
-							entry.setLastCheckedFileSize(entry.getFileSize());
-						}
-						//current file size
-						entry.setSourceFileProperties(objDataSourceClient.getFileHandle(entry.SourceFileName()));
-						
-						if(entry.getLastCheckedFileSize().equals(entry.getFileSize())){
-							entry.setSteady(true);
-							logger.debug(String.format("%s Not changed. file size: %s bytes. '%s'",msg,entry.getLastCheckedFileSize(),entry.SourceFileName()));
-						}
-						else{
-							allFilesAreSteady = false;
-							logger.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'",msg, entry.getFileSize(),entry.getLastCheckedFileSize(), entry.SourceFileName()));
-							
-						}
-						entry.setLastCheckedFileSize(entry.getFileSize());
+					if (!checkSteadyStateOfFile(entry, msg)) {
+						allFilesAreSteady = false;
 					}
 				}
-				if(allFilesAreSteady){
+				if (allFilesAreSteady) {
+					//one extra check because of https://change.sos-berlin.com/browse/JADE-372
+					//more than one file could be updated SERIAL on the source.
+					logger.info(String.format("all files seem steady! Extra %s waiting %ss for late comers.",msg,interval));
+					doSleep(interval);
+					
+					for (SOSFileListEntry entry : objSourceFileList.List()) {
+						entry.setSteady(false);
+						if (!checkSteadyStateOfFile(entry, msg)) {
+							allFilesAreSteady = false;
+						}
+					}
+				}
+				if (allFilesAreSteady) {
 					logger.info(String.format("%s break steady check. all files are steady.",msg));
 					break;
 				}
@@ -140,6 +137,30 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 		}
 		return allFilesAreSteady;
+	}
+	
+	private boolean checkSteadyStateOfFile(SOSFileListEntry entry, String msg) {
+		boolean fileIsSteady = true;
+		if (entry.isSteady() == false) {
+			//initialize property with the first file size
+			if(entry.getLastCheckedFileSize() < 0){
+				entry.setLastCheckedFileSize(entry.getFileSize());
+			}
+			//current file size
+			entry.setSourceFileProperties(objDataSourceClient.getFileHandle(entry.SourceFileName()));
+			
+			if(entry.getLastCheckedFileSize().equals(entry.getFileSize())){
+				entry.setSteady(true);
+				logger.debug(String.format("%s Not changed. file size: %s bytes. '%s'",msg,entry.getLastCheckedFileSize(),entry.SourceFileName()));
+			}
+			else{
+				fileIsSteady = false;
+				logger.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'",msg, entry.getFileSize(),entry.getLastCheckedFileSize(), entry.SourceFileName()));
+				
+			}
+			entry.setLastCheckedFileSize(entry.getFileSize());
+		}
+		return fileIsSteady;
 	}
 
 	private void doLogout(ISOSVfsFileTransfer pobjClient) throws Exception {
@@ -225,7 +246,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", lngCurrentNoOfFilesFound, strRegExp4FileNames,
 						strSourceDir));
 				if (lngNoOfFilesFound >= lngCurrentNoOfFilesFound && lngNoOfFilesFound != 0) { // no additional file found
-					if (objOptions.WaitingForLateComers.isTrue()) { // just wait a round for latecommers
+					if (objOptions.WaitingForLateComers.isTrue()) { // just wait a round for late comers
 						objOptions.WaitingForLateComers.setFalse();
 					}
 					else {
