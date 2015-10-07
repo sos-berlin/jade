@@ -51,7 +51,7 @@ public class SOSJadeHistory extends JSJobUtilitiesClass<SOSJadeHistoryOptions> {
 	 *
 	 */
 	@Override
-	public SOSJadeHistoryOptions Options() {
+	public SOSJadeHistoryOptions getOptions() {
 
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::Options"; //$NON-NLS-1$
@@ -83,15 +83,15 @@ public class SOSJadeHistory extends JSJobUtilitiesClass<SOSJadeHistoryOptions> {
 		logger.debug(String.format(Messages.getMsg("JSJ-I-110"), conMethodName));
 
 		try {
-			Options().CheckMandatory();
-			logger.debug(Options().toString());
+			getOptions().CheckMandatory();
+			logger.debug(getOptions().toString());
 			sosJadeImport = new SOSJadeImport(new File(objOptions.getconfiguration_file().Value()));
 
 			SOSJadeImportData sosJadeImportData = new SOSJadeImportData();
-			sosJadeImportData.setData(Options().Settings());
+			sosJadeImportData.setData(getOptions().Settings());
 
 			SOSJadeDetailImportData sosJadeDetailImportData = new SOSJadeDetailImportData();
-			sosJadeDetailImportData.setData(Options().Settings());
+			sosJadeDetailImportData.setData(getOptions().Settings());
 
 			sosJadeImport.setJadeTransferData(sosJadeImportData);
 			sosJadeImport.setJadeTransferDetailData(sosJadeDetailImportData);

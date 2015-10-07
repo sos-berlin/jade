@@ -83,7 +83,7 @@ public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter impleme
 		Object objSp = objJSCommands.getSpoolerObject();
 		Spooler objSpooler = (Spooler) objSp;
 		SOSJadeHistory objR = new SOSJadeHistory();
-		SOSJadeHistoryOptions objO = objR.Options();
+		SOSJadeHistoryOptions objO = objR.getOptions();
 		objO.CurrentNodeName(getCurrentNodeName());
 
 		objO.setAllOptions(getSchedulerParameterAsProperties(getParameters()));

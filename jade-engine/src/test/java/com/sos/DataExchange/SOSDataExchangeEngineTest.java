@@ -400,7 +400,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 	}
 
 	/**
-	 * Test method for {@link sos.net.sosftp.SOSFTPCommandSend#Options()}.
+	 * Test method for {@link sos.net.sosftp.SOSFTPCommandSend#getOptions()}.
 	 */
 	// @Test
 	public void testOptions() {

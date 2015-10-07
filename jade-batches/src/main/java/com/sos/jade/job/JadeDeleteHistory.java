@@ -50,7 +50,7 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
 	 *
 	 */
 	@Override
-	public JadeDeleteHistoryOptions Options() {
+	public JadeDeleteHistoryOptions getOptions() {
 
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::Options"; //$NON-NLS-1$
@@ -82,8 +82,8 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
 		logger.debug(String.format(Messages.getMsg("JSJ-I-110"), conMethodName));
 
 		try {
-			Options().CheckMandatory();
-			logger.debug(Options().toString());
+			getOptions().CheckMandatory();
+			logger.debug(getOptions().toString());
 
 			File configurationFile = new File(objOptions.configuration_file.Value());
 			JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);

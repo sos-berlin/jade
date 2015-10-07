@@ -76,7 +76,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 		
 		jadeOptions = null;
 		jadeEngine = new JadeEngine();
-		jadeOptions = jadeEngine.Options();
+		jadeOptions = jadeEngine.getOptions();
 		jadeOptions.CurrentNodeName(getCurrentNodeName());
 		jadeOptions.setAllOptions2(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
 		//objJadeOptions.CheckMandatory(); //is made in Execute method
@@ -296,7 +296,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 					objP = spooler_task.order().params();
 				}
 				if (isNotNull(objP)) {
-					String strResultList2File = objR.Options().result_list_file.Value();
+					String strResultList2File = objR.getOptions().result_list_file.Value();
 					if (isNotEmpty(strResultList2File) && isNotEmpty(fileNames)) {
 						JSTextFile objResultListFile = new JSTextFile(strResultList2File);
 						try {
@@ -305,11 +305,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 								objResultListFile.close();
 							}
 							else {
-								JSJ_F_0090.toLog(objR.Options().result_list_file.getShortKey(), strResultList2File);
+								JSJ_F_0090.toLog(objR.getOptions().result_list_file.getShortKey(), strResultList2File);
 							}
 						}
 						catch (Exception e) {
-							String strM = JSJ_F_0080.get(strResultList2File, objR.Options().result_list_file.getShortKey());
+							String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().result_list_file.getShortKey());
 							throw new JobSchedulerException(strM, e);
 						}
 					}

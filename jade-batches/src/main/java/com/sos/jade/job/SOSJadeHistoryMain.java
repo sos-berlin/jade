@@ -46,7 +46,7 @@ public class SOSJadeHistoryMain extends JSToolBox {
 
 		try {
 			SOSJadeHistory objM = new SOSJadeHistory();
-			SOSJadeHistoryOptions objO = objM.Options();
+			SOSJadeHistoryOptions objO = objM.getOptions();
 			
 			objO.CommandLineArgs(pstrArgs);
 			objM.Execute();
