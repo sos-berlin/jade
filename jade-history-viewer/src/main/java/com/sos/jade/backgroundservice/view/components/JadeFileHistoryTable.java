@@ -103,6 +103,9 @@ public class JadeFileHistoryTable extends Table{
 		String strVc = null;
 		strVc = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).get(JadeBSConstants.PREF_KEY_ORDER, null);
 		if (strVc != null && ((historyItems != null && historyItems.size() > 0) || this.container != null)){
+			if(strVc.contains("transferTimestamp")){
+				strVc.replace("transferTimestamp", "transferEnd");
+			}
 			this.setVisibleColumns((Object[])strVc.split(JadeBSConstants.DELIMITER_REGEX));
 			this.refreshRowCache();
 			this.markAsDirty();
@@ -113,11 +116,13 @@ public class JadeFileHistoryTable extends Table{
 	}
 	
 	private void setPreferencesColumnsWidth(){
-		for(Object key : visibleColumns){
-			int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
-			if (width != 0){
-				setColumnWidth(key.toString(), width);
-//				log.debug("setting width of column {} to {}", key.toString(), String.valueOf(width));
+		if (parentNodeName != null) {
+			for (Object key : visibleColumns) {
+				int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
+				if (width != 0) {
+					setColumnWidth(key.toString(), width);
+					//				log.debug("setting width of column {} to {}", key.toString(), String.valueOf(width));
+				}
 			}
 		}
 	}
