@@ -154,7 +154,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testExecute() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost_re.ini");
 		objO.profile.Value("jump_test_send");
@@ -175,7 +175,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testcopyfrominternet() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_copy_from_internet");
@@ -188,7 +188,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testcopytointernet() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_copy_to_internet");
@@ -201,7 +201,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testJumpTestCopyToInternetHttpProxy() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_copy_to_internet_http_proxy");
@@ -214,7 +214,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testJumpTestCopyToInternetSocks5Proxy() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_copy_to_internet_socks5_proxy");
@@ -227,7 +227,7 @@ public class Jade4DMZTest {
   @Ignore("Test set to Ignore for later examination")
 	public final void testsendusingdmz() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_sendusingdmz");
@@ -240,7 +240,7 @@ public class Jade4DMZTest {
   @Ignore("Test set to Ignore for later examination")
 	public final void testsendusingdmzOH() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jumphost_test_receive");
@@ -253,7 +253,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testreceiveusingdmz() {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_receiveusingdmz");
@@ -266,7 +266,7 @@ public class Jade4DMZTest {
 	@Ignore("Test set to Ignore for later examination")
 	public final void testExecute3() throws Exception {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_send");
@@ -290,7 +290,7 @@ public class Jade4DMZTest {
   @Ignore("Test set to Ignore for later examination")
 	public final void testExecuteDeepCopy() throws Exception {
 		Jade4DMZ objJ = new Jade4DMZ();
-		objO = objJ.Options();
+		objO = objJ.getOptions();
 
 		objO.settings.Value(strPathOfTestInis + "jade_jumpHost.ini");
 		objO.profile.Value("jump_test_send");

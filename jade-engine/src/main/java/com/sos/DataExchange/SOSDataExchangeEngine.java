@@ -143,7 +143,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					logger.info(String.format("all files seem steady! Extra %s waiting %ss for late comers.",msg,interval));
 					doSleep(interval);
 					
-					for (SOSFileListEntry entry : objSourceFileList.List()) {
+					for (SOSFileListEntry entry : sourceFileList.List()) {
 						entry.setSteady(false);
 						if (!checkSteadyStateOfFile(entry, msg)) {
 							allFilesAreSteady = false;
@@ -475,8 +475,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					sb.append(String.format(pattern4String, "CheckSteadyCount", getOptions().CheckSteadyCount.Value()));
 				}
 			}
-			if (Options().CheckIntegrityHash.isDirty()) {
-				sb.append(String.format(pattern4IntegrityHash, "CheckIntegrity", Options().CheckIntegrityHash.value(), Options().IntegrityHashType.Value()));
+			if (getOptions().CheckIntegrityHash.isDirty()) {
+				sb.append(String.format(pattern4IntegrityHash, "CheckIntegrity", getOptions().CheckIntegrityHash.value(), getOptions().IntegrityHashType.Value()));
 			}
 		}
 		else {
@@ -498,8 +498,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			if (getOptions().atomic_suffix.isDirty()) {
 				sb.append(String.format(pattern4String, "AtomicSuffix", getOptions().atomic_suffix.Value()));
 			}
-			if (Options().CreateIntegrityHashFile.isDirty()) {
-				sb.append(String.format(pattern4IntegrityHash, "CreateIntegrityFile", Options().CreateIntegrityHashFile.value(), Options().IntegrityHashType.Value()));
+			if (getOptions().CreateIntegrityHashFile.isDirty()) {
+				sb.append(String.format(pattern4IntegrityHash, "CreateIntegrityFile", getOptions().CreateIntegrityHashFile.value(), getOptions().IntegrityHashType.Value()));
 			}
 		}
 		if (options.replacement.isDirty() && options.replacing.IsNotEmpty()) {
