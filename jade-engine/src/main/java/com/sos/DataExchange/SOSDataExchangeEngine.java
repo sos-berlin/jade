@@ -142,7 +142,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					logger.info(String.format("all files seem steady! Extra %s waiting %ss for late comers.",msg,interval));
 					doSleep(interval);
 					
-					for (SOSFileListEntry entry : objSourceFileList.List()) {
+					for (SOSFileListEntry entry : sourceFileList.List()) {
 						entry.setSteady(false);
 						if (!checkSteadyStateOfFile(entry, msg)) {
 							allFilesAreSteady = false;
