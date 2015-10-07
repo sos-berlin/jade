@@ -32,7 +32,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * 
 	 */
 	public void Execute() {
-		String dir = normalizeDirectoryPath(Options().jump_dir.Value());
+		String dir = normalizeDirectoryPath(getOptions().jump_dir.Value());
 
 		String uuid 	= "jade-dmz-" + getUUID();
 		String subDir  	= dir + uuid;
@@ -522,7 +522,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * 
 	 */
 	@Override
-	public JADEOptions Options() {
+	public JADEOptions getOptions() {
 		if (objOptions == null) {
 			objOptions = new JADEOptions();
 		}

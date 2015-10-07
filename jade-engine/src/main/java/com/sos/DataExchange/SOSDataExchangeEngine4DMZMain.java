@@ -49,7 +49,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
 		
 		try {
 			jade4dmz = new Jade4DMZ();
-			JADEOptions options = jade4dmz.Options();
+			JADEOptions options = jade4dmz.getOptions();
 
 			jade4dmz.setJSJobUtilites(this);
 			options.SendTransferHistory.value(true);
