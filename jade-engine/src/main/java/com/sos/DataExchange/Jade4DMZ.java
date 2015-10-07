@@ -446,6 +446,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		opts.operation.Value("delete");
 		opts.verbose = objOptions.verbose;
 		opts.FileListName.Value(getSourceListFilename());
+		opts.force_files.value(false);
 		// https://change.sos-berlin.com/browse/JADE-297
 		opts.user.DefaultValue("");
 		objOptions.user.DefaultValue("");
