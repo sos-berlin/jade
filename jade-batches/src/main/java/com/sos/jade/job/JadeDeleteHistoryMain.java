@@ -48,7 +48,7 @@ public class JadeDeleteHistoryMain extends JSToolBox {
 
 		try {
 			JadeDeleteHistory objM = new JadeDeleteHistory();
-			JadeDeleteHistoryOptions objO = objM.Options();
+			JadeDeleteHistoryOptions objO = objM.getOptions();
 			
 			objO.CommandLineArgs(pstrArgs);
 			objM.Execute();

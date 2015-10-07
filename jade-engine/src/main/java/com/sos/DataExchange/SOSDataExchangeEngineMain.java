@@ -46,7 +46,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
 		try {
 			
 			engine = new SOSDataExchangeEngine();
-			JADEOptions options = engine.Options();
+			JADEOptions options = engine.getOptions();
 			//options.AllowEmptyParameterList.setFalse();
 
 			engine.setJSJobUtilites(this);

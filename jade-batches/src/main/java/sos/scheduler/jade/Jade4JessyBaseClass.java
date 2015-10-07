@@ -75,7 +75,7 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
 		showVersionInfo();
 		objR = new JadeEngine();
-		objO = objR.Options();
+		objO = objR.getOptions();
 		objO.CurrentNodeName(getCurrentNodeName());
 		hsmParameters = getSchedulerParameterAsProperties(getParameters());
 		objO.setAllOptions2(objO.DeletePrefix(hsmParameters, "ftp_"));

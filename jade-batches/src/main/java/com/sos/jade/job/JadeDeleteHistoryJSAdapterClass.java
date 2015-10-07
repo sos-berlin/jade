@@ -80,7 +80,7 @@ public class JadeDeleteHistoryJSAdapterClass extends JobSchedulerJobAdapter  imp
 		final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
 
 		JadeDeleteHistory objR = new JadeDeleteHistory();
-		JadeDeleteHistoryOptions objO = objR.Options();
+		JadeDeleteHistoryOptions objO = objR.getOptions();
 		objO.CurrentNodeName(getCurrentNodeName());
 		objO.setAllOptions(getSchedulerParameterAsProperties(getParameters()));
 		objO.CheckMandatory();
