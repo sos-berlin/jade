@@ -106,7 +106,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
  		
 		objO.CurrentNodeName(getCurrentNodeName());
 		HashMap<String, String> hsmParameters = getSchedulerParameterAsProperties(getJobOrOrderParameters());
-		objO.setAllOptions(objO.DeletePrefix(hsmParameters, "ftp_"));
+		objO.setAllOptions2(objO.DeletePrefix(hsmParameters, "ftp_"));
 		if (!objO.scheduler_host.isDirty()){
 		   objO.scheduler_host.Value("");
 		}
