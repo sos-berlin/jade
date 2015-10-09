@@ -615,61 +615,67 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 * @return
 	 */
 	private String[] getSingleFileNames() {
-		final String method = className + "::getSingleFileNames";
-		
 		Vector<String> fileList = new Vector<String>();
+		String localDir = objOptions.SourceDir.ValueWithFileSeparator();
+		
 		if (objOptions.file_path.IsNotEmpty() == true) {
 			String filePath = objOptions.file_path.Value();
 			logger.debug(String.format("single file(s) specified : '%1$s'", filePath));
 			
 			try {
-				String localDir = objOptions.SourceDir.ValueWithFileSeparator();
-				// TODO separator-char variable as Option
 				String[] arr = filePath.split(";");
-				for (String name : arr) {
-					name = name.trim();
-					if (name.length() > 0) {
+				for (String filename : arr) {
+					filename = filename.trim();
+					if (filename.length() > 0) {
 						if (localDir.trim().length() > 0) {
-							if (isAPathName(name) == false) {
-								/**
-								 * Problem with folders, when pgs run on Windows, but has to
-								 * create a path for unix-systems.
-								 */
-								// strT = new File(localDir, strT).getAbsolutePath();
-								name = localDir + name;
+							if (isAPathName(filename) == false) {
+								filename = localDir + filename;
 							}
 						}
-						fileList.add(name);
+						fileList.add(filename);
 					}
 				}
 			}
 			catch (Exception e) {
-				String msg = String.format("error in  %1$s", method);
-				logger.error(msg + e);
-				throw new JobSchedulerException(msg, e);
+				throw new JobSchedulerException(String.format("error while reading file_path='%1$s': %2$s", objOptions.file_path.Value(), e.toString()));
 			}
 		}
 		if (objOptions.FileListName.IsNotEmpty() == true) {
 			String fileListName = objOptions.FileListName.Value();
 			JSFile file = new JSFile(fileListName);
 			if (file.exists() == true) {
-				// TODO create method in JSFile: File2Array
-				StringBuffer line = null;
-				while ((line = file.GetLine()) != null) {
-					fileList.add(line.toString());
-				}
 				try {
-					file.close();
+					StringBuffer line = null;
+					String filename = "";
+					while ((line = file.GetLine()) != null) {
+						filename = line.toString().trim();
+						if (filename.length() > 0) {
+							if (localDir.trim().length() > 0) {
+								if (isAPathName(filename) == false) {
+									filename = localDir + filename;
+								}
+							}
+							fileList.add(filename);
+						}
+					}
+				} catch (JobSchedulerException e1) {
+					throw e1;
+				} catch (Exception e1) {
+					throw new JobSchedulerException(String.format("error while reading '%1$s': %2$s", objOptions.FileListName.Value(), e1.toString()));
 				}
-				catch (IOException e) {}
+				finally {
+					try {
+						file.close();
+					}
+					catch (IOException e) {}
+				}
+			}
+			else {
+				throw new JobSchedulerException(String.format("%1$s doesn't exist.", objOptions.FileListName.Value()));
 			}
 		}
 		
-		String[] arr = { "" };
-		if (fileList.size() > 0) {
-			arr = fileList.toArray(new String[fileList.size()]);
-		}
-		return arr;
+		return (fileList.size() > 0) ? fileList.toArray(new String[fileList.size()]) : new String[0];
 	}
 
 	/**
@@ -1180,6 +1186,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							sourceFileList.CreateResultSetFile();
 						}
 						else {
+							sourceFileList.CreateResultSetFile();
 							if (objOptions.CreateSecurityHashFile.isTrue() || objOptions.CheckSecurityHash.isTrue()) {
 								sourceFileList.createHashFileEntries(objOptions.SecurityHashType.Value());
 							}
