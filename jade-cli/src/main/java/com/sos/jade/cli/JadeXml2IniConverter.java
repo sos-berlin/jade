@@ -10,6 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -20,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.poi.ss.formula.ptg.RefNPtg;
 import org.apache.xpath.NodeSet;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -162,7 +166,9 @@ public class JadeXml2IniConverter {
 		XPathExpression xmlExpression = _xpathXml.compile("/Configurations");
 		
 		_rootSchema = (Node) schemaExpression.evaluate(schemaSource,XPathConstants.NODE);
-		_rootXml = (Node) xmlExpression.evaluate(xmlSource, XPathConstants.NODE);
+		
+		Document xmlDoc = getXmlFileDocument(xmlSource, xmlFilePath);
+		_rootXml = (Node) xmlExpression.evaluate(xmlDoc, XPathConstants.NODE);
 		
 		if(_rootSchema == null){
 			throw new Exception(String.format("\"xs:schema\" element not found in the schema file %s",schemaFilePath));
@@ -199,6 +205,19 @@ public class JadeXml2IniConverter {
 				_writer = null;
 			}
 		}
+	}
+	
+	private Document getXmlFileDocument(InputSource xmlSource,String xmlFile) throws Exception{
+		String normalized = xmlFile.toLowerCase();
+		if(!normalized.startsWith("http://") && !normalized.startsWith("https://")){
+			System.setProperty("user.dir",new File(xmlFile).getParent());
+		}
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+        factory.setXIncludeAware(true); 
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(xmlSource);
 	}
 	
 	public int getCountNotificationMailFragments(){
