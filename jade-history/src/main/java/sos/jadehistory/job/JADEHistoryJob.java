@@ -909,6 +909,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			}
 		} else if (mappingName.equals("mapping_last_error_message")) {
 			len = 255;
+			attr_val = getNormalizedMessage(attr_val, len);
 		} else if (mappingName.equals("mapping_log_filename")) {
 			len = 255;
 		} else if (mappingName.equals("mapping_jump_host")) {
@@ -921,6 +922,18 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			len = 10;
 		} 
 		return len > 0 ? JADEHistory.getNormalizedField(getConnection(), attr_val, len) : attr_val;
+	}
+
+	private String getNormalizedMessage(String val, int len) {
+		val = val.replaceAll("&quot;", "\"").replaceAll("&apos;", "'").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&");
+		if( val.startsWith("\"") && val.endsWith("\"")) {
+			val = val.replaceFirst("^\"", "").replaceFirst("\"$", "").replaceAll("\"\"", "\"");
+		}
+		int beginCut = val.length() - len;
+		if (beginCut > 0) {
+			val = val.substring(beginCut);
+		}
+		return val;
 	}
 
 	public String getFilePath() {
