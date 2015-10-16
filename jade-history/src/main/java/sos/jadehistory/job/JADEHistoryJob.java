@@ -64,7 +64,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 	/** fehlende Werte bei den einigen Spalten
 	 * (remote_host_ip,localhost_ip,local_filename,remote_filename,file_size,md5)
 	 * mit diesem Wert füllen */
-	private final String					_nullValue						= "null";
+	private final String					_nullValue						= "n/a";
 	/**Status in der letzten import Zeil : success oder error */
 	private String							_lastStatus						= "";
 	private final String					_errorStatus					= "error";
@@ -737,72 +737,55 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 		attr_val = attr_val.trim();
 		if (mappingName.equals("mapping_operation")) {
 			len = 30;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 			attr_val = attr_val.toLowerCase();
 		} else if (mappingName.equals("mapping_mandator")) {
 			len = 30;
-			if (attr_val.length() == 0) {
-				attr_val = "sos";
-			}
 			attr_val = attr_val.toLowerCase();
 		} else if (mappingName.equals("mapping_source_host")) {
 			len = 128;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_target_host", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_source_host_ip")) {
 			len = 30;
-			if (attr_val.length() == 0) {
-				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
-					attr_val = _nullValue;
-				} else {
-					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
-				}
-			}
+//			if (attr_val.length() == 0) {
+//				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
+//					attr_val = _nullValue;
+//				} else {
+//					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
+//				}
+//			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_target_host_ip", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_source_user")) {
 			len = 128;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_target_user", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_source_dir")) {
 			len = 255;
-			//is possibly empty for file path selection
-			/* if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			} */
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_target_dir", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_source_filename")) {
 			len = 255;
-			if (attr_val.length() == 0) {
-				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
-					attr_val = _nullValue;
-				} else {
-					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
-				}
-			}
+//			if (attr_val.length() == 0) {
+//				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
+//					attr_val = _nullValue;
+//				} else {
+//					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
+//				}
+//			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_target_filename", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_guid")) {
 			len = 40;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
-		} 
-		else if (mappingName.equals("mapping_transfer_start")) {
+//			if (attr_val.length() == 0) {
+//				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
+//			}
+		} else if (mappingName.equals("mapping_transfer_start")) {
 			if (attr_val.length() > 0){
 				try {
 					SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
@@ -810,8 +793,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 					throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
 				}
 			}
-		} 
-		else if (mappingName.equals("mapping_transfer_end")) {
+		} else if (mappingName.equals("mapping_transfer_end")) {
 			if (attr_val.length() > 0){
 				try {
 					SOSDate.getDateTimeAsString(attr_val, "yyyy-MM-dd HH:mm:ss");
@@ -819,8 +801,8 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 					throw new JobSchedulerException("illegal value for parameter [" + attr_name + "] found [yyyy-MM-dd HH:mm:ss]: " + attr_val);
 				}
 			}
-		} 
-		else if (mappingName.equals("mapping_file_size") || mappingName.equals("mapping_pid") || mappingName.equals("mapping_ppid")) {
+		} else if (mappingName.equals("mapping_file_size") || mappingName.equals("mapping_pid") || 
+				mappingName.equals("mapping_ppid") || mappingName.equals("mapping_port")) {
 			if (attr_val.length() == 0) {
 				attr_val = "0";
 			} else {
@@ -832,82 +814,57 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 			}
 		} else if (mappingName.equals("mapping_target_host")) {
 			len = 128;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_source_host", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_target_host_ip")) {
 			len = 30;
-			if (attr_val.length() == 0) {
-				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
-					attr_val = _nullValue;
-				} else {
-					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
-				}
-			}
+//			if (attr_val.length() == 0) {
+//				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
+//					attr_val = _nullValue;
+//				} else {
+//					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
+//				}
+//			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_source_host_ip", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_target_user")) {
 			len = 128;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_source_user", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_target_dir")) {
 			len = 255;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_source_dir", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_target_filename")) {
 			len = 255;
-			if (attr_val.length() == 0) {
-				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
-					attr_val = _nullValue;
-				} else {
-					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
-				}
-			}
+//			if (attr_val.length() == 0) {
+//				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
+//					attr_val = _nullValue;
+//				} else {
+//					throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
+//				}
+//			}
 			if (operation != null && operation.equals(_operationReceive)) {
 				attr_val = getRecordValue(record, "mapping_source_filename", _operationSend);
 			}
 		} else if (mappingName.equals("mapping_protocol")) {
 			len = 10;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
-		} else if (mappingName.equals("mapping_port")) {
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			} else {
-				try {
-					Integer.parseInt(attr_val);
-				} catch (Exception e) {
-					throw new JobSchedulerException("illegal non-numeric value for parameter [" + attr_name + "]: " + attr_val);
-				}
-			}
 		} else if (mappingName.equals("mapping_md5")) {
 			len = 50;
-			if (attr_val.length() == 0) {
-				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
-					attr_val = _nullValue;
-				} else {
-					attr_val = "N/A";
-					//throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
-				}
-			}
+//			if (attr_val.length() == 0) {
+//				if (_lastStatus.equalsIgnoreCase(_errorStatus)) {
+//					attr_val = _nullValue;
+//				} else {
+//					attr_val = "N/A";
+//					//throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty by the status [" + _lastStatus + "]");
+//				}
+//			}
 		} else if (mappingName.equals("mapping_status")) {
 			len = 30;
-			if (attr_val.length() == 0) {
-				throw new JobSchedulerException("parameter [" + attr_name + "] can't be empty");
-			}
 		} else if (mappingName.equals("mapping_last_error_message")) {
 			len = 255;
 			attr_val = getNormalizedMessage(attr_val, len);
@@ -922,6 +879,9 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 		} else if (mappingName.equals("mapping_jump_protocol")) {
 			len = 10;
 		} 
+		if(attr_val.length() == 0){
+			attr_val = _nullValue;
+		}
 		return len > 0 ? JADEHistory.getNormalizedField(getConnection(), attr_val, len) : attr_val;
 	}
 
