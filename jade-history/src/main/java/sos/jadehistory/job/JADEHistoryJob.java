@@ -802,7 +802,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
 				}
 			}
 		} else if (mappingName.equals("mapping_file_size") || mappingName.equals("mapping_pid") || 
-				mappingName.equals("mapping_ppid") || mappingName.equals("mapping_port")) {
+				mappingName.equals("mapping_ppid") || mappingName.equals("mapping_port") || mappingName.equals("mapping_jump_port")) {
 			if (attr_val.length() == 0) {
 				attr_val = "0";
 			} else {
