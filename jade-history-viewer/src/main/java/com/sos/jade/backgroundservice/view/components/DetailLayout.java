@@ -127,7 +127,6 @@ public class DetailLayout extends VerticalLayout {
 		Label lbl = new Label();
 		lbl.setId(id);
 		lbl.addStyleName(styleName);
-		lbl.setSizeUndefined();
 		if(value != null){
 			lbl.setValue(value);
 		}
@@ -136,7 +135,6 @@ public class DetailLayout extends VerticalLayout {
 	
 	private HorizontalLayout initHlayout(Component... components){
 		HorizontalLayout hl = new HorizontalLayout();
-		hl.setSizeFull();
 		this.addComponent(hl);
 		this.setExpandRatio(hl, 1);
 		hl.addComponents(components);

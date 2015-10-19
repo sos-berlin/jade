@@ -106,10 +106,11 @@
   
   .jadeBsDetailTable .v-table-row:hover,
   .jadeBsDetailTable .v-table-row-odd:hover{
- 	background: transparent url(../bs/images/table_selected.png) repeat-x;
+	background-color: #F3AF86;
 	color: #000000;
 	text-shadow: none;
 	font-weight: bold;
+	white-space: normal;
   }
   
   .v-table-row-odd{
@@ -118,26 +119,35 @@
   
   .v-table .v-selected, 
   .black .v-table .v-selected {
-	background: transparent url(../bs/images/table_selected.png) repeat-x;
+	background: #F3AF86 url(../bs/images/table_selected.png) repeat-x;
 	color: #000000;
 	text-shadow: none;
 	font-weight: bold;
+	white-space: normal;
+	border-top: transparent;
+	border-bottom: transparent;
+	border-right: 1px solid #d3d4d5;
   }
 
-  .v-table-focus .v-table-cell-content {
-	border-top: 1px dotted #D5D5D5;
-	border-bottom: 1px dotted #D5D5D5;
+  .v-table-focus .v-table-cell-content .v-table-cell-wrapper {
+	border-top: transparent;
+	border-bottom: transparent;
+	white-space: normal;
   }
 
   .v-table-cell-content {
-	white-space: nowrap;
 	overflow: hidden;
 	padding: 0 6px;
 	border-right: 1px solid #d3d4d5;
+	white-space: normal;
   }
 
   .v-table .v-selected .v-table-cell-content {
 	border-right-color: #d3d4d5;
+  }
+  
+  .v-table .v-selected .v-table-cell-content .v-table-cell-wrapper {
+	white-space: normal;
   }
   
   .v-table-header-wrap, 
