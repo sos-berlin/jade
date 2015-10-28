@@ -2,12 +2,13 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
 package com.sos.jade.converter.generated;
 
+import java.math.BigInteger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
@@ -31,12 +32,10 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Zip_QNAME = new QName("", "Zip");
     private final static QName _CreateOrderForAllFiles_QNAME = new QName("", "CreateOrderForAllFiles");
     private final static QName _CSExportedFile_QNAME = new QName("", "CSExportedFile");
     private final static QName _Account_QNAME = new QName("", "Account");
     private final static QName _ContentType_QNAME = new QName("", "ContentType");
-    private final static QName _KeepConnection_QNAME = new QName("", "KeepConnection");
     private final static QName _BackgroundServiceProtocol_QNAME = new QName("", "BackgroundServiceProtocol");
     private final static QName _HTTPProxy_QNAME = new QName("", "HTTPProxy");
     private final static QName _CSFile_QNAME = new QName("", "CSFile");
@@ -44,23 +43,25 @@ public class ObjectFactory {
     private final static QName _MailServer_QNAME = new QName("", "MailServer");
     private final static QName _SkipLastFiles_QNAME = new QName("", "SkipLastFiles");
     private final static QName _JobSchedulerHostname_QNAME = new QName("", "JobSchedulerHostname");
-    private final static QName _JumpDirectory_QNAME = new QName("", "JumpDirectory");
     private final static QName _LocalPostProcessing_QNAME = new QName("", "LocalPostProcessing");
+    private final static QName _JumpDirectory_QNAME = new QName("", "JumpDirectory");
     private final static QName _FTPSClientSecurity_QNAME = new QName("", "FTPSClientSecurity");
     private final static QName _DebugLevel_QNAME = new QName("", "DebugLevel");
     private final static QName _MergeOrderParameters_QNAME = new QName("", "MergeOrderParameters");
     private final static QName _AtomicSuffix_QNAME = new QName("", "AtomicSuffix");
     private final static QName _BCC_QNAME = new QName("", "BCC");
+    private final static QName _ReturnCode_QNAME = new QName("", "ReturnCode");
     private final static QName _MaxFileAge_QNAME = new QName("", "MaxFileAge");
     private final static QName _JumpCommand_QNAME = new QName("", "JumpCommand");
     private final static QName _MoveTargetFragmentRef_QNAME = new QName("", "MoveTargetFragmentRef");
+    private final static QName _CSKeepExportedFileOnExit_QNAME = new QName("", "CSKeepExportedFileOnExit");
     private final static QName _BasicAuthentication_QNAME = new QName("", "BasicAuthentication");
-    private final static QName _HistoryFileAppendMode_QNAME = new QName("", "HistoryFileAppendMode");
     private final static QName _CheckSize_QNAME = new QName("", "CheckSize");
     private final static QName _BackgroundServicePort_QNAME = new QName("", "BackgroundServicePort");
+    private final static QName _DisableCertificateHostnameVerification_QNAME = new QName("", "DisableCertificateHostnameVerification");
     private final static QName _Transactional_QNAME = new QName("", "Transactional");
     private final static QName _KeyStoreFile_QNAME = new QName("", "KeyStoreFile");
-    private final static QName _VerifyCertificateHostname_QNAME = new QName("", "VerifyCertificateHostname");
+    private final static QName _Description_QNAME = new QName("", "Description");
     private final static QName _TransferMode_QNAME = new QName("", "TransferMode");
     private final static QName _CommandBeforeOperation_QNAME = new QName("", "CommandBeforeOperation");
     private final static QName _HistoryFile_QNAME = new QName("", "HistoryFile");
@@ -71,7 +72,6 @@ public class ObjectFactory {
     private final static QName _MaxFiles_QNAME = new QName("", "MaxFiles");
     private final static QName _BackgroundServiceHost_QNAME = new QName("", "BackgroundServiceHost");
     private final static QName _Directory_QNAME = new QName("", "Directory");
-    private final static QName _SendTransferHistory_QNAME = new QName("", "SendTransferHistory");
     private final static QName _CC_QNAME = new QName("", "CC");
     private final static QName _NextState_QNAME = new QName("", "NextState");
     private final static QName _CSKeyFile_QNAME = new QName("", "CSKeyFile");
@@ -85,6 +85,7 @@ public class ObjectFactory {
     private final static QName _CommandAfterFile_QNAME = new QName("", "CommandAfterFile");
     private final static QName _FileSpec_QNAME = new QName("", "FileSpec");
     private final static QName _ReplaceWith_QNAME = new QName("", "ReplaceWith");
+    private final static QName _DisableHistoryFileAppendMode_QNAME = new QName("", "DisableHistoryFileAppendMode");
     private final static QName _ReplaceWhat_QNAME = new QName("", "ReplaceWhat");
     private final static QName _CheckSteadyStateInterval_QNAME = new QName("", "CheckSteadyStateInterval");
     private final static QName _MinFileAge_QNAME = new QName("", "MinFileAge");
@@ -94,7 +95,6 @@ public class ObjectFactory {
     private final static QName _FTPPreProcessing_QNAME = new QName("", "FTPPreProcessing");
     private final static QName _CopyTargetFragmentRef_QNAME = new QName("", "CopyTargetFragmentRef");
     private final static QName _SSHAuthentication_QNAME = new QName("", "SSHAuthentication");
-    private final static QName _BackgroundService_QNAME = new QName("", "BackgroundService");
     private final static QName _Port_QNAME = new QName("", "Port");
     private final static QName _PollForever_QNAME = new QName("", "PollForever");
     private final static QName _OnError_QNAME = new QName("", "OnError");
@@ -108,14 +108,18 @@ public class ObjectFactory {
     private final static QName _RaiseErrorIfResultSetIs_QNAME = new QName("", "RaiseErrorIfResultSetIs");
     private final static QName _PollTimeout_QNAME = new QName("", "PollTimeout");
     private final static QName _To_QNAME = new QName("", "To");
+    private final static QName _Logging_QNAME = new QName("", "Logging");
     private final static QName _CSEntryPath_QNAME = new QName("", "CSEntryPath");
     private final static QName _FileList_QNAME = new QName("", "FileList");
     private final static QName _CumulativeFilename_QNAME = new QName("", "CumulativeFilename");
     private final static QName _PollInterval_QNAME = new QName("", "PollInterval");
+    private final static QName _Timeout_QNAME = new QName("", "Timeout");
+    private final static QName _Documentation_QNAME = new QName("", "Documentation");
     private final static QName _Hostname_QNAME = new QName("", "Hostname");
     private final static QName _AtomicPrefix_QNAME = new QName("", "AtomicPrefix");
     private final static QName _Passphrase_QNAME = new QName("", "Passphrase");
     private final static QName _Encoding_QNAME = new QName("", "Encoding");
+    private final static QName _Assertions_QNAME = new QName("", "Assertions");
     private final static QName _FTPSProtocol_QNAME = new QName("", "FTPSProtocol");
     private final static QName _Atomicity_QNAME = new QName("", "Atomicity");
     private final static QName _CreateIntegrityHashFile_QNAME = new QName("", "CreateIntegrityHashFile");
@@ -126,12 +130,12 @@ public class ObjectFactory {
     private final static QName _BackgroundServiceJobChainName_QNAME = new QName("", "BackgroundServiceJobChainName");
     private final static QName _MinFileSize_QNAME = new QName("", "MinFileSize");
     private final static QName _Domain_QNAME = new QName("", "Domain");
-    private final static QName _CheckSteadyStateCount_QNAME = new QName("", "CheckSteadyStateCount");
+    private final static QName _Notifications_QNAME = new QName("", "Notifications");
     private final static QName _SFTPPreProcessing_QNAME = new QName("", "SFTPPreProcessing");
     private final static QName _ZlibCompressionLevel_QNAME = new QName("", "ZlibCompressionLevel");
+    private final static QName _CheckSteadyStateCount_QNAME = new QName("", "CheckSteadyStateCount");
     private final static QName _KeyStorePassword_QNAME = new QName("", "KeyStorePassword");
     private final static QName _PollingServerDuration_QNAME = new QName("", "PollingServerDuration");
-    private final static QName _CSDeleteExportedFileOnExit_QNAME = new QName("", "CSDeleteExportedFileOnExit");
     private final static QName _ResultSetFile_QNAME = new QName("", "ResultSetFile");
     private final static QName _Execute_QNAME = new QName("", "Execute");
     private final static QName _AppendFiles_QNAME = new QName("", "AppendFiles");
@@ -147,8 +151,8 @@ public class ObjectFactory {
     private final static QName _BasicConnection_QNAME = new QName("", "BasicConnection");
     private final static QName _SecurityMode_QNAME = new QName("", "SecurityMode");
     private final static QName _MoveSourceFragmentRef_QNAME = new QName("", "MoveSourceFragmentRef");
-    private final static QName _LocalPreProcessing_QNAME = new QName("", "LocalPreProcessing");
     private final static QName _FTPPostProcessing_QNAME = new QName("", "FTPPostProcessing");
+    private final static QName _LocalPreProcessing_QNAME = new QName("", "LocalPreProcessing");
     private final static QName _Body_QNAME = new QName("", "Body");
     private final static QName _CSStoreType_QNAME = new QName("", "CSStoreType");
     private final static QName _TransferZeroByteFiles_QNAME = new QName("", "TransferZeroByteFiles");
@@ -171,6 +175,7 @@ public class ObjectFactory {
     private final static QName _KeepModificationDate_QNAME = new QName("", "KeepModificationDate");
     private final static QName _BufferSize_QNAME = new QName("", "BufferSize");
     private final static QName _CheckSteadyStateErrorState_QNAME = new QName("", "CheckSteadyStateErrorState");
+    private final static QName _Links_QNAME = new QName("", "Links");
     private final static QName _GetListSourceFragmentRef_QNAME = new QName("", "GetListSourceFragmentRef");
     private final static QName _Recursive_QNAME = new QName("", "Recursive");
     private final static QName _DisableOverwriteFiles_QNAME = new QName("", "DisableOverwriteFiles");
@@ -215,19 +220,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AuthenticatedProxyType }
-     * 
-     */
-    public AuthenticatedProxyType createAuthenticatedProxyType() {
-        return new AuthenticatedProxyType();
-    }
-
-    /**
      * Create an instance of {@link UnauthenticatedProxyType }
      * 
      */
     public UnauthenticatedProxyType createUnauthenticatedProxyType() {
         return new UnauthenticatedProxyType();
+    }
+
+    /**
+     * Create an instance of {@link AuthenticatedProxyType }
+     * 
+     */
+    public AuthenticatedProxyType createAuthenticatedProxyType() {
+        return new AuthenticatedProxyType();
     }
 
     /**
@@ -276,6 +281,142 @@ public class ObjectFactory {
      */
     public ReadableFragmentRefType createReadableFragmentRefType() {
         return new ReadableFragmentRefType();
+    }
+
+    /**
+     * Create an instance of {@link AlternativeCopySourceFragmentRef }
+     * 
+     */
+    public AlternativeCopySourceFragmentRef createAlternativeCopySourceFragmentRef() {
+        return new AlternativeCopySourceFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link FTPFragmentRef }
+     * 
+     */
+    public FTPFragmentRef createFTPFragmentRef() {
+        return new FTPFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link FTPPreProcessingType }
+     * 
+     */
+    public FTPPreProcessingType createFTPPreProcessingType() {
+        return new FTPPreProcessingType();
+    }
+
+    /**
+     * Create an instance of {@link FTPPostProcessingType }
+     * 
+     */
+    public FTPPostProcessingType createFTPPostProcessingType() {
+        return new FTPPostProcessingType();
+    }
+
+    /**
+     * Create an instance of {@link RenameType }
+     * 
+     */
+    public RenameType createRenameType() {
+        return new RenameType();
+    }
+
+    /**
+     * Create an instance of {@link FTPSFragmentRef }
+     * 
+     */
+    public FTPSFragmentRef createFTPSFragmentRef() {
+        return new FTPSFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link HTTPFragmentRef }
+     * 
+     */
+    public HTTPFragmentRef createHTTPFragmentRef() {
+        return new HTTPFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link HTTPSFragmentRef }
+     * 
+     */
+    public HTTPSFragmentRef createHTTPSFragmentRef() {
+        return new HTTPSFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link LocalSource }
+     * 
+     */
+    public LocalSource createLocalSource() {
+        return new LocalSource();
+    }
+
+    /**
+     * Create an instance of {@link LocalPreProcessingType }
+     * 
+     */
+    public LocalPreProcessingType createLocalPreProcessingType() {
+        return new LocalPreProcessingType();
+    }
+
+    /**
+     * Create an instance of {@link LocalPostProcessingType }
+     * 
+     */
+    public LocalPostProcessingType createLocalPostProcessingType() {
+        return new LocalPostProcessingType();
+    }
+
+    /**
+     * Create an instance of {@link SFTPFragmentRef }
+     * 
+     */
+    public SFTPFragmentRef createSFTPFragmentRef() {
+        return new SFTPFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link SFTPPreProcessingType }
+     * 
+     */
+    public SFTPPreProcessingType createSFTPPreProcessingType() {
+        return new SFTPPreProcessingType();
+    }
+
+    /**
+     * Create an instance of {@link SFTPPostProcessingType }
+     * 
+     */
+    public SFTPPostProcessingType createSFTPPostProcessingType() {
+        return new SFTPPostProcessingType();
+    }
+
+    /**
+     * Create an instance of {@link ZlibCompression }
+     * 
+     */
+    public ZlibCompression createZlibCompression() {
+        return new ZlibCompression();
+    }
+
+    /**
+     * Create an instance of {@link SMBFragmentRef }
+     * 
+     */
+    public SMBFragmentRef createSMBFragmentRef() {
+        return new SMBFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link WebDAVFragmentRef }
+     * 
+     */
+    public WebDAVFragmentRef createWebDAVFragmentRef() {
+        return new WebDAVFragmentRef();
     }
 
     /**
@@ -391,6 +532,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AlternativeCopyTargetFragmentRef }
+     * 
+     */
+    public AlternativeCopyTargetFragmentRef createAlternativeCopyTargetFragmentRef() {
+        return new AlternativeCopyTargetFragmentRef();
+    }
+
+    /**
+     * Create an instance of {@link LocalTarget }
+     * 
+     */
+    public LocalTarget createLocalTarget() {
+        return new LocalTarget();
+    }
+
+    /**
      * Create an instance of {@link TargetFileOptions }
      * 
      */
@@ -463,11 +620,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AlternativeMoveSourceFragmentRef }
+     * 
+     */
+    public AlternativeMoveSourceFragmentRef createAlternativeMoveSourceFragmentRef() {
+        return new AlternativeMoveSourceFragmentRef();
+    }
+
+    /**
      * Create an instance of {@link MoveTarget }
      * 
      */
     public MoveTarget createMoveTarget() {
         return new MoveTarget();
+    }
+
+    /**
+     * Create an instance of {@link AlternativeMoveTargetFragmentRef }
+     * 
+     */
+    public AlternativeMoveTargetFragmentRef createAlternativeMoveTargetFragmentRef() {
+        return new AlternativeMoveTargetFragmentRef();
     }
 
     /**
@@ -487,6 +660,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AlternativeRemoveSourceFragmentRef }
+     * 
+     */
+    public AlternativeRemoveSourceFragmentRef createAlternativeRemoveSourceFragmentRef() {
+        return new AlternativeRemoveSourceFragmentRef();
+    }
+
+    /**
      * Create an instance of {@link GetList }
      * 
      */
@@ -500,6 +681,22 @@ public class ObjectFactory {
      */
     public GetListSource createGetListSource() {
         return new GetListSource();
+    }
+
+    /**
+     * Create an instance of {@link ListableFragmentRefType }
+     * 
+     */
+    public ListableFragmentRefType createListableFragmentRefType() {
+        return new ListableFragmentRefType();
+    }
+
+    /**
+     * Create an instance of {@link AlternativeGetListSourceFragmentRef }
+     * 
+     */
+    public AlternativeGetListSourceFragmentRef createAlternativeGetListSourceFragmentRef() {
+        return new AlternativeGetListSourceFragmentRef();
     }
 
     /**
@@ -535,11 +732,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Notifications }
+     * Create an instance of {@link LoggingType }
      * 
      */
-    public Notifications createNotifications() {
-        return new Notifications();
+    public LoggingType createLoggingType() {
+        return new LoggingType();
     }
 
     /**
@@ -559,75 +756,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MailServerFragmentRef }
+     * Create an instance of {@link NotificationType }
      * 
      */
-    public MailServerFragmentRef createMailServerFragmentRef() {
-        return new MailServerFragmentRef();
+    public NotificationType createNotificationType() {
+        return new NotificationType();
     }
 
     /**
-     * Create an instance of {@link CredentialStore }
+     * Create an instance of {@link AssertionType }
      * 
      */
-    public CredentialStore createCredentialStore() {
-        return new CredentialStore();
+    public AssertionType createAssertionType() {
+        return new AssertionType();
     }
 
     /**
-     * Create an instance of {@link CredentialStoreFragmentRef }
+     * Create an instance of {@link DocumentationType }
      * 
      */
-    public CredentialStoreFragmentRef createCredentialStoreFragmentRef() {
-        return new CredentialStoreFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link HTTPFragmentRef }
-     * 
-     */
-    public HTTPFragmentRef createHTTPFragmentRef() {
-        return new HTTPFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link SFTPFragmentRef }
-     * 
-     */
-    public SFTPFragmentRef createSFTPFragmentRef() {
-        return new SFTPFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link SFTPPreProcessingType }
-     * 
-     */
-    public SFTPPreProcessingType createSFTPPreProcessingType() {
-        return new SFTPPreProcessingType();
-    }
-
-    /**
-     * Create an instance of {@link SFTPPostProcessingType }
-     * 
-     */
-    public SFTPPostProcessingType createSFTPPostProcessingType() {
-        return new SFTPPostProcessingType();
-    }
-
-    /**
-     * Create an instance of {@link RenameType }
-     * 
-     */
-    public RenameType createRenameType() {
-        return new RenameType();
-    }
-
-    /**
-     * Create an instance of {@link ZlibCompression }
-     * 
-     */
-    public ZlibCompression createZlibCompression() {
-        return new ZlibCompression();
+    public DocumentationType createDocumentationType() {
+        return new DocumentationType();
     }
 
     /**
@@ -668,6 +817,14 @@ public class ObjectFactory {
      */
     public BasicAuthenticationType createBasicAuthenticationType() {
         return new BasicAuthenticationType();
+    }
+
+    /**
+     * Create an instance of {@link CredentialStoreFragmentRef }
+     * 
+     */
+    public CredentialStoreFragmentRef createCredentialStoreFragmentRef() {
+        return new CredentialStoreFragmentRef();
     }
 
     /**
@@ -799,102 +956,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AlternativeFragments }
-     * 
-     */
-    public AlternativeFragments createAlternativeFragments() {
-        return new AlternativeFragments();
-    }
-
-    /**
-     * Create an instance of {@link ReadableAlternativeFragment }
-     * 
-     */
-    public ReadableAlternativeFragment createReadableAlternativeFragment() {
-        return new ReadableAlternativeFragment();
-    }
-
-    /**
-     * Create an instance of {@link AltReadableFragmentRefType }
-     * 
-     */
-    public AltReadableFragmentRefType createAltReadableFragmentRefType() {
-        return new AltReadableFragmentRefType();
-    }
-
-    /**
-     * Create an instance of {@link AltFTPFragmentRef }
-     * 
-     */
-    public AltFTPFragmentRef createAltFTPFragmentRef() {
-        return new AltFTPFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link AltFTPSFragmentRef }
-     * 
-     */
-    public AltFTPSFragmentRef createAltFTPSFragmentRef() {
-        return new AltFTPSFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link AltHTTPFragmentRef }
-     * 
-     */
-    public AltHTTPFragmentRef createAltHTTPFragmentRef() {
-        return new AltHTTPFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link AltHTTPSFragmentRef }
-     * 
-     */
-    public AltHTTPSFragmentRef createAltHTTPSFragmentRef() {
-        return new AltHTTPSFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link AltSFTPFragmentRef }
-     * 
-     */
-    public AltSFTPFragmentRef createAltSFTPFragmentRef() {
-        return new AltSFTPFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link AltSMBFragmentRef }
-     * 
-     */
-    public AltSMBFragmentRef createAltSMBFragmentRef() {
-        return new AltSMBFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link AltWebDAVFragmentRef }
-     * 
-     */
-    public AltWebDAVFragmentRef createAltWebDAVFragmentRef() {
-        return new AltWebDAVFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link WriteableAlternativeFragment }
-     * 
-     */
-    public WriteableAlternativeFragment createWriteableAlternativeFragment() {
-        return new WriteableAlternativeFragment();
-    }
-
-    /**
-     * Create an instance of {@link AltWriteableFragmentRefType }
-     * 
-     */
-    public AltWriteableFragmentRefType createAltWriteableFragmentRefType() {
-        return new AltWriteableFragmentRefType();
-    }
-
-    /**
      * Create an instance of {@link NotificationFragments }
      * 
      */
@@ -924,6 +985,22 @@ public class ObjectFactory {
      */
     public Header createHeader() {
         return new Header();
+    }
+
+    /**
+     * Create an instance of {@link BackgroundServiceFragment }
+     * 
+     */
+    public BackgroundServiceFragment createBackgroundServiceFragment() {
+        return new BackgroundServiceFragment();
+    }
+
+    /**
+     * Create an instance of {@link BackgroundServiceType }
+     * 
+     */
+    public BackgroundServiceType createBackgroundServiceType() {
+        return new BackgroundServiceType();
     }
 
     /**
@@ -1007,75 +1084,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LocalTarget }
+     * Create an instance of {@link Link }
      * 
      */
-    public LocalTarget createLocalTarget() {
-        return new LocalTarget();
-    }
-
-    /**
-     * Create an instance of {@link LocalPreProcessingType }
-     * 
-     */
-    public LocalPreProcessingType createLocalPreProcessingType() {
-        return new LocalPreProcessingType();
-    }
-
-    /**
-     * Create an instance of {@link LocalPostProcessingType }
-     * 
-     */
-    public LocalPostProcessingType createLocalPostProcessingType() {
-        return new LocalPostProcessingType();
-    }
-
-    /**
-     * Create an instance of {@link SMBFragmentRef }
-     * 
-     */
-    public SMBFragmentRef createSMBFragmentRef() {
-        return new SMBFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link FTPPreProcessingType }
-     * 
-     */
-    public FTPPreProcessingType createFTPPreProcessingType() {
-        return new FTPPreProcessingType();
-    }
-
-    /**
-     * Create an instance of {@link BackgroundServiceType }
-     * 
-     */
-    public BackgroundServiceType createBackgroundServiceType() {
-        return new BackgroundServiceType();
-    }
-
-    /**
-     * Create an instance of {@link WebDAVFragmentRef }
-     * 
-     */
-    public WebDAVFragmentRef createWebDAVFragmentRef() {
-        return new WebDAVFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link Logging }
-     * 
-     */
-    public Logging createLogging() {
-        return new Logging();
-    }
-
-    /**
-     * Create an instance of {@link TESTFragment }
-     * 
-     */
-    public TESTFragment createTESTFragment() {
-        return new TESTFragment();
+    public Link createLink() {
+        return new Link();
     }
 
     /**
@@ -1087,22 +1100,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LocalSource }
-     * 
-     */
-    public LocalSource createLocalSource() {
-        return new LocalSource();
-    }
-
-    /**
-     * Create an instance of {@link FTPPostProcessingType }
-     * 
-     */
-    public FTPPostProcessingType createFTPPostProcessingType() {
-        return new FTPPostProcessingType();
-    }
-
-    /**
      * Create an instance of {@link AuthenticationMethodPassword }
      * 
      */
@@ -1111,43 +1108,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link HTTPSFragmentRef }
+     * Create an instance of {@link BackgroundServiceFragmentRef }
      * 
      */
-    public HTTPSFragmentRef createHTTPSFragmentRef() {
-        return new HTTPSFragmentRef();
+    public BackgroundServiceFragmentRef createBackgroundServiceFragmentRef() {
+        return new BackgroundServiceFragmentRef();
     }
 
     /**
-     * Create an instance of {@link FTPFragmentRef }
+     * Create an instance of {@link MailServerFragmentRef }
      * 
      */
-    public FTPFragmentRef createFTPFragmentRef() {
-        return new FTPFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link ReadableAlternativeFragmentRef }
-     * 
-     */
-    public ReadableAlternativeFragmentRef createReadableAlternativeFragmentRef() {
-        return new ReadableAlternativeFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link WriteableAlternativeFragmentRef }
-     * 
-     */
-    public WriteableAlternativeFragmentRef createWriteableAlternativeFragmentRef() {
-        return new WriteableAlternativeFragmentRef();
-    }
-
-    /**
-     * Create an instance of {@link FTPSFragmentRef }
-     * 
-     */
-    public FTPSFragmentRef createFTPSFragmentRef() {
-        return new FTPSFragmentRef();
+    public MailServerFragmentRef createMailServerFragmentRef() {
+        return new MailServerFragmentRef();
     }
 
     /**
@@ -1175,12 +1148,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
+     * Create an instance of {@link LinksType }
      * 
      */
-    @XmlElementDecl(namespace = "", name = "Zip", defaultValue = "false")
-    public JAXBElement<Boolean> createZip(Boolean value) {
-        return new JAXBElement<Boolean>(_Zip_QNAME, Boolean.class, null, value);
+    public LinksType createLinksType() {
+        return new LinksType();
     }
 
     /**
@@ -1217,15 +1189,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "ContentType", defaultValue = "text/plain")
     public JAXBElement<String> createContentType(String value) {
         return new JAXBElement<String>(_ContentType_QNAME, String.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "KeepConnection", defaultValue = "false")
-    public JAXBElement<Boolean> createKeepConnection(Boolean value) {
-        return new JAXBElement<Boolean>(_KeepConnection_QNAME, Boolean.class, null, value);
     }
 
     /**
@@ -1292,21 +1255,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "JumpDirectory", defaultValue = "/tmp")
-    public JAXBElement<String> createJumpDirectory(String value) {
-        return new JAXBElement<String>(_JumpDirectory_QNAME, String.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LocalPostProcessingType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "", name = "LocalPostProcessing")
     public JAXBElement<LocalPostProcessingType> createLocalPostProcessing(LocalPostProcessingType value) {
         return new JAXBElement<LocalPostProcessingType>(_LocalPostProcessing_QNAME, LocalPostProcessingType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "JumpDirectory", defaultValue = "/tmp")
+    public JAXBElement<String> createJumpDirectory(String value) {
+        return new JAXBElement<String>(_JumpDirectory_QNAME, String.class, null, value);
     }
 
     /**
@@ -1355,6 +1318,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Long }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "ReturnCode")
+    public JAXBElement<Long> createReturnCode(Long value) {
+        return new JAXBElement<Long>(_ReturnCode_QNAME, Long.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
@@ -1382,21 +1354,21 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "CSKeepExportedFileOnExit", defaultValue = "false")
+    public JAXBElement<Boolean> createCSKeepExportedFileOnExit(Boolean value) {
+        return new JAXBElement<Boolean>(_CSKeepExportedFileOnExit_QNAME, Boolean.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BasicAuthenticationType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "", name = "BasicAuthentication")
     public JAXBElement<BasicAuthenticationType> createBasicAuthentication(BasicAuthenticationType value) {
         return new JAXBElement<BasicAuthenticationType>(_BasicAuthentication_QNAME, BasicAuthenticationType.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "HistoryFileAppendMode", defaultValue = "false")
-    public JAXBElement<Boolean> createHistoryFileAppendMode(Boolean value) {
-        return new JAXBElement<Boolean>(_HistoryFileAppendMode_QNAME, Boolean.class, null, value);
     }
 
     /**
@@ -1421,6 +1393,15 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
      * 
      */
+    @XmlElementDecl(namespace = "", name = "DisableCertificateHostnameVerification", defaultValue = "false")
+    public JAXBElement<Boolean> createDisableCertificateHostnameVerification(Boolean value) {
+        return new JAXBElement<Boolean>(_DisableCertificateHostnameVerification_QNAME, Boolean.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
+     * 
+     */
     @XmlElementDecl(namespace = "", name = "Transactional", defaultValue = "false")
     public JAXBElement<Boolean> createTransactional(Boolean value) {
         return new JAXBElement<Boolean>(_Transactional_QNAME, Boolean.class, null, value);
@@ -1436,12 +1417,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "VerifyCertificateHostname", defaultValue = "true")
-    public JAXBElement<Boolean> createVerifyCertificateHostname(Boolean value) {
-        return new JAXBElement<Boolean>(_VerifyCertificateHostname_QNAME, Boolean.class, null, value);
+    @XmlElementDecl(namespace = "", name = "Description")
+    public JAXBElement<String> createDescription(String value) {
+        return new JAXBElement<String>(_Description_QNAME, String.class, null, value);
     }
 
     /**
@@ -1532,15 +1513,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "Directory")
     public JAXBElement<String> createDirectory(String value) {
         return new JAXBElement<String>(_Directory_QNAME, String.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "SendTransferHistory", defaultValue = "false")
-    public JAXBElement<Boolean> createSendTransferHistory(Boolean value) {
-        return new JAXBElement<Boolean>(_SendTransferHistory_QNAME, Boolean.class, null, value);
     }
 
     /**
@@ -1661,6 +1633,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "DisableHistoryFileAppendMode", defaultValue = "false")
+    public JAXBElement<Boolean> createDisableHistoryFileAppendMode(Boolean value) {
+        return new JAXBElement<Boolean>(_DisableHistoryFileAppendMode_QNAME, Boolean.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
@@ -1739,15 +1720,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "SSHAuthentication")
     public JAXBElement<SSHAuthenticationType> createSSHAuthentication(SSHAuthenticationType value) {
         return new JAXBElement<SSHAuthenticationType>(_SSHAuthentication_QNAME, SSHAuthenticationType.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BackgroundServiceType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "BackgroundService")
-    public JAXBElement<BackgroundServiceType> createBackgroundService(BackgroundServiceType value) {
-        return new JAXBElement<BackgroundServiceType>(_BackgroundService_QNAME, BackgroundServiceType.class, null, value);
     }
 
     /**
@@ -1868,6 +1840,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LoggingType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "Logging")
+    public JAXBElement<LoggingType> createLogging(LoggingType value) {
+        return new JAXBElement<LoggingType>(_Logging_QNAME, LoggingType.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
@@ -1904,6 +1885,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "Timeout")
+    public JAXBElement<BigInteger> createTimeout(BigInteger value) {
+        return new JAXBElement<BigInteger>(_Timeout_QNAME, BigInteger.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DocumentationType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "Documentation")
+    public JAXBElement<DocumentationType> createDocumentation(DocumentationType value) {
+        return new JAXBElement<DocumentationType>(_Documentation_QNAME, DocumentationType.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
@@ -1937,6 +1936,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "Encoding", defaultValue = "7bit")
     public JAXBElement<String> createEncoding(String value) {
         return new JAXBElement<String>(_Encoding_QNAME, String.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AssertionType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "Assertions")
+    public JAXBElement<AssertionType> createAssertions(AssertionType value) {
+        return new JAXBElement<AssertionType>(_Assertions_QNAME, AssertionType.class, null, value);
     }
 
     /**
@@ -2006,7 +2014,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "BackgroundServiceJobChainName", defaultValue = "scheduler_jade_history")
+    @XmlElementDecl(namespace = "", name = "BackgroundServiceJobChainName", defaultValue = "/sos/jade/jade_history")
     public JAXBElement<String> createBackgroundServiceJobChainName(String value) {
         return new JAXBElement<String>(_BackgroundServiceJobChainName_QNAME, String.class, null, value);
     }
@@ -2030,12 +2038,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link NotificationType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "CheckSteadyStateCount", defaultValue = "30")
-    public JAXBElement<Integer> createCheckSteadyStateCount(Integer value) {
-        return new JAXBElement<Integer>(_CheckSteadyStateCount_QNAME, Integer.class, null, value);
+    @XmlElementDecl(namespace = "", name = "Notifications")
+    public JAXBElement<NotificationType> createNotifications(NotificationType value) {
+        return new JAXBElement<NotificationType>(_Notifications_QNAME, NotificationType.class, null, value);
     }
 
     /**
@@ -2057,6 +2065,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "CheckSteadyStateCount", defaultValue = "30")
+    public JAXBElement<Integer> createCheckSteadyStateCount(Integer value) {
+        return new JAXBElement<Integer>(_CheckSteadyStateCount_QNAME, Integer.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
@@ -2072,15 +2089,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "PollingServerDuration", defaultValue = "0")
     public JAXBElement<Integer> createPollingServerDuration(Integer value) {
         return new JAXBElement<Integer>(_PollingServerDuration_QNAME, Integer.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "CSDeleteExportedFileOnExit", defaultValue = "true")
-    public JAXBElement<Boolean> createCSDeleteExportedFileOnExit(Boolean value) {
-        return new JAXBElement<Boolean>(_CSDeleteExportedFileOnExit_QNAME, Boolean.class, null, value);
     }
 
     /**
@@ -2219,21 +2227,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link LocalPreProcessingType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "LocalPreProcessing")
-    public JAXBElement<LocalPreProcessingType> createLocalPreProcessing(LocalPreProcessingType value) {
-        return new JAXBElement<LocalPreProcessingType>(_LocalPreProcessing_QNAME, LocalPreProcessingType.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FTPPostProcessingType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "", name = "FTPPostProcessing")
     public JAXBElement<FTPPostProcessingType> createFTPPostProcessing(FTPPostProcessingType value) {
         return new JAXBElement<FTPPostProcessingType>(_FTPPostProcessing_QNAME, FTPPostProcessingType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LocalPreProcessingType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "LocalPreProcessing")
+    public JAXBElement<LocalPreProcessingType> createLocalPreProcessing(LocalPreProcessingType value) {
+        return new JAXBElement<LocalPreProcessingType>(_LocalPreProcessing_QNAME, LocalPreProcessingType.class, null, value);
     }
 
     /**
@@ -2435,12 +2443,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ReadableFragmentRefType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link LinksType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "Links")
+    public JAXBElement<LinksType> createLinks(LinksType value) {
+        return new JAXBElement<LinksType>(_Links_QNAME, LinksType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListableFragmentRefType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "", name = "GetListSourceFragmentRef")
-    public JAXBElement<ReadableFragmentRefType> createGetListSourceFragmentRef(ReadableFragmentRefType value) {
-        return new JAXBElement<ReadableFragmentRefType>(_GetListSourceFragmentRef_QNAME, ReadableFragmentRefType.class, null, value);
+    public JAXBElement<ListableFragmentRefType> createGetListSourceFragmentRef(ListableFragmentRefType value) {
+        return new JAXBElement<ListableFragmentRefType>(_GetListSourceFragmentRef_QNAME, ListableFragmentRefType.class, null, value);
     }
 
     /**

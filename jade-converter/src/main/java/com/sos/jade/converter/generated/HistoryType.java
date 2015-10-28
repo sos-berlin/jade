@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}HistoryFile" minOccurs="0"/>
- *         &lt;element ref="{}HistoryFileAppendMode" minOccurs="0"/>
+ *         &lt;element ref="{}DisableHistoryFileAppendMode" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,14 +37,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "HistoryType", propOrder = {
     "historyFile",
-    "historyFileAppendMode"
+    "disableHistoryFileAppendMode"
 })
 public class HistoryType {
 
     @XmlElement(name = "HistoryFile")
     protected String historyFile;
-    @XmlElement(name = "HistoryFileAppendMode", defaultValue = "false")
-    protected Boolean historyFileAppendMode;
+    @XmlElement(name = "DisableHistoryFileAppendMode", defaultValue = "false")
+    protected Boolean disableHistoryFileAppendMode;
 
     /**
      * Ruft den Wert der historyFile-Eigenschaft ab.
@@ -71,27 +71,27 @@ public class HistoryType {
     }
 
     /**
-     * Ruft den Wert der historyFileAppendMode-Eigenschaft ab.
+     * Ruft den Wert der disableHistoryFileAppendMode-Eigenschaft ab.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isHistoryFileAppendMode() {
-        return historyFileAppendMode;
+    public Boolean isDisableHistoryFileAppendMode() {
+        return disableHistoryFileAppendMode;
     }
 
     /**
-     * Legt den Wert der historyFileAppendMode-Eigenschaft fest.
+     * Legt den Wert der disableHistoryFileAppendMode-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setHistoryFileAppendMode(Boolean value) {
-        this.historyFileAppendMode = value;
+    public void setDisableHistoryFileAppendMode(Boolean value) {
+        this.disableHistoryFileAppendMode = value;
     }
 
 }

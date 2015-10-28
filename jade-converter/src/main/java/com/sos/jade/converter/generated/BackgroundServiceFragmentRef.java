@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "AltFTPSFragmentRef")
-public class AltFTPSFragmentRef {
+@XmlRootElement(name = "BackgroundServiceFragmentRef")
+public class BackgroundServiceFragmentRef {
 
     @XmlAttribute(name = "ref", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

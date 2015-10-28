@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -11,22 +11,21 @@ package com.sos.jade.converter.generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für anonymous complex type.
+ * <p>Java-Klasse für NotificationType complex type.
  * 
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
  * 
  * <pre>
- * &lt;complexType>
+ * &lt;complexType name="NotificationType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}NotificationTriggers" minOccurs="0"/>
  *         &lt;element ref="{}MailServerFragmentRef" minOccurs="0"/>
+ *         &lt;element ref="{}BackgroundServiceFragmentRef" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,41 +35,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "notificationTriggers",
-    "mailServerFragmentRef"
+@XmlType(name = "NotificationType", propOrder = {
+    "mailServerFragmentRef",
+    "backgroundServiceFragmentRef"
 })
-@XmlRootElement(name = "Notifications")
-public class Notifications {
+public class NotificationType {
 
-    @XmlElement(name = "NotificationTriggers")
-    protected NotificationTriggers notificationTriggers;
     @XmlElement(name = "MailServerFragmentRef")
     protected MailServerFragmentRef mailServerFragmentRef;
-
-    /**
-     * Ruft den Wert der notificationTriggers-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NotificationTriggers }
-     *     
-     */
-    public NotificationTriggers getNotificationTriggers() {
-        return notificationTriggers;
-    }
-
-    /**
-     * Legt den Wert der notificationTriggers-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NotificationTriggers }
-     *     
-     */
-    public void setNotificationTriggers(NotificationTriggers value) {
-        this.notificationTriggers = value;
-    }
+    @XmlElement(name = "BackgroundServiceFragmentRef")
+    protected BackgroundServiceFragmentRef backgroundServiceFragmentRef;
 
     /**
      * Ruft den Wert der mailServerFragmentRef-Eigenschaft ab.
@@ -94,6 +68,30 @@ public class Notifications {
      */
     public void setMailServerFragmentRef(MailServerFragmentRef value) {
         this.mailServerFragmentRef = value;
+    }
+
+    /**
+     * Ruft den Wert der backgroundServiceFragmentRef-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BackgroundServiceFragmentRef }
+     *     
+     */
+    public BackgroundServiceFragmentRef getBackgroundServiceFragmentRef() {
+        return backgroundServiceFragmentRef;
+    }
+
+    /**
+     * Legt den Wert der backgroundServiceFragmentRef-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BackgroundServiceFragmentRef }
+     *     
+     */
+    public void setBackgroundServiceFragmentRef(BackgroundServiceFragmentRef value) {
+        this.backgroundServiceFragmentRef = value;
     }
 
 }

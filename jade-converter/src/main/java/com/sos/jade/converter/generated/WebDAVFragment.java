@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *       &lt;sequence>
  *         &lt;element ref="{}URLConnection"/>
  *         &lt;element ref="{}AcceptUntrustedCertificate" minOccurs="0"/>
- *         &lt;element ref="{}VerifyCertificateHostname" minOccurs="0"/>
+ *         &lt;element ref="{}DisableCertificateHostnameVerification" minOccurs="0"/>
  *         &lt;element ref="{}BasicAuthentication"/>
  *         &lt;element ref="{}CredentialStoreFragmentRef" minOccurs="0"/>
  *         &lt;element ref="{}JumpFragmentRef" minOccurs="0"/>
@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = {
     "urlConnection",
     "acceptUntrustedCertificate",
-    "verifyCertificateHostname",
+    "disableCertificateHostnameVerification",
     "basicAuthentication",
     "credentialStoreFragmentRef",
     "jumpFragmentRef",
@@ -62,8 +62,8 @@ public class WebDAVFragment {
     protected URLConnectionType urlConnection;
     @XmlElement(name = "AcceptUntrustedCertificate", defaultValue = "false")
     protected Boolean acceptUntrustedCertificate;
-    @XmlElement(name = "VerifyCertificateHostname", defaultValue = "true")
-    protected Boolean verifyCertificateHostname;
+    @XmlElement(name = "DisableCertificateHostnameVerification", defaultValue = "false")
+    protected Boolean disableCertificateHostnameVerification;
     @XmlElement(name = "BasicAuthentication", required = true)
     protected BasicAuthenticationType basicAuthentication;
     @XmlElement(name = "CredentialStoreFragmentRef")
@@ -126,27 +126,27 @@ public class WebDAVFragment {
     }
 
     /**
-     * Ruft den Wert der verifyCertificateHostname-Eigenschaft ab.
+     * Ruft den Wert der disableCertificateHostnameVerification-Eigenschaft ab.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isVerifyCertificateHostname() {
-        return verifyCertificateHostname;
+    public Boolean isDisableCertificateHostnameVerification() {
+        return disableCertificateHostnameVerification;
     }
 
     /**
-     * Legt den Wert der verifyCertificateHostname-Eigenschaft fest.
+     * Legt den Wert der disableCertificateHostnameVerification-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setVerifyCertificateHostname(Boolean value) {
-        this.verifyCertificateHostname = value;
+    public void setDisableCertificateHostnameVerification(Boolean value) {
+        this.disableCertificateHostnameVerification = value;
     }
 
     /**

@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}CSExportedFile"/>
- *         &lt;element ref="{}CSDeleteExportedFileOnExit" minOccurs="0"/>
+ *         &lt;element ref="{}CSKeepExportedFileOnExit" minOccurs="0"/>
  *         &lt;element ref="{}CSOverwriteExportedFile" minOccurs="0"/>
  *         &lt;element ref="{}CSPermissionsForExportedFile" minOccurs="0"/>
  *       &lt;/sequence>
@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "csExportedFile",
-    "csDeleteExportedFileOnExit",
+    "csKeepExportedFileOnExit",
     "csOverwriteExportedFile",
     "csPermissionsForExportedFile"
 })
@@ -49,8 +49,8 @@ public class CSExportAttachment {
 
     @XmlElement(name = "CSExportedFile", required = true)
     protected String csExportedFile;
-    @XmlElement(name = "CSDeleteExportedFileOnExit", defaultValue = "true")
-    protected Boolean csDeleteExportedFileOnExit;
+    @XmlElement(name = "CSKeepExportedFileOnExit", defaultValue = "false")
+    protected Boolean csKeepExportedFileOnExit;
     @XmlElement(name = "CSOverwriteExportedFile", defaultValue = "false")
     protected Boolean csOverwriteExportedFile;
     @XmlElement(name = "CSPermissionsForExportedFile", defaultValue = "600")
@@ -81,27 +81,27 @@ public class CSExportAttachment {
     }
 
     /**
-     * Ruft den Wert der csDeleteExportedFileOnExit-Eigenschaft ab.
+     * Ruft den Wert der csKeepExportedFileOnExit-Eigenschaft ab.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isCSDeleteExportedFileOnExit() {
-        return csDeleteExportedFileOnExit;
+    public Boolean isCSKeepExportedFileOnExit() {
+        return csKeepExportedFileOnExit;
     }
 
     /**
-     * Legt den Wert der csDeleteExportedFileOnExit-Eigenschaft fest.
+     * Legt den Wert der csKeepExportedFileOnExit-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setCSDeleteExportedFileOnExit(Boolean value) {
-        this.csDeleteExportedFileOnExit = value;
+    public void setCSKeepExportedFileOnExit(Boolean value) {
+        this.csKeepExportedFileOnExit = value;
     }
 
     /**
