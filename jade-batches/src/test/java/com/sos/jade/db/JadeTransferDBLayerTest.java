@@ -1,13 +1,12 @@
 package com.sos.jade.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -52,7 +51,6 @@ public class JadeTransferDBLayerTest {
 	private final String	conClassName	= "JadeTransferDBLayerTest";
     private JadeTransferDBLayer jadeTransferDBLayer;
     private String configurationFilename="c:/temp/hibernate.cfg.xml";
-    private File configurationFile;
     
 	public JadeTransferDBLayerTest() {
 		//
@@ -68,9 +66,7 @@ public class JadeTransferDBLayerTest {
 
 	@Before
 	public void setUp() throws Exception {
-        configurationFile = new File(configurationFilename);
-        jadeTransferDBLayer= new JadeTransferDBLayer(configurationFile);
-
+        jadeTransferDBLayer= new JadeTransferDBLayer(configurationFilename);
 	}
 
 	@After
@@ -79,8 +75,6 @@ public class JadeTransferDBLayerTest {
 
 	private JadeTransferDBItem getNewTransferItem() {
 		   JadeTransferDBItem transferItem = new JadeTransferDBItem();
-
-			 
 			transferItem.setMandator("myMandator");
 			transferItem.setSourceHost("mySourceHost");
 			transferItem.setSourceHostIp("mySourceHostIp");
@@ -104,92 +98,73 @@ public class JadeTransferDBLayerTest {
 			transferItem.setLastErrorMessage("myLastErrorMessage");
 			transferItem.setCommandType(3);
 			transferItem.setCommand("myCommand");
-
 	        transferItem.setModifiedBy("myModifiedBy");
 			transferItem.setModified(new Date());		 
 			transferItem.setCreatedBy("myCreatedBy");
 			transferItem.setCreated(new Date());
 			return transferItem;
 		}
-		 
 		
 		@Test
 		@Ignore("Test set to Ignore for later examination")
 		public void testDeleteFromTo() throws ParseException {
-			
-	// Test mit delete eines Bereiches		
-			jadeTransferDBLayer.beginTransaction();
-			jadeTransferDBLayer.setDateFormat("yyyy-MM-dd hh:mm");
-			jadeTransferDBLayer.setCreatedFrom("2011-01-01 00:00");
-			jadeTransferDBLayer.setCreatedTo("2011-10-01 00:00");
-			jadeTransferDBLayer.deleteFromTo();
-			jadeTransferDBLayer.commit();
-
-			
-			List  transferList  = jadeTransferDBLayer.getTransferList(0);
-			assertEquals(0, transferList.size());
-			
-	// Test mit delete eines Eintrages		
-			JadeTransferDBLayer d = new JadeTransferDBLayer(configurationFile);
-			d.beginTransaction();
-			
-			JadeTransferDBItem jadeTransferDBItem = this.getNewTransferItem();
-			jadeTransferDBItem.setStatus(47);
-
-
-			d.save(jadeTransferDBItem);
-			d.delete(jadeTransferDBItem);
-			d.save(jadeTransferDBItem);  
-			d.delete(jadeTransferDBItem);
-
-			d.commit();
-			  
-			d.beginTransaction(); 
-	    	Query query = d.createQuery("  from JadeTransferDBItem where status = :status");
-
-	 	    query.setParameter("status", 47);
-	 
-			transferList = query.list();
-			assertEquals(0, transferList.size());
+			try {
+				// Test mit delete eines Bereiches
+				jadeTransferDBLayer.getConnection().connect();
+				jadeTransferDBLayer.getConnection().beginTransaction();
+				jadeTransferDBLayer.setDateFormat("yyyy-MM-dd hh:mm");
+				jadeTransferDBLayer.setCreatedFrom("2011-01-01 00:00");
+				jadeTransferDBLayer.setCreatedTo("2011-10-01 00:00");
+				jadeTransferDBLayer.deleteFromTo();
+				jadeTransferDBLayer.getConnection().commit();
+				List  transferList  = jadeTransferDBLayer.getTransferList(0);
+				assertEquals(0, transferList.size());
+				// Test mit delete eines Eintrages		
+				JadeTransferDBLayer d = new JadeTransferDBLayer(configurationFilename);
+				d.getConnection().connect();
+				d.getConnection().beginTransaction();
+				JadeTransferDBItem jadeTransferDBItem = this.getNewTransferItem();
+				jadeTransferDBItem.setStatus(47);
+				d.getConnection().save(jadeTransferDBItem);
+				d.getConnection().delete(jadeTransferDBItem);
+				d.getConnection().save(jadeTransferDBItem);  
+				d.getConnection().delete(jadeTransferDBItem);
+				d.getConnection().commit();
+				d.getConnection().connect();
+				d.getConnection().beginTransaction(); 
+				Query query = d.getConnection().createQuery("  from JadeTransferDBItem where status = :status");
+				query.setParameter("status", 47);
+				transferList = query.list();
+				assertEquals(0, transferList.size());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}		
 		
 		@Test
 		@Ignore("Test set to Ignore for later examination")
 		public void testFilesSelectFromTo() throws ParseException {
-
-		    JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
-		    
+		    JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFilename);
 		    jadeTransferDBLayer.setDateFormat("dd.MM.yyyy hh:mm");
 		    jadeTransferDBLayer.setCreatedFrom("07.09.2001 00:00");
 		    jadeTransferDBLayer.setCreatedTo("07.09.2021 00:00");
-		    
-
 		    try {
-
 		    	List <JadeTransferDBItem> resultList = jadeTransferDBLayer.getTransfersFromTo();
 				for (int i = 0; i < resultList.size(); i++) {
 					JadeTransferDBItem transfer = (JadeTransferDBItem) resultList.get(i);
 					if (transfer != null) {
 						if (i == 0) {
-							if (transfer.getSourceHost()== null) {
-								 
-							}
-							else {
+							if (transfer.getSourceHost() != null) {
 								assertEquals("mySourceHost", transfer.getSourceHost());
 							}
 						}
 						System.out.println("History: " + transfer.getTransferId());
 					}
 				}
-
-		 	}
-			catch (ParseException e) {
+		 	} catch (ParseException e) {
 				e.printStackTrace();
 			}
 		}
 
-	 
-	 
-
-	 
 }

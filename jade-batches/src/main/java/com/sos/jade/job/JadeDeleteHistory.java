@@ -76,39 +76,29 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
 	 *
 	 * @return
 	 */
-	public JadeDeleteHistory Execute() throws Exception {
+	public JadeDeleteHistory Execute() {
 		final String conMethodName = conClassName + "::Execute"; //$NON-NLS-1$
-
 		logger.debug(String.format(Messages.getMsg("JSJ-I-110"), conMethodName));
-
 		try {
 			getOptions().CheckMandatory();
 			logger.debug(getOptions().toString());
-
-			File configurationFile = new File(objOptions.configuration_file.Value());
-			JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
+			JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(objOptions.configuration_file.Value());
 			jadeTransferDBLayer.setAge(objOptions.age_exceeding_days.value());
-
-			jadeTransferDBLayer.beginTransaction();
+			jadeTransferDBLayer.getConnection().connect();
+			jadeTransferDBLayer.getConnection().beginTransaction();
 			jadeTransferDBLayer.deleteFromTo();
-			jadeTransferDBLayer.commit();
-
-			JadeTransferDetailDBLayer jadeTransferDetailDBLayer = new JadeTransferDetailDBLayer(configurationFile);
+			jadeTransferDBLayer.getConnection().commit();
+			JadeTransferDetailDBLayer jadeTransferDetailDBLayer = new JadeTransferDetailDBLayer(objOptions.configuration_file.Value());
 			jadeTransferDetailDBLayer.setAge(objOptions.age_exceeding_days.value());
-
-			jadeTransferDetailDBLayer.beginTransaction();
+			jadeTransferDetailDBLayer.getConnection().connect();
+			jadeTransferDetailDBLayer.getConnection().beginTransaction();
 			jadeTransferDetailDBLayer.deleteFromTo();
-			jadeTransferDetailDBLayer.commit();
-
-		}
-		catch (Exception e) {
+			jadeTransferDetailDBLayer.getConnection().commit();
+			logger.debug(String.format(Messages.getMsg("JSJ-I-111"), conMethodName));
+		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			logger.error(String.format(Messages.getMsg("JSJ-I-107"), conMethodName), e);
 		}
-		finally {
-			logger.debug(String.format(Messages.getMsg("JSJ-I-111"), conMethodName));
-		}
-
 		return this;
 	}
 

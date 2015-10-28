@@ -392,15 +392,14 @@ public class JadeTransferDBItemTest {
 
 	@Test
 	@Ignore("Test set to Ignore for later examination")
-	public void testSave() {
+	public void testSave() throws Exception {
 		JadeTransferDetailDBItem jadeTransferDetailDBItem =  getNewTransferDetailDBItem();
 		JadeTransferDBItem transferItem = getNewTransferItem();
-		JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
-		jadeTransferDBLayer.beginTransaction();
-		Session session = jadeTransferDBLayer.getSession();
-		transferItem.setSession(jadeTransferDBLayer.getSession());
+		JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
+		jadeTransferDBLayer.getConnection().connect();
+		jadeTransferDBLayer.getConnection().beginTransaction();
 		transferItem.addTransferDetail(jadeTransferDetailDBItem);
-		transferItem.save();
-		jadeTransferDBLayer.commit();
+		jadeTransferDBLayer.getConnection().save(transferItem);
+		jadeTransferDBLayer.getConnection().commit();
 	}
 }

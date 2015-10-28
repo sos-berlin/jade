@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
 
@@ -41,57 +42,42 @@ import org.hibernate.Query;
 
 public class JadeTransferDetailDBLayer extends JadeTransferDBLayer {
 
-	@SuppressWarnings("unused")
-	private final String	conClassName	= "JadeTransferDetailDBLayer";
-
-	public JadeTransferDetailDBLayer(final File configurationFile)  {
+	public JadeTransferDetailDBLayer(final String configurationFile)  {
 		super(configurationFile);
-		this.setConfigurationFile(configurationFile);
+		this.setConfigurationFileName(configurationFile);
+		this.initConnection(this.getConfigurationFileName());
 	} 
 	
-	public List <JadeTransferDetailDBItem>  	getTransferDetailsFromTo() throws ParseException {
-	    	SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-	     	beginTransaction();
-			
-			Query query = session.createQuery("  from JadeTransferDetailDBItem where  created >= :createdFrom and created <= :createdTo");
+	public List <JadeTransferDetailDBItem> getTransferDetailsFromTo() throws Exception {
+    	SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+    	connection.connect();
+		connection.beginTransaction();
+		Query query = connection.createQuery("  from JadeTransferDetailDBItem where  created >= :createdFrom and created <= :createdTo");
+		query.setTimestamp("createdFrom", createdFrom);
+		query.setTimestamp("createdTo", createdTo);
+		List<JadeTransferDetailDBItem> resultset = query.list();
+		return resultset;
+	}
 
-			query.setTimestamp("createdFrom", createdFrom);
-			query.setTimestamp("createdTo", createdTo);
-
-			List  <JadeTransferDetailDBItem>  resultset = query.list();
-	 
-			commit();
-			return resultset;
-
+ 	public List <JadeTransferDetailDBItem> getTransferListDetail(final int limit) throws Exception {
+		connection.connect();
+		connection.beginTransaction();
+ 		Query query = connection.createQuery( "from JadeTransferDetailDBItem " + getWhere()); 
+		if (whereStartTime != null &&  !whereStartTime.equals("")) {
+			query.setDate("startTime", whereStartTime);
 		}
-
-	 	public List <JadeTransferDetailDBItem> getTransferListDetail(final int limit) throws Exception {
-	 		beginTransaction();
-			
-	 		Query query=session.createQuery( "from JadeTransferDetailDBItem " + getWhere()); 
-					
-			if (whereStartTime != null &&  !whereStartTime.equals("")) {
-				query.setDate("startTime", whereStartTime);
-			}
-			if (whereEndTime != null &&  !whereEndTime.equals("")) {
-				query.setDate("endTime", whereEndTime);
-			}
-		
-		    query.setMaxResults(limit);
-		    
-			List <JadeTransferDetailDBItem> transferDetailsList=query.list();
-			commit();
-			
-			return transferDetailsList;
+		if (whereEndTime != null &&  !whereEndTime.equals("")) {
+			query.setDate("endTime", whereEndTime);
 		}
+	    query.setMaxResults(limit);
+		List <JadeTransferDetailDBItem> transferDetailsList=query.list();
+		return transferDetailsList;
+	}
 		
-		
-		@Override
-		public int deleteFromTo() {
-			int row =  deleteFromTo("JadeTransferDetailDBItem");
-			return row;
-		}
-		
-		 
+	@Override
+	public int deleteFromTo() {
+		int row =  deleteFromTo("JadeTransferDetailDBItem");
+		return row;
+	}
  	 
 }

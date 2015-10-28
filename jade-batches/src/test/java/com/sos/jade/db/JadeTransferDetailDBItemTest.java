@@ -319,13 +319,20 @@ public class JadeTransferDetailDBItemTest {
 	@Ignore("Test set to Ignore for later examination")
 	public void testSave() {
  		JadeTransferDBItem transferItem = getNewTransferItem();
-		JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
- 		jadeTransferDBLayer.beginTransaction();
- 		transferItem.setSession(jadeTransferDBLayer.getSession());
- 		transferItem.save();
-		jadeTransferDetailDBItem = getNewTransferDetailDBItem();
-		jadeTransferDetailDBItem.setSession(jadeTransferDBLayer.getSession());
-		jadeTransferDetailDBItem.setJadeTransferDBItem(transferItem);
-		jadeTransferDetailDBItem.save();
-		jadeTransferDBLayer.commit();	}
+		JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFilename);
+ 		try {
+			jadeTransferDBLayer.getConnection().beginTransaction();
+			Session session = (Session)jadeTransferDBLayer.getConnection().getCurrentSession();
+			transferItem.setSession(session);
+			transferItem.save();
+			jadeTransferDetailDBItem = getNewTransferDetailDBItem();
+			jadeTransferDetailDBItem.setSession(session);
+			jadeTransferDetailDBItem.setJadeTransferDBItem(transferItem);
+			jadeTransferDetailDBItem.save();
+			jadeTransferDBLayer.getConnection().commit();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
 }

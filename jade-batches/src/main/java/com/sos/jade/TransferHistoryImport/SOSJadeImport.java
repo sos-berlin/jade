@@ -125,8 +125,7 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
 	public void doTransferDetail() {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::doImportDetail";
-		jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
-		jadeTransferDBLayer.beginTransaction();
+		jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
 		JadeTransferDetailDBItem transferDetailItem = new JadeTransferDetailDBItem();
 		
 		if (transferItem == null) {
@@ -152,8 +151,7 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
 		@SuppressWarnings("unused")
 		final String conMethodName = conClassName + "::doImportSummary";
 
-		jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
-		jadeTransferDBLayer.beginTransaction();
+		jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
 		transferItem = new JadeTransferDBItem();
 
 		copyFields(jadeTransferExportData,transferItem);
@@ -173,7 +171,6 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
 	@Override
 	public void close() {
 		if (jadeTransferDBLayer != null) {
- 		   jadeTransferDBLayer.commit();
 		}
 	}
 

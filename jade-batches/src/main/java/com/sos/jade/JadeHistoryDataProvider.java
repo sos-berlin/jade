@@ -55,7 +55,7 @@ public class JadeHistoryDataProvider implements ISOSHibernateDataProvider{
 	
     
 	public JadeHistoryDataProvider(File configurationFile) {
-		this.jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
+		this.jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
 	}
 	
     public JadeHistoryFilter getFilter() {
@@ -69,30 +69,6 @@ public class JadeHistoryDataProvider implements ISOSHibernateDataProvider{
 	public void getData(int limit) {
 		listOfTransferItems = jadeTransferDBLayer.getTransferList(limit);
 	}
-	
-
-  
-    
-	private  void fillTable4asdfasdfasdf5656() {
-		Table table = null;
-		this.tableTransfers = table;
-		Iterator <JadeTransferDBItem> jadeTransferHistoryEntries = listOfTransferItems.iterator();
-		while (jadeTransferHistoryEntries.hasNext()) {
-			JadeTransferDBItem h = jadeTransferHistoryEntries.next();
-			 if (jadeTransferDBLayer.getFilter().isFiltered(h) == true) {
-//				 if (jadeTransferDBLayer.getFilter()!=null) {
-			}
-			else {
-				
-			//	final JadeHistoryTableItem newItemTableItem = new JadeHistoryTableItem(table, SWT.BORDER);
-			//	newItemTableItem.setJadeHistoryDBItem(h);
-			//	logger.debug("...creating tableItem: " + h.getProfileName() + ":" + table.getItemCount());
-			//	newItemTableItem.setData(h);
-			//	newItemTableItem.setColumns();
-			}
-		}
-		
-	}
 
 	@Override
 	public void fillTable(Table table) {
@@ -100,11 +76,4 @@ public class JadeHistoryDataProvider implements ISOSHibernateDataProvider{
 		
 	}
 
-	@Override
-	public void commit() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	 
 }

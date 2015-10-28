@@ -8,7 +8,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
+
+
+
+
 
 
 import com.sos.hibernate.layer.SOSHibernateDBLayer;
@@ -64,9 +69,10 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
  	private   int age;
 	
 
-	public JadeTransferDBLayer(File configurationFile)  {
+	public JadeTransferDBLayer(String configurationFile)  {
 		super();
-		this.setConfigurationFile(configurationFile);
+		this.setConfigurationFileName(configurationFile);
+		this.initConnection(this.getConfigurationFileName());
 		this.dateFormat = "dd.MM.yyyy hh:mm";
 		//
 	} 
@@ -102,19 +108,20 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 	}
 
 	public List <JadeTransferDBItem>  getTransfersFromTo() throws ParseException {
-			beginTransaction();
-			 
-			Query query = session.createQuery("  from JadeTransferDBItem where " + getWhereFromTo());
-
+		List<JadeTransferDBItem> resultset = null;
+		try {
+			connection.connect();
+			connection.beginTransaction();
+			Query query = connection.createQuery("  from JadeTransferDBItem where " + getWhereFromTo());
 			query.setTimestamp("createdFrom", createdFrom);
 			query.setTimestamp("createdTo", createdTo);
-
-			List  <JadeTransferDBItem>  resultset = query.list();
-	 
-			commit();
-			return resultset;
-
+			resultset = query.list();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return resultset;
+	}
 	
  
 	 protected String getWhere() {
@@ -128,21 +135,15 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 				where += and + " status=" + whereStatus ;
 				and = " and ";
 			}
-			 
-		 
-
 			if (whereStartTime != null && !whereStartTime.equals("")) {
 				where += and + " startTime>= :startTime";
 				and = " and ";
 			}
-
 			if (whereEndTime != null &&  !whereEndTime.equals("")) {
 				where += and + " endTime <= :endTime ";
 				and = " and ";
 			}
-			if (where.trim().equals("")) {
-			   
-			}else {
+			if (!where.trim().equals("")) {
 				where = "where " + where;
 			}
 			return where;
@@ -150,40 +151,47 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 	   }
 		
 		public List <JadeTransferDBItem> getTransferList(int limit)  {
-			beginTransaction();
-			Query query=session.createQuery( "from JadeTransferDBItem " + getWhere()); 
-					
-			if (whereStartTime != null &&  !whereStartTime.equals("")) {
-				query.setDate("startTime", whereStartTime);
+			List<JadeTransferDBItem> transferList = null;
+			try {
+				connection.connect();
+				connection.beginTransaction();
+				Query query=connection.createQuery( "from JadeTransferDBItem " + getWhere()); 
+				if (whereStartTime != null &&  !whereStartTime.equals("")) {
+					query.setDate("startTime", whereStartTime);
+				}
+				if (whereEndTime != null &&  !whereEndTime.equals("")) {
+					query.setDate("endTime", whereEndTime);
+				}
+				query.setMaxResults(limit);
+				transferList = query.list();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			if (whereEndTime != null &&  !whereEndTime.equals("")) {
-				query.setDate("endTime", whereEndTime);
-			}
-		
-		    query.setMaxResults(limit);
-		    
-			List <JadeTransferDBItem> transferList=query.list();
-			commit();	
 			return transferList;
-
 		}
 
 	 		
 		public int deleteFromTo(String tableName) {
-			initSession();
+			initConnection();
 		 	String hql = "delete from " + tableName + " where " + getWhereFromTo();
-
-			Query query = session.createQuery(hql);
-			
-			if (createdFrom != null && !createdFrom.equals("")) {
-				query.setTimestamp("createdFrom", createdFrom);
+			int row = 0;
+			try {
+				connection.connect();
+				connection.beginTransaction();
+				Query query = connection.createQuery(hql);
+				if (createdFrom != null && !createdFrom.equals("")) {
+					query.setTimestamp("createdFrom", createdFrom);
+				}
+				if (createdTo != null && !createdTo.equals("")) {
+					query.setTimestamp("createdTo", createdTo);
+				}
+				row = query.executeUpdate();
+				connection.commit();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			if (createdTo != null && !createdTo.equals("")) {
-				query.setTimestamp("createdTo", createdTo);
-			}
-		 
-			int row = query.executeUpdate();
-
 			return row;
 		}		
 		
@@ -200,8 +208,6 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 			this.whereStatus = whereStatus;
 		}
 
-		 
-
 		public void setWhereStartTime(Date whereStartTime) {
 			this.whereStartTime = whereStartTime;
 		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -217,7 +223,7 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 		public void setWhereStartTime(String whereStartTime) throws ParseException {
 			if (whereStartTime.equals("")) {
 				this.whereStartTime = null;
-			}else {
+			} else {
 	 	        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 		        Date d = formatter.parse(whereStartTime);
 				setWhereStartTime(d);
@@ -257,12 +263,17 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 	} 	
 	
 	public void save (JadeTransferDBItem transferItem) {
-		if (transferItem.getSession() == null) {
-		   session = getSession();
-		   transferItem.setSession(session);
+		if (connection == null) {
+		   initConnection(getConfigurationFileName());
 		}
-
-		transaction = transferItem.getSession().beginTransaction();
-		transferItem.save();
+		try {
+			connection.connect();
+			connection.beginTransaction();
+			connection.save(transferItem);
+			connection.commit();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

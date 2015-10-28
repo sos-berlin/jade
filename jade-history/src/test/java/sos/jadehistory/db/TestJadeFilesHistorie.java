@@ -34,8 +34,6 @@ import java.io.File;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -66,9 +64,6 @@ public class TestJadeFilesHistorie {
 
 	@Before
 	public void setUp() throws Exception {
-		configurationFile = new File(configurationFilename);
-		//jadeFilesDBLayer = new JadeFilesDBLayer(configurationFile);
-
 	}
 
 	@After
@@ -77,30 +72,38 @@ public class TestJadeFilesHistorie {
 
 	@Test
 	public void testPartialSearchword(){
-		JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFile);
-		Session session = layer.getSession();
-		Transaction transaction = session.beginTransaction();
-        Query query = layer.createQuery(" from JadeFilesDBItem where sourceFilename like '%Mass%'");
-        List<DbItem> resultset = query.list();
-        assertNotNull(resultset);
-        for(DbItem item : resultset){
-        	System.out.println("**** sourceFilename: " + ((JadeFilesDBItem)item).getSourceFilename() + "****");
-        }
-        transaction.commit();
+		JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFilename);
+        try {
+        	layer.getConnection().connect();
+        	layer.getConnection().beginTransaction();
+			Query query = layer.getConnection().createQuery(" from JadeFilesDBItem where sourceFilename like '%Mass%'");
+			List<DbItem> resultset = query.list();
+			assertNotNull(resultset);
+			for(DbItem item : resultset){
+				System.out.println("**** sourceFilename: " + ((JadeFilesDBItem)item).getSourceFilename() + "****");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
 	public void testCompleteSearchword(){
-		JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFile);
-		Session session = layer.getSession();
-		Transaction transaction = session.beginTransaction();
-        Query query = layer.createQuery(" from JadeFilesDBItem where sourceFilename = 'Masstest00001.txt'");
-        List<DbItem> resultset = query.list();
-        assertNotNull(resultset);
-        for(DbItem item : resultset){
-        	System.out.println("**** sourceFilename: " + ((JadeFilesDBItem)item).getSourceFilename() + "****");
-        }
-        transaction.commit();
+		JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFilename);
+        try {
+        	layer.getConnection().connect();
+        	layer.getConnection().beginTransaction();
+			Query query = layer.getConnection().createQuery(" from JadeFilesDBItem where sourceFilename = 'Masstest00001.txt'");
+			List<DbItem> resultset = query.list();
+			assertNotNull(resultset);
+			for(DbItem item : resultset){
+				System.out.println("**** sourceFilename: " + ((JadeFilesDBItem)item).getSourceFilename() + "****");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

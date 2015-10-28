@@ -30,8 +30,6 @@
 		<module>jade-cli</module>
 		<!-- z.Zt. aus dem Build entfernt wegen build error -->
 		<!--module>jade-vaadin-cockpit</module -->
-		<!-- z.Zt. aus dem Build entfernt -->
-    	<!--  <module>jade-converter</module> -->
-  </modules>
+	</modules>
 
 </project>

@@ -43,8 +43,6 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
 		}
  		jadeBsOptions.hibernateConfigurationFileName.CheckMandatory();
  		connect();
-//		this.jadeFilesDBLayer = new JadeFilesDBLayer(new File(hibernateConfigFile));
-//		this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(new File(hibernateConfigFile));
 	}
 
 	@Override
@@ -56,12 +54,9 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
  		try {
 			this.connection = new SOSHibernateConnection(hibernateConfigFile);
 			connection.connect();
-	 		// TODO: DBLayer mit connection instanziieren
 			this.historyDBLayer = new JadeHistoryDBLayer(connection);
-			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error occurred connecting to DB: ", e);
 		}
 	}
 	
