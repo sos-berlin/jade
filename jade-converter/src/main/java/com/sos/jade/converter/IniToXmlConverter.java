@@ -4,12 +4,12 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +44,8 @@ public class IniToXmlConverter {
 	private HashSet<String> profilesMissingMandatoryParameters = new HashSet<>();
 	private boolean missingMandatoryParameter = false;
 	//*********************************************************************************************************************************************//
+	private Map<String,Integer> refsCounter = new HashMap<String,Integer>();
+	private Fragments fragments = new Fragments();
 	
 	public IniToXmlConverter() {
 		
@@ -120,7 +122,6 @@ public class IniToXmlConverter {
 	private Object convertIniFile(String[] profilesToConvert) {
 			// build top-level xml elements (Configurations, Fragments, ProtocolFragments, Profiles)
 			Configurations configurations = new Configurations();
-			Fragments fragments = new Fragments();
 			configurations.setFragments(fragments);
 			ProtocolFragments protocolFragments = new ProtocolFragments();
 			fragments.setProtocolFragments(protocolFragments);
@@ -129,6 +130,7 @@ public class IniToXmlConverter {
 			List<Profile> profileList = profiles.getProfile();
 			
 			for (String profilename : profilesToConvert) {
+				try {
 				logger.info("----- Starting conversion of profile '" + profilename + "' -----");
 				JADEOptions options = loadIniFile(iniFilePath, profilename);
 				
@@ -142,7 +144,6 @@ public class IniToXmlConverter {
 				}
 				
 				Profile profile = new Profile();
-				profileList.add(profile);
 				if (profilenameWithoutPrefix.isEmpty()) {
 					profile.setProfileId(profilename);
 				} else {
@@ -157,109 +158,109 @@ public class IniToXmlConverter {
 					// Copy
 					Copy copy = new Copy();
 					operation.setCopy(copy);
-						// CopySource
-						CopySource copySource = createCopySource(options, protocolFragments, false);
-						copy.setCopySource(copySource);
-						// CopyTarget
-						CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
-						copy.setCopyTarget(copyTarget);
-						// TransferOptions
-						if (isTransferOptionsSpecified(options)) {
-							TransferOptions transferOptions = createTransferOptions(options);
-							copy.setTransferOptions(transferOptions);
-						}
+					// CopySource
+					CopySource copySource = createCopySource(options, false);
+					copy.setCopySource(copySource);
+					// CopyTarget
+					CopyTarget copyTarget = createCopyTarget(options, false);
+					copy.setCopyTarget(copyTarget);
+					// TransferOptions
+					if (isTransferOptionsSpecified(options)) {
+						TransferOptions transferOptions = createTransferOptions(options);
+						copy.setTransferOptions(transferOptions);
+					}
 				} else if (operationValue.equalsIgnoreCase("move")) {
 					// Move
 					Move move = new Move();
 					operation.setMove(move);
+					// MoveSource
+					MoveSource moveSource = createMoveSource(options, false);
+					move.setMoveSource(moveSource);
+					// MoveTarget
+					MoveTarget moveTarget = createMoveTarget(options, false);
+					move.setMoveTarget(moveTarget);
+					// TransferOptions
+					if (isTransferOptionsSpecified(options)) {
+						TransferOptions transferOptions = createTransferOptions(options);
+						move.setTransferOptions(transferOptions);								
+					}
+				} else if (operationValue.equalsIgnoreCase("remove")) {
+					// Remove
+					Remove remove = new Remove();
+					operation.setRemove(remove);
+					// RemoveSource
+					RemoveSource removeSource = createRemoveSource(options);
+					remove.setRemoveSource(removeSource);
+				} else if (operationValue.equalsIgnoreCase("getlist")) {
+					// GetList
+					GetList getList = new GetList();
+					operation.setGetList(getList);
+					// GetListSource
+					GetListSource getListSource = createGetListSource(options);
+					getList.setGetListSource(getListSource);
+				} else if (operationValue.equalsIgnoreCase("copytointernet")) {
+					if (options.remove_files.isTrue()) {
+						// Move
+						Move move = new Move();
+						operation.setMove(move);
 						// MoveSource
-						MoveSource moveSource = createMoveSource(protocolFragments, options, false);
+						MoveSource moveSource = createMoveSource(options, false);
 						move.setMoveSource(moveSource);
 						// MoveTarget
-						MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
+						MoveTarget moveTarget = createMoveTarget(options, true); // Jump
 						move.setMoveTarget(moveTarget);
 						// TransferOptions
 						if (isTransferOptionsSpecified(options)) {
 							TransferOptions transferOptions = createTransferOptions(options);
 							move.setTransferOptions(transferOptions);								
 						}
-				} else if (operationValue.equalsIgnoreCase("remove")) {
-					// Remove
-					Remove remove = new Remove();
-					operation.setRemove(remove);
-						// RemoveSource
-						RemoveSource removeSource = createRemoveSource(protocolFragments, options);
-						remove.setRemoveSource(removeSource);
-				} else if (operationValue.equalsIgnoreCase("getlist")) {
-					// GetList
-					GetList getList = new GetList();
-					operation.setGetList(getList);
-						// GetListSource
-						GetListSource getListSource = createGetListSource(protocolFragments, options);
-						getList.setGetListSource(getListSource);
-				} else if (operationValue.equalsIgnoreCase("copytointernet")) {
-					if (options.remove_files.isTrue()) {
-						// Move
-						Move move = new Move();
-						operation.setMove(move);
-							// MoveSource
-							MoveSource moveSource = createMoveSource(protocolFragments, options, false);
-							move.setMoveSource(moveSource);
-							// MoveTarget
-							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, true); // Jump
-							move.setMoveTarget(moveTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								move.setTransferOptions(transferOptions);								
-							}
 					} else {
 						// Copy
 						Copy copy = new Copy();
 						operation.setCopy(copy);
-							// CopySource
-							CopySource copySource = createCopySource(options, protocolFragments, false);
-							copy.setCopySource(copySource);
-							// CopyTarget
-							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, true); // Jump
-							copy.setCopyTarget(copyTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								copy.setTransferOptions(transferOptions);
-							}
+						// CopySource
+						CopySource copySource = createCopySource(options, false);
+						copy.setCopySource(copySource);
+						// CopyTarget
+						CopyTarget copyTarget = createCopyTarget(options, true); // Jump
+						copy.setCopyTarget(copyTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							copy.setTransferOptions(transferOptions);
+						}
 					}
 				} else if (operationValue.equalsIgnoreCase("copyfrominternet")) {
 					if (options.remove_files.isTrue()) {
 						// Move
 						Move move = new Move();
 						operation.setMove(move);
-							// MoveSource
-							MoveSource moveSource = createMoveSource(protocolFragments, options, true); // Jump
-							move.setMoveSource(moveSource);
-							// MoveTarget
-							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
-							move.setMoveTarget(moveTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								move.setTransferOptions(transferOptions);								
-							}
+						// MoveSource
+						MoveSource moveSource = createMoveSource(options, true); // Jump
+						move.setMoveSource(moveSource);
+						// MoveTarget
+						MoveTarget moveTarget = createMoveTarget(options, false);
+						move.setMoveTarget(moveTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							move.setTransferOptions(transferOptions);								
+						}
 					} else {
 						// Copy
 						Copy copy = new Copy();
 						operation.setCopy(copy);
-							// CopySource
-							CopySource copySource = createCopySource(options, protocolFragments, true); // Jump
-							copy.setCopySource(copySource);
-							// CopyTarget
-							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
-							copy.setCopyTarget(copyTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								copy.setTransferOptions(transferOptions);
-							}
+						// CopySource
+						CopySource copySource = createCopySource(options, true); // Jump
+						copy.setCopySource(copySource);
+						// CopyTarget
+						CopyTarget copyTarget = createCopyTarget(options, false);
+						copy.setCopyTarget(copyTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							copy.setTransferOptions(transferOptions);
+						}
 					}
 				} else if (operationValue.equalsIgnoreCase("send")) {
 					convertFromSendOperation(options);
@@ -268,33 +269,33 @@ public class IniToXmlConverter {
 						// Move
 						Move move = new Move();
 						operation.setMove(move);
-							// MoveSource
-							MoveSource moveSource = createMoveSource(protocolFragments, options, false);
-							move.setMoveSource(moveSource);
-							// MoveTarget
-							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
-							move.setMoveTarget(moveTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								move.setTransferOptions(transferOptions);								
-							}
+						// MoveSource
+						MoveSource moveSource = createMoveSource(options, false);
+						move.setMoveSource(moveSource);
+						// MoveTarget
+						MoveTarget moveTarget = createMoveTarget(options, false);
+						move.setMoveTarget(moveTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							move.setTransferOptions(transferOptions);								
+						}
 					} else {
 						logger.info("Operation 'send' is deprecated. Trying to convert to a profile with operation 'copy'.");
 						// Copy
 						Copy copy = new Copy();
 						operation.setCopy(copy);
-							// CopySource
-							CopySource copySource = createCopySource(options, protocolFragments, false);
-							copy.setCopySource(copySource);
-							// CopyTarget
-							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
-							copy.setCopyTarget(copyTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								copy.setTransferOptions(transferOptions);
-							}
+						// CopySource
+						CopySource copySource = createCopySource(options, false);
+						copy.setCopySource(copySource);
+						// CopyTarget
+						CopyTarget copyTarget = createCopyTarget(options, false);
+						copy.setCopyTarget(copyTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							copy.setTransferOptions(transferOptions);
+						}
 					}
 				} else if (operationValue.equalsIgnoreCase("receive")) {
 					convertFromReceiveOperation(options);
@@ -303,33 +304,33 @@ public class IniToXmlConverter {
 						// Move
 						Move move = new Move();
 						operation.setMove(move);
-							// MoveSource
-							MoveSource moveSource = createMoveSource(protocolFragments, options, false);
-							move.setMoveSource(moveSource);
-							// MoveTarget
-							MoveTarget moveTarget = createMoveTarget(protocolFragments, options, false);
-							move.setMoveTarget(moveTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								move.setTransferOptions(transferOptions);								
-							}
+						// MoveSource
+						MoveSource moveSource = createMoveSource(options, false);
+						move.setMoveSource(moveSource);
+						// MoveTarget
+						MoveTarget moveTarget = createMoveTarget(options, false);
+						move.setMoveTarget(moveTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							move.setTransferOptions(transferOptions);								
+						}
 					} else {
 						logger.info("Operation 'receive' is deprecated. Trying to convert to a profile with operation 'copy'.");
 						// Copy
 						Copy copy = new Copy();
 						operation.setCopy(copy);
-							// CopySource
-							CopySource copySource = createCopySource(options, protocolFragments, false);
-							copy.setCopySource(copySource);
-							// CopyTarget
-							CopyTarget copyTarget = createCopyTarget(protocolFragments, options, false);
-							copy.setCopyTarget(copyTarget);
-							// TransferOptions
-							if (isTransferOptionsSpecified(options)) {
-								TransferOptions transferOptions = createTransferOptions(options);
-								copy.setTransferOptions(transferOptions);
-							}
+						// CopySource
+						CopySource copySource = createCopySource(options, false);
+						copy.setCopySource(copySource);
+						// CopyTarget
+						CopyTarget copyTarget = createCopyTarget(options, false);
+						copy.setCopyTarget(copyTarget);
+						// TransferOptions
+						if (isTransferOptionsSpecified(options)) {
+							TransferOptions transferOptions = createTransferOptions(options);
+							copy.setTransferOptions(transferOptions);
+						}
 					}
 				} else if (operationValue.equalsIgnoreCase("zip")) {
 					logger.info("Value 'zip' is not allowed for parameter 'operation'.");
@@ -338,95 +339,79 @@ public class IniToXmlConverter {
 				}
 				
 				// Client
-					if(options.mandator.isDirty()) {
-						Client client = new Client();
-						profile.setClient(client);
-						// ReceivingClient
-						client.setReceivingClient(options.mandator.Value());
-					}
+				if(options.mandator.isDirty()) {
+					Client client = new Client();
+					profile.setClient(client);
+					// ReceivingClient
+					client.setReceivingClient(options.mandator.Value());
+				}
 				// JobScheduler
-					// CreateOrder
-					if (options.create_order.isTrue()) {
-						JobScheduler jobScheduler = new JobScheduler();
-						profile.setJobScheduler(jobScheduler);
-						CreateOrder createOrder = createCreateOrder(options);
-						jobScheduler.setCreateOrder(createOrder);
-					} else if (isCreateOrderSpecified(options)) {
-						logger.info("Skipping grouping element 'JobScheduler' as parameter 'create_order' is set to false or not specified.");
+				// CreateOrder
+				if (options.create_order.isTrue()) {
+					JobScheduler jobScheduler = new JobScheduler();
+					profile.setJobScheduler(jobScheduler);
+					CreateOrder createOrder = createCreateOrder(options);
+					jobScheduler.setCreateOrder(createOrder);
+				} else if (isCreateOrderSpecified(options)) {
+					logger.info("Skipping grouping element 'JobScheduler' as parameter 'create_order' is set to false or not specified.");
+				}
+				//Logging
+				if (isLoggingSpecified(options)) {
+					profile.setLogging(createLogging(options));
+				}
+				
+				// NotificationTriggers
+				if (isNotificationTriggersSpecified(options)) {
+					NotificationTriggers notificationTriggers = new NotificationTriggers();
+					profile.setNotificationTriggers(notificationTriggers);
+					// OnSuccess
+					if (options.mail_on_success.value()) {
+						SOSSmtpMailOptions mailOptions = options.getMailOptions().getOptions(SOSSmtpMailOptions.enuMailClasses.MailOnSuccess);
+						notificationTriggers.setOnSuccess(getNotificationTrigger(mailOptions));
 					}
-				/**
-				TODO This does not work yet. The SOSSMTPMailOptionsClass (options.getMailOptions()) doesn't seem to provide any parameters.
+					// OnError
+					if (options.mail_on_error.value()) {
+						SOSSmtpMailOptions mailOptions = options.getMailOptions().getOptions(SOSSmtpMailOptions.enuMailClasses.MailOnError);
+						notificationTriggers.setOnError(getNotificationTrigger(mailOptions));
+					}
+					// OnEmptyFiles
+					if (options.mail_on_empty_files.value()) {
+						SOSSmtpMailOptions mailOptions = options.getMailOptions().getOptions(SOSSmtpMailOptions.enuMailClasses.MailOnEmptyFiles);
+						notificationTriggers.setOnEmptyFiles(getNotificationTrigger(mailOptions));
+					}
+				}
 				// Notifications
 				if (isNotificationsSpecified(options)) {
-					Notifications notifications = new Notifications();
+					NotificationType notifications = new NotificationType();
 					profile.setNotifications(notifications);
-					// NotificationTriggers
-					if (isNotificationTriggersSpecified(options)) {
-						NotificationTriggers notificationTriggers = new NotificationTriggers();
-						notifications.setNotificationTriggers(notificationTriggers);
-						// OnSuccess
-						if (options.mail_on_success.isDirty()) {
-							notificationTriggers.setOnSuccess(options.mail_on_success.value());
-						}
-						// OnError
-						if (options.mail_on_error.isDirty()) {
-							notificationTriggers.setOnError(options.mail_on_error.value());
-						}
-						// OnEmptyFiles
-						if (options.mail_on_empty_files.isDirty()) {
-							notificationTriggers.setOnEmptyFiles(options.mail_on_empty_files.value());
-						}
+					// BackgroundServiceFragmentRefs
+					if (isBackgroundServiceSpecified(options)) {
+						// BackgroundServiceFragment
+						BackgroundServiceFragment backgroundServiceFragment = createBackgroundServiceFragment(options);
+						// BackgroundServiceFragmentRef
+						BackgroundServiceFragmentRef backgroundServiceFragmentRef = new BackgroundServiceFragmentRef();
+						backgroundServiceFragmentRef.setRef(backgroundServiceFragment.getName());
+						notifications.setBackgroundServiceFragmentRef(backgroundServiceFragmentRef);
 					}
-					// NotificationFragmentRefs
-					if (isNotificationFragmentSpecified(options)) {
-						String fragmentId = getRandomFragmentId();
-						// there currently are only MailFragments, no other NotificationFragments need to be considered for conversion
-						// NotificationFragmentRefs
-						NotificationFragmentRefs notificationFragmentRefs = new NotificationFragmentRefs();
-						notifications.setNotificationFragmentRefs(notificationFragmentRefs);
-							// NotificationFragmentRef
-							NotificationFragmentRef notificationFragmentRef = new NotificationFragmentRef();
-							notificationFragmentRef.setRef(fragmentId);
-							notificationFragmentRefs.getNotificationFragmentRef().add(notificationFragmentRef);
-						// NotificationFragments
-						NotificationFragments notificationFragments = new NotificationFragments();
-						fragments.setNotificationFragments(notificationFragments);
-							// MailFragment
-							MailFragment mailFragment = createMailFragment(options, fragmentId);
-							notificationFragments.getMailFragment().add(mailFragment);
+					// MailServerFragmentRef
+					if (isMailServerFragmentSpecified(options.getMailOptions()) && isNotificationTriggersSpecified(options)) {
+						// MailServerFragment
+						MailServerFragment mailServerFragment = createMailServerFragment(options.getMailOptions());
+						// MailServerFragmentRef
+						MailServerFragmentRef mailServerFragmentRef = new MailServerFragmentRef();
+						mailServerFragmentRef.setRef(mailServerFragment.getName());
+						notifications.setMailServerFragmentRef(mailServerFragmentRef);
 					}
 				}
-				**/
-				// CredentialStore
-				if (isCredentialStoreFragmentSpecified(options.Source()) || isCredentialStoreFragmentSpecified(options.Target())) {
-					// CredentialStoreFragmentRef
-					logger.info("Currently only the CredentialStoreFragment will be generated, but no references to it."); // TODO
-					CredentialStoreFragments credentialStoreFragments = fragments.getCredentialStoreFragments();
-					if (credentialStoreFragments == null) {
-						credentialStoreFragments = new CredentialStoreFragments();
-						fragments.setCredentialStoreFragments(credentialStoreFragments);
-					}
-					if (isCredentialStoreFragmentSpecified(options.Source())) {
-						CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(options.Source(), getRandomFragmentId());
-						credentialStoreFragments.getCredentialStoreFragment().add(credentialStoreFragment);
-					}
-					if (isCredentialStoreFragmentSpecified(options.Target())) {
-						CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(options.Target(), getRandomFragmentId());
-						credentialStoreFragments.getCredentialStoreFragment().add(credentialStoreFragment);
-					}
-				}
-				// MailServer
-				if (isMailServerTypeSpecified(options.getMailOptions())) {
-					// MailServerFragments
-					MailServerFragments mailServerFragments = fragments.getMailServerFragments();
-					if (mailServerFragments == null) {
-						mailServerFragments = new MailServerFragments();
-						fragments.setMailServerFragments(mailServerFragments);
-					}
-					MailServerFragment mailServerFragment = createMailServerFragment(options, getRandomFragmentId());
-					mailServerFragments.getMailServerFragment().add(mailServerFragment);
-				}
+				profileList.add(profile);
+				
 				logger.info("----- Finished conversion of profile: '" + profilename + "' -----");
+				
+				
+				} catch (Exception e) {
+					logger.error(String.format("error in profile [%1$s]: %2$s",  profilename, e.toString()));
+				}
+				
 				if (missingMandatoryParameter) {
 					profilesMissingMandatoryParameters.add(profilename);
 				}
@@ -444,6 +429,88 @@ public class IniToXmlConverter {
 		return configurations;	
 	}
 	
+	
+	private ProtocolFragments getProtocolFragments() {
+		ProtocolFragments protocolFragments = fragments.getProtocolFragments();
+		if (protocolFragments == null) {
+			protocolFragments = new ProtocolFragments();
+			fragments.setProtocolFragments(protocolFragments);
+		}
+		return protocolFragments;
+	}
+	
+	private CredentialStoreFragments getCredentialStoreFragments() {
+		CredentialStoreFragments credentialStoreFragments = fragments.getCredentialStoreFragments();
+		if (credentialStoreFragments == null) {
+			credentialStoreFragments = new CredentialStoreFragments();
+			fragments.setCredentialStoreFragments(credentialStoreFragments);
+		}
+		return credentialStoreFragments;
+	}
+	
+	private NotificationFragments getNotificationFragments() {
+		NotificationFragments notificationFragments = fragments.getNotificationFragments();
+		if (notificationFragments == null) {
+			notificationFragments = new NotificationFragments();
+			fragments.setNotificationFragments(notificationFragments);
+		}
+		return notificationFragments;
+	}
+	
+	private MailServerFragments getMailServerFragments() {
+		MailServerFragments mailServerFragments = fragments.getMailServerFragments();
+		if (mailServerFragments == null) {
+			mailServerFragments = new MailServerFragments();
+			fragments.setMailServerFragments(mailServerFragments);
+		}
+		return mailServerFragments;
+	}
+
+	
+	private MailServerFragment createMailServerFragment(SOSSmtpMailOptions mailOptions) {
+		MailServerFragment mailServerFragment = new MailServerFragment();
+		String fragmentId = getRandomFragmentId(mailServerFragment);
+		mailServerFragment.setName(fragmentId);
+		if (isMailHostSpecified(mailOptions)) {
+			mailServerFragment.setMailHost(createMailHost(mailOptions));
+		}
+		if (mailOptions.queue_directory.isDirty()) {
+			mailServerFragment.setQueueDirectory(mailOptions.queue_directory.Value());
+		}
+		getMailServerFragments().getMailServerFragment().add(mailServerFragment);
+		return mailServerFragment;
+	}
+
+	private BackgroundServiceFragment createBackgroundServiceFragment(JADEOptions options) {
+		BackgroundServiceFragment backgroundServiceFragment = new BackgroundServiceFragment();
+		String fragmentId = getRandomFragmentId(backgroundServiceFragment);
+		backgroundServiceFragment.setName(fragmentId);
+		if (options.BackgroundServiceHost.isDirty()) {
+			backgroundServiceFragment.setBackgroundServiceHost(options.BackgroundServiceHost.Value());
+		}
+		if (options.BackgroundServicePort.isDirty()) {
+			backgroundServiceFragment.setBackgroundServicePort(options.BackgroundServicePort.value());
+		}
+		if (options.BackgroundServiceJobChainName.isDirty()) {
+			backgroundServiceFragment.setBackgroundServiceJobChainName(options.BackgroundServiceJobChainName.Value());
+		}
+		if (options.Scheduler_Transfer_Method.isDirty()) {
+			backgroundServiceFragment.setBackgroundServiceProtocol(options.Scheduler_Transfer_Method.Value());
+		}
+		getNotificationFragments().getBackgroundServiceFragment().add(backgroundServiceFragment);
+		return backgroundServiceFragment;
+	}
+
+	private NotificationTriggerType getNotificationTrigger(SOSSmtpMailOptions options) {
+		NotificationTriggerType notificationTriggerType = new NotificationTriggerType();
+		MailFragment mailFragment = createMailFragment(options);
+		MailFragmentRef mailFragmentRef = new MailFragmentRef();
+		mailFragmentRef.setRef(mailFragment.getName());
+		notificationTriggerType.setMailFragmentRef(mailFragmentRef);
+		getNotificationFragments().getMailFragment().add(mailFragment);
+		return notificationTriggerType;
+	}
+
 	/**
 	 * Operation 'send' is deprecated but has to be supported by the converter. The converter is supposed to create a profile with operation 'copy' or 'move' instead.
 	 * Since the parameters are not prefixed when using the operation 'send', they have to be prefixed by using this method.
@@ -485,11 +552,16 @@ public class IniToXmlConverter {
 		if (options.protocol.isDirty()) {
 			targetOptions.protocol.Value(options.protocol.Value());
 		}
+		else {
+			targetOptions.protocol.Value("ftp");
+		}
 		if (options.host.isDirty()) {
 			targetOptions.host.Value(options.host.Value());
+			targetOptions.host.setNotDirty();
 		}
 		if (options.port.isDirty()) {
 			targetOptions.port.value(options.port.value());
+			targetOptions.port.setNotDirty();
 		}
 		if (options.user.isDirty()) {
 			targetOptions.user.Value(options.user.Value());
@@ -558,11 +630,16 @@ public class IniToXmlConverter {
 		if (options.protocol.isDirty()) {
 			sourceOptions.protocol.Value(options.protocol.Value());
 		}
+		else {
+			sourceOptions.protocol.Value("ftp");
+		}
 		if (options.host.isDirty()) {
 			sourceOptions.host.Value(options.host.Value());
+			options.host.setNotDirty();
 		}
 		if (options.port.isDirty()) {
 			sourceOptions.port.value(options.port.value());
+			options.port.setNotDirty();
 		}
 		if (options.user.isDirty()) {
 			sourceOptions.user.Value(options.user.Value());
@@ -674,7 +751,7 @@ public class IniToXmlConverter {
 							break;
 						}
 					}
-				// The global-profile may not be detected as a fragment because it is never explicitly included. For this reason it will be added to the ignored profiles, but only if it is not forced
+				// The [global] profile may not be detected as a fragment because it is never explicitly included. For this reason it will be added to the ignored profiles, but only if it is not forced
 				} else if (key.equalsIgnoreCase("global") && forced == false) {
 					ignored = true;
 				}
@@ -752,9 +829,9 @@ public class IniToXmlConverter {
 	}
 
 	
-	private MailFragment createMailFragment(JADEOptions options, String fragmentId) {
-		SOSSmtpMailOptions mailOptions = options.getMailOptions();
+	private MailFragment createMailFragment(SOSSmtpMailOptions mailOptions) {
 		MailFragment mailFragment = new MailFragment();
+		String fragmentId = getRandomFragmentId(mailFragment);
 		mailFragment.setName(fragmentId);
 		// Header
 		Header header = new Header();
@@ -801,31 +878,18 @@ public class IniToXmlConverter {
 	}
 	
 	
-	private MailServerFragment createMailServerFragment(JADEOptions options, String fragmentId) {
-		MailServerFragment mailServerFragment = new MailServerFragment();
-		mailServerFragment.setName(fragmentId);
-		return mailServerFragment;
-	}
-	
-	//TODO prefixes on_error, on_empty, on_success 
-	private MailServerType createMailServerType(JADEOptions options) {
-		
-		MailServerType mailServerType = new MailServerType();
-		SOSSmtpMailOptions mailOptions = options.getMailOptions();
-		// MailServer
-		if (isMailHostSpecified(mailOptions)) {
-			MailHost mailHost = new MailHost();
-			
-			mailServerType.setMailHost(mailHost);
-			
+	//TODO prefixes on_error, on_empty, on_success? 
+	private MailHost createMailHost(SOSSmtpMailOptions mailOptions) {
+		MailHost mailHost = new MailHost();
+		//if (isMailHostSpecified(mailOptions)) {
 			// BasicConnection
 			BasicConnectionType basicConnectionType = new BasicConnectionType();
 			mailHost.setBasicConnection(basicConnectionType);
 			// Hostname
-			if (mailOptions.host.isDirty()) {
-				basicConnectionType.setHostname(mailOptions.host.Value());
+			if (mailOptions.SMTPHost.isDirty()) {
+				basicConnectionType.setHostname(mailOptions.SMTPHost.Value());
 			} else {
-				reportMissingMandatoryParameter("mail_host");
+				reportMissingMandatoryParameter("smtp_host");
 			}
 			// Port
 			if (mailOptions.port.isDirty()) {
@@ -844,12 +908,8 @@ public class IniToXmlConverter {
 					basicAuthenticationType.setPassword(mailOptions.smtp_password.Value());
 				}
 			}
-			// QueueDirectory
-			if (mailOptions.queue_directory.isDirty()) {
-				mailServerType.setQueueDirectory(mailOptions.queue_directory.Value());
-			}
-		}
-		return mailServerType;
+		//}
+		return mailHost;
 	}
 
 
@@ -869,55 +929,36 @@ public class IniToXmlConverter {
 
 
 
-	private boolean isNotificationFragmentSpecified(JADEOptions options) {
-		SOSSmtpMailOptions mailOptions = options.getMailOptions();
-		boolean returnValue = false;
-		if (mailOptions.from.isDirty()|| mailOptions.to.isDirty() || mailOptions.cc.isDirty() || mailOptions.bcc.isDirty() || mailOptions.subject.isDirty() ||
-				mailOptions.attachment.isDirty() || mailOptions.body.isDirty() || mailOptions.content_type.isDirty() || mailOptions.encoding.isDirty() ||
-				mailOptions.host.isDirty() || mailOptions.port.isDirty() || mailOptions.smtp_user.isDirty() || mailOptions.smtp_password.isDirty()) {
-			returnValue = true;
-			System.out.println("#### from: " + mailOptions.from.Value());
-			System.out.println("#### to: " + mailOptions.to.Value());
-			System.out.println("#### cc: " + mailOptions.cc.Value());
-			System.out.println("#### bcc: " + mailOptions.bcc.Value());
-			System.out.println("#### subject: " + mailOptions.subject.Value());
-			System.out.println("#### attachment: " + mailOptions.attachment.Value());
-			System.out.println("#### body: " + mailOptions.body.Value());
-			System.out.println("#### content_type: " + mailOptions.content_type.Value());
-			System.out.println("#### encoding: " + mailOptions.encoding.Value());
-			System.out.println("#### host: " + mailOptions.host.Value());
-			System.out.println("#### port: " + mailOptions.port.Value());
-			System.out.println("#### smtp_user: " + mailOptions.smtp_user.Value());
-			System.out.println("#### smtp_password: " + mailOptions.smtp_password.Value());
-		}
-		return returnValue;
-	}
-
-
-
 	private boolean isNotificationsSpecified(JADEOptions options) {
 		boolean returnValue = false;
-		if (isNotificationTriggersSpecified(options) || isNotificationFragmentSpecified(options)) {
+		if (isBackgroundServiceSpecified(options) || (isMailServerFragmentSpecified(options.getMailOptions()) && isNotificationTriggersSpecified(options))) {
 			returnValue = true;
 		}
 		return returnValue;
 	}
-
 
 
 	private boolean isNotificationTriggersSpecified(JADEOptions options) {
 		boolean returnValue = false;
-		if (options.mail_on_success.isDirty() || options.mail_on_error.isDirty() || options.mail_on_empty_files.isDirty()) {
+		if (options.mail_on_success.value() || options.mail_on_error.value() || options.mail_on_empty_files.value()) {
 			returnValue = true;
 		}
 		return returnValue;
 	}
 	
 	
-	
-	private boolean isMailServerTypeSpecified(SOSSmtpMailOptions mailOptions) {
+	private boolean isBackgroundServiceSpecified(JADEOptions options) {
 		boolean returnValue = false;
-		if (mailOptions.SMTPHost.isDirty() || mailOptions.queue_directory.isDirty() || mailOptions.port.isDirty() || mailOptions.smtp_user.isDirty() || mailOptions.smtp_password.isDirty()) {
+		if (options.SendTransferHistory.value()) {
+			returnValue = true;
+		}
+		return returnValue;
+	}
+	
+	
+	private boolean isMailServerFragmentSpecified(SOSSmtpMailOptions mailOptions) {
+		boolean returnValue = false;
+		if (isMailHostSpecified(mailOptions) || mailOptions.queue_directory.isDirty()) {
 			returnValue = true;
 		}
 		return returnValue;
@@ -931,6 +972,34 @@ public class IniToXmlConverter {
 			returnValue = true;
 		}
 		return returnValue;
+	}
+	
+	
+	private boolean isLoggingSpecified(JADEOptions options) {
+		//TODO protocol_command_listener is source/target parameter: schema has to changed
+		boolean pcl = options.Source().ProtocolCommandListener.isDirty() || options.Target().ProtocolCommandListener.isDirty();
+		if (pcl || options.verbose.isDirty() || options.log_filename.isDirty() || options.log4jPropertyFileName.isDirty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	private LoggingType createLogging(JADEOptions options) {
+		LoggingType loggingType = new LoggingType();
+		if (options.verbose.isDirty()) {
+			loggingType.setDebugLevel(options.verbose.value());
+		}
+		if (options.log_filename.isDirty()) {
+			loggingType.setLogFile(options.log_filename.Value());
+		}
+		if (options.log4jPropertyFileName.isDirty()) {
+			loggingType.setLog4JPropertyFile(options.log4jPropertyFileName.Value());
+		}
+		if (options.Source().ProtocolCommandListener.value() || options.Target().ProtocolCommandListener.value()) {
+			loggingType.setProtocolCommandListener(true);
+		}
+		return loggingType;
 	}
 
 
@@ -960,23 +1029,37 @@ public class IniToXmlConverter {
 
 
 
-	private GetListSource createGetListSource(ProtocolFragments protocolFragments, JADEOptions options) {
+	private GetListSource createGetListSource(JADEOptions options) {
 		GetListSource getListSource = new GetListSource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// GetListSourceFragmentRef
-		ReadableFragmentRefType getListSourceFragmentRefType = createReadableFragmentRefType(options, sourceConnectionOptions, protocolFragments, false);
+		ListableFragmentRefType getListSourceFragmentRefType = new ListableFragmentRefType();
+		setListableFragmentRefType(getListSourceFragmentRefType, options, sourceConnectionOptions, false);
 		getListSource.setGetListSourceFragmentRef(getListSourceFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
 		getListSource.setSourceFileOptions(sourceFileOptions);
+		//Alternatives
+		SOSConnection2OptionsAlternate alternativConnectionOptions = sourceConnectionOptions.Alternatives();
+		if (alternativConnectionOptions.protocol.isDirty()) {
+			AlternativeGetListSourceFragmentRef alternativeGetListSourceFragmentRef = new AlternativeGetListSourceFragmentRef();
+			setListableFragmentRefType(alternativeGetListSourceFragmentRef, options, alternativConnectionOptions, false);
+			if (alternativConnectionOptions.Directory.isDirty()) {
+				alternativeGetListSourceFragmentRef.setDirectory(alternativConnectionOptions.Directory.Value());
+			}
+			getListSource.getAlternativeGetListSourceFragmentRef().add(alternativeGetListSourceFragmentRef);
+		}
 		return getListSource;
 	}
 
-	private MoveTarget createMoveTarget(ProtocolFragments protocolFragments, JADEOptions options, boolean useJumpHost) {
+	
+
+	private MoveTarget createMoveTarget(JADEOptions options, boolean useJumpHost) {
 		MoveTarget moveTarget = new MoveTarget();
 		SOSConnection2OptionsAlternate targetConnectionOptions = options.Target();
 		// MoveTargetFragmentRef
-		WriteableFragmentRefType moveTargetFragmentRef = createWriteableFragmentRefType(options, targetConnectionOptions, protocolFragments, useJumpHost);
+		WriteableFragmentRefType moveTargetFragmentRef = new WriteableFragmentRefType();
+		setWriteableFragmentRefType(moveTargetFragmentRef, options, targetConnectionOptions, useJumpHost);
 		moveTarget.setMoveTargetFragmentRef(moveTargetFragmentRef);
 		// Directory
 		moveTarget.setDirectory(options.Target().Directory.Value());
@@ -985,88 +1068,118 @@ public class IniToXmlConverter {
 			TargetFileOptions targetFileOptions = createTargetFileOptions(options);
 			moveTarget.setTargetFileOptions(targetFileOptions);	
 		}
+		//Alternatives
+		SOSConnection2OptionsAlternate alternativConnectionOptions = targetConnectionOptions.Alternatives();
+		if (alternativConnectionOptions.protocol.isDirty()) {
+			AlternativeMoveTargetFragmentRef alternativeCopyTargetFragmentRef =new AlternativeMoveTargetFragmentRef();
+			setWriteableFragmentRefType(alternativeCopyTargetFragmentRef, options, alternativConnectionOptions, useJumpHost);
+			if (alternativConnectionOptions.Directory.isDirty()) {
+				alternativeCopyTargetFragmentRef.setDirectory(alternativConnectionOptions.Directory.Value());
+			}
+			moveTarget.getAlternativeMoveTargetFragmentRef().add(alternativeCopyTargetFragmentRef);
+		}
 		return moveTarget;
 	}
 
 
 
-	private RemoveSource createRemoveSource(ProtocolFragments protocolFragments, JADEOptions options) {
+	private RemoveSource createRemoveSource(JADEOptions options) {
 		RemoveSource removeSource = new RemoveSource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// RemoveSourceFragmentRef
-		WriteableFragmentRefType writeableFragmentRefType = createWriteableFragmentRefType(options, sourceConnectionOptions, protocolFragments, false);
+		WriteableFragmentRefType writeableFragmentRefType = new WriteableFragmentRefType();
+		setWriteableFragmentRefType(writeableFragmentRefType, options, sourceConnectionOptions, false);
 		removeSource.setRemoveSourceFragmentRef(writeableFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
 		removeSource.setSourceFileOptions(sourceFileOptions);
+		//Alternatives
+		SOSConnection2OptionsAlternate alternativConnectionOptions = sourceConnectionOptions.Alternatives();
+		if (alternativConnectionOptions.protocol.isDirty()) {
+			AlternativeRemoveSourceFragmentRef alternativeRemoveSourceFragmentRef = new AlternativeRemoveSourceFragmentRef();
+			setWriteableFragmentRefType(alternativeRemoveSourceFragmentRef, options, alternativConnectionOptions, false);
+			if (alternativConnectionOptions.Directory.isDirty()) {
+				alternativeRemoveSourceFragmentRef.setDirectory(alternativConnectionOptions.Directory.Value());
+			}
+			removeSource.getAlternativeRemoveSourceFragmentRef().add(alternativeRemoveSourceFragmentRef);
+		}
 		return removeSource;
 	}
 
 
 
-	private MoveSource createMoveSource(ProtocolFragments protocolFragments, JADEOptions options, boolean useJumpHost) {
+	private MoveSource createMoveSource(JADEOptions options, boolean useJumpHost) {
 		MoveSource moveSource = new MoveSource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// MoveSourceFragmentRef
-		WriteableFragmentRefType writeableFragmentRefType = createWriteableFragmentRefType(options, sourceConnectionOptions, protocolFragments, useJumpHost);
+		WriteableFragmentRefType writeableFragmentRefType = new WriteableFragmentRefType();
+		setWriteableFragmentRefType(writeableFragmentRefType, options, sourceConnectionOptions, useJumpHost);
 		moveSource.setMoveSourceFragmentRef(writeableFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
 		moveSource.setSourceFileOptions(sourceFileOptions);
+		//Alternatives
+		SOSConnection2OptionsAlternate sourceAlternativConnectionOptions = sourceConnectionOptions.Alternatives();
+		if (sourceAlternativConnectionOptions.protocol.isDirty()) {
+			AlternativeMoveSourceFragmentRef alternativeCopyTargetFragmentRef = new AlternativeMoveSourceFragmentRef();
+			setWriteableFragmentRefType(alternativeCopyTargetFragmentRef,options, sourceAlternativConnectionOptions, useJumpHost);
+			if (sourceAlternativConnectionOptions.Directory.isDirty()) {
+				alternativeCopyTargetFragmentRef.setDirectory(sourceAlternativConnectionOptions.Directory.Value());
+			}
+			moveSource.getAlternativeMoveSourceFragmentRef().add(alternativeCopyTargetFragmentRef);
+		}
 		return moveSource;
 	}
 
 
 
-	private WriteableFragmentRefType createWriteableFragmentRefType(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, ProtocolFragments protocolFragments, boolean useJumpHost) {
-		String fragmentId = getRandomFragmentId();
-		WriteableFragmentRefType writeableFragmentRefType = new WriteableFragmentRefType();
-			// (Protocol)
-			String sourceProtocolValue = connectionOptions.protocol.Value();
-			if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
-				// FTPFragmentRef
-				FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, fragmentId); 
-				writeableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
-				// FTPFragment
-				FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getFTPFragment().add(ftpFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
-				// FTPSFragmentRef
-				FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, fragmentId); 
-				writeableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
-				// FTPSFragment
-				FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getFTPSFragment().add(ftpsFragment);
-			}  else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
-				// LocalTarget
-				LocalTarget localTarget = createLocalTarget(options, connectionOptions);
-				writeableFragmentRefType.setLocalTarget(localTarget);
-			} else if (sourceProtocolValue.equalsIgnoreCase("sftp")) {
-				// SFTPFragmentRef
-				SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, fragmentId);
-				writeableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
-				// SFTPFragment
-				SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getSFTPFragment().add(sftpFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
-				// SMBFragmentRef
-				SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, fragmentId);
-				writeableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
-				// SMBFragment
-				SMBFragment smbFragment = createSMBFragment(connectionOptions, fragmentId);
-				protocolFragments.getSMBFragment().add(smbFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
-				// WebDAVFragmentRef
-				WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, fragmentId);
-				writeableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
-				// WebDAVFragment
-				WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getWebDAVFragment().add(webDAVFragment);
-			} // TODO WriteableAlternativeFragmentRef
-		return writeableFragmentRefType;
+	private void setWriteableFragmentRefType(WriteableFragmentRefType writeableFragmentRefType,JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
+		if (connectionOptions.protocol.isNotDirty()) {
+			reportMissingMandatoryParameter("Protocol");
+			throw new RuntimeException("Parameter 'protocol' is required!");
+		}
+		String sourceProtocolValue = connectionOptions.protocol.Value();
+		if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
+			// FTPFragment
+			FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, useJumpHost);
+			// FTPFragmentRef
+			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment.getName()); 
+			writeableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
+			// FTPSFragment
+			FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, useJumpHost);
+			// FTPSFragmentRef
+			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment.getName()); 
+			writeableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
+		}  else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
+			// LocalTarget
+			LocalTarget localTarget = createLocalTarget(options, connectionOptions);
+			writeableFragmentRefType.setLocalTarget(localTarget);
+		} else if (sourceProtocolValue.equalsIgnoreCase("sftp")) {
+			// SFTPFragment
+			SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, useJumpHost);
+			// SFTPFragmentRef
+			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment.getName());
+			writeableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
+			// SMBFragment
+			SMBFragment smbFragment = createSMBFragment(connectionOptions);
+			// SMBFragmentRef
+			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment.getName());
+			writeableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
+			// WebDAVFragment
+			WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, useJumpHost);
+			// WebDAVFragmentRef
+			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment.getName());
+			writeableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
+		}  else {
+			reportMissingMandatoryParameter("Protocol");
+			throw new RuntimeException(String.format("Parameter 'protocol' = %1$s is not supported", connectionOptions.protocol.Value()));
+		}
 	}
-
-
+	
+	
 	private LocalTarget createLocalTarget(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions) {
 		// LocalTarget
 		LocalTarget localTarget = new LocalTarget();
@@ -1090,100 +1203,167 @@ public class IniToXmlConverter {
 
 
 
-	private CopyTarget createCopyTarget(ProtocolFragments protocolFragments, JADEOptions options, boolean useJumpHost) {
+	private CopyTarget createCopyTarget(JADEOptions options, boolean useJumpHost) {
 		CopyTarget copyTarget = new CopyTarget();
 		SOSConnection2OptionsAlternate targetConnectionOptions = options.Target();
 		// CopyTargetFragmentRef
-		WriteableFragmentRefType copyTargetFragmentRef = createWriteableFragmentRefType(options, targetConnectionOptions, protocolFragments, useJumpHost);
+		WriteableFragmentRefType copyTargetFragmentRef = new WriteableFragmentRefType();
+		setWriteableFragmentRefType(copyTargetFragmentRef, options, targetConnectionOptions, useJumpHost);
 		copyTarget.setCopyTargetFragmentRef(copyTargetFragmentRef);
 		// Directory
-		copyTarget.setDirectory(options.Target().Directory.Value());
+		copyTarget.setDirectory(targetConnectionOptions.Directory.Value());
 		// TargetFileOptions
 		if (isTargetFileOptionsSpecified(options)) {
 			TargetFileOptions targetFileOptions = createTargetFileOptions(options);
 			copyTarget.setTargetFileOptions(targetFileOptions);	
+		}
+		// Alternatives
+		SOSConnection2OptionsAlternate targetAlternativConnectionOptions = targetConnectionOptions.Alternatives();
+		if (targetAlternativConnectionOptions.protocol.isDirty()) {
+			AlternativeCopyTargetFragmentRef alternativeCopyTargetFragmentRef = new AlternativeCopyTargetFragmentRef(); 
+			setWriteableFragmentRefType(alternativeCopyTargetFragmentRef, options, targetAlternativConnectionOptions, useJumpHost);
+			if (targetAlternativConnectionOptions.Directory.isDirty()) {
+				alternativeCopyTargetFragmentRef.setDirectory(targetAlternativConnectionOptions.Directory.Value());
+			}
+			copyTarget.getAlternativeCopyTargetFragmentRef().add(alternativeCopyTargetFragmentRef);
 		}
 		return copyTarget;
 	}
 
 
 
-	private CopySource createCopySource(JADEOptions options, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private CopySource createCopySource(JADEOptions options, boolean useJumpHost) {
 		CopySource copySource = new CopySource();
 		SOSConnection2OptionsAlternate sourceConnectionOptions = options.Source();
 		// CopySourceFragmentRef
-		ReadableFragmentRefType readableFragmentRefType = createReadableFragmentRefType(options, sourceConnectionOptions, protocolFragments, useJumpHost);
+		ReadableFragmentRefType readableFragmentRefType = new ReadableFragmentRefType();
+		setReadableFragmentRefType(readableFragmentRefType, options, sourceConnectionOptions, useJumpHost);
 		copySource.setCopySourceFragmentRef(readableFragmentRefType);
 		// SourceFileOptions
 		SourceFileOptions sourceFileOptions = createSourceFileOptions(options);
 		copySource.setSourceFileOptions(sourceFileOptions);
+		// Alternatives
+		SOSConnection2OptionsAlternate sourceAlternativConnectionOptions = sourceConnectionOptions.Alternatives();
+		if (sourceAlternativConnectionOptions.protocol.isDirty()) {
+			AlternativeCopySourceFragmentRef alternativeCopyTargetFragmentRef = new AlternativeCopySourceFragmentRef(); 
+			setReadableFragmentRefType(alternativeCopyTargetFragmentRef, options, sourceAlternativConnectionOptions, useJumpHost);
+			if (sourceAlternativConnectionOptions.Directory.isDirty()) {
+				alternativeCopyTargetFragmentRef.setDirectory(sourceAlternativConnectionOptions.Directory.Value());
+			}
+			copySource.getAlternativeCopySourceFragmentRef().add(alternativeCopyTargetFragmentRef);
+		}
 		return copySource;
 	}
 
 
 
-	private ReadableFragmentRefType createReadableFragmentRefType(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, ProtocolFragments protocolFragments, boolean useJumpHost) {
-		String fragmentId = getRandomFragmentId();
-		ReadableFragmentRefType readableFragmentRefType = new ReadableFragmentRefType();
-			// (Protocol)
-			String sourceProtocolValue = connectionOptions.protocol.Value();
-			if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
-				// FTPFragmentRef
-				FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, fragmentId); 
-				readableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
-				// FTPFragment
-				FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getFTPFragment().add(ftpFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
-				// FTPSFragmentRef
-				FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, fragmentId); 
-				readableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
-				// FTPSFragment
-				FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getFTPSFragment().add(ftpsFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("http")) {
-				if (isHTTPSFragment(connectionOptions)) {
-					// HTTPSFragmentRef
-					HTTPSFragmentRef httpsFragmentRef = createHTTPSFragmentRef(fragmentId);
-					readableFragmentRefType.setHTTPSFragmentRef(httpsFragmentRef);
-					// HTTPSFragment
-					HTTPSFragment httpsFragment = createHTTPSFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-					protocolFragments.getHTTPSFragment().add(httpsFragment);
-				} else {
-					// HTTPFragmentRef
-					HTTPFragmentRef httpFragmentRef = createHTTPFragmentRef(fragmentId);
-					readableFragmentRefType.setHTTPFragmentRef(httpFragmentRef);
-					// HTTPFragment
-					HTTPFragment httpFragment = createHTTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-					protocolFragments.getHTTPFragment().add(httpFragment);
-				}
-			} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
-				// LocalSource
-				LocalSource localSource = createLocalSource(options, connectionOptions);
-				readableFragmentRefType.setLocalSource(localSource);
-			} else if (sourceProtocolValue.equalsIgnoreCase("sftp")) {
-				// SFTPFragmentRef
-				SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, fragmentId);
-				readableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
-				// SFTPFragment
-				SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getSFTPFragment().add(sftpFragment);
-			} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
-				// SMBFragmentRef
-				SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, fragmentId);
+	private void setReadableFragmentRefType(ReadableFragmentRefType readableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
+		if (connectionOptions.protocol.isNotDirty()) {
+			reportMissingMandatoryParameter("Protocol");
+			throw new RuntimeException("Parameter 'protocol' is required!");
+		}
+		// (Protocol)
+		String sourceProtocolValue = connectionOptions.protocol.Value();
+		if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
+			// FTPFragment
+			FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, useJumpHost);
+			// FTPFragmentRef
+			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment.getName()); 
+			readableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
+			// FTPSFragment
+			FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, useJumpHost);
+			// FTPSFragmentRef
+			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment.getName()); 
+			readableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("http")) {
+			if (isHTTPSFragment(connectionOptions)) {
+				// HTTPSFragment
+				HTTPSFragment httpsFragment = createHTTPSFragment(options, connectionOptions, useJumpHost);
+				// HTTPSFragmentRef
+				HTTPSFragmentRef httpsFragmentRef = createHTTPSFragmentRef(httpsFragment.getName());
+				readableFragmentRefType.setHTTPSFragmentRef(httpsFragmentRef);
+			} else {
+				// HTTPFragment
+				HTTPFragment httpFragment = createHTTPFragment(options, connectionOptions, useJumpHost);
+				// HTTPFragmentRef
+				HTTPFragmentRef httpFragmentRef = createHTTPFragmentRef(httpFragment.getName());
+				readableFragmentRefType.setHTTPFragmentRef(httpFragmentRef);
+			}
+		} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
+			// LocalSource
+			LocalSource localSource = createLocalSource(options, connectionOptions);
+			readableFragmentRefType.setLocalSource(localSource);
+		} else if (sourceProtocolValue.equalsIgnoreCase("sftp")) {
+			// SFTPFragment
+			SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, useJumpHost);
+			// SFTPFragmentRef
+			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment.getName());
+			readableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
+			// SMBFragment
+			SMBFragment smbFragment = createSMBFragment(connectionOptions);
+			// SMBFragmentRef
+			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment.getName());
 				readableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
-				// SMBFragment
-				SMBFragment smbFragment = createSMBFragment(connectionOptions, fragmentId);
-				protocolFragments.getSMBFragment().add(smbFragment);
 			} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
-				// WebDAVFragmentRef
-				WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, fragmentId);
-				readableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
-				// WebDAVFragment
-				WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, fragmentId, protocolFragments, useJumpHost);
-				protocolFragments.getWebDAVFragment().add(webDAVFragment);
-			} // TODO ReadableAlternativeFragmentRef
-		return readableFragmentRefType;
+			// WebDAVFragment
+			WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, useJumpHost);
+			// WebDAVFragmentRef
+			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment.getName());
+			readableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
+		} else {
+			reportMissingMandatoryParameter("Protocol");
+			throw new RuntimeException(String.format("Parameter 'protocol' = %1$s is not supported", connectionOptions.protocol.Value()));
+		}
+	}
+	
+	
+	private void setListableFragmentRefType(ListableFragmentRefType listableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
+		if (connectionOptions.protocol.isNotDirty()) {
+			reportMissingMandatoryParameter("Protocol");
+			throw new RuntimeException("Parameter 'protocol' is required!");
+		}
+		// (Protocol)
+		String sourceProtocolValue = connectionOptions.protocol.Value();
+		if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
+			// FTPFragment
+			FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, useJumpHost);
+			// FTPFragmentRef
+			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment.getName());
+			listableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
+			// FTPSFragment
+			FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, useJumpHost);
+			// FTPSFragmentRef
+			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment.getName());
+			listableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
+			// LocalSource
+			LocalSource localSource = createLocalSource(options, connectionOptions);
+			listableFragmentRefType.setLocalSource(localSource);
+		} else if (sourceProtocolValue.equalsIgnoreCase("sftp")) {
+			// SFTPFragment
+			SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, useJumpHost);
+			// SFTPFragmentRef
+			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment.getName());
+			listableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
+			// SMBFragment
+			SMBFragment smbFragment = createSMBFragment(connectionOptions);
+			// SMBFragmentRef
+			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment.getName());
+			listableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
+		} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
+			// WebDAVFragment
+			WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, useJumpHost);
+			// WebDAVFragmentRef
+			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef( options, connectionOptions, webDAVFragment.getName());
+			listableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
+		} else {
+			reportMissingMandatoryParameter("Protocol");
+			throw new RuntimeException(String.format("Parameter 'protocol' = %1$s is not supported", connectionOptions.protocol.Value()));
+		}
 	}
 
 	private boolean isHTTPSFragment(SOSConnection2OptionsAlternate connectionOptions) {
@@ -1322,7 +1502,7 @@ public class IniToXmlConverter {
 	private Directives createDirectives(JADEOptions options) {
 		Directives directives = new Directives();
 		if (options.force_files.isDirty()) {
-			logger.info("Replacing 'force_files=" + options.force_files.Value() + "' with 'DisableErrorOnNoFilesFound=" + String.valueOf(!options.makeDirs.value()) + "'");
+			logger.info("Replacing 'force_files=" + options.force_files.Value() + "' with 'DisableErrorOnNoFilesFound=" + String.valueOf(!options.force_files.value()) + "'");
 			directives.setDisableErrorOnNoFilesFound(!options.force_files.value());
 		}
 		if (options.TransferZeroByteFiles.isDirty()) {
@@ -1416,8 +1596,9 @@ public class IniToXmlConverter {
 
 
 
-	private WebDAVFragment createWebDAVFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private WebDAVFragment createWebDAVFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		WebDAVFragment webDAVFragment = new WebDAVFragment();
+		String fragmentId = getRandomFragmentId(webDAVFragment);
 		webDAVFragment.setName(fragmentId);
 		// URLConnection
 		URLConnectionType urlConnection = createURLConnection(connectionOptions);
@@ -1431,10 +1612,9 @@ public class IniToXmlConverter {
 		webDAVFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
-			String jumpFragmentId = getRandomFragmentId();
-			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
-			protocolFragments.getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragmentId);
+			JumpFragment jumpFragment = createJumpFragment(options);
+			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
 			webDAVFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForWebDAV
@@ -1452,6 +1632,15 @@ public class IniToXmlConverter {
 				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only value 'http' is allowed in combination with WebDAV.");
 			}
 		}
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			webDAVFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		fragments.getProtocolFragments().getWebDAVFragment().add(webDAVFragment);
 		return webDAVFragment;
 	}
 
@@ -1534,8 +1723,9 @@ public class IniToXmlConverter {
 		return webDAVFragmentRef;
 	}
 
-	private SMBFragment createSMBFragment(SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private SMBFragment createSMBFragment(SOSConnection2OptionsAlternate connectionOptions) {
 		SMBFragment smbFragment = new SMBFragment();
+		String fragmentId = getRandomFragmentId(smbFragment);
 		smbFragment.setName(fragmentId);
 		// Hostname
 		smbFragment.setHostname(connectionOptions.host.Value());
@@ -1548,6 +1738,15 @@ public class IniToXmlConverter {
 		if (connectionOptions.password.isDirty()) {
 			smbAuthentication.setPassword(connectionOptions.password.Value());
 		}
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			smbFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		fragments.getProtocolFragments().getSMBFragment().add(smbFragment);
 		return smbFragment;
 	}
 
@@ -1562,8 +1761,9 @@ public class IniToXmlConverter {
 		return smbFragmentRef;
 	}
 
-	private SFTPFragment createSFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private SFTPFragment createSFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		SFTPFragment sftpFragment = new SFTPFragment();
+		String fragmentId = getRandomFragmentId(sftpFragment);
 		sftpFragment.setName(fragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnection = createBasicConnection(connectionOptions);
@@ -1573,10 +1773,9 @@ public class IniToXmlConverter {
 		sftpFragment.setSSHAuthentication(sshAuthentication);
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
-			String jumpFragmentId = getRandomFragmentId();
-			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
-			protocolFragments.getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragmentId);
+			JumpFragment jumpFragment = createJumpFragment(options);
+			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
 			sftpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForSFTP
@@ -1612,13 +1811,23 @@ public class IniToXmlConverter {
 				logger.warn("Value 'ask' is no longer permitted for option '" + connectionOptions.getPrefix() + "StrictHostKeyChecking'. Use either 'yes' or 'no'.");
 			}
 		}
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			sftpFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		fragments.getProtocolFragments().getSFTPFragment().add(sftpFragment);
 		return sftpFragment;
 	}
 
 
 
-	private JumpFragment createJumpFragment(JADEOptions options, String jumpFragmentId) {
+	private JumpFragment createJumpFragment(JADEOptions options) {
 		JumpFragment jumpFragment = new JumpFragment();
+		String jumpFragmentId = getRandomFragmentId(jumpFragment);
 		jumpFragment.setName(jumpFragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnectionType = new BasicConnectionType();
@@ -1693,6 +1902,7 @@ public class IniToXmlConverter {
 			}
 		}
 		// StrictHostKeyChecking does not seem to be implemented
+		// no CredentialStore for jump implemented
 		return jumpFragment;
 	}
 
@@ -1943,15 +2153,16 @@ public class IniToXmlConverter {
 		}
 		// Zip
 		if (connectionOptions.protocol.Value().equals("zip")) {
-			localSource.setZip(true);
+			//localSource.setZip(true);
 		}
 		return localSource;
 	}
 
 
 
-	private HTTPSFragment createHTTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private HTTPSFragment createHTTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		HTTPSFragment httpsFragment = new HTTPSFragment();
+		String fragmentId = getRandomFragmentId(httpsFragment);
 		httpsFragment.setName(fragmentId);
 		// URLConnection
 		URLConnectionType urlConnection = createURLConnection(connectionOptions);
@@ -1965,10 +2176,9 @@ public class IniToXmlConverter {
 		httpsFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
-			String jumpFragmentId = getRandomFragmentId();
-			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
-			protocolFragments.getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragmentId);
+			JumpFragment jumpFragment = createJumpFragment(options);
+			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
 			httpsFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForHTTP
@@ -1986,6 +2196,15 @@ public class IniToXmlConverter {
 				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only value 'http' is allowed in combination with HTTPS.");
 			}
 		}
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			httpsFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		fragments.getProtocolFragments().getHTTPSFragment().add(httpsFragment);
 		return httpsFragment;
 	}
 
@@ -1999,8 +2218,9 @@ public class IniToXmlConverter {
 
 
 
-	private HTTPFragment createHTTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private HTTPFragment createHTTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		HTTPFragment httpFragment = new HTTPFragment();
+		String fragmentId = getRandomFragmentId(httpFragment);
 		httpFragment.setName(fragmentId);
 		// URLConnection
 		URLConnectionType urlConnection = createURLConnection(connectionOptions);
@@ -2010,10 +2230,9 @@ public class IniToXmlConverter {
 		httpFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
-			String jumpFragmentId = getRandomFragmentId();
-			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
-			protocolFragments.getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragmentId);
+			JumpFragment jumpFragment = createJumpFragment(options);
+			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
 			httpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForHTTP
@@ -2031,6 +2250,15 @@ public class IniToXmlConverter {
 				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only value 'http' is allowed in combination with HTTP.");
 			}
 		}
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			httpFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		fragments.getProtocolFragments().getHTTPFragment().add(httpFragment);
 		return httpFragment;
 	}
 
@@ -2043,9 +2271,10 @@ public class IniToXmlConverter {
 		return httpFragmentRef;
 	}
 
-	private CredentialStoreFragment createCredentialStoreFragment(SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private CredentialStoreFragment createCredentialStoreFragment(SOSConnection2OptionsAlternate connectionOptions) {
 		SOSCredentialStoreOptions credentialStoreOptions = connectionOptions.getCredentialStore();
 		CredentialStoreFragment credentialStoreFragment = null;
+		String fragmentId = getRandomFragmentId(credentialStoreFragment);
 		if (credentialStoreOptions.use_credential_Store.isTrue()) {
 			credentialStoreFragment = new CredentialStoreFragment();
 			credentialStoreFragment.setName(fragmentId);
@@ -2106,7 +2335,7 @@ public class IniToXmlConverter {
 				}
 				// CSDeleteExportedFileOnExit
 				if (credentialStoreOptions.CS_DeleteExportedFileOnExit.isDirty()) {
-					csExportAttachment.setCSDeleteExportedFileOnExit(credentialStoreOptions.CS_DeleteExportedFileOnExit.value());
+					csExportAttachment.setCSKeepExportedFileOnExit(!credentialStoreOptions.CS_DeleteExportedFileOnExit.value());
 				}
 				// CSOverwriteExportedFile
 				if (credentialStoreOptions.CS_OverwriteExportedFile.isDirty()) {
@@ -2124,8 +2353,9 @@ public class IniToXmlConverter {
 		return credentialStoreFragment;
 	}
 
-	private FTPSFragment createFTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private FTPSFragment createFTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		FTPSFragment ftpsFragment = new FTPSFragment();
+		String fragmentId = getRandomFragmentId(ftpsFragment);
 		ftpsFragment.setName(fragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnection = new BasicConnectionType();
@@ -2174,10 +2404,9 @@ public class IniToXmlConverter {
 		}
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
-			String jumpFragmentId = getRandomFragmentId();
-			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
-			protocolFragments.getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragmentId);
+			JumpFragment jumpFragment = createJumpFragment(options);
+			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
 			ftpsFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForFTPS
@@ -2205,6 +2434,15 @@ public class IniToXmlConverter {
 				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only values 'socks4' and 'socks5' are allowed in combination with FTPS.");
 			}
 		}
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			ftpsFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		fragments.getProtocolFragments().getFTPSFragment().add(ftpsFragment);
 		return ftpsFragment;
 	}
 
@@ -2403,8 +2641,9 @@ public class IniToXmlConverter {
 		return returnValue;
 	}
 
-	private FTPFragment createFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId, ProtocolFragments protocolFragments, boolean useJumpHost) {
+	private FTPFragment createFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		FTPFragment ftpFragment = new FTPFragment();
+		String fragmentId = getRandomFragmentId(ftpFragment);
 		ftpFragment.setName(fragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnection = new BasicConnectionType();
@@ -2418,10 +2657,9 @@ public class IniToXmlConverter {
 		ftpFragment.setBasicAuthentication(basicAuthentication);
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
-			String jumpFragmentId = getRandomFragmentId();
-			JumpFragment jumpFragment = createJumpFragment(options, jumpFragmentId);
-			protocolFragments.getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragmentId);
+			JumpFragment jumpFragment = createJumpFragment(options);
+			getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
 			ftpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// PassiveMode
@@ -2458,11 +2696,19 @@ public class IniToXmlConverter {
 				logger.warn("Invalid value specified for option '" + connectionOptions.getPrefix() + "proxy_protocol'. Only values 'http', 'socks4' and 'socks5' are allowed in combination with FTP.");
 			}
 		}
-		// ControlEncoding is not implemented. see https://kb.sos-berlin.com/display/PKB/JADE+Parameter+Reference+-+FTPFragment
-		// CheckServerFeatures is not implemented. see https://kb.sos-berlin.com/display/PKB/JADE+Parameter+Reference+-+FTPFragment
+		// CredentialStore
+		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
+			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
+			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
+			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
+			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			ftpFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
+		}
+		getProtocolFragments().getFTPFragment().add(ftpFragment);
 		return ftpFragment;
 	}
 
+	
 	private FTPFragmentRef createFTPFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
 		FTPFragmentRef ftpFragmentRef = new FTPFragmentRef();
 		ftpFragmentRef.setRef(fragmentId);
@@ -2580,7 +2826,7 @@ public class IniToXmlConverter {
 	}
 	
 	private void reportMissingMandatoryParameter(String parameterName, String message) {
-		logger.warn("Mandatory paramter '" + parameterName + "' is missing. " + message);
+		logger.warn("Mandatory parameter '" + parameterName + "' is missing. " + message);
 		missingMandatoryParameter = true;
 	}
 	
@@ -2588,8 +2834,20 @@ public class IniToXmlConverter {
 		reportMissingMandatoryParameter(parameterName, "");
 	}
 	
-	private String getRandomFragmentId() {
-		return UUID.randomUUID().toString();
+	private String getRandomFragmentId(Object caller) {
+		return getRandomFragmentId(caller.getClass().getSimpleName());
+	}
+	
+	private String getRandomFragmentId(String prefix) {
+		if (!refsCounter.containsKey(prefix)) {
+			refsCounter.put(prefix, 0);
+		}
+		else {
+			int counter = refsCounter.get(prefix);
+			refsCounter.put(prefix, (counter+1));
+		}
+		return prefix + "#" + refsCounter.get(prefix);
+		//return UUID.randomUUID().toString();
 	}
 
 	private void writeXML(Object object, File outFile) {

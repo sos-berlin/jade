@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}ProtocolFragments"/>
- *         &lt;element ref="{}AlternativeFragments" minOccurs="0"/>
  *         &lt;element ref="{}NotificationFragments" minOccurs="0"/>
  *         &lt;element ref="{}CredentialStoreFragments" minOccurs="0"/>
  *         &lt;element ref="{}MailServerFragments" minOccurs="0"/>
@@ -41,7 +40,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "protocolFragments",
-    "alternativeFragments",
     "notificationFragments",
     "credentialStoreFragments",
     "mailServerFragments"
@@ -51,8 +49,6 @@ public class Fragments {
 
     @XmlElement(name = "ProtocolFragments", required = true)
     protected ProtocolFragments protocolFragments;
-    @XmlElement(name = "AlternativeFragments")
-    protected AlternativeFragments alternativeFragments;
     @XmlElement(name = "NotificationFragments")
     protected NotificationFragments notificationFragments;
     @XmlElement(name = "CredentialStoreFragments")
@@ -82,30 +78,6 @@ public class Fragments {
      */
     public void setProtocolFragments(ProtocolFragments value) {
         this.protocolFragments = value;
-    }
-
-    /**
-     * Ruft den Wert der alternativeFragments-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AlternativeFragments }
-     *     
-     */
-    public AlternativeFragments getAlternativeFragments() {
-        return alternativeFragments;
-    }
-
-    /**
-     * Legt den Wert der alternativeFragments-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AlternativeFragments }
-     *     
-     */
-    public void setAlternativeFragments(AlternativeFragments value) {
-        this.alternativeFragments = value;
     }
 
     /**

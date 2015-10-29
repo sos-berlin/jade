@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -26,9 +26,10 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}History" minOccurs="0"/>
- *         &lt;element ref="{}BackgroundService" minOccurs="0"/>
  *         &lt;element ref="{}Logging" minOccurs="0"/>
- *         &lt;element ref="{}MailServerFragmentRef" minOccurs="0"/>
+ *         &lt;element ref="{}Notifications" minOccurs="0"/>
+ *         &lt;element ref="{}Assertions" minOccurs="0"/>
+ *         &lt;element ref="{}Documentation" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,21 +41,24 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "history",
-    "backgroundService",
     "logging",
-    "mailServerFragmentRef"
+    "notifications",
+    "assertions",
+    "documentation"
 })
 @XmlRootElement(name = "General")
 public class General {
 
     @XmlElement(name = "History")
     protected HistoryType history;
-    @XmlElement(name = "BackgroundService")
-    protected BackgroundServiceType backgroundService;
     @XmlElement(name = "Logging")
-    protected Logging logging;
-    @XmlElement(name = "MailServerFragmentRef")
-    protected MailServerFragmentRef mailServerFragmentRef;
+    protected LoggingType logging;
+    @XmlElement(name = "Notifications")
+    protected NotificationType notifications;
+    @XmlElement(name = "Assertions")
+    protected AssertionType assertions;
+    @XmlElement(name = "Documentation")
+    protected DocumentationType documentation;
 
     /**
      * Ruft den Wert der history-Eigenschaft ab.
@@ -81,38 +85,14 @@ public class General {
     }
 
     /**
-     * Ruft den Wert der backgroundService-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BackgroundServiceType }
-     *     
-     */
-    public BackgroundServiceType getBackgroundService() {
-        return backgroundService;
-    }
-
-    /**
-     * Legt den Wert der backgroundService-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BackgroundServiceType }
-     *     
-     */
-    public void setBackgroundService(BackgroundServiceType value) {
-        this.backgroundService = value;
-    }
-
-    /**
      * Ruft den Wert der logging-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link Logging }
+     *     {@link LoggingType }
      *     
      */
-    public Logging getLogging() {
+    public LoggingType getLogging() {
         return logging;
     }
 
@@ -121,35 +101,83 @@ public class General {
      * 
      * @param value
      *     allowed object is
-     *     {@link Logging }
+     *     {@link LoggingType }
      *     
      */
-    public void setLogging(Logging value) {
+    public void setLogging(LoggingType value) {
         this.logging = value;
     }
 
     /**
-     * Ruft den Wert der mailServerFragmentRef-Eigenschaft ab.
+     * Ruft den Wert der notifications-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link MailServerFragmentRef }
+     *     {@link NotificationType }
      *     
      */
-    public MailServerFragmentRef getMailServerFragmentRef() {
-        return mailServerFragmentRef;
+    public NotificationType getNotifications() {
+        return notifications;
     }
 
     /**
-     * Legt den Wert der mailServerFragmentRef-Eigenschaft fest.
+     * Legt den Wert der notifications-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link MailServerFragmentRef }
+     *     {@link NotificationType }
      *     
      */
-    public void setMailServerFragmentRef(MailServerFragmentRef value) {
-        this.mailServerFragmentRef = value;
+    public void setNotifications(NotificationType value) {
+        this.notifications = value;
+    }
+
+    /**
+     * Ruft den Wert der assertions-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link AssertionType }
+     *     
+     */
+    public AssertionType getAssertions() {
+        return assertions;
+    }
+
+    /**
+     * Legt den Wert der assertions-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link AssertionType }
+     *     
+     */
+    public void setAssertions(AssertionType value) {
+        this.assertions = value;
+    }
+
+    /**
+     * Ruft den Wert der documentation-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link DocumentationType }
+     *     
+     */
+    public DocumentationType getDocumentation() {
+        return documentation;
+    }
+
+    /**
+     * Legt den Wert der documentation-Eigenschaft fest.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DocumentationType }
+     *     
+     */
+    public void setDocumentation(DocumentationType value) {
+        this.documentation = value;
     }
 
 }

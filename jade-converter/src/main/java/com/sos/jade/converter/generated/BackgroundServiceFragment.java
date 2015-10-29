@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{}AltWriteableFragmentRefType">
+ *     &lt;extension base="{}BackgroundServiceType">
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NMTOKEN" />
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -37,9 +37,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "WriteableAlternativeFragment")
-public class WriteableAlternativeFragment
-    extends AltWriteableFragmentRefType
+@XmlRootElement(name = "BackgroundServiceFragment")
+public class BackgroundServiceFragment
+    extends BackgroundServiceType
 {
 
     @XmlAttribute(name = "name", required = true)

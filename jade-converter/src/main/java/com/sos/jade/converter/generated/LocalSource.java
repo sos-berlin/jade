@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}LocalPreProcessing" minOccurs="0"/>
  *         &lt;element ref="{}LocalPostProcessing" minOccurs="0"/>
  *         &lt;element ref="{}Rename" minOccurs="0"/>
- *         &lt;element ref="{}Zip" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,8 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "localPreProcessing",
     "localPostProcessing",
-    "rename",
-    "zip"
+    "rename"
 })
 @XmlRootElement(name = "LocalSource")
 public class LocalSource {
@@ -53,8 +51,6 @@ public class LocalSource {
     protected LocalPostProcessingType localPostProcessing;
     @XmlElement(name = "Rename")
     protected RenameType rename;
-    @XmlElement(name = "Zip", defaultValue = "false")
-    protected Boolean zip;
 
     /**
      * Ruft den Wert der localPreProcessing-Eigenschaft ab.
@@ -126,30 +122,6 @@ public class LocalSource {
      */
     public void setRename(RenameType value) {
         this.rename = value;
-    }
-
-    /**
-     * Ruft den Wert der zip-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isZip() {
-        return zip;
-    }
-
-    /**
-     * Legt den Wert der zip-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setZip(Boolean value) {
-        this.zip = value;
     }
 
 }

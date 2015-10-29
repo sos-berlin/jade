@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.08.28 um 03:50:36 PM CEST 
+// Generiert: 2015.10.09 um 03:42:30 PM CEST 
 //
 
 
@@ -11,6 +11,7 @@ package com.sos.jade.converter.generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -43,6 +44,9 @@ import javax.xml.bind.annotation.XmlType;
     "backgroundServiceProtocol",
     "backgroundServiceJobChainName"
 })
+@XmlSeeAlso({
+    BackgroundServiceFragment.class
+})
 public class BackgroundServiceType {
 
     @XmlElement(name = "BackgroundServiceHost", defaultValue = "localhost")
@@ -51,7 +55,7 @@ public class BackgroundServiceType {
     protected Integer backgroundServicePort;
     @XmlElement(name = "BackgroundServiceProtocol", defaultValue = "udp")
     protected String backgroundServiceProtocol;
-    @XmlElement(name = "BackgroundServiceJobChainName", defaultValue = "scheduler_jade_history")
+    @XmlElement(name = "BackgroundServiceJobChainName", defaultValue = "/sos/jade/jade_history")
     protected String backgroundServiceJobChainName;
 
     /**
