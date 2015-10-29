@@ -530,8 +530,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			String pattern4SourceTarget 	= "%n  +------------%s------------%n";
 			sb.append(String.format("%n%072d%n", 0).replace('0', '*'));
 			sb.append(String.format("*%70s*%n", " "));
-			sb.append(String.format("*%20s%-50s*%n", "JADE", " - JobScheduler Advanced Data Exchange"));
-			sb.append(String.format("*%37s%-33s*%n", "---www.sos-berlin.com", "---------------------"));
+			sb.append(String.format("*%25s%-45s*%n", "YADE", " - Managed File Transfer"));
+			sb.append(String.format("*%44s%-26s*%n", "-----www.sos-berlin.com", "-----"));
 			sb.append(String.format("*%70s*%n", " "));
 			sb.append(String.format("%072d%n", 0).replace('0', '*'));
 			sb.append(String.format(pattern4String, "Version", VersionInfo.VERSION_STRING));
