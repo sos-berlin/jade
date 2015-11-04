@@ -1,6 +1,8 @@
 package com.sos.jade.converter;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -32,7 +34,7 @@ import sos.net.mail.options.SOSSmtpMailOptions;
 
 public class IniToXmlConverter {
 	
-	private static final String schemaLocation = "http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd";
+	private static final String schemaLocation = "http://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0.xsd";
 	//*************************************************** CommandLineArguments ********************************************************************//
 	private String iniFilePath = "";
 	private boolean autoDetectProfiles = true;
@@ -57,7 +59,7 @@ public class IniToXmlConverter {
 		converter.handleArguments(args);
 		if (converter.iniFilePath.isEmpty()) {
 			throw (new JobSchedulerException("No settings file was specified for conversion."));
-		} else if (!new JSIniFile(converter.iniFilePath).exists()) {
+		} else if (!new File(converter.iniFilePath).exists()) {
 			throw (new JobSchedulerException("The settings file specified for conversion could not be found."));
 		}
 		logger.info("The settings file specified for conversion is '" + converter.iniFilePath + "'");
@@ -113,6 +115,8 @@ public class IniToXmlConverter {
 					File file = new File(argValue);
 					if (file.exists() && file.isDirectory()) {
 						outputDir = file;
+					} else if (!file.exists() && file.mkdirs()) {
+						outputDir = file;
 					}
 				}
 			}
@@ -135,7 +139,7 @@ public class IniToXmlConverter {
 				JADEOptions options = loadIniFile(iniFilePath, profilename);
 				
 				// remove the @-prefix
-				// TODO this might be obsolete already, as the xml2iniConverter does not create prefixes for profiles anymore (only for fragments)
+				// this might be obsolete already, as the xml2iniConverter does not create prefixes for profiles anymore (only for fragments)
 				String profilenameWithoutPrefix = "";
 				if (profilename.contains("@")) {
 					profilenameWithoutPrefix = profilename.substring(profilename.indexOf("@") + 1);
@@ -353,7 +357,7 @@ public class IniToXmlConverter {
 					CreateOrder createOrder = createCreateOrder(options);
 					jobScheduler.setCreateOrder(createOrder);
 				} else if (isCreateOrderSpecified(options)) {
-					logger.info("Skipping grouping element 'JobScheduler' as parameter 'create_order' is set to false or not specified.");
+					logger.debug("Skipping grouping element 'JobScheduler' because of parameter 'create_order' is set to false or not specified.");
 				}
 				//Logging
 				if (isLoggingSpecified(options)) {
@@ -390,7 +394,7 @@ public class IniToXmlConverter {
 						BackgroundServiceFragment backgroundServiceFragment = createBackgroundServiceFragment(options);
 						// BackgroundServiceFragmentRef
 						BackgroundServiceFragmentRef backgroundServiceFragmentRef = new BackgroundServiceFragmentRef();
-						backgroundServiceFragmentRef.setRef(backgroundServiceFragment.getName());
+						backgroundServiceFragmentRef.setRef(getBackgroundServiceFragmentRefId(backgroundServiceFragment));
 						notifications.setBackgroundServiceFragmentRef(backgroundServiceFragmentRef);
 					}
 					// MailServerFragmentRef
@@ -399,7 +403,7 @@ public class IniToXmlConverter {
 						MailServerFragment mailServerFragment = createMailServerFragment(options.getMailOptions());
 						// MailServerFragmentRef
 						MailServerFragmentRef mailServerFragmentRef = new MailServerFragmentRef();
-						mailServerFragmentRef.setRef(mailServerFragment.getName());
+						mailServerFragmentRef.setRef(getMailServerFragmentRefId(mailServerFragment));
 						notifications.setMailServerFragmentRef(mailServerFragmentRef);
 					}
 				}
@@ -469,22 +473,22 @@ public class IniToXmlConverter {
 	
 	private MailServerFragment createMailServerFragment(SOSSmtpMailOptions mailOptions) {
 		MailServerFragment mailServerFragment = new MailServerFragment();
-		String fragmentId = getRandomFragmentId(mailServerFragment);
-		mailServerFragment.setName(fragmentId);
+//		String fragmentId = getRandomFragmentId(mailServerFragment);
+//		mailServerFragment.setName(fragmentId);
 		if (isMailHostSpecified(mailOptions)) {
 			mailServerFragment.setMailHost(createMailHost(mailOptions));
 		}
 		if (mailOptions.queue_directory.isDirty()) {
 			mailServerFragment.setQueueDirectory(mailOptions.queue_directory.Value());
 		}
-		getMailServerFragments().getMailServerFragment().add(mailServerFragment);
+//		getMailServerFragments().getMailServerFragment().add(mailServerFragment);
 		return mailServerFragment;
 	}
 
 	private BackgroundServiceFragment createBackgroundServiceFragment(JADEOptions options) {
 		BackgroundServiceFragment backgroundServiceFragment = new BackgroundServiceFragment();
-		String fragmentId = getRandomFragmentId(backgroundServiceFragment);
-		backgroundServiceFragment.setName(fragmentId);
+//		String fragmentId = getRandomFragmentId(backgroundServiceFragment);
+//		backgroundServiceFragment.setName(fragmentId);
 		if (options.BackgroundServiceHost.isDirty()) {
 			backgroundServiceFragment.setBackgroundServiceHost(options.BackgroundServiceHost.Value());
 		}
@@ -497,7 +501,7 @@ public class IniToXmlConverter {
 		if (options.Scheduler_Transfer_Method.isDirty()) {
 			backgroundServiceFragment.setBackgroundServiceProtocol(options.Scheduler_Transfer_Method.Value());
 		}
-		getNotificationFragments().getBackgroundServiceFragment().add(backgroundServiceFragment);
+//		getNotificationFragments().getBackgroundServiceFragment().add(backgroundServiceFragment);
 		return backgroundServiceFragment;
 	}
 
@@ -505,9 +509,9 @@ public class IniToXmlConverter {
 		NotificationTriggerType notificationTriggerType = new NotificationTriggerType();
 		MailFragment mailFragment = createMailFragment(options);
 		MailFragmentRef mailFragmentRef = new MailFragmentRef();
-		mailFragmentRef.setRef(mailFragment.getName());
+		mailFragmentRef.setRef(getMailFragmentRefId(mailFragment));
 		notificationTriggerType.setMailFragmentRef(mailFragmentRef);
-		getNotificationFragments().getMailFragment().add(mailFragment);
+		//getNotificationFragments().getMailFragment().add(mailFragment);
 		return notificationTriggerType;
 	}
 
@@ -681,13 +685,16 @@ public class IniToXmlConverter {
 	private String[] detectProfiles() {
 		String[] profilesToConvert = null;
 		JSIniFile inifile = new JSIniFile(iniFilePath);
-		Map<String, SOSProfileSection> sectionsLowerCase = inifile.Sections();
+		Set<String> sectionsCaseSensitive = new HashSet<String>();
+		/*Map<String, SOSProfileSection> sectionsLowerCase = inifile.Sections();
 		Iterator<String> sectionsLowerCaseIterator = sectionsLowerCase.keySet().iterator();
-		HashSet<String> sectionsCaseSensitive = new HashSet<String>();
 		while (sectionsLowerCaseIterator.hasNext()) {
 			String key = sectionsLowerCaseIterator.next();
 			String sectionNameCaseSensitive = sectionsLowerCase.get(key).strSectionName;
 			sectionsCaseSensitive.add(sectionNameCaseSensitive);
+		}*/
+		for (Map.Entry<String, SOSProfileSection> entry : inifile.Sections().entrySet()) {
+			sectionsCaseSensitive.add(entry.getValue().strSectionName);
 		}
 		
 		if (autoDetectProfiles == false) {
@@ -831,8 +838,8 @@ public class IniToXmlConverter {
 	
 	private MailFragment createMailFragment(SOSSmtpMailOptions mailOptions) {
 		MailFragment mailFragment = new MailFragment();
-		String fragmentId = getRandomFragmentId(mailFragment);
-		mailFragment.setName(fragmentId);
+//		String fragmentId = getRandomFragmentId(mailFragment);
+//		mailFragment.setName(fragmentId);
 		// Header
 		Header header = new Header();
 		mailFragment.setHeader(header);
@@ -878,7 +885,6 @@ public class IniToXmlConverter {
 	}
 	
 	
-	//TODO prefixes on_error, on_empty, on_success? 
 	private MailHost createMailHost(SOSSmtpMailOptions mailOptions) {
 		MailHost mailHost = new MailHost();
 		//if (isMailHostSpecified(mailOptions)) {
@@ -1143,13 +1149,13 @@ public class IniToXmlConverter {
 			// FTPFragment
 			FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, useJumpHost);
 			// FTPFragmentRef
-			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment.getName()); 
+			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment); 
 			writeableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
 			// FTPSFragment
 			FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, useJumpHost);
 			// FTPSFragmentRef
-			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment.getName()); 
+			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment); 
 			writeableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
 		}  else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
 			// LocalTarget
@@ -1159,19 +1165,19 @@ public class IniToXmlConverter {
 			// SFTPFragment
 			SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, useJumpHost);
 			// SFTPFragmentRef
-			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment.getName());
+			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment);
 			writeableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
 			// SMBFragment
 			SMBFragment smbFragment = createSMBFragment(connectionOptions);
 			// SMBFragmentRef
-			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment.getName());
+			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment);
 			writeableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
 			// WebDAVFragment
 			WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, useJumpHost);
 			// WebDAVFragmentRef
-			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment.getName());
+			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment);
 			writeableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 		}  else {
 			reportMissingMandatoryParameter("Protocol");
@@ -1268,26 +1274,26 @@ public class IniToXmlConverter {
 			// FTPFragment
 			FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, useJumpHost);
 			// FTPFragmentRef
-			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment.getName()); 
+			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment); 
 			readableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
 			// FTPSFragment
 			FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, useJumpHost);
 			// FTPSFragmentRef
-			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment.getName()); 
+			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment); 
 			readableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("http")) {
 			if (isHTTPSFragment(connectionOptions)) {
 				// HTTPSFragment
 				HTTPSFragment httpsFragment = createHTTPSFragment(options, connectionOptions, useJumpHost);
 				// HTTPSFragmentRef
-				HTTPSFragmentRef httpsFragmentRef = createHTTPSFragmentRef(httpsFragment.getName());
+				HTTPSFragmentRef httpsFragmentRef = createHTTPSFragmentRef(httpsFragment);
 				readableFragmentRefType.setHTTPSFragmentRef(httpsFragmentRef);
 			} else {
 				// HTTPFragment
 				HTTPFragment httpFragment = createHTTPFragment(options, connectionOptions, useJumpHost);
 				// HTTPFragmentRef
-				HTTPFragmentRef httpFragmentRef = createHTTPFragmentRef(httpFragment.getName());
+				HTTPFragmentRef httpFragmentRef = createHTTPFragmentRef(httpFragment);
 				readableFragmentRefType.setHTTPFragmentRef(httpFragmentRef);
 			}
 		} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
@@ -1298,19 +1304,19 @@ public class IniToXmlConverter {
 			// SFTPFragment
 			SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, useJumpHost);
 			// SFTPFragmentRef
-			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment.getName());
+			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment);
 			readableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
 			// SMBFragment
 			SMBFragment smbFragment = createSMBFragment(connectionOptions);
 			// SMBFragmentRef
-			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment.getName());
+			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment);
 				readableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
 			} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
 			// WebDAVFragment
 			WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, useJumpHost);
 			// WebDAVFragmentRef
-			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment.getName());
+			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment);
 			readableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 		} else {
 			reportMissingMandatoryParameter("Protocol");
@@ -1330,13 +1336,13 @@ public class IniToXmlConverter {
 			// FTPFragment
 			FTPFragment ftpFragment = createFTPFragment(options, connectionOptions, useJumpHost);
 			// FTPFragmentRef
-			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment.getName());
+			FTPFragmentRef ftpFragmentRef = createFTPFragmentRef(options, connectionOptions, ftpFragment);
 			listableFragmentRefType.setFTPFragmentRef(ftpFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("ftps")) {
 			// FTPSFragment
 			FTPSFragment ftpsFragment = createFTPSFragment(options, connectionOptions, useJumpHost);
 			// FTPSFragmentRef
-			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment.getName());
+			FTPSFragmentRef ftpsFragmentRef = createFTPSFragmentRef(options, connectionOptions, ftpsFragment);
 			listableFragmentRefType.setFTPSFragmentRef(ftpsFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("local") || sourceProtocolValue.equalsIgnoreCase("zip")) { // zip has been removed as a protocol, local is used instead with a boolean zip-parameter
 			// LocalSource
@@ -1346,19 +1352,19 @@ public class IniToXmlConverter {
 			// SFTPFragment
 			SFTPFragment sftpFragment = createSFTPFragment(options, connectionOptions, useJumpHost);
 			// SFTPFragmentRef
-			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment.getName());
+			SFTPFragmentRef sftpFragmentRef = createSFTPFragmentRef(options, connectionOptions, sftpFragment);
 			listableFragmentRefType.setSFTPFragmentRef(sftpFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("smb")) {
 			// SMBFragment
 			SMBFragment smbFragment = createSMBFragment(connectionOptions);
 			// SMBFragmentRef
-			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment.getName());
+			SMBFragmentRef smbFragmentRef = createSMBFragmentRef(options, connectionOptions, smbFragment);
 			listableFragmentRefType.setSMBFragmentRef(smbFragmentRef);
 		} else if (sourceProtocolValue.equalsIgnoreCase("webdav")) {
 			// WebDAVFragment
 			WebDAVFragment webDAVFragment = createWebDAVFragment(options, connectionOptions, useJumpHost);
 			// WebDAVFragmentRef
-			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef( options, connectionOptions, webDAVFragment.getName());
+			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef( options, connectionOptions, webDAVFragment);
 			listableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 		} else {
 			reportMissingMandatoryParameter("Protocol");
@@ -1598,8 +1604,6 @@ public class IniToXmlConverter {
 
 	private WebDAVFragment createWebDAVFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		WebDAVFragment webDAVFragment = new WebDAVFragment();
-		String fragmentId = getRandomFragmentId(webDAVFragment);
-		webDAVFragment.setName(fragmentId);
 		// URLConnection
 		URLConnectionType urlConnection = createURLConnection(connectionOptions);
 		webDAVFragment.setURLConnection(urlConnection);
@@ -1613,8 +1617,8 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
+//			getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			webDAVFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForWebDAV
@@ -1635,12 +1639,10 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			webDAVFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		fragments.getProtocolFragments().getWebDAVFragment().add(webDAVFragment);
 		return webDAVFragment;
 	}
 
@@ -1655,14 +1657,17 @@ public class IniToXmlConverter {
 				} else if (connectionOptions.host.isDirty()) {
 					url = new URL(connectionOptions.host.Value());
 				}
-			} catch (MalformedURLException | RuntimeException e) {}
-			String connection = url.getProtocol() + "://" + url.getHost();
-			if (url.getPort() != -1) {
-				connection += ":" + url.getPort();
-			} else if (connectionOptions.port.isDirty()) {
-				connection += ":" + connectionOptions.port.value();
+				String connection = url.getProtocol() + "://" + url.getHost();
+				if (url.getPort() != -1) {
+					connection += ":" + url.getPort();
+				} else if (connectionOptions.port.isDirty()) {
+					connection += ":" + connectionOptions.port.value();
+				}
+				urlConnectionType.setURL(connection);
+				return urlConnectionType;
+			} catch (MalformedURLException | RuntimeException e) {
+				logger.error("", e);
 			}
-			urlConnectionType.setURL(connection);
 		} else {
 			reportMissingMandatoryParameter(connectionOptions.getPrefix() + "url");
 		}
@@ -1679,16 +1684,24 @@ public class IniToXmlConverter {
 				} else if (connectionOptions.host.isDirty()) {
 					url = new URL(connectionOptions.host.Value());
 				}
-			} catch (MalformedURLException | RuntimeException e) {}
-			if (url.getUserInfo() != null || connectionOptions.user.isDirty()) {
-				if (url.getUserInfo() != null) {
-					if (url.getUserInfo().contains(":")) {
-						basicAuthenticationType.setAccount(url.getUserInfo().split(":")[0]);
-						basicAuthenticationType.setPassword(url.getUserInfo().split(":")[1]);
-					} else {
-						basicAuthenticationType.setAccount(url.getUserInfo());
+				if (url.getUserInfo() != null || connectionOptions.user.isDirty()) {
+					if (url.getUserInfo() != null) {
+						if (url.getUserInfo().contains(":")) {
+							basicAuthenticationType.setAccount(url.getUserInfo().split(":")[0]);
+							basicAuthenticationType.setPassword(url.getUserInfo().split(":")[1]);
+						} else {
+							basicAuthenticationType.setAccount(url.getUserInfo());
+						}
+					}
+					else if (connectionOptions.user.isDirty()) {
+						basicAuthenticationType.setAccount(connectionOptions.user.Value());
+						if (connectionOptions.password.isDirty()) {
+							basicAuthenticationType.setPassword(connectionOptions.password.Value());
+						}
 					}
 				}
+			} catch (MalformedURLException | RuntimeException e) {
+				logger.error("", e);
 			}
 		} else if (connectionOptions.user.isDirty()) {
 			basicAuthenticationType.setAccount(connectionOptions.user.Value());
@@ -1712,9 +1725,9 @@ public class IniToXmlConverter {
 
 
 
-	private WebDAVFragmentRef createWebDAVFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private WebDAVFragmentRef createWebDAVFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, WebDAVFragment fragment) {
 		WebDAVFragmentRef webDAVFragmentRef = new WebDAVFragmentRef();
-		webDAVFragmentRef.setRef(fragmentId);
+		webDAVFragmentRef.setRef(getWebDAVFragmentRefId(fragment));
 		// Rename
 		if (isRenameSpecified(connectionOptions) || (connectionOptions.getPrefix().equalsIgnoreCase("target_") && isUnprefixedRenameSpecified(options))) {
 			RenameType rename = createRename(options, connectionOptions);
@@ -1725,8 +1738,6 @@ public class IniToXmlConverter {
 
 	private SMBFragment createSMBFragment(SOSConnection2OptionsAlternate connectionOptions) {
 		SMBFragment smbFragment = new SMBFragment();
-		String fragmentId = getRandomFragmentId(smbFragment);
-		smbFragment.setName(fragmentId);
 		// Hostname
 		smbFragment.setHostname(connectionOptions.host.Value());
 		// SMBAuthentication
@@ -1741,18 +1752,16 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			smbFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		fragments.getProtocolFragments().getSMBFragment().add(smbFragment);
 		return smbFragment;
 	}
 
-	private SMBFragmentRef createSMBFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private SMBFragmentRef createSMBFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, SMBFragment fragment) {
 		SMBFragmentRef smbFragmentRef = new SMBFragmentRef();
-		smbFragmentRef.setRef(fragmentId);
+		smbFragmentRef.setRef(getSMBFragmentRefId(fragment));
 		// Rename
 		if (isRenameSpecified(connectionOptions) || (connectionOptions.getPrefix().equalsIgnoreCase("target_") && isUnprefixedRenameSpecified(options))) {
 			RenameType rename = createRename(options, connectionOptions);
@@ -1763,8 +1772,6 @@ public class IniToXmlConverter {
 
 	private SFTPFragment createSFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		SFTPFragment sftpFragment = new SFTPFragment();
-		String fragmentId = getRandomFragmentId(sftpFragment);
-		sftpFragment.setName(fragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnection = createBasicConnection(connectionOptions);
 		sftpFragment.setBasicConnection(basicConnection);
@@ -1774,8 +1781,8 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
+//			getProtocolFragments().getJumpFragment().add(jumpFragment);
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			sftpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForSFTP
@@ -1794,7 +1801,7 @@ public class IniToXmlConverter {
 					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyType(connectionOptions);
 					proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
 				} else if (connectionOptions.proxy_protocol.Value().isEmpty()) {
-					logger.info("Skipping grouping element 'ProxyForSFTP' as parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
+					logger.debug("Skipping grouping element 'ProxyForSFTP' because of parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
 					sftpFragment.setProxyForSFTP(null);
 				}
 			} else {
@@ -1814,12 +1821,10 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			sftpFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		fragments.getProtocolFragments().getSFTPFragment().add(sftpFragment);
 		return sftpFragment;
 	}
 
@@ -1827,8 +1832,6 @@ public class IniToXmlConverter {
 
 	private JumpFragment createJumpFragment(JADEOptions options) {
 		JumpFragment jumpFragment = new JumpFragment();
-		String jumpFragmentId = getRandomFragmentId(jumpFragment);
-		jumpFragment.setName(jumpFragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnectionType = new BasicConnectionType();
 		jumpFragment.setBasicConnection(basicConnectionType);
@@ -1894,7 +1897,7 @@ public class IniToXmlConverter {
 					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyTypeForJump(options);
 					proxyForSFTP.setSOCKS5Proxy(socks5Proxy);
 				} else if (options.jump_proxy_protocol.Value().isEmpty()) {
-					logger.info("Skipping grouping element 'ProxyForSFTP' as parameter 'jump_proxy_protocol' is not specified.");
+					logger.debug("Skipping grouping element 'ProxyForSFTP' because of parameter 'jump_proxy_protocol' is not specified.");
 					jumpFragment.setProxyForSFTP(null);
 				}
 			} else {
@@ -1908,9 +1911,9 @@ public class IniToXmlConverter {
 
 
 
-	private JumpFragmentRef createJumpFragmentRef(String jumpFragmentId) {
+	private JumpFragmentRef createJumpFragmentRef(JumpFragment jumpFragment) {
 		JumpFragmentRef jumpFragmentRef = new JumpFragmentRef();
-		jumpFragmentRef.setRef(jumpFragmentId);
+		jumpFragmentRef.setRef(getJumpFragmentRefId(jumpFragment));
 		return jumpFragmentRef;
 	}
 
@@ -2071,9 +2074,9 @@ public class IniToXmlConverter {
 
 
 
-	private SFTPFragmentRef createSFTPFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private SFTPFragmentRef createSFTPFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, SFTPFragment fragment) {
 		SFTPFragmentRef sftpFragmentRef = new SFTPFragmentRef();
-		sftpFragmentRef.setRef(fragmentId);
+		sftpFragmentRef.setRef(getSFTPFragmentRefId(fragment));
 		// SFTPPreProcessing
 		if (isPreProcessingSpecified(connectionOptions)) {
 			SFTPPreProcessingType sftpPreProcessing = createSFTPPreProcessing(connectionOptions);
@@ -2097,7 +2100,7 @@ public class IniToXmlConverter {
 					zlibCompression.setZlibCompressionLevel(connectionOptions.zlib_compression_level.value());
 				}
 			} else {
-				logger.info("Skipping grouping element 'ZlibCompression' as parameter '" + connectionOptions.getPrefix() + "use_zlib_compression' is set to false or not specified.");
+				logger.debug("Skipping grouping element 'ZlibCompression' because of parameter '" + connectionOptions.getPrefix() + "use_zlib_compression' is set to false or not specified.");
 			}
 		}
 		return sftpFragmentRef;
@@ -2162,8 +2165,6 @@ public class IniToXmlConverter {
 
 	private HTTPSFragment createHTTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		HTTPSFragment httpsFragment = new HTTPSFragment();
-		String fragmentId = getRandomFragmentId(httpsFragment);
-		httpsFragment.setName(fragmentId);
 		// URLConnection
 		URLConnectionType urlConnection = createURLConnection(connectionOptions);
 		httpsFragment.setURLConnection(urlConnection);
@@ -2177,8 +2178,7 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			httpsFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForHTTP
@@ -2199,20 +2199,18 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			httpsFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		fragments.getProtocolFragments().getHTTPSFragment().add(httpsFragment);
 		return httpsFragment;
 	}
 
 
 
-	private HTTPSFragmentRef createHTTPSFragmentRef(String fragmentId) {
+	private HTTPSFragmentRef createHTTPSFragmentRef(HTTPSFragment fragment) {
 		HTTPSFragmentRef httpsFragmentRef = new HTTPSFragmentRef();
-		httpsFragmentRef.setRef(fragmentId);
+		httpsFragmentRef.setRef(getHTTPSFragmentRefId(fragment));
 		return httpsFragmentRef;
 	}
 
@@ -2220,8 +2218,6 @@ public class IniToXmlConverter {
 
 	private HTTPFragment createHTTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		HTTPFragment httpFragment = new HTTPFragment();
-		String fragmentId = getRandomFragmentId(httpFragment);
-		httpFragment.setName(fragmentId);
 		// URLConnection
 		URLConnectionType urlConnection = createURLConnection(connectionOptions);
 		httpFragment.setURLConnection(urlConnection);
@@ -2231,8 +2227,7 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			httpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForHTTP
@@ -2253,20 +2248,18 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			httpFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		fragments.getProtocolFragments().getHTTPFragment().add(httpFragment);
 		return httpFragment;
 	}
 
 
 
-	private HTTPFragmentRef createHTTPFragmentRef(String fragmentId) {
+	private HTTPFragmentRef createHTTPFragmentRef(HTTPFragment fragment) {
 		HTTPFragmentRef httpFragmentRef = new HTTPFragmentRef();
-		httpFragmentRef.setRef(fragmentId);
+		httpFragmentRef.setRef(getHTTPFragmentRefId(fragment));
 
 		return httpFragmentRef;
 	}
@@ -2274,10 +2267,8 @@ public class IniToXmlConverter {
 	private CredentialStoreFragment createCredentialStoreFragment(SOSConnection2OptionsAlternate connectionOptions) {
 		SOSCredentialStoreOptions credentialStoreOptions = connectionOptions.getCredentialStore();
 		CredentialStoreFragment credentialStoreFragment = null;
-		String fragmentId = getRandomFragmentId(credentialStoreFragment);
 		if (credentialStoreOptions.use_credential_Store.isTrue()) {
 			credentialStoreFragment = new CredentialStoreFragment();
-			credentialStoreFragment.setName(fragmentId);
 			// CSFile
 			if (credentialStoreOptions.CS_FileName.isDirty()) {
 				credentialStoreFragment.setCSFile(credentialStoreOptions.CS_FileName.Value());
@@ -2315,13 +2306,13 @@ public class IniToXmlConverter {
 					reportMissingMandatoryParameter("CSPassword");
 				}
 			} else {
-				logger.info("Skipping grouping element 'CSAuthentication' as parameter 'CS_AuthenticationMethod' is not valid.");
+				logger.debug("Skipping grouping element 'CSAuthentication' because of parameter 'CS_AuthenticationMethod' is not valid.");
 			}
 			// CSEntryPath
 			if (credentialStoreOptions.CS_KeyPath.isDirty()) {
 				credentialStoreFragment.setCSEntryPath(credentialStoreOptions.CS_KeyPath.Value());
 			} else {
-				reportMissingMandatoryParameter("CSEntryPath");
+				reportMissingMandatoryParameter("CSKeyPath");
 			}
 			// CSExportAttachment
 			if (credentialStoreOptions.CS_ExportAttachment.isTrue()) {
@@ -2348,15 +2339,13 @@ public class IniToXmlConverter {
 			}
 			// CSStoreType may be neglected as the only implemented StoreType currently is KeePass
 		} else {
-			logger.info("Skipping grouping element 'CredentialStoreFragment' as parameter '" + connectionOptions.getPrefix() + "use_credential_store' is set to false or not specified.");
+			logger.debug("Skipping grouping element 'CredentialStoreFragment' because of parameter '" + connectionOptions.getPrefix() + "use_credential_store' is set to false or not specified.");
 		}
 		return credentialStoreFragment;
 	}
 
 	private FTPSFragment createFTPSFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		FTPSFragment ftpsFragment = new FTPSFragment();
-		String fragmentId = getRandomFragmentId(ftpsFragment);
-		ftpsFragment.setName(fragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnection = new BasicConnectionType();
 		ftpsFragment.setBasicConnection(basicConnection);
@@ -2405,8 +2394,7 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-			fragments.getProtocolFragments().getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			ftpsFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// ProxyForFTPS
@@ -2426,7 +2414,7 @@ public class IniToXmlConverter {
 						AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyType(connectionOptions);
 						proxyForFTPS.setSOCKS5Proxy(socks5Proxy);
 					} else {
-						logger.info("Skipping grouping element 'ProxyForFTPS' as parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
+						logger.debug("Skipping grouping element 'ProxyForFTPS' because of parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
 						ftpsFragment.setProxyForFTPS(null);
 					}
 				}
@@ -2437,12 +2425,10 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			ftpsFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		fragments.getProtocolFragments().getFTPSFragment().add(ftpsFragment);
 		return ftpsFragment;
 	}
 
@@ -2457,9 +2443,9 @@ public class IniToXmlConverter {
 
 
 
-	private FTPSFragmentRef createFTPSFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private FTPSFragmentRef createFTPSFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, FTPSFragment fragment) {
 		FTPSFragmentRef ftpsFragmentRef = new FTPSFragmentRef();
-		ftpsFragmentRef.setRef(fragmentId);
+		ftpsFragmentRef.setRef(getFTPSFragmentRefId(fragment));
 		// Rename
 		if (isRenameSpecified(connectionOptions) || (connectionOptions.getPrefix().equalsIgnoreCase("target_") && isUnprefixedRenameSpecified(options))) {
 			RenameType rename = createRename(options, connectionOptions);
@@ -2536,7 +2522,7 @@ public class IniToXmlConverter {
 				}
 			}
 		} else {
-			logger.info("Skipping grouping element 'CumulateFiles' as parameter 'CumulateFiles' is set to false or not specified.");
+			logger.debug("Skipping grouping element 'CumulateFiles' because of parameter 'CumulateFiles' is set to false or not specified.");
 		}
 		// CompressFiles
 		if (options.compress_files.isTrue()) {
@@ -2643,8 +2629,6 @@ public class IniToXmlConverter {
 
 	private FTPFragment createFTPFragment(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		FTPFragment ftpFragment = new FTPFragment();
-		String fragmentId = getRandomFragmentId(ftpFragment);
-		ftpFragment.setName(fragmentId);
 		// BasicConnection
 		BasicConnectionType basicConnection = new BasicConnectionType();
 		ftpFragment.setBasicConnection(basicConnection);
@@ -2658,8 +2642,7 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-			getProtocolFragments().getJumpFragment().add(jumpFragment);
-			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment.getName());
+			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			ftpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
 		// PassiveMode
@@ -2689,7 +2672,7 @@ public class IniToXmlConverter {
 					AuthenticatedProxyType socks5Proxy = createAuthenticatedProxyType(connectionOptions);
 					proxyForFTP.setSOCKS5Proxy(socks5Proxy);
 				} else if (connectionOptions.proxy_protocol.Value().isEmpty()) {
-					logger.info("Skipping grouping element 'ProxyForFTP' as parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
+					logger.debug("Skipping grouping element 'ProxyForFTP' because of parameter '" + connectionOptions.getPrefix() + "proxy_protocol' is not specified.");
 					ftpFragment.setProxyForFTP(null);
 				}
 			} else {
@@ -2699,19 +2682,17 @@ public class IniToXmlConverter {
 		// CredentialStore
 		if (isCredentialStoreFragmentSpecified(connectionOptions)) {
 			CredentialStoreFragment credentialStoreFragment = createCredentialStoreFragment(connectionOptions);
-			getCredentialStoreFragments().getCredentialStoreFragment().add(credentialStoreFragment);
 			CredentialStoreFragmentRef credentialStoreFragmentRef = new CredentialStoreFragmentRef();
-			credentialStoreFragmentRef.setRef(credentialStoreFragment.getName());
+			credentialStoreFragmentRef.setRef(getCredentialStoreFragmentRefId(credentialStoreFragment));
 			ftpFragment.setCredentialStoreFragmentRef(credentialStoreFragmentRef);
 		}
-		getProtocolFragments().getFTPFragment().add(ftpFragment);
 		return ftpFragment;
 	}
 
 	
-	private FTPFragmentRef createFTPFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, String fragmentId) {
+	private FTPFragmentRef createFTPFragmentRef(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, FTPFragment fragment) {
 		FTPFragmentRef ftpFragmentRef = new FTPFragmentRef();
-		ftpFragmentRef.setRef(fragmentId);
+		ftpFragmentRef.setRef(getFTPFragmentRefId(fragment));
 		// FTPPreProcessing
 		if (isPreProcessingSpecified(connectionOptions)) {
 			FTPPreProcessingType ftpPreProcessing = createFTPPreProcessing(connectionOptions);
@@ -2771,6 +2752,174 @@ public class IniToXmlConverter {
 			returnValue = true;
 		}
 		return returnValue;
+	}
+	
+	private String getCredentialStoreFragmentRefId(CredentialStoreFragment fragment) {
+		List<CredentialStoreFragment> frags = getCredentialStoreFragments().getCredentialStoreFragment();
+		for (CredentialStoreFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getMailServerFragmentRefId(MailServerFragment fragment) {
+		List<MailServerFragment> frags = getMailServerFragments().getMailServerFragment();
+		for (MailServerFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getMailFragmentRefId(MailFragment fragment) {
+		List<MailFragment> frags = getNotificationFragments().getMailFragment();
+		for (MailFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getBackgroundServiceFragmentRefId(BackgroundServiceFragment fragment) {
+		List<BackgroundServiceFragment> frags = getNotificationFragments().getBackgroundServiceFragment();
+		for (BackgroundServiceFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getWebDAVFragmentRefId(WebDAVFragment fragment) {
+		List<WebDAVFragment> frags = getProtocolFragments().getWebDAVFragment();
+		for (WebDAVFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getFTPFragmentRefId(FTPFragment fragment) {
+		List<FTPFragment> frags = getProtocolFragments().getFTPFragment();
+		for (FTPFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getSFTPFragmentRefId(SFTPFragment fragment) {
+		List<SFTPFragment> frags = getProtocolFragments().getSFTPFragment();
+		for (SFTPFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getFTPSFragmentRefId(FTPSFragment fragment) {
+		List<FTPSFragment> frags = getProtocolFragments().getFTPSFragment();
+		for (FTPSFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getSMBFragmentRefId(SMBFragment fragment) {
+		List<SMBFragment> frags = getProtocolFragments().getSMBFragment();
+		for (SMBFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getJumpFragmentRefId(JumpFragment fragment) {
+		List<JumpFragment> frags = getProtocolFragments().getJumpFragment();
+		for (JumpFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getHTTPSFragmentRefId(HTTPSFragment fragment) {
+		List<HTTPSFragment> frags = getProtocolFragments().getHTTPSFragment();
+		for (HTTPSFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
+	}
+	
+	private String getHTTPFragmentRefId(HTTPFragment fragment) {
+		List<HTTPFragment> frags = getProtocolFragments().getHTTPFragment();
+		for (HTTPFragment entry : frags) {
+			fragment.setName(entry.getName());
+			if (elementToString(fragment).equals(elementToString(entry))) {
+				return entry.getName();
+			}
+		}
+		String fragmentId = getRandomFragmentId(fragment);
+		fragment.setName(fragmentId);
+		frags.add(fragment);
+		return fragmentId;
 	}
 
 	private RenameType createRename(JADEOptions options, SOSConnection2OptionsAlternate connectionOptions) {
@@ -2864,6 +3013,24 @@ public class IniToXmlConverter {
 			e.printStackTrace();
 		}
 		logger.info("Done.");
+	}
+	
+	private String elementToString(Object object) {
+		StringWriter w = new StringWriter();
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			jaxbMarshaller.marshal(object, w);
+			return w.toString();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return "";
+		} finally {
+			try {
+				w.close();
+			} catch (IOException ee) {}
+		}
+		
 	}
 	
 	private JADEOptions loadIniFile(String filepath, String profilename) {
