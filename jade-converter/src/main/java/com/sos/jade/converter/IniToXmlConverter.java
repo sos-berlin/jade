@@ -1141,7 +1141,7 @@ public class IniToXmlConverter {
 	private void setWriteableFragmentRefType(WriteableFragmentRefType writeableFragmentRefType,JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
 			raiseMandatoryParameter = true;
-			throw new RuntimeException("Parameter 'protocol' is required!");
+			throw new RuntimeException(String.format("Parameter '%1$s_protocol' is required!", connectionOptions.getPrefix()));
 		}
 		String sourceProtocolValue = connectionOptions.protocol.Value();
 		if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
@@ -1265,7 +1265,7 @@ public class IniToXmlConverter {
 	private void setReadableFragmentRefType(ReadableFragmentRefType readableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
 			raiseMandatoryParameter = true;
-			throw new RuntimeException("Parameter 'protocol' is required!");
+			throw new RuntimeException(String.format("Parameter '%1$s_protocol' is required!", connectionOptions.getPrefix()));
 		}
 		// (Protocol)
 		String sourceProtocolValue = connectionOptions.protocol.Value();
@@ -1327,7 +1327,7 @@ public class IniToXmlConverter {
 	private void setListableFragmentRefType(ListableFragmentRefType listableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
 			raiseMandatoryParameter = true;
-			throw new RuntimeException("Parameter 'protocol' is required!");
+			throw new RuntimeException(String.format("Parameter '%1$s_protocol' is required!", connectionOptions.getPrefix()));
 		}
 		// (Protocol)
 		String sourceProtocolValue = connectionOptions.protocol.Value();
