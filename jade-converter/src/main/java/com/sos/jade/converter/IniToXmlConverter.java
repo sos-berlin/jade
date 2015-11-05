@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,10 +41,14 @@ public class IniToXmlConverter {
 	private File outputDir = null;
 	//*********************************************************************************************************************************************//
 	public static Logger logger = LoggerFactory.getLogger(IniToXmlConverter.class);
-	private HashSet<String> profilesMissingMandatoryParameters = new HashSet<>();
+	private Set<String> profilesMissingMandatoryParameters = new HashSet<>();
+	private Set<String> profilesNotCreated = new HashSet<>();
 	private boolean missingMandatoryParameter = false;
+	private boolean raiseMandatoryParameter = false;
 	//*********************************************************************************************************************************************//
 	private Map<String,Integer> refsCounter = new HashMap<String,Integer>();
+	private Set<String> includedFragments = new HashSet<String>();
+	private Set<String> profilesWithOperation = new HashSet<String>();
 	private Fragments fragments = new Fragments();
 	
 	public IniToXmlConverter() {
@@ -134,6 +136,8 @@ public class IniToXmlConverter {
 			List<Profile> profileList = profiles.getProfile();
 			
 			for (String profilename : profilesToConvert) {
+				raiseMandatoryParameter = false;
+				missingMandatoryParameter = false;
 				try {
 				logger.info("----- Starting conversion of profile '" + profilename + "' -----");
 				JADEOptions options = loadIniFile(iniFilePath, profilename);
@@ -409,22 +413,30 @@ public class IniToXmlConverter {
 				}
 				profileList.add(profile);
 				
-				logger.info("----- Finished conversion of profile: '" + profilename + "' -----");
-				
-				
 				} catch (Exception e) {
 					logger.error(String.format("error in profile [%1$s]: %2$s",  profilename, e.toString()));
 				}
 				
+				logger.info(String.format("----- Finished conversion of profile: '%1$s' -----", profilename));
+				
 				if (missingMandatoryParameter) {
 					profilesMissingMandatoryParameters.add(profilename);
 				}
-				missingMandatoryParameter = false;
+				if (raiseMandatoryParameter) {
+					profilesNotCreated.add(profilename);
+				}
 			}
 			logger.info("Finished conversion of profiles.");
+			if (!profilesNotCreated.isEmpty()) {
+				String log = "The following profiles are not created because of missing mandatory parameters:";
+				for (String s : profilesNotCreated) {
+					log += System.lineSeparator() + s;
+				}
+				logger.error(log);
+			}
 			if (!profilesMissingMandatoryParameters.isEmpty()) {
-				String log = "The following profiles are missing mandatory parameters and hence may be invalid:";
-				for (String s : profilesMissingMandatoryParameters.toArray(new String[0])) {
+				String log = "The following profiles have missing mandatory parameters and hence may be invalid:";
+				for (String s : profilesMissingMandatoryParameters) {
 					log += System.lineSeparator() + s;
 				}
 				logger.warn(log);
@@ -473,22 +485,17 @@ public class IniToXmlConverter {
 	
 	private MailServerFragment createMailServerFragment(SOSSmtpMailOptions mailOptions) {
 		MailServerFragment mailServerFragment = new MailServerFragment();
-//		String fragmentId = getRandomFragmentId(mailServerFragment);
-//		mailServerFragment.setName(fragmentId);
 		if (isMailHostSpecified(mailOptions)) {
 			mailServerFragment.setMailHost(createMailHost(mailOptions));
 		}
 		if (mailOptions.queue_directory.isDirty()) {
 			mailServerFragment.setQueueDirectory(mailOptions.queue_directory.Value());
 		}
-//		getMailServerFragments().getMailServerFragment().add(mailServerFragment);
 		return mailServerFragment;
 	}
 
 	private BackgroundServiceFragment createBackgroundServiceFragment(JADEOptions options) {
 		BackgroundServiceFragment backgroundServiceFragment = new BackgroundServiceFragment();
-//		String fragmentId = getRandomFragmentId(backgroundServiceFragment);
-//		backgroundServiceFragment.setName(fragmentId);
 		if (options.BackgroundServiceHost.isDirty()) {
 			backgroundServiceFragment.setBackgroundServiceHost(options.BackgroundServiceHost.Value());
 		}
@@ -501,7 +508,6 @@ public class IniToXmlConverter {
 		if (options.Scheduler_Transfer_Method.isDirty()) {
 			backgroundServiceFragment.setBackgroundServiceProtocol(options.Scheduler_Transfer_Method.Value());
 		}
-//		getNotificationFragments().getBackgroundServiceFragment().add(backgroundServiceFragment);
 		return backgroundServiceFragment;
 	}
 
@@ -511,7 +517,6 @@ public class IniToXmlConverter {
 		MailFragmentRef mailFragmentRef = new MailFragmentRef();
 		mailFragmentRef.setRef(getMailFragmentRefId(mailFragment));
 		notificationTriggerType.setMailFragmentRef(mailFragmentRef);
-		//getNotificationFragments().getMailFragment().add(mailFragment);
 		return notificationTriggerType;
 	}
 
@@ -686,13 +691,6 @@ public class IniToXmlConverter {
 		String[] profilesToConvert = null;
 		JSIniFile inifile = new JSIniFile(iniFilePath);
 		Set<String> sectionsCaseSensitive = new HashSet<String>();
-		/*Map<String, SOSProfileSection> sectionsLowerCase = inifile.Sections();
-		Iterator<String> sectionsLowerCaseIterator = sectionsLowerCase.keySet().iterator();
-		while (sectionsLowerCaseIterator.hasNext()) {
-			String key = sectionsLowerCaseIterator.next();
-			String sectionNameCaseSensitive = sectionsLowerCase.get(key).strSectionName;
-			sectionsCaseSensitive.add(sectionNameCaseSensitive);
-		}*/
 		for (Map.Entry<String, SOSProfileSection> entry : inifile.Sections().entrySet()) {
 			sectionsCaseSensitive.add(entry.getValue().strSectionName);
 		}
@@ -732,17 +730,15 @@ public class IniToXmlConverter {
 				logger.info("Ignoring the following profiles:" + msg);
 			}
 			// Sektionen, die von anderen Sektionen inkludiert werden
-			String[] includedSections = detectIncludedSections(sectionsCaseSensitive);
+			detectIncludedSectionsAndSectionsWithOperation(sectionsCaseSensitive);
 			
 			String profiles = "";
-			Iterator<String> it = sectionsCaseSensitive.iterator();
-			while (it.hasNext()) {
-				String key = it.next();
+			for (String section : sectionsCaseSensitive) {
 				// check if forced
 				boolean forced = false;
 				if (forcedProfiles != null) {
 					for (String profile : forcedProfiles) {
-						if (profile.equals(key)) {
+						if (profile.equals(section)) {
 							profiles += ";" + profile;
 							forced = true;
 							break;
@@ -753,18 +749,18 @@ public class IniToXmlConverter {
 				boolean ignored = false;
 				if (ignoredProfiles != null && forced == false) { // a profile should not be specified as both forced and ignored
 					for (String profile : ignoredProfiles) {
-						if (profile.equals(key)) {
+						if (profile.equals(section)) {
 							ignored = true;
 							break;
 						}
 					}
 				// The [global] profile may not be detected as a fragment because it is never explicitly included. For this reason it will be added to the ignored profiles, but only if it is not forced
-				} else if (key.equalsIgnoreCase("global") && forced == false) {
+				} else if (section.equalsIgnoreCase("global") && forced == false) {
 					ignored = true;
 				}
 				if (forced == false && ignored == false) {
-					if (isProfile(key, includedSections)) {
-						profiles += ";" + key;
+					if (isProfile(section)) {
+						profiles += ";" + section;
 					}
 				}
 			}
@@ -785,49 +781,54 @@ public class IniToXmlConverter {
 	}
 	
 	
-	private String[] detectIncludedSections(Collection<String> sections) {
-		Iterator<String> it = sections.iterator();
-		Set<String> includedFragments = new HashSet<String>();
-		while (it.hasNext()) {
-			String key = it.next();
-			JADEOptions options = loadIniFile(iniFilePath, key);
+	private void detectIncludedSectionsAndSectionsWithOperation(Set<String> sections) {
+		for (String section : sections) {
+			JADEOptions options = loadIniFile(iniFilePath, section);
+			if (options.operation.isDirty()) {
+				profilesWithOperation.add(section);
+			}
 			String[] includes = options.include.Value().split(",");
 			for (String include : includes) {
-				includedFragments.add(include.trim());
+				if (!includedFragments.contains(include.trim())) {
+					includedFragments.add(include.trim());
+				}
 			}
 			includes = options.Source().include.Value().split(",");
 			for (String include : includes) {
-				includedFragments.add(include.trim());
+				if (!includedFragments.contains(include.trim())) {
+					includedFragments.add(include.trim());
+				}
 			}
 			includes = options.Target().include.Value().split(",");
 			for (String include : includes) {
-				includedFragments.add(include.trim());
+				if (!includedFragments.contains(include.trim())) {
+					includedFragments.add(include.trim());
+				}
 			}
 			includes = options.Source().Alternatives().include.Value().split(",");
 			for (String include : includes) {
-				includedFragments.add(include.trim());
+				if (!includedFragments.contains(include.trim())) {
+					includedFragments.add(include.trim());
+				}
 			}
 			includes = options.Target().Alternatives().include.Value().split(",");
 			for (String include : includes) {
-				includedFragments.add(include.trim());
+				if (!includedFragments.contains(include.trim())) {
+					includedFragments.add(include.trim());
+				}
 			}
 		}
-		return includedFragments.toArray(new String[0]);
 	}
-
-
-
-	private boolean isProfile(String key, String[] includedFragments) {
+	
+	
+	private boolean isProfile(String key) {
 		boolean returnValue = true;
 		//a section is considered a profile if it is not being referenced by an include and if it contains an operation
-		JADEOptions options = loadIniFile(iniFilePath, key);
-		if (options.operation.isDirty()) {
+		if (profilesWithOperation.contains(key)) {
 			// Operation is specified
 			// check for include
-			for (String include : includedFragments) {
-				if (include.equals(key)) {
+			if (includedFragments.contains(key)) {
 					returnValue = false;
-				}
 			}
 		} else {
 			returnValue = false;
@@ -838,8 +839,6 @@ public class IniToXmlConverter {
 	
 	private MailFragment createMailFragment(SOSSmtpMailOptions mailOptions) {
 		MailFragment mailFragment = new MailFragment();
-//		String fragmentId = getRandomFragmentId(mailFragment);
-//		mailFragment.setName(fragmentId);
 		// Header
 		Header header = new Header();
 		mailFragment.setHeader(header);
@@ -1141,7 +1140,7 @@ public class IniToXmlConverter {
 
 	private void setWriteableFragmentRefType(WriteableFragmentRefType writeableFragmentRefType,JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
-			reportMissingMandatoryParameter("Protocol");
+			raiseMandatoryParameter = true;
 			throw new RuntimeException("Parameter 'protocol' is required!");
 		}
 		String sourceProtocolValue = connectionOptions.protocol.Value();
@@ -1180,7 +1179,7 @@ public class IniToXmlConverter {
 			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment);
 			writeableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 		}  else {
-			reportMissingMandatoryParameter("Protocol");
+			raiseMandatoryParameter = true;
 			throw new RuntimeException(String.format("Parameter 'protocol' = %1$s is not supported", connectionOptions.protocol.Value()));
 		}
 	}
@@ -1265,7 +1264,7 @@ public class IniToXmlConverter {
 
 	private void setReadableFragmentRefType(ReadableFragmentRefType readableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
-			reportMissingMandatoryParameter("Protocol");
+			raiseMandatoryParameter = true;
 			throw new RuntimeException("Parameter 'protocol' is required!");
 		}
 		// (Protocol)
@@ -1319,7 +1318,7 @@ public class IniToXmlConverter {
 			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef(options, connectionOptions, webDAVFragment);
 			readableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 		} else {
-			reportMissingMandatoryParameter("Protocol");
+			raiseMandatoryParameter = true;
 			throw new RuntimeException(String.format("Parameter 'protocol' = %1$s is not supported", connectionOptions.protocol.Value()));
 		}
 	}
@@ -1327,7 +1326,7 @@ public class IniToXmlConverter {
 	
 	private void setListableFragmentRefType(ListableFragmentRefType listableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
-			reportMissingMandatoryParameter("Protocol");
+			raiseMandatoryParameter = true;
 			throw new RuntimeException("Parameter 'protocol' is required!");
 		}
 		// (Protocol)
@@ -1367,7 +1366,7 @@ public class IniToXmlConverter {
 			WebDAVFragmentRef webDAVFragmentRef = createWebDAVFragmentRef( options, connectionOptions, webDAVFragment);
 			listableFragmentRefType.setWebDAVFragmentRef(webDAVFragmentRef);
 		} else {
-			reportMissingMandatoryParameter("Protocol");
+			raiseMandatoryParameter = true;
 			throw new RuntimeException(String.format("Parameter 'protocol' = %1$s is not supported", connectionOptions.protocol.Value()));
 		}
 	}
@@ -1617,7 +1616,6 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-//			getProtocolFragments().getJumpFragment().add(jumpFragment);
 			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			webDAVFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
@@ -1662,6 +1660,9 @@ public class IniToXmlConverter {
 					connection += ":" + url.getPort();
 				} else if (connectionOptions.port.isDirty()) {
 					connection += ":" + connectionOptions.port.value();
+				}
+				if (url.getPath().length() > 0) {
+					connection += url.getPath();
 				}
 				urlConnectionType.setURL(connection);
 				return urlConnectionType;
@@ -1781,7 +1782,6 @@ public class IniToXmlConverter {
 		// JumpFragmentRef
 		if (useJumpHost && isJumpFragmentSpecified(options)) {
 			JumpFragment jumpFragment = createJumpFragment(options);
-//			getProtocolFragments().getJumpFragment().add(jumpFragment);
 			JumpFragmentRef jumpFragmentRef = createJumpFragmentRef(jumpFragment);
 			sftpFragment.setJumpFragmentRef(jumpFragmentRef);
 		}
@@ -2506,7 +2506,6 @@ public class IniToXmlConverter {
 			targetFileOptions.setCheckSize(options.check_size.value());
 		}
 		// CumulateFiles
-//		if (options.CumulateFiles.isTrue()) {
 		if (isCumulateFilesSpecified(options)) {
 			if (options.CumulateFiles.isTrue()) {
 				CumulateFiles cumulateFiles = new CumulateFiles();
@@ -2996,7 +2995,6 @@ public class IniToXmlConverter {
 			refsCounter.put(prefix, (counter+1));
 		}
 		return prefix + "#" + refsCounter.get(prefix);
-		//return UUID.randomUUID().toString();
 	}
 
 	private void writeXML(Object object, File outFile) {
@@ -3012,7 +3010,7 @@ public class IniToXmlConverter {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		logger.info("Done.");
+		logger.info("Done."+System.lineSeparator());
 	}
 	
 	private String elementToString(Object object) {
