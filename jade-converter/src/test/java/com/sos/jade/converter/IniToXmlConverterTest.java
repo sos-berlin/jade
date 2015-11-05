@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IniToXmlConverterTest {
@@ -15,6 +16,9 @@ public class IniToXmlConverterTest {
 	public IniToXmlConverterTest() {
 		//
 	}
+	
+	private String outputDir = "C:/Temp/jade/test";
+	private String inputDir = "R:/backup/projects/YADE/testing/1.10/configurations";
 	
 	private DirectoryStream.Filter<Path> subFolders = new DirectoryStream.Filter<Path>() {
 
@@ -25,41 +29,53 @@ public class IniToXmlConverterTest {
 		
 	};
 
-	@Test
-	public void testMain() throws JAXBException {
-		String settingsFile = "C:/Temp/jade/settings/oh_settings.ini";
-		String[] options = {"-settings="+settingsFile,"-outputDir=C:/Temp/jade/test"}; 
-		IniToXmlConverter.main(options);
-	}
-	
+	@Ignore
 	@Test
 	public void testCredentialStore() throws JAXBException {
-		String settingsFile = "R:/backup/projects/YADE/testing/1.10/configurations/Integration/04_01_credential_store.ini";
-		String[] options = {"-settings="+settingsFile,"-outputDir=C:/Temp/jade/test/Integration"}; 
+		String settingsFile = inputDir + "/Integration/04_01_credential_store.ini";
+		String[] options = {"-settings=" + settingsFile,"-outputDir=" + outputDir + "/Integration"}; 
 		IniToXmlConverter.main(options);
 	}
 	
+	@Ignore
 	@Test
 	public void testTestSuite() throws JAXBException, IOException {
-		Path testSuiteLocation = Paths.get("R:/backup/projects/YADE/testing/1.10/configurations");
-		String outputParentDir = "C:/Temp/jade/test";
+		Path testSuiteLocation = Paths.get(inputDir);
 		Path outputPath = null;
 		DirectoryStream<Path> subFolderStream = Files.newDirectoryStream(testSuiteLocation, subFolders);
 		DirectoryStream<Path> iniFileStream = null;
 		for (Path subFolder : subFolderStream) {
 			iniFileStream = Files.newDirectoryStream(subFolder, "*.ini");
 			for (Path iniFile : iniFileStream) {
-				outputPath = Paths.get(outputParentDir, subFolder.getFileName().toString());
+				outputPath = Paths.get(outputDir, subFolder.getFileName().toString());
 				String[] options = { "-settings=" + iniFile.toString(),"-outputDir=" + outputPath.toString() };
 				IniToXmlConverter.main(options);
 			}
 		}
 	}
 	
+	@Ignore
+	@Test
+	public void testConverterTestData() throws JAXBException, IOException {
+		Path testSuiteLocation = Paths.get(inputDir + "/../../../schema/converter/configurations").toRealPath();
+		Path outputPath = null;
+		DirectoryStream<Path> subFolderStream = Files.newDirectoryStream(testSuiteLocation, subFolders);
+		DirectoryStream<Path> iniFileStream = null;
+		for (Path subFolder : subFolderStream) {
+			iniFileStream = Files.newDirectoryStream(subFolder, "*.ini");
+			for (Path iniFile : iniFileStream) {
+				outputPath = Paths.get(outputDir, subFolder.getFileName().toString());
+				String[] options = { "-settings=" + iniFile.toString(),"-outputDir=" + outputPath.toString() };
+				IniToXmlConverter.main(options);
+			}
+		}
+	}
+	
+	@Ignore
 	@Test
 	public void testAlternatives() throws JAXBException {
-		String settingsFile = "R:/backup/projects/YADE/testing/1.10/configurations/Integration/05_01_alternative_fragments.ini";
-		String[] options = {"-settings="+settingsFile,"-outputDir=C:/Temp/jade/test/Integration"}; 
+		String settingsFile = inputDir + "/Integration/05_01_alternative_fragments.ini";
+		String[] options = {"-settings=" + settingsFile,"-outputDir=" + outputDir + "/Integration"}; 
 		IniToXmlConverter.main(options);
 	}
 	
