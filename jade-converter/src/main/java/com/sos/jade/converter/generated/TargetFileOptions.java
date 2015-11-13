@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.10.09 um 03:42:30 PM CEST 
+// Generiert: 2015.11.11 um 11:55:19 AM CET 
 //
 
 
@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{}CheckSize" minOccurs="0"/>
  *         &lt;element ref="{}CumulateFiles" minOccurs="0"/>
  *         &lt;element ref="{}CompressFiles" minOccurs="0"/>
- *         &lt;element ref="{}CheckIntegrityHash" minOccurs="0"/>
+ *         &lt;element ref="{}CreateIntegrityHashFile" minOccurs="0"/>
  *         &lt;element ref="{}KeepModificationDate" minOccurs="0"/>
  *         &lt;element ref="{}DisableMakeDirectories" minOccurs="0"/>
  *         &lt;element ref="{}DisableOverwriteFiles" minOccurs="0"/>
@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "checkSize",
     "cumulateFiles",
     "compressFiles",
-    "checkIntegrityHash",
+    "createIntegrityHashFile",
     "keepModificationDate",
     "disableMakeDirectories",
     "disableOverwriteFiles"
@@ -67,8 +67,8 @@ public class TargetFileOptions {
     protected CumulateFiles cumulateFiles;
     @XmlElement(name = "CompressFiles")
     protected CompressFiles compressFiles;
-    @XmlElement(name = "CheckIntegrityHash")
-    protected CheckIntegrityHash checkIntegrityHash;
+    @XmlElement(name = "CreateIntegrityHashFile")
+    protected CreateIntegrityHashFile createIntegrityHashFile;
     @XmlElement(name = "KeepModificationDate", defaultValue = "false")
     protected Boolean keepModificationDate;
     @XmlElement(name = "DisableMakeDirectories", defaultValue = "false")
@@ -197,27 +197,27 @@ public class TargetFileOptions {
     }
 
     /**
-     * Ruft den Wert der checkIntegrityHash-Eigenschaft ab.
+     * Ruft den Wert der createIntegrityHashFile-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link CheckIntegrityHash }
+     *     {@link CreateIntegrityHashFile }
      *     
      */
-    public CheckIntegrityHash getCheckIntegrityHash() {
-        return checkIntegrityHash;
+    public CreateIntegrityHashFile getCreateIntegrityHashFile() {
+        return createIntegrityHashFile;
     }
 
     /**
-     * Legt den Wert der checkIntegrityHash-Eigenschaft fest.
+     * Legt den Wert der createIntegrityHashFile-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link CheckIntegrityHash }
+     *     {@link CreateIntegrityHashFile }
      *     
      */
-    public void setCheckIntegrityHash(CheckIntegrityHash value) {
-        this.checkIntegrityHash = value;
+    public void setCreateIntegrityHashFile(CreateIntegrityHashFile value) {
+        this.createIntegrityHashFile = value;
     }
 
     /**

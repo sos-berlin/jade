@@ -39,6 +39,7 @@ public class IniToXmlConverter {
 	private String[] ignoredProfiles = null;
 	private String[] forcedProfiles = null;
 	private File outputDir = null;
+	private File outputFile = null;
 	//*********************************************************************************************************************************************//
 	public static Logger logger = LoggerFactory.getLogger(IniToXmlConverter.class);
 	private Set<String> profilesMissingMandatoryParameters = new HashSet<>();
@@ -55,31 +56,38 @@ public class IniToXmlConverter {
 		
 	}
 	
-	public static void main(String[] args) throws JAXBException {
+	public static void main(String[] args) {
 		
-		IniToXmlConverter converter = new IniToXmlConverter();
-		converter.handleArguments(args);
-		if (converter.iniFilePath.isEmpty()) {
-			throw (new JobSchedulerException("No settings file was specified for conversion."));
-		} else if (!new File(converter.iniFilePath).exists()) {
-			throw (new JobSchedulerException("The settings file specified for conversion could not be found."));
+		try {
+			IniToXmlConverter converter = new IniToXmlConverter();
+			converter.handleArguments(args);
+			if (converter.iniFilePath.isEmpty()) {
+				throw (new JobSchedulerException("No settings file was specified for conversion."));
+			} else if (!new File(converter.iniFilePath).exists()) {
+				throw (new JobSchedulerException("The settings file specified for conversion could not be found."));
+			}
+			logger.info(String.format("The settings file specified for conversion is '%1$s'", converter.iniFilePath));
+			String[] profilesToConvert = converter.detectProfiles();
+			Object object = converter.convertIniFile(profilesToConvert);
+			File outFile = converter.getOutFile();
+			converter.writeXML(object, outFile);
+			System.exit(0);
+		} catch (Exception e) {
+			logger.error("", e);
+			System.exit(1);
 		}
-		logger.info("The settings file specified for conversion is '" + converter.iniFilePath + "'");
-		String[] profilesToConvert = converter.detectProfiles();
-		Object object = converter.convertIniFile(profilesToConvert);
-		File outFile = converter.getOutFile();
-		converter.writeXML(object, outFile);
 	}
 	
 	private File getOutFile() {
-		File iniFile = new File(iniFilePath);
-		String outFilePath = "";
-		if (outputDir != null) {
-			outFilePath = outputDir.getAbsolutePath() + "/" + iniFile.getName().replace(".ini", ".xml");
-		} else {
-			outFilePath = iniFile.getAbsolutePath().replace(".ini", ".xml");
+		if (outputFile != null) {
+			return outputFile;
 		}
-		return new File(outFilePath);
+		File iniFile = new File(iniFilePath);
+		String outFileName = iniFile.getName().replaceFirst("\\.ini$", "") + ".xml";
+		if (outputDir == null) {
+			outputDir = iniFile.getParentFile();
+		} 
+		return new File(outputDir, outFileName);
 	}
 
 	/**
@@ -89,6 +97,7 @@ public class IniToXmlConverter {
 	 * -forcedProfiles="profile1;profile2"
 	 * -ignoredProfiles="profile3;profile4"
 	 * -outputDir="outpath"
+	 * -outputFile="outfilepath"
 	 * @param args
 	 */
 	private void handleArguments(String[] args) {
@@ -107,7 +116,7 @@ public class IniToXmlConverter {
 					} else if (argValue.equalsIgnoreCase("true")) {
 						autoDetectProfiles = true;
 					} else {
-						throw (new IllegalArgumentException("Invalid value specified for option 'autoDetectProfiles'"));
+						throw new IllegalArgumentException("Invalid value specified for option 'autoDetectProfiles'");
 					}
 				} else if (argName.equalsIgnoreCase("ignoredProfiles") && argValue.isEmpty() == false) {
 					ignoredProfiles = argValue.split(";");
@@ -119,6 +128,24 @@ public class IniToXmlConverter {
 						outputDir = file;
 					} else if (!file.exists() && file.mkdirs()) {
 						outputDir = file;
+					} else if (file.exists() && !file.isDirectory()) {
+						throw new IllegalArgumentException(String.format("Invalid value specified for option %1$s. '%2$s' already exists and it is not a directory.", argName, argValue));
+					}
+					if (!file.exists()) {
+						throw new IllegalArgumentException(String.format("Invalid value specified for option %1$s. '%2$s' doesn't exist.", argName, argValue));
+					}
+				} else if (argName.equalsIgnoreCase("outputFile") && argValue.isEmpty() == false) {
+					File file = new File(argValue);
+					File fileParent = file.getParentFile();
+					if (fileParent.exists() && fileParent.isDirectory()) {
+						outputFile = file;
+					} else if (!fileParent.exists() && fileParent.mkdirs()) {
+						outputFile = file;
+					} else if (file.exists() && !file.isDirectory()) {
+						throw new IllegalArgumentException(String.format("Invalid value specified for option %1$s. '%2$s' already exists and it is not a directory.", argName, fileParent.getAbsolutePath()));
+					}
+					if (!fileParent.exists()) {
+						throw new IllegalArgumentException(String.format("Invalid value specified for option %1$s. '%2$s' doesn't exist.", argName, fileParent.getAbsolutePath()));
 					}
 				}
 			}
@@ -981,7 +1008,6 @@ public class IniToXmlConverter {
 	
 	
 	private boolean isLoggingSpecified(JADEOptions options) {
-		//TODO protocol_command_listener is source/target parameter: schema has to changed
 		boolean pcl = options.Source().ProtocolCommandListener.isDirty() || options.Target().ProtocolCommandListener.isDirty();
 		if (pcl || options.verbose.isDirty() || options.log_filename.isDirty() || options.log4jPropertyFileName.isDirty()) {
 			return true;
@@ -1141,7 +1167,7 @@ public class IniToXmlConverter {
 	private void setWriteableFragmentRefType(WriteableFragmentRefType writeableFragmentRefType,JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
 			raiseMandatoryParameter = true;
-			throw new RuntimeException(String.format("Parameter '%1$s_protocol' is required!", connectionOptions.getPrefix()));
+			throw new RuntimeException(String.format("Parameter '%1$sprotocol' is required!", connectionOptions.getPrefix()));
 		}
 		String sourceProtocolValue = connectionOptions.protocol.Value();
 		if (sourceProtocolValue.equalsIgnoreCase("ftp")) {
@@ -1265,7 +1291,7 @@ public class IniToXmlConverter {
 	private void setReadableFragmentRefType(ReadableFragmentRefType readableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
 			raiseMandatoryParameter = true;
-			throw new RuntimeException(String.format("Parameter '%1$s_protocol' is required!", connectionOptions.getPrefix()));
+			throw new RuntimeException(String.format("Parameter '%1$sprotocol' is required!", connectionOptions.getPrefix()));
 		}
 		// (Protocol)
 		String sourceProtocolValue = connectionOptions.protocol.Value();
@@ -1327,7 +1353,7 @@ public class IniToXmlConverter {
 	private void setListableFragmentRefType(ListableFragmentRefType listableFragmentRefType, JADEOptions options, SOSConnection2OptionsAlternate connectionOptions, boolean useJumpHost) {
 		if (connectionOptions.protocol.isNotDirty()) {
 			raiseMandatoryParameter = true;
-			throw new RuntimeException(String.format("Parameter '%1$s_protocol' is required!", connectionOptions.getPrefix()));
+			throw new RuntimeException(String.format("Parameter '%1$sprotocol' is required!", connectionOptions.getPrefix()));
 		}
 		// (Protocol)
 		String sourceProtocolValue = connectionOptions.protocol.Value();
@@ -1416,10 +1442,28 @@ public class IniToXmlConverter {
 			ResultSet resultSet = createResultSet(options);
 			sourceFileOptions.setResultSet(resultSet);
 		}
-		// SkipFiles is currently not implemented
+		// SkipFiles? Why? Use case?
+		if (options.skip_first_files.isDirty() || options.skip_last_files.isDirty()) {
+			SkipFiles skipFiles = new SkipFiles();
+			if (options.skip_first_files.isDirty()) {
+				skipFiles.setSkipFirstFiles(options.skip_first_files.value());
+			}
+			if (options.skip_last_files.isDirty()) {
+				skipFiles.setSkipLastFiles(options.skip_last_files.value());
+			}
+			sourceFileOptions.setSkipFiles(skipFiles);
+		}
 		// MaxFiles
 		if (options.MaxFiles.isDirty()) {
 			sourceFileOptions.setMaxFiles(options.MaxFiles.value());
+		}
+		// CheckIntegrityHash
+		if (options.CheckIntegrityHash.isTrue()) {
+			CheckIntegrityHash checkIntegrityHash = new CheckIntegrityHash();
+			if (options.SecurityHashType.isDirty()) {
+				checkIntegrityHash.setHashAlgorithm(options.SecurityHashType.Value());
+			}
+			sourceFileOptions.setCheckIntegrityHash(checkIntegrityHash);
 		}
 		return sourceFileOptions;
 	}
@@ -1430,9 +1474,9 @@ public class IniToXmlConverter {
 			resultSet.setResultSetFile(options.result_list_file.Value());
 		}
 		if (isCheckResultSetSizeSpecified(options)) {
-			CheckResultSetSize checkResultSetSize = new CheckResultSetSize();
-			checkResultSetSize.setExpectedSizeOfResultSet(options.expected_size_of_result_set.value());
-			checkResultSetSize.setRaiseErrorIfResultSetIs(options.raise_error_if_result_set_is.Value());
+			CheckResultSetCount checkResultSetCount = new CheckResultSetCount();
+			checkResultSetCount.setExpectedResultSetCount(options.expected_size_of_result_set.value());
+			checkResultSetCount.setRaiseErrorIfResultSetIs(options.raise_error_if_result_set_is.Value());
 		}
 		if (options.on_empty_result_set.isDirty()) {
 			resultSet.setEmptyResultSetState(options.on_empty_result_set.Value());
@@ -1881,6 +1925,10 @@ public class IniToXmlConverter {
 		if (options.jump_dir.isDirty()) {
 			jumpFragment.setJumpDirectory(options.jump_dir.Value());
 		}
+		// StrictHostKeyChecking
+		if (options.jump_strict_hostkey_checking.isDirty()) {
+			jumpFragment.setStrictHostkeyChecking(options.jump_strict_hostkey_checking.value());
+		}
 		// ProxyForSFTP
 		if (isJumpProxySpecified(options)) {
 			if (options.jump_proxy_protocol.Value().equalsIgnoreCase("http") || options.jump_proxy_protocol.Value().equalsIgnoreCase("socks4") ||
@@ -1904,7 +1952,6 @@ public class IniToXmlConverter {
 				logger.warn("Invalid value specified for option 'jump_proxy_protocol'. Only values 'http', 'socks4' and 'socks5' are allowed in combination with Jump.");
 			}
 		}
-		// StrictHostKeyChecking does not seem to be implemented
 		// no CredentialStore for jump implemented
 		return jumpFragment;
 	}
@@ -2531,16 +2578,13 @@ public class IniToXmlConverter {
 			}
 			targetFileOptions.setCompressFiles(compressFiles);
 		}
-		// CheckIntegrityHash
-		if (options.CheckSecurityHash.isTrue() || options.CreateSecurityHashFile.isTrue()) {
-			CheckIntegrityHash checkIntegrityHash = new CheckIntegrityHash();
-			if (options.CreateSecurityHashFile.isDirty()) {
-				checkIntegrityHash.setCreateIntegrityHashFile(options.CreateSecurityHashFile.value());
-			}
+		// CreateIntegrityHash
+		if (options.CreateSecurityHashFile.isTrue()) {
+			CreateIntegrityHashFile createIntegrityHash = new CreateIntegrityHashFile();
 			if (options.SecurityHashType.isDirty()) {
-				checkIntegrityHash.setHashAlgorithm(options.SecurityHashType.Value());
+				createIntegrityHash.setHashAlgorithm(options.SecurityHashType.Value());
 			}
-			targetFileOptions.setCheckIntegrityHash(checkIntegrityHash);
+			targetFileOptions.setCreateIntegrityHashFile(createIntegrityHash);
 		}
 		// KeepModificationDate
 		if (options.KeepModificationDate.isDirty()) {
@@ -2994,12 +3038,12 @@ public class IniToXmlConverter {
 			int counter = refsCounter.get(prefix);
 			refsCounter.put(prefix, (counter+1));
 		}
-		return prefix + "#" + refsCounter.get(prefix);
+		return prefix + ":" + refsCounter.get(prefix);
 	}
 
-	private void writeXML(Object object, File outFile) {
+	private void writeXML(Object object, File outFile) throws JAXBException {
 		logger.info("Writing converted file '" + outFile.getAbsolutePath() + "'");
-		try {
+//		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			
@@ -3007,9 +3051,9 @@ public class IniToXmlConverter {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION, schemaLocation);
 
 			jaxbMarshaller.marshal(object, outFile);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+//		} catch (JAXBException e) {
+//			logger.error("", e);
+//		}
 		logger.info("Done."+System.lineSeparator());
 	}
 	
@@ -3021,7 +3065,7 @@ public class IniToXmlConverter {
 			jaxbMarshaller.marshal(object, w);
 			return w.toString();
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			logger.error("", e);
 			return "";
 		} finally {
 			try {

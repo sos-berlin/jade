@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.sos-berlin.jade</groupId>
 	<artifactId>jade-converter</artifactId>
-	<properties>
+	<!--properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	</properties-->
 
 	<build>
 		<plugins>
@@ -68,26 +68,141 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.sos-berlin.jobscheduler</groupId>
-			<artifactId>jobscheduler-helper</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sos-berlin.jobscheduler</groupId>
-			<artifactId>virtual-file-system</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.sos-berlin.jade</groupId>
 			<artifactId>jade-engine</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+			  <exclusion>
+		            <groupId>com.sos-berlin.jobscheduler.engine</groupId>
+		            <artifactId>engine-job-api</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>jobscheduler-object-model</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin</groupId>
+		            <artifactId>graphviz-adapter</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>sos-net</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>sos-scheduler</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.jobscheduler</groupId>
+		            <artifactId>sos-ssh</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-xml</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-connection</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.sos-berlin.commons</groupId>
+		            <artifactId>sos-textprocessor</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>javax.mail</groupId>
+		            <artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>org.apache.commons</groupId>
+		            <artifactId>commons-lang3</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>commons-httpclient</groupId>
+		            <artifactId>commons-httpclient</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>commons-beanutils</groupId>
+		            <artifactId>commons-beanutils</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>commons-codec</groupId>
+		            <artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>commons-logging</groupId>
+		            <artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>commons-net</groupId>
+		            <artifactId>commons-net</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>org.jdom</groupId>
+		            <artifactId>jdom</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.jcraft</groupId>
+		            <artifactId>jsch</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.trilead</groupId>
+		            <artifactId>sos-trilead-ssh2</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>ch.ethz.ganymed</groupId>
+		            <artifactId>ganymed-ssh2</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>jcifs</groupId>
+		            <artifactId>jcifs</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>ca.juliusdavies</groupId>
+		            <artifactId>not-yet-commons-ssl</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>org.apache.activemq</groupId>
+		            <artifactId>activemq-all</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>webdavclient4j</groupId>
+		            <artifactId>webdavclient4j-core</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>org.bouncycastle</groupId>
+		            <artifactId>bcprov-ext-jdk15on</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.lowagie</groupId>
+		            <artifactId>itext</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>org.apache.poi</groupId>
+		            <artifactId>poi</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>xalan</groupId>
+		            <artifactId>xalan</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>xml-apis</groupId>
+		            <artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>xerces</groupId>
+		            <artifactId>xercesImpl</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 
 	</dependencies>
