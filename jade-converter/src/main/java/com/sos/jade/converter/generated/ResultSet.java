@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.10.09 um 03:42:30 PM CEST 
+// Generiert: 2015.11.11 um 11:55:19 AM CET 
 //
 
 
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element ref="{}ResultSetFile" minOccurs="0"/>
- *         &lt;element ref="{}CheckResultSetSize" minOccurs="0"/>
+ *         &lt;element ref="{}CheckResultSetCount" minOccurs="0"/>
  *         &lt;element ref="{}EmptyResultSetState" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "resultSetFile",
-    "checkResultSetSize",
+    "checkResultSetCount",
     "emptyResultSetState"
 })
 @XmlRootElement(name = "ResultSet")
@@ -47,8 +47,8 @@ public class ResultSet {
 
     @XmlElement(name = "ResultSetFile")
     protected String resultSetFile;
-    @XmlElement(name = "CheckResultSetSize")
-    protected CheckResultSetSize checkResultSetSize;
+    @XmlElement(name = "CheckResultSetCount")
+    protected CheckResultSetCount checkResultSetCount;
     @XmlElement(name = "EmptyResultSetState")
     protected String emptyResultSetState;
 
@@ -77,27 +77,27 @@ public class ResultSet {
     }
 
     /**
-     * Ruft den Wert der checkResultSetSize-Eigenschaft ab.
+     * Ruft den Wert der checkResultSetCount-Eigenschaft ab.
      * 
      * @return
      *     possible object is
-     *     {@link CheckResultSetSize }
+     *     {@link CheckResultSetCount }
      *     
      */
-    public CheckResultSetSize getCheckResultSetSize() {
-        return checkResultSetSize;
+    public CheckResultSetCount getCheckResultSetCount() {
+        return checkResultSetCount;
     }
 
     /**
-     * Legt den Wert der checkResultSetSize-Eigenschaft fest.
+     * Legt den Wert der checkResultSetCount-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
-     *     {@link CheckResultSetSize }
+     *     {@link CheckResultSetCount }
      *     
      */
-    public void setCheckResultSetSize(CheckResultSetSize value) {
-        this.checkResultSetSize = value;
+    public void setCheckResultSetCount(CheckResultSetCount value) {
+        this.checkResultSetCount = value;
     }
 
     /**

@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.10.09 um 03:42:30 PM CEST 
+// Generiert: 2015.11.11 um 11:55:19 AM CET 
 //
 
 
@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}MinFileAge" minOccurs="0"/>
- *         &lt;element ref="{}MaxFileAge" minOccurs="0"/>
+ *         &lt;element ref="{}HashAlgorithm" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,63 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "minFileAge",
-    "maxFileAge"
+    "hashAlgorithm"
 })
-@XmlRootElement(name = "FileAge")
-public class FileAge {
+@XmlRootElement(name = "CreateIntegrityHashFile")
+public class CreateIntegrityHashFile {
 
-    @XmlElement(name = "MinFileAge")
-    protected String minFileAge;
-    @XmlElement(name = "MaxFileAge")
-    protected String maxFileAge;
+    @XmlElement(name = "HashAlgorithm", defaultValue = "md5")
+    protected String hashAlgorithm;
 
     /**
-     * Ruft den Wert der minFileAge-Eigenschaft ab.
+     * Ruft den Wert der hashAlgorithm-Eigenschaft ab.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getMinFileAge() {
-        return minFileAge;
+    public String getHashAlgorithm() {
+        return hashAlgorithm;
     }
 
     /**
-     * Legt den Wert der minFileAge-Eigenschaft fest.
+     * Legt den Wert der hashAlgorithm-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setMinFileAge(String value) {
-        this.minFileAge = value;
-    }
-
-    /**
-     * Ruft den Wert der maxFileAge-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getMaxFileAge() {
-        return maxFileAge;
-    }
-
-    /**
-     * Legt den Wert der maxFileAge-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setMaxFileAge(String value) {
-        this.maxFileAge = value;
+    public void setHashAlgorithm(String value) {
+        this.hashAlgorithm = value;
     }
 
 }

@@ -29,11 +29,11 @@ public class IniToXmlConverterTest {
 		
 	};
 
-	@Ignore
+	//@Ignore
 	@Test
 	public void testCredentialStore() throws JAXBException {
 		String settingsFile = inputDir + "/Integration/04_01_credential_store.ini";
-		String[] options = {"-settings=" + settingsFile,"-outputDir=" + outputDir + "/Integration"}; 
+		String[] options = {"-settings=" + settingsFile,"-outputFile=" + outputDir + "/Integration/test.xml"}; 
 		IniToXmlConverter.main(options);
 	}
 	

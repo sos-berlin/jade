@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.10.09 um 03:42:30 PM CEST 
+// Generiert: 2015.11.11 um 11:55:19 AM CET 
 //
 
 
@@ -51,7 +51,7 @@ public class ObjectFactory {
     private final static QName _AtomicSuffix_QNAME = new QName("", "AtomicSuffix");
     private final static QName _BCC_QNAME = new QName("", "BCC");
     private final static QName _ReturnCode_QNAME = new QName("", "ReturnCode");
-    private final static QName _MaxFileAge_QNAME = new QName("", "MaxFileAge");
+    private final static QName _ExpectedResultSetCount_QNAME = new QName("", "ExpectedResultSetCount");
     private final static QName _JumpCommand_QNAME = new QName("", "JumpCommand");
     private final static QName _MoveTargetFragmentRef_QNAME = new QName("", "MoveTargetFragmentRef");
     private final static QName _CSKeepExportedFileOnExit_QNAME = new QName("", "CSKeepExportedFileOnExit");
@@ -78,7 +78,6 @@ public class ObjectFactory {
     private final static QName _SOCKS5Proxy_QNAME = new QName("", "SOCKS5Proxy");
     private final static QName _URLConnection_QNAME = new QName("", "URLConnection");
     private final static QName _OrderJobChainName_QNAME = new QName("", "OrderJobChainName");
-    private final static QName _ExpectedSizeOfResultSet_QNAME = new QName("", "ExpectedSizeOfResultSet");
     private final static QName _CompressedFileExtension_QNAME = new QName("", "CompressedFileExtension");
     private final static QName _SFTPPostProcessing_QNAME = new QName("", "SFTPPostProcessing");
     private final static QName _KeyStoreType_QNAME = new QName("", "KeyStoreType");
@@ -88,7 +87,6 @@ public class ObjectFactory {
     private final static QName _DisableHistoryFileAppendMode_QNAME = new QName("", "DisableHistoryFileAppendMode");
     private final static QName _ReplaceWhat_QNAME = new QName("", "ReplaceWhat");
     private final static QName _CheckSteadyStateInterval_QNAME = new QName("", "CheckSteadyStateInterval");
-    private final static QName _MinFileAge_QNAME = new QName("", "MinFileAge");
     private final static QName _ProtocolCommandListener_QNAME = new QName("", "ProtocolCommandListener");
     private final static QName _CumulativeFileDelete_QNAME = new QName("", "CumulativeFileDelete");
     private final static QName _HashAlgorithm_QNAME = new QName("", "HashAlgorithm");
@@ -122,13 +120,10 @@ public class ObjectFactory {
     private final static QName _Assertions_QNAME = new QName("", "Assertions");
     private final static QName _FTPSProtocol_QNAME = new QName("", "FTPSProtocol");
     private final static QName _Atomicity_QNAME = new QName("", "Atomicity");
-    private final static QName _CreateIntegrityHashFile_QNAME = new QName("", "CreateIntegrityHashFile");
     private final static QName _SupplyingClient_QNAME = new QName("", "SupplyingClient");
-    private final static QName _MaxFileSize_QNAME = new QName("", "MaxFileSize");
     private final static QName _ReceivingClient_QNAME = new QName("", "ReceivingClient");
     private final static QName _CommandBeforeFile_QNAME = new QName("", "CommandBeforeFile");
     private final static QName _BackgroundServiceJobChainName_QNAME = new QName("", "BackgroundServiceJobChainName");
-    private final static QName _MinFileSize_QNAME = new QName("", "MinFileSize");
     private final static QName _Domain_QNAME = new QName("", "Domain");
     private final static QName _Notifications_QNAME = new QName("", "Notifications");
     private final static QName _SFTPPreProcessing_QNAME = new QName("", "SFTPPreProcessing");
@@ -468,22 +463,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FileAge }
-     * 
-     */
-    public FileAge createFileAge() {
-        return new FileAge();
-    }
-
-    /**
-     * Create an instance of {@link FileSize }
-     * 
-     */
-    public FileSize createFileSize() {
-        return new FileSize();
-    }
-
-    /**
      * Create an instance of {@link Polling }
      * 
      */
@@ -500,11 +479,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CheckResultSetSize }
+     * Create an instance of {@link CheckResultSetCount }
      * 
      */
-    public CheckResultSetSize createCheckResultSetSize() {
-        return new CheckResultSetSize();
+    public CheckResultSetCount createCheckResultSetCount() {
+        return new CheckResultSetCount();
     }
 
     /**
@@ -513,6 +492,14 @@ public class ObjectFactory {
      */
     public SkipFiles createSkipFiles() {
         return new SkipFiles();
+    }
+
+    /**
+     * Create an instance of {@link CheckIntegrityHash }
+     * 
+     */
+    public CheckIntegrityHash createCheckIntegrityHash() {
+        return new CheckIntegrityHash();
     }
 
     /**
@@ -580,11 +567,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CheckIntegrityHash }
+     * Create an instance of {@link CreateIntegrityHashFile }
      * 
      */
-    public CheckIntegrityHash createCheckIntegrityHash() {
-        return new CheckIntegrityHash();
+    public CreateIntegrityHashFile createCreateIntegrityHashFile() {
+        return new CreateIntegrityHashFile();
     }
 
     /**
@@ -1327,12 +1314,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "MaxFileAge")
-    public JAXBElement<String> createMaxFileAge(String value) {
-        return new JAXBElement<String>(_MaxFileAge_QNAME, String.class, null, value);
+    @XmlElementDecl(namespace = "", name = "ExpectedResultSetCount")
+    public JAXBElement<Integer> createExpectedResultSetCount(Integer value) {
+        return new JAXBElement<Integer>(_ExpectedResultSetCount_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -1570,15 +1557,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "ExpectedSizeOfResultSet")
-    public JAXBElement<Integer> createExpectedSizeOfResultSet(Integer value) {
-        return new JAXBElement<Integer>(_ExpectedSizeOfResultSet_QNAME, Integer.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
@@ -1657,15 +1635,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "CheckSteadyStateInterval", defaultValue = "1")
     public JAXBElement<Integer> createCheckSteadyStateInterval(Integer value) {
         return new JAXBElement<Integer>(_CheckSteadyStateInterval_QNAME, Integer.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "MinFileAge")
-    public JAXBElement<String> createMinFileAge(String value) {
-        return new JAXBElement<String>(_MinFileAge_QNAME, String.class, null, value);
     }
 
     /**
@@ -1966,30 +1935,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "CreateIntegrityHashFile", defaultValue = "false")
-    public JAXBElement<Boolean> createCreateIntegrityHashFile(Boolean value) {
-        return new JAXBElement<Boolean>(_CreateIntegrityHashFile_QNAME, Boolean.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "", name = "SupplyingClient")
     public JAXBElement<String> createSupplyingClient(String value) {
         return new JAXBElement<String>(_SupplyingClient_QNAME, String.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "MaxFileSize")
-    public JAXBElement<Integer> createMaxFileSize(Integer value) {
-        return new JAXBElement<Integer>(_MaxFileSize_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -2017,15 +1968,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "BackgroundServiceJobChainName", defaultValue = "/sos/jade/jade_history")
     public JAXBElement<String> createBackgroundServiceJobChainName(String value) {
         return new JAXBElement<String>(_BackgroundServiceJobChainName_QNAME, String.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "MinFileSize")
-    public JAXBElement<Integer> createMinFileSize(Integer value) {
-        return new JAXBElement<Integer>(_MinFileSize_QNAME, Integer.class, null, value);
     }
 
     /**
