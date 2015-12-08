@@ -6,33 +6,26 @@ import com.sos.jade.backgroundservice.data.JadeHistoryDetailItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 
-/**
- * This is a Vaadin filter for the details table, which is used when all date is already received. 
- * No extra call to the DB is needed, because the data is received by the history table. 
- * 
- * @author SP
- *
- */
-public class DetailFilter implements Container.Filter{
-	private static final long serialVersionUID = 1L;
-	private List<String> messageKeys;
+public class DetailFilter implements Container.Filter {
 
-	public DetailFilter() {
-	}
+    private static final long serialVersionUID = 1L;
+    private List<String> messageKeys;
 
-	public DetailFilter(List<String> messageKeys) {
-		this.messageKeys = messageKeys;
-	}
+    public DetailFilter() {
+    }
 
-	@Override
-	public boolean passesFilter(Object itemId, Item item)
-			throws UnsupportedOperationException {
-		return messageKeys.contains(((JadeHistoryDetailItem)itemId).getMessageKey());
-	}
+    public DetailFilter(List<String> messageKeys) {
+        this.messageKeys = messageKeys;
+    }
 
-	@Override
-	public boolean appliesToProperty(Object propertyId) {
+    @Override
+    public boolean passesFilter(Object itemId, Item item) throws UnsupportedOperationException {
+        return messageKeys.contains(((JadeHistoryDetailItem) itemId).getMessageKey());
+    }
+
+    @Override
+    public boolean appliesToProperty(Object propertyId) {
         return "key".equals(propertyId);
-	}
+    }
 
 }
