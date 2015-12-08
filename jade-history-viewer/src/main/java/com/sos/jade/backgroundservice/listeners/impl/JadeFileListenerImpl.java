@@ -1,7 +1,7 @@
 package com.sos.jade.backgroundservice.listeners.impl;
 
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.hibernateConfigFile;
-import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.jadeBsOptions;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.JADE_BS_OPTIONS;
 
 import java.io.File;
 import java.io.Serializable;
@@ -26,69 +26,67 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.UI;
 
 public class JadeFileListenerImpl implements IJadeFileListener, Serializable{
-	private static final long serialVersionUID = 1L;
-//	private JadeFilesDBLayer jadeFilesDBLayer;
-//	private JadeFilesHistoryDBLayer jadeFilesHistoryDBLayer;
-	public MainView ui;
-	private Logger log = LoggerFactory.getLogger(JadeFileListenerImpl.class);
-	private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
-	private JadeHistoryDBLayer historyDBLayer;
-	private SOSHibernateConnection connection;
-	
-	public JadeFileListenerImpl(MainView ui){
-		this.ui = ui;
-		String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-		if(hibernateConfigFile != null && hibernateConfigFile.length() != 0){
-			jadeBsOptions.hibernateConfigurationFileName.Value(hibernateConfigFile);
-		}
- 		jadeBsOptions.hibernateConfigurationFileName.CheckMandatory();
- 		connect();
-	}
+    private static final long serialVersionUID = 1L;
+    public MainView ui;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeFileListenerImpl.class);
+    private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss.SSS");
+    private SOSHibernateConnection connection;
+    private JadeHistoryDBLayer historyDBLayer;
+    
+    public JadeFileListenerImpl(MainView ui){
+        this.ui = ui;
+        String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
+        if(hibernateConfigFile != null && hibernateConfigFile.length() != 0){
+            JADE_BS_OPTIONS.hibernateConfigurationFileName.Value(hibernateConfigFile);
+        }
+        JADE_BS_OPTIONS.hibernateConfigurationFileName.CheckMandatory();
+        connect();
+    }
 
-	@Override
-	public void getException(Exception e) {
-		e.printStackTrace();
-	}
+    @Override
+    public void logException(Exception e) {
+        LOGGER.error("", e);
+    }
 
-	private void connect(){
- 		try {
-			this.connection = new SOSHibernateConnection(hibernateConfigFile);
-			connection.connect();
-			this.historyDBLayer = new JadeHistoryDBLayer(connection);
-		} catch (Exception e) {
-			log.error("Error occurred connecting to DB: ", e);
-		}
-	}
-	
-	private void disconnect(){
-		connection.disconnect();
-	}
-	
-	@Override
-	public void getFileHistoryByIdFromLayer(Long id) {
-		connect();
-		try {
-			List<JadeFilesHistoryDBItem> received = this.historyDBLayer.getFilesHistoryById(id);
-			ui.setHistoryItems(received);
-		} catch (Exception e) {
-			getException(e);
-		}
-		disconnect();
-	}
-	
-	@Override
-	public void filterJadeFilesHistory(JadeFilesHistoryFilter filter) {
-		connect();
-		if(filter != null){
-			this.historyDBLayer.setFilesHistoryFilter(filter);
-		}
+    private void connect(){
         try {
-        	List<JadeFilesHistoryDBItem> received = historyDBLayer.getHistoryFilesOrderedByTransferEnd();
- 			ui.setHistoryItems(received);
-		} catch (Exception e) {
-			getException(e);
-		}
-		disconnect();
-	}
-	
+            this.connection = new SOSHibernateConnection(hibernateConfigFile);
+            connection.connect();
+            this.historyDBLayer = new JadeHistoryDBLayer(connection);
+        } catch (Exception e) {
+            LOGGER.error("Error occurred connecting to DB: ", e);
+        }
+    }
+    
+    private void disconnect(){
+        connection.disconnect();
+    }
+    
+    @Override
+    public void getFileHistoryByIdFromLayer(Long id) {
+        connect();
+        try {
+            List<JadeFilesHistoryDBItem> received = this.historyDBLayer.getFilesHistoryById(id);
+            ui.setHistoryItems(received);
+        } catch (Exception e) {
+            logException(e);
+        }
+        disconnect();
+    }
+    
+    @Override
+    public void filterJadeFilesHistory(JadeFilesHistoryFilter filter) {
+        connect();
+        if(filter != null){
+            this.historyDBLayer.setFilesHistoryFilter(filter);
+        }
+        try {
+            List<JadeFilesHistoryDBItem> received = historyDBLayer.getHistoryFilesOrderedByTransferEnd();
+            ui.setHistoryItems(received);
+        } catch (Exception e) {
+            logException(e);
+        }
+        disconnect();
+    }
+    
 }
