@@ -29,8 +29,6 @@ import com.vaadin.ui.Table;
 public class JadeFileHistoryTable extends Table {
 
     private static final long serialVersionUID = 2134585331362934124L;
-    private static final int DEFAULT_COLUMN_KEY_WIDTH = 200;
-    private static final int DEFAULT_COLUMN_VALUE_WIDTH = 220;
     private static final int PAGE_LENGTH = 20;
     private static final Logger LOGGER = LoggerFactory.getLogger(JadeFileHistoryTable.class);
     private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
