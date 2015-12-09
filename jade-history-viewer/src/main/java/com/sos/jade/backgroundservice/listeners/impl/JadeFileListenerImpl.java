@@ -33,8 +33,8 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
             JADE_BS_OPTIONS.hibernateConfigurationFileName.Value(hibernateConfigFile);
         }
         JADE_BS_OPTIONS.hibernateConfigurationFileName.CheckMandatory();
-        this.jadeFilesDBLayer = new JadeFilesDBLayer(new File(hibernateConfigFile));
-        this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(new File(hibernateConfigFile));
+        this.jadeFilesDBLayer = new JadeFilesDBLayer(hibernateConfigFile);
+        this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(hibernateConfigFile);
     }
 
     @Override
@@ -46,7 +46,6 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
     public void getFileHistoryByIdFromLayer(Long id) {
         initJadeFilesDbSession();
         getFileHistoryFromDb(id);
-        closeJadeFilesDbSession();
     }
 
     @Override
@@ -81,21 +80,17 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
     }
 
     private void initJadeFilesDbSession() {
-        jadeFilesDBLayer.initSession();
-    }
-
-    private void closeJadeFilesDbSession() {
-        jadeFilesDBLayer.closeSession();
+        jadeFilesDBLayer.initConnection(hibernateConfigFile);
     }
 
     private void initJadeFilesHistoryDbSession() {
         try {
-            jadeFilesHistoryDBLayer.initSession();
+            jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
         } catch (Exception e) {
             try {
                 LOGGER.error("Exception occurred while initializing Session for the first time", e);
                 // retry once
-                jadeFilesHistoryDBLayer.initSession();
+                jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
             } catch (Exception e1) {
                 LOGGER.error("Exception occurred while initializing Session for the second time", e1);
             }
