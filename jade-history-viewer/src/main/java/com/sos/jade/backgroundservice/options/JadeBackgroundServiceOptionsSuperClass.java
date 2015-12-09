@@ -16,8 +16,10 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
     private static final long serialVersionUID = 338878527661019237L;
     private final String conClassName = "JadeBackgroundServiceOptionsSuperClass";
 
-    @JSOptionDefinition(name = "hibernateConfigurationFileName", description = "", key = "hibernateConfigurationFileName", type = "SOSOptionString", mandatory = true)
-    public SOSOptionInFileName hibernateConfigurationFileName = new SOSOptionInFileName(this, conClassName + ".hibernateConfigurationFileName", "", "env:hibernateConfigFile", "/WEB-INF/classes/hibernate.cfg.xml", true);
+    @JSOptionDefinition(name = "hibernateConfigurationFileName", description = "", key = "hibernateConfigurationFileName", 
+            type = "SOSOptionString", mandatory = true)
+    public SOSOptionInFileName hibernateConfigurationFileName = new SOSOptionInFileName(this, conClassName + ".hibernateConfigurationFileName", "", 
+            "env:hibernateConfigFile", "/WEB-INF/classes/hibernate.cfg.xml", true);
 
     public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.SetAlias("hibernateConf", "H");
 
@@ -40,8 +42,10 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
         this.securityServer = p_securityServer;
     }
 
-    @JSOptionDefinition(name = "devel", description = "sets the state of Development; possible states are DEVEL, QA, RELEASED", key = "devel", type = "SOSOptionDevelopment", mandatory = false)
-    public SOSOptionDevelopment devel = new SOSOptionDevelopment(this, conClassName + ".devel", "sets the state of Development; possible states are DEVEL, QA, RELEASED", "env:develMode", "DEVEL", false);
+    @JSOptionDefinition(name = "devel", description = "sets the state of Development; possible states are DEVEL, QA, RELEASED", key = "devel", 
+            type = "SOSOptionDevelopment", mandatory = false)
+    public SOSOptionDevelopment devel = new SOSOptionDevelopment(this, conClassName + ".devel", 
+            "sets the state of Development; possible states are DEVEL, QA, RELEASED", "env:develMode", "DEVEL", false);
 
     public SOSOptionDevelopment getDevel() {
         return devel;
@@ -52,8 +56,10 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
         return this;
     }
 
-    @JSOptionDefinition(name = "webserverType", description = "the type of webserver which runs the application", key = "webserverType", type = "SOSOptionWebserverType", mandatory = false)
-    public SOSOptionWebserverType webserverType = new SOSOptionWebserverType(this, conClassName + ".webserverType", "the type of webserver which runs the application, possible values are TOMCAT, JETTY", "env:serverType", "TOMCAT", false);
+    @JSOptionDefinition(name = "webserverType", description = "the type of webserver which runs the application", key = "webserverType", 
+            type = "SOSOptionWebserverType", mandatory = false)
+    public SOSOptionWebserverType webserverType = new SOSOptionWebserverType(this, conClassName + ".webserverType", 
+            "the type of webserver which runs the application, possible values are TOMCAT, JETTY", "env:serverType", "TOMCAT", false);
 
     public SOSOptionWebserverType getWebserverType() {
         return webserverType;

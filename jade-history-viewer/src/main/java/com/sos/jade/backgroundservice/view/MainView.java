@@ -572,7 +572,8 @@ public class MainView extends CustomComponent implements View {
         boolean lastUsed = false;
         try {
             if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)) {
-                lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
+                lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+                        .getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
             }
         } catch (BackingStoreException e) {
             LOGGER.warn("Unable to read from PreferenceStore, using defaults.");
@@ -581,7 +582,8 @@ public class MainView extends CustomComponent implements View {
     }
 
     private boolean checkRemoveDuplicatesSettings() {
-        boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
+        boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+                .getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
         return removeDuplicates;
     }
 

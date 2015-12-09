@@ -1,5 +1,19 @@
 package com.sos.jade.backgroundservice.enums;
 
 public enum OperationValues {
-    copy, move, getlist, rename
+    COPY ("copy"), 
+    MOVE ("move"), 
+    GETLIST ("getlist"), 
+    RENAME ("rename");
+
+    public String name;
+    
+    private OperationValues (String name){
+        this.name = name;
+    }
+    
+    public String getName(){
+        return name;
+    }
+
 }

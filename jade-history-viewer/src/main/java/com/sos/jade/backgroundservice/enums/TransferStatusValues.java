@@ -1,25 +1,29 @@
 package com.sos.jade.backgroundservice.enums;
 
 public enum TransferStatusValues {
-	transferUndefined ("transfer undefined"), 
-	waiting4transfer ("waiting for transfer"), 
-	transferring ("transferring"), 
-	transferInProgress ("transfer in progress"), 
-	transferred ("transferred"), 
-	transfer_skipped ("skipped"), 
-	transfer_has_errors ("has errors"), 
-	transfer_aborted ("aborted"), 
-	compressed ("compressed"), 
-	notOverwritten ("not overwritten"), 
-	deleted ("deleted"), 
-	renamed ("renamed"), 
-	IgnoredDueToZerobyteConstraint ("ignored due to zero byte constraint"), 
-	setBack ("setback"), 
-	polling ("polling");
+	TRANSFER_UNDEFINED ("transferUndefined"), 
+	WAITING_4_TRANSFER ("waiting4transfer"), 
+	TRANSFERRING ("transferring"), 
+	TRANSFER_IN_PROGRESS ("transferInProgress"), 
+	TRANSFERRED ("transferred"), 
+	TRANSFER_SKIPPED ("transfer_skipped"), 
+	TRANSFER_HAS_ERRORS ("transfer_has_errors"), 
+	TRANSFER_ABORTED ("transfer_aborted"), 
+	COMPRESSED ("compressed"), 
+	NOT_OVERWRITTEN ("notOverwritten"), 
+	DELETED ("deleted"), 
+	RENAMED ("renamed"), 
+	IGNORED_DUE_TO_ZEROBYTE_CONSTRAINT ("IgnoredDueToZerobyteConstraint"), 
+	SET_BACK ("setBack"), 
+	POLLING ("polling");
 	
 	public String name;
 	
 	private TransferStatusValues (String name){
 		this.name = name;
+	}
+	
+	public String getName(){
+	    return name;
 	}
 }
