@@ -136,7 +136,8 @@ public class JadeDetailTable extends Table {
 
     private void setPreferencesColumnsWidth() {
         for (Object column : VISIBLE_COLUMNS) {
-            int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(column.toString(), 0);
+            int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS)
+                    .getInt(column.toString(), 0);
             if (width != 0) {
                 setColumnWidth(column.toString(), width);
                 LOGGER.debug("setting width of column " + column.toString() + " to " + String.valueOf(width));

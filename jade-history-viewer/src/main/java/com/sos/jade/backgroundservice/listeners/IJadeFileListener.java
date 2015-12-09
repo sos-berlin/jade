@@ -10,5 +10,4 @@ public interface IJadeFileListener {
 
     void logException(Exception e);
 
-    void closeJadeFilesHistoryDbSession();
 }

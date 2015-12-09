@@ -157,23 +157,39 @@ public class DetailLayout extends VerticalLayout {
     }
 
     private void initLayouts() {
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblGuidCaption, lblGuid), initHLabelLayout(lblMd5Caption, lblMd5), initHLabelLayout(lblPortCaption, lblPort), initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblJumpHostCaption, lblJumpHost), initHLabelLayout(lblJumpPortCaption, lblJumpPort), initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblSourceDirCaption, lblSourceDir), initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), initHLabelLayout(lblSourceUserCaption, lblSourceUser), initHLabelLayout(lblLogFilenameCaption, lblLogFilename)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblTargetDirCaption, lblTargetDir), initHLabelLayout(lblTargetUserCaption, lblTargetUser), initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel())));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblGuidCaption, lblGuid), initHLabelLayout(lblMd5Caption, lblMd5), 
+                initHLabelLayout(lblPortCaption, lblPort), initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblJumpHostCaption, lblJumpHost), initHLabelLayout(lblJumpPortCaption, lblJumpPort), 
+                initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblSourceDirCaption, lblSourceDir), initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), 
+                initHLabelLayout(lblSourceUserCaption, lblSourceUser), initHLabelLayout(lblLogFilenameCaption, lblLogFilename)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblTargetDirCaption, lblTargetDir), initHLabelLayout(lblTargetUserCaption, lblTargetUser), 
+                initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel())));
     }
 
     @SuppressWarnings("unused")
     private void initDetailedLayouts() {
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblGuidCaption, lblGuid), initHLabelLayout(lblPidCaption, lblPid), initHLabelLayout(lblPpidCaption, lblPpid), initHLabelLayout(lblOperationCaption, lblOperation)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblFileHistoryCreatedCaption, lblFileHistoryCreated), initHLabelLayout(lblFileHistoryCreatedByCaption, lblFileHistoryCreatedBy), initHLabelLayout(lblFileHistoryModifiedCaption, lblFileHistoryModified), initHLabelLayout(lblFileHistoryModifiedByCaption, lblFileHistoryModifiedBy)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblProtocolCaption, lblProtocol), initHLabelLayout(lblPortCaption, lblPort), initHLabelLayout(lblLogFilenameCaption, lblLogFilename), initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblSourceDirCaption, lblSourceDir), initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), initHLabelLayout(lblSourceHostCaption, lblSourceHost), initHLabelLayout(lblSourceUserCaption, lblSourceUser)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblTargetDirCaption, lblTargetDir), initHLabelLayout(lblTargetFilenameCaption, lblTargetFilename), initHLabelLayout(lblTargetHostCaption, lblTargetHost), initHLabelLayout(lblTargetUserCaption, lblTargetUser)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblJumpHostCaption, lblJumpHost), initHLabelLayout(lblJumpPortCaption, lblJumpPort), initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblTransferStartCaption, lblTransferStart), initHLabelLayout(lblTransferEndCaption, lblTransferEnd), initHLabelLayout(lblMd5Caption, lblMd5), initHLabelLayout(lblFileSizeCaption, lblFileSize)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblMandatorCaption, lblMandator), initHLabelLayout(lblFileCreatedCaption, lblFileCreated), initHLabelLayout(lblFileCreatedByCaption, lblFileCreatedBy), initHLabelLayout(lblFileModifiedCaption, lblFileModified)));
-        this.detailLayouts.add(initHlayout(initHLabelLayout(lblFileModifiedByCaption, lblFileModifiedBy), initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy3Caption", ""), initDummyValueLabel())));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblGuidCaption, lblGuid), initHLabelLayout(lblPidCaption, lblPid), 
+                initHLabelLayout(lblPpidCaption, lblPpid), initHLabelLayout(lblOperationCaption, lblOperation)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblFileHistoryCreatedCaption, lblFileHistoryCreated), 
+                initHLabelLayout(lblFileHistoryCreatedByCaption, lblFileHistoryCreatedBy), 
+                initHLabelLayout(lblFileHistoryModifiedCaption, lblFileHistoryModified), 
+                initHLabelLayout(lblFileHistoryModifiedByCaption, lblFileHistoryModifiedBy)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblProtocolCaption, lblProtocol), initHLabelLayout(lblPortCaption, lblPort), 
+                initHLabelLayout(lblLogFilenameCaption, lblLogFilename), initHLabelLayout(lblLastErrorMessageCaption, lblLastErrorMessage)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblSourceDirCaption, lblSourceDir), initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), 
+                initHLabelLayout(lblSourceHostCaption, lblSourceHost), initHLabelLayout(lblSourceUserCaption, lblSourceUser)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblTargetDirCaption, lblTargetDir), initHLabelLayout(lblTargetFilenameCaption, lblTargetFilename), 
+                initHLabelLayout(lblTargetHostCaption, lblTargetHost), initHLabelLayout(lblTargetUserCaption, lblTargetUser)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblJumpHostCaption, lblJumpHost), initHLabelLayout(lblJumpPortCaption, lblJumpPort), 
+                initHLabelLayout(lblJumpProtocolCaption, lblJumpProtocol), initHLabelLayout(lblJumpUserCaption, lblJumpUser)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblTransferStartCaption, lblTransferStart), initHLabelLayout(lblTransferEndCaption, lblTransferEnd), 
+                initHLabelLayout(lblMd5Caption, lblMd5), initHLabelLayout(lblFileSizeCaption, lblFileSize)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblMandatorCaption, lblMandator), initHLabelLayout(lblFileCreatedCaption, lblFileCreated), 
+                initHLabelLayout(lblFileCreatedByCaption, lblFileCreatedBy), initHLabelLayout(lblFileModifiedCaption, lblFileModified)));
+        this.detailLayouts.add(initHlayout(initHLabelLayout(lblFileModifiedByCaption, lblFileModifiedBy), initHLabelLayout(initCaptionLabel("dummy1Caption", ""), 
+                initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel()), 
+                initHLabelLayout(initCaptionLabel("dummy3Caption", ""), initDummyValueLabel())));
     }
 
     private void initLabels() {

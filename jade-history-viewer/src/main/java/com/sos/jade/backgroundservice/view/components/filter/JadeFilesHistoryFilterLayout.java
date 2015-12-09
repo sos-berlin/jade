@@ -151,7 +151,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
                         mainView.getTblFileHistory().markAsDirty();
                         mainView.getLblEntryCount().setValue(messages.getValue("MainView.entryCount", mainView.getCurrentLocale()) + " "
                                 + mainView.getHistoryItems().size());
-                        listener.closeJadeFilesHistoryDbSession();
                         mainView.getProgress().setPrimaryStyleName("jadeProgressBar");
                         mainView.getProgress().setVisible(false);
                     }
@@ -185,17 +184,17 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
         tfTargetHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()), targetHost);
         List<String> statusList = new ArrayList<String>();
 		for(TransferStatusValues transferStatus : TransferStatusValues.values()){
-			statusList.add(transferStatus.name());
+			statusList.add(transferStatus.getName());
 		}
         nsStatus = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName()), statusList);
         List<String> operationList = new ArrayList<String>();
 		for(OperationValues operation : OperationValues.values()){
-			operationList.add(operation.name());
+			operationList.add(operation.getName());
 		}
         nsOperation = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()), operationList);
         List<String> protocolList = new ArrayList<String>();
 		for(ProtocolValues protocol : ProtocolValues.values()){
-			protocolList.add(protocol.name());
+			protocolList.add(protocol.getName());
 		}
         nsProtocol = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()), protocolList);
         btnCommit = new Button(messages.getValue("FilterLayout.ok"));

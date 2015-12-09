@@ -102,9 +102,4 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
         }
     }
 
-    @Override
-    public void closeJadeFilesHistoryDbSession() {
-        jadeFilesHistoryDBLayer.closeSession();
-    }
-
 }

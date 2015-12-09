@@ -6,7 +6,6 @@ import sos.jadehistory.db.JadeFilesHistoryDBItem;
 
 import com.sos.jade.backgroundservice.enums.JadeFileColumns;
 import com.sos.jade.backgroundservice.enums.JadeHistoryFileColumns;
-import com.sos.jade.backgroundservice.enums.TransferStatusValues;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.IndexedContainer;
@@ -25,18 +24,31 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void addItems(List<JadeFilesHistoryDBItem> historyItems) {
-        for (JadeFilesHistoryDBItem historyItem : historyItems) {
+    private void addItems(List<JadeFilesHistoryDBItem> historyItemList) {
+        for (JadeFilesHistoryDBItem historyItem : historyItemList) {
             try {
                 historyItem.getJadeFilesDBItem().getMandator();
                 addItem(historyItem);
                 Item item = getItem(historyItem);
                 Property status = item.getItemProperty(JadeHistoryFileColumns.STATUS.getName());
-                if ("success".equals(historyItem.getStatus())) {
+                if ("transferred".equals(historyItem.getStatus()) 
+                        || "success".equals(historyItem.getStatus())
+                        || "compressed".equals(historyItem.getStatus())
+                        || "renamed".equals(historyItem.getStatus())) {
                     status.setValue(new StatusSuccessLabel());
-                } else if ("error".equals(historyItem.getStatus())) {
+                } else if ("transfer_aborted".equals(historyItem.getStatus())
+                        || "transfer_has_errors".equals(historyItem.getStatus())) {
                     status.setValue(new StatusErrorLabel());
-                } else if ("transferring".equals(historyItem.getStatus())) {
+                } else if ("transferring".equals(historyItem.getStatus())
+                        || "notOverwritten".equals(historyItem.getStatus())
+                        || "transfer_skipped".equals(historyItem.getStatus())
+                        || "transferInProgress".equals(historyItem.getStatus())
+                        || "waiting4transfer".equals(historyItem.getStatus())
+                        || "transferUndefined".equals(historyItem.getStatus())
+                        || "IgnoredDueToZerobyteConstraint".equals(historyItem.getStatus())
+                        || "setBack".equals(historyItem.getStatus()) 
+                        || "polling".equals(historyItem.getStatus())
+                        || "deleted".equals(historyItem.getStatus())) {
                     status.setValue(new StatusTransferLabel());
                 }
                 Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
@@ -66,15 +78,22 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
     private void addContainerProperties() {
         addContainerProperty(JadeHistoryFileColumns.STATUS.getName(), Label.class, new Label());
         addContainerProperty(JadeFileColumns.MANDATOR.getName(), JadeFileColumns.MANDATOR.getType(), JadeFileColumns.MANDATOR.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.TRANSFER_START.getName(), JadeHistoryFileColumns.TRANSFER_START.getType(), JadeHistoryFileColumns.TRANSFER_START.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.TRANSFER_END.getName(), JadeHistoryFileColumns.TRANSFER_END.getType(), JadeHistoryFileColumns.TRANSFER_END.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.OPERATION.getName(), JadeHistoryFileColumns.OPERATION.getType(), JadeHistoryFileColumns.OPERATION.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.PROTOCOL.getName(), JadeHistoryFileColumns.PROTOCOL.getType(), JadeHistoryFileColumns.PROTOCOL.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.TARGET_FILENAME.getName(), JadeHistoryFileColumns.TARGET_FILENAME.getType(), JadeHistoryFileColumns.TARGET_FILENAME.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.TRANSFER_START.getName(), JadeHistoryFileColumns.TRANSFER_START.getType(), 
+                JadeHistoryFileColumns.TRANSFER_START.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.TRANSFER_END.getName(), JadeHistoryFileColumns.TRANSFER_END.getType(), 
+                JadeHistoryFileColumns.TRANSFER_END.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.OPERATION.getName(), JadeHistoryFileColumns.OPERATION.getType(), 
+                JadeHistoryFileColumns.OPERATION.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.PROTOCOL.getName(), JadeHistoryFileColumns.PROTOCOL.getType(), 
+                JadeHistoryFileColumns.PROTOCOL.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.TARGET_FILENAME.getName(), JadeHistoryFileColumns.TARGET_FILENAME.getType(), 
+                JadeHistoryFileColumns.TARGET_FILENAME.getDefaultValue());
         addContainerProperty(JadeFileColumns.FILE_SIZE.getName(), JadeFileColumns.FILE_SIZE.getType(), JadeFileColumns.FILE_SIZE.getDefaultValue());
         addContainerProperty(JadeFileColumns.SOURCE_HOST.getName(), JadeFileColumns.SOURCE_HOST.getType(), JadeFileColumns.SOURCE_HOST.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.TARGET_HOST.getName(), JadeHistoryFileColumns.TARGET_HOST.getType(), JadeHistoryFileColumns.TARGET_HOST.getDefaultValue());
-        addContainerProperty(JadeHistoryFileColumns.TRANSFER_END.getName(), JadeHistoryFileColumns.TRANSFER_END.getType(), JadeHistoryFileColumns.TRANSFER_END.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.TARGET_HOST.getName(), JadeHistoryFileColumns.TARGET_HOST.getType(), 
+                JadeHistoryFileColumns.TARGET_HOST.getDefaultValue());
+        addContainerProperty(JadeHistoryFileColumns.TRANSFER_END.getName(), JadeHistoryFileColumns.TRANSFER_END.getType(), 
+                JadeHistoryFileColumns.TRANSFER_END.getDefaultValue());
     }
 
     private class StatusSuccessLabel extends Label {
