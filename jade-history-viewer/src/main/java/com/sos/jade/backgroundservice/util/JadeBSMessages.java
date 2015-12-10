@@ -9,12 +9,15 @@ public class JadeBSMessages implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private ResourceBundle bundle;
+    private Locale locale = Locale.getDefault();
     private String bundleName;
 
     public JadeBSMessages(String bundleName, Locale locale) {
         this.bundleName = bundleName;
-        if (locale == null) {
-            locale = Locale.getDefault();
+        if (locale != null) {
+            this.locale = locale;
+        } else {
+            this.locale = Locale.getDefault();
         }
         try {
             bundle = ResourceBundle.getBundle(bundleName, locale);
@@ -36,6 +39,7 @@ public class JadeBSMessages implements Serializable {
     }
 
     public void setLocale(Locale locale) {
-         this.bundle = ResourceBundle.getBundle(bundleName, locale);
+        this.locale = locale;
+        this.bundle = ResourceBundle.getBundle(bundleName, locale);
     }
 }

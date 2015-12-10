@@ -1,4 +1,4 @@
- package com.sos.jade.backgroundservice.view;
+package com.sos.jade.backgroundservice.view;
 
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.JADE_BS_OPTIONS;
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.parentNodeName;
@@ -512,6 +512,7 @@ public class MainView extends CustomComponent implements View {
                         jmb.getSmPreferencesReuseFilter().setChecked(checkReuseLastFilterSettings());
                     }
                     tblFileHistory.populateDatasource(historyItems);
+                    fileListener.closeJadeFilesHistoryDbSession();
                     if (checkRemoveDuplicatesSettings()) {
                         duplicatesFilter.setHistoryItems(historyItems);
                         ((IndexedContainer) tblFileHistory.getContainerDataSource()).addContainerFilter(duplicatesFilter);
@@ -591,12 +592,12 @@ public class MainView extends CustomComponent implements View {
         JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
         Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
                 .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, 0L);
-        if(timeFrom != 0L){
+        if (timeFrom != 0L) {
             filter.setTransferStartFrom(new Date(timeFrom));
         }
         Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L); 
-        if(timeTo != 0L){
+                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L);
+        if (timeTo != 0L) {
             filter.setTransferStartTo(new Date(timeTo));
         }
         String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)

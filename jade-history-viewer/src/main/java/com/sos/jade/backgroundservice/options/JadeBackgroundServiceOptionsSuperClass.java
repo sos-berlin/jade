@@ -32,7 +32,8 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
     }
 
     @JSOptionDefinition(name = "security_server", description = "", key = "security_server", type = "SOSOptionString", mandatory = false)
-    public SOSOptionString securityServer = new SOSOptionString(this, conClassName + ".SecurityServer", "Security Server for security rest service", "", "", false);
+    public SOSOptionString securityServer = new SOSOptionString(this, conClassName + ".SecurityServer", 
+            "Security Server for security rest service", "", "", false);
 
     public SOSOptionString getSecurityServer() {
         return this.securityServer;

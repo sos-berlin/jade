@@ -75,7 +75,6 @@ public class JadeDetailTable extends Table {
         initConfigurationChangeListeners();
     }
 
-    /** sets alternative values for column headers */
     private void setColumnHeaders() {
         setColumnHeader(KEY, messages.getValue("DetailLayout.keyHeader"));
         setColumnHeader(VALUE, messages.getValue("DetailLayout.valueHeader"));
@@ -86,18 +85,11 @@ public class JadeDetailTable extends Table {
         setColumnWidth(VALUE, DEFAULT_COLUMN_VALUE_WIDTH);
     }
 
-    /** refresh
-     * 
-     * @param locale */
     public void refreshColumnHeaders(Locale locale) {
         setColumnHeader(KEY, messages.getValue("DetailLayout.keyHeader", locale));
         setColumnHeader(VALUE, messages.getValue("DetailLayout.valueHeader", locale));
     }
 
-    /** replaces the present container with a new created container related to
-     * the given historyItems
-     * 
-     * @param historyItems List of JadeFilesHistoryDBItems */
     public void populateDatasource(JadeFilesHistoryDBItem detailItem) {
         this.detailItem = detailItem;
         this.container = new JadeDetailsContainer(this.detailItem, this.messages);
@@ -126,7 +118,6 @@ public class JadeDetailTable extends Table {
 
     public void resetColumnWidths() {
         for (Object column : this.getVisibleColumns()) {
-            // width = -1 means the column takes all the accessible space
             setColumnWidth(column.toString(), -1);
             prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(column.toString(), -1);
         }
