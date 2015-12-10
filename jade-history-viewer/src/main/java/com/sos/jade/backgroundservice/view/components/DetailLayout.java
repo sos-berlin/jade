@@ -164,7 +164,8 @@ public class DetailLayout extends VerticalLayout {
         this.detailLayouts.add(initHlayout(initHLabelLayout(lblSourceDirCaption, lblSourceDir), initHLabelLayout(lblSourceFilenameCaption, lblSourceFilename), 
                 initHLabelLayout(lblSourceUserCaption, lblSourceUser), initHLabelLayout(lblLogFilenameCaption, lblLogFilename)));
         this.detailLayouts.add(initHlayout(initHLabelLayout(lblTargetDirCaption, lblTargetDir), initHLabelLayout(lblTargetUserCaption, lblTargetUser), 
-                initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy2Caption", ""), initDummyValueLabel())));
+                initHLabelLayout(initCaptionLabel("dummy1Caption", ""), initDummyValueLabel()), initHLabelLayout(initCaptionLabel("dummy2Caption", ""), 
+                        initDummyValueLabel())));
     }
 
     @SuppressWarnings("unused")

@@ -18,7 +18,7 @@ public class DuplicatesFilter implements Container.Filter {
     public DuplicatesFilter() {
         // default constructor, nothing to do
     }
-
+    
     public DuplicatesFilter(List<JadeFilesHistoryDBItem> historyItems) {
         this.historyItems = historyItems;
     }

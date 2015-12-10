@@ -36,6 +36,6 @@ public class JadeBSMessages implements Serializable {
     }
 
     public void setLocale(Locale locale) {
-         this.bundle = ResourceBundle.getBundle(bundleName, locale);
+        this.bundle = ResourceBundle.getBundle(bundleName, locale);
     }
 }
