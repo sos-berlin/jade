@@ -46,10 +46,6 @@ public class SOSOptionDevelopment extends SOSOptionStringValueList {
     }
 
     @Override
-    public void Value(final String pstrValue) {
-        super.Value(pstrValue);
-    }
-    @Override
     public String[] getValueList() {
 
         if (strValueList == null) {

@@ -25,11 +25,6 @@ public class JadeFileListenerProxy extends JadeFileListenerImpl implements IJade
     }
 
     @Override
-    public void logException(Exception e) {
-        super.logException(e);
-    }
-
-    @Override
     public void getFileHistoryByIdFromLayer(Long id) {
         LOGGER.debug("getFileHistoryByIdFromLayer entered at " + sdf.format(new Date()));
         super.getFileHistoryByIdFromLayer(id);

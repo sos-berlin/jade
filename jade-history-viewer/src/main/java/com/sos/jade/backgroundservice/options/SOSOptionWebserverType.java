@@ -31,10 +31,6 @@ public class SOSOptionWebserverType extends SOSOptionStringValueList {
         return webServerType == WebserverType.TOMCAT;
     }
 
-    @Override
-    public void Value(final String pstrValue) {
-        super.Value(pstrValue);
-    }
     private void setWebserverType(String type) {
         if ("JETTY".equalsIgnoreCase(type)) {
             this.webServerType = WebserverType.JETTY;
