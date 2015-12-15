@@ -241,7 +241,6 @@ public class JadeFileHistoryTable extends Table {
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
-            e.printStackTrace();
             LOGGER.error("error while flushing Preferences for Column Order: {}", e);
         }
     }
