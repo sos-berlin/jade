@@ -324,7 +324,6 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 			}
 		} catch (BackingStoreException e) {
             LOGGER.warn("Unable to read from PreferenceStore, using defaults.");
-			e.printStackTrace();
 		}
 		if (lastUsed){
 			Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
