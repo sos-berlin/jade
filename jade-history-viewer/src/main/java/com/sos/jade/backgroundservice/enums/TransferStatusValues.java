@@ -17,13 +17,13 @@ public enum TransferStatusValues {
 	SET_BACK ("setBack"), 
 	POLLING ("polling");
 	
-	public String name;
+	private String name;
 	
 	private TransferStatusValues (String name){
 		this.name = name;
 	}
 	
 	public String getName(){
-	    return name;
-	}
+        return name;
+    }
 }
