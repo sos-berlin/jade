@@ -45,10 +45,10 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
     private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
     private static final float DROPDOWN_WIDTH = 75.0f;
     private VerticalLayout vlMain;
-	private Date startFrom;
-	private Date startTo;
-	private DateField dfStartFrom;
-	private DateField dfStartTo;
+    private Date startFrom;
+    private Date startTo;
+    private DateField dfStartFrom;
+    private DateField dfStartTo;
     private String mandator;
     private String sourceFile;
     private String sourceHost;
@@ -176,27 +176,27 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
         vlMain.addComponent(hlFifth);
         HorizontalLayout hlButtons = initHLayout();
         vlMain.addComponent(hlButtons);
-		dfStartFrom = initDateField(messages.getValue("FilterLayout.from"), startFrom);
-		dfStartTo = initDateField(messages.getValue("FilterLayout.to"), startTo);
+        dfStartFrom = initDateField(messages.getValue("FilterLayout.from"), startFrom);
+        dfStartTo = initDateField(messages.getValue("FilterLayout.to"), startTo);
         tfMandator = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()), mandator);
         tfSourceFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_FILENAME.getName()), sourceFile);
         tfSourceHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()), sourceHost);
         tfTargetFile = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_FILENAME.getName()), targetFile);
         tfTargetHost = initTextField(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()), targetHost);
         List<String> statusList = new ArrayList<String>();
-		for(TransferStatusValues transferStatus : TransferStatusValues.values()){
-			statusList.add(transferStatus.getName());
-		}
+        for (TransferStatusValues transferStatus : TransferStatusValues.values()) {
+            statusList.add(transferStatus.getName());
+        }
         nsStatus = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.STATUS.getName()), statusList);
         List<String> operationList = new ArrayList<String>();
-		for(OperationValues operation : OperationValues.values()){
-			operationList.add(operation.getName());
-		}
+        for (OperationValues operation : OperationValues.values()) {
+            operationList.add(operation.getName());
+        }
         nsOperation = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()), operationList);
         List<String> protocolList = new ArrayList<String>();
-		for(ProtocolValues protocol : ProtocolValues.values()){
-			protocolList.add(protocol.getName());
-		}
+        for (ProtocolValues protocol : ProtocolValues.values()) {
+            protocolList.add(protocol.getName());
+        }
         nsProtocol = initNativeSelect(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()), protocolList);
         btnCommit = new Button(messages.getValue("FilterLayout.ok"));
         btnDiscard = new Button(messages.getValue("FilterLayout.discard"));
@@ -212,9 +212,9 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
         hlForth.addComponents(nsProtocol, tfTargetHost);
         hlForth.setExpandRatio(nsProtocol, 1);
         hlForth.setExpandRatio(tfTargetHost, 1);
-		hlFifth.addComponents(dfStartFrom, dfStartTo);
-		hlFifth.setExpandRatio(dfStartFrom, 1);
-		hlFifth.setExpandRatio(dfStartTo, 1);
+        hlFifth.addComponents(dfStartFrom, dfStartTo);
+        hlFifth.setExpandRatio(dfStartFrom, 1);
+        hlFifth.setExpandRatio(dfStartTo, 1);
         hlButtons.addComponents(btnDiscard, btnCommit);
         hlButtons.setComponentAlignment(btnDiscard, Alignment.MIDDLE_LEFT);
         hlButtons.setComponentAlignment(btnCommit, Alignment.MIDDLE_LEFT);
@@ -253,8 +253,8 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
 
     private JadeFilesHistoryFilter createJadeFilesHistoryFilter() {
         JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
-		filter.setTransferStartFrom(dfStartFrom.getValue());
-		filter.setTransferStartTo(dfStartTo.getValue());
+        filter.setTransferStartFrom(dfStartFrom.getValue());
+        filter.setTransferStartTo(dfStartTo.getValue());
         if (nsProtocol.getValue() != null && !"".equals(nsProtocol.getValue())) {
             filter.setProtocol(nsProtocol.getValue().toString());
         }
@@ -273,116 +273,116 @@ public class JadeFilesHistoryFilterLayout extends VerticalLayout implements Seri
     }
 
     private void saveFilterPreferences() {
-		if(dfStartFrom.getValue() != null){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, dfStartFrom.getValue().getTime());
+        if (dfStartFrom.getValue() != null) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, dfStartFrom.getValue().getTime());
         }
-		if(dfStartTo.getValue() != null){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, dfStartTo.getValue().getTime());
-		}
-		if(nsProtocol.getValue() != null && !"".equals(nsProtocol.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_PROTOCOL, nsProtocol.getValue().toString());
-		}
-		if(nsStatus.getValue() != null && !"".equals(nsStatus.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_STATUS, nsStatus.getValue().toString());
-		}
-		if(nsOperation.getValue() != null && !"".equals(nsOperation.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_OPERATION, nsOperation.getValue().toString());
-		}
-		if(tfSourceFile.getValue() != null && !"".equals(tfSourceFile.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, tfSourceFile.getValue());
-		}
-		if(tfSourceHost.getValue() != null && !"".equals(tfSourceHost.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, tfSourceHost.getValue());
-		}
-		if(tfTargetFile.getValue() != null && !"".equals(tfTargetFile.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_TARGET_FILE, tfTargetFile.getValue());
-		}
-		if(tfTargetHost.getValue() != null && !"".equals(tfTargetHost.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_TARGET_HOST, tfTargetHost.getValue());
-		}
-		if(tfMandator.getValue() != null && !"".equals(tfMandator.getValue())){
-			prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-			.put(JadeBSConstants.FILTER_OPTION_MANDATOR, tfMandator.getValue());
-		}
-	}
-	
-	private void checkLastFilterSettings(){
-		boolean lastUsed = false;
-		try {
-			if(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)){
-				lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
-						.getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
-			}
-		} catch (BackingStoreException e) {
+        if (dfStartTo.getValue() != null) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .putLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, dfStartTo.getValue().getTime());
+        }
+        if (nsProtocol.getValue() != null && !"".equals(nsProtocol.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_PROTOCOL, nsProtocol.getValue().toString());
+        }
+        if (nsStatus.getValue() != null && !"".equals(nsStatus.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_STATUS, nsStatus.getValue().toString());
+        }
+        if (nsOperation.getValue() != null && !"".equals(nsOperation.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_OPERATION, nsOperation.getValue().toString());
+        }
+        if (tfSourceFile.getValue() != null && !"".equals(tfSourceFile.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, tfSourceFile.getValue());
+        }
+        if (tfSourceHost.getValue() != null && !"".equals(tfSourceHost.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, tfSourceHost.getValue());
+        }
+        if (tfTargetFile.getValue() != null && !"".equals(tfTargetFile.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_TARGET_FILE, tfTargetFile.getValue());
+        }
+        if (tfTargetHost.getValue() != null && !"".equals(tfTargetHost.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_TARGET_HOST, tfTargetHost.getValue());
+        }
+        if (tfMandator.getValue() != null && !"".equals(tfMandator.getValue())) {
+            prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .put(JadeBSConstants.FILTER_OPTION_MANDATOR, tfMandator.getValue());
+        }
+    }
+
+    private void checkLastFilterSettings() {
+        boolean lastUsed = false;
+        try {
+            if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)) {
+                lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+                        .getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
+            }
+        } catch (BackingStoreException e) {
             LOGGER.warn("Unable to read from PreferenceStore, using defaults.");
-		}
-		if (lastUsed){
-			Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, 0L);
+        }
+        if (lastUsed) {
+            Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, 0L);
             if (timeFrom != 0L) {
-				dfStartFrom.setValue(new Date(timeFrom));
-			}
-			Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L); 
+                dfStartFrom.setValue(new Date(timeFrom));
+            }
+            Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L);
             if (timeTo != 0L) {
-				dfStartTo.setValue(new Date(timeTo));
-			}
-			String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
-			if(protocol != null && !"".equals(protocol)){
-				nsProtocol.setValue(protocol);
-			}
-			String status = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_STATUS, null); 
-			if(status != null && !"".equals(status)){
-				nsStatus.setValue(status);
-			}
-			String operation = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_OPERATION, null);
-			if(operation != null && !"".equals(operation)){
-				nsOperation.setValue(operation);
-			}
-			String sourceFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, null);
-			if(sourceFile != null && !"".equals(sourceFile)){
-				tfSourceFile.setValue(sourceFile);
-			}
-			String sourceHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, null);
-			if(sourceHost != null && !"".equals(sourceHost)){
-				tfSourceHost.setValue(sourceHost);
-			}
-			String targetFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_TARGET_FILE, null);
-			if(targetFile != null && !"".equals(targetFile)){
-				tfTargetFile.setValue(targetFile);
-			}
-			String targetHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_TARGET_HOST, null);
-			if(targetHost != null && !"".equals(targetHost)){
-				tfTargetHost.setValue(targetHost);
-			}
-			String mandator = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-					.get(JadeBSConstants.FILTER_OPTION_MANDATOR, null);
-			if(mandator != null && !"".equals(mandator)){
-				tfMandator.setValue(mandator);
-			}
-			lastFilter = createJadeFilesHistoryFilter();
-		}
-	}
-	
-	public void refreshCaptions(Locale locale){
-		dfStartFrom.setCaption(messages.getValue("FilterLayout.from", locale));
-		dfStartTo.setCaption(messages.getValue("FilterLayout.to", locale));
+                dfStartTo.setValue(new Date(timeTo));
+            }
+            String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
+            if (protocol != null && !"".equals(protocol)) {
+                nsProtocol.setValue(protocol);
+            }
+            String status = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_STATUS, null);
+            if (status != null && !"".equals(status)) {
+                nsStatus.setValue(status);
+            }
+            String operation = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_OPERATION, null);
+            if (operation != null && !"".equals(operation)) {
+                nsOperation.setValue(operation);
+            }
+            String sourceFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, null);
+            if (sourceFile != null && !"".equals(sourceFile)) {
+                tfSourceFile.setValue(sourceFile);
+            }
+            String sourceHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, null);
+            if (sourceHost != null && !"".equals(sourceHost)) {
+                tfSourceHost.setValue(sourceHost);
+            }
+            String targetFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_TARGET_FILE, null);
+            if (targetFile != null && !"".equals(targetFile)) {
+                tfTargetFile.setValue(targetFile);
+            }
+            String targetHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_TARGET_HOST, null);
+            if (targetHost != null && !"".equals(targetHost)) {
+                tfTargetHost.setValue(targetHost);
+            }
+            String mandator = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                    .get(JadeBSConstants.FILTER_OPTION_MANDATOR, null);
+            if (mandator != null && !"".equals(mandator)) {
+                tfMandator.setValue(mandator);
+            }
+            lastFilter = createJadeFilesHistoryFilter();
+        }
+    }
+
+    public void refreshCaptions(Locale locale) {
+        dfStartFrom.setCaption(messages.getValue("FilterLayout.from", locale));
+        dfStartTo.setCaption(messages.getValue("FilterLayout.to", locale));
         tfMandator.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
         tfMandator.setInputPrompt(messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
         nsProtocol.setCaption(messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
