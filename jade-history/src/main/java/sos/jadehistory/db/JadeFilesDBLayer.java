@@ -20,6 +20,9 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     protected JadeFilesFilter filter = null;
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(JadeFilesDBLayer.class);
+    private static final String AND = " and ";
+    private static final String CREATED_FROM = "createdFrom";
+    private static final String CREATED_TO = "createdTo";
 
     public JadeFilesDBLayer(String configurationFileName) {
         super();
@@ -54,65 +57,65 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         String and = "";
         if (filter.getCreatedFrom() != null) {
             where += and + " created >= :createdFrom";
-            and = " and ";
+            and = AND;
         }
         if (filter.getCreatedTo() != null) {
             where += and + " created <= :createdTo ";
-            and = " and ";
+            and = AND;
         }
         if (filter.getModifiedFrom() != null) {
             where += and + " modified >= :modifiedFrom";
-            and = " and ";
+            and = AND;
         }
         if (filter.getModifiedTo() != null) {
             where += and + " modified <= :modifiedTo ";
-            and = " and ";
+            and = AND;
         }
         if (filter.getModificationDateFrom() != null) {
             where += and + " modificationDate >= :modificationDateFrom";
-            and = " and ";
+            and = AND;
         }
         if (filter.getModificationDateTo() != null) {
             where += and + " modificationDate <= :modificationDateTo ";
-            and = " and ";
+            and = AND;
         }
         if (filter.getMandator() != null && !"".equals(filter.getMandator())) {
             where += and + " mandator=:mandator";
-            and = " and ";
+            and = AND;
         }
         if (filter.getCreatedBy() != null && !"".equals(filter.getCreatedBy())) {
             where += and + " createdBy=:createdBy";
-            and = " and ";
+            and = AND;
         }
         if (filter.getModifiedBy() != null && !"".equals(filter.getModifiedBy())) {
             where += and + " modifiedBy=:modifiedBy";
-            and = " and ";
+            and = AND;
         }
         if (filter.getSourceDir() != null && !"".equals(filter.getSourceDir())) {
             where += and + " sourceDir=:sourceDir";
-            and = " and ";
+            and = AND;
         }
         if (filter.getSourceFilename() != null && !"".equals(filter.getSourceFilename())) {
             where += and + " sourceFilename like :sourceFilename";
-            and = " and ";
+            and = AND;
         }
         if (filter.getSourceHost() != null && !"".equals(filter.getSourceHost())) {
             where += and + " sourceHost=:sourceHost";
-            and = " and ";
+            and = AND;
         }
         if (filter.getSourceHostIp() != null && !"".equals(filter.getSourceHostIp())) {
             where += and + " sourceHostIp=:sourceHostIp";
-            and = " and ";
+            and = AND;
         }
         if (filter.getSourceUser() != null && !"".equals(filter.getSourceUser())) {
             where += and + " sourceUser=:sourceUser";
-            and = " and ";
+            and = AND;
         }
         if (filter.getFileSize() != null) {
             where += and + " fileSize=:fileSize";
-            and = " and ";
+            and = AND;
         }
-        if (!where.trim().equals("")) {
+        if (!"".equals(where.trim())) {
             where = "where " + where;
         }
         return where;
@@ -123,13 +126,13 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         String and = "";
         if (filter.getCreatedFrom() != null) {
             where += and + " created >= :createdFrom";
-            and = " and ";
+            and = AND;
         }
         if (filter.getCreatedTo() != null) {
             where += and + " created <= :createdTo ";
-            and = " and ";
+            and = AND;
         }
-        if (!where.trim().equals("")) {
+        if (!"".equals(where.trim())) {
             where = "where " + where;
         }
         return where;
@@ -137,10 +140,10 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
     private void setWhere(Query query) {
         if (filter.getCreatedFrom() != null && !"".equals(filter.getCreatedFrom())) {
-            query.setTimestamp("createdFrom", filter.getCreatedFrom());
+            query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
         }
         if (filter.getCreatedTo() != null && !"".equals(filter.getCreatedTo())) {
-            query.setTimestamp("createdTo", filter.getCreatedTo());
+            query.setTimestamp(CREATED_TO, filter.getCreatedTo());
         }
         if (filter.getModifiedFrom() != null && !"".equals(filter.getModifiedFrom())) {
             query.setTimestamp("modifiedFrom", filter.getModifiedFrom());
@@ -205,7 +208,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             connection.commit();
         } catch (Exception e) {
             LOGGER.error("Error occurred while trying to delete items: ", e);
-            e.printStackTrace();
         }
         return row;
     }
@@ -222,10 +224,10 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             connection.beginTransaction();
             Query query = connection.createQuery("  from JadeFilesDBItem " + getWhere());
             if (filter.getCreatedFrom() != null) {
-                query.setTimestamp("createdFrom", filter.getCreatedFrom());
+                query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
             }
             if (filter.getCreatedTo() != null) {
-                query.setTimestamp("createdTo", filter.getCreatedTo());
+                query.setTimestamp(CREATED_TO, filter.getCreatedTo());
             }
             resultset = query.list();
         } catch (Exception e) {
@@ -323,10 +325,10 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             connection.beginTransaction();
             Query query = connection.createQuery(q);
             if (filter.getCreatedFrom() != null) {
-                query.setTimestamp("createdFrom", filter.getCreatedFrom());
+                query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
             }
             if (filter.getCreatedTo() != null) {
-                query.setTimestamp("createdTo", filter.getCreatedTo());
+                query.setTimestamp(CREATED_TO, filter.getCreatedTo());
             }
             row = query.executeUpdate();
             connection.commit();
@@ -335,10 +337,10 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             connection.beginTransaction();
             query = connection.createQuery(hql);
             if (filter.getCreatedFrom() != null) {
-                query.setTimestamp("createdFrom", filter.getCreatedFrom());
+                query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
             }
             if (filter.getCreatedTo() != null) {
-                query.setTimestamp("createdTo", filter.getCreatedTo());
+                query.setTimestamp(CREATED_TO, filter.getCreatedTo());
             }
             row = query.executeUpdate();
             connection.commit();

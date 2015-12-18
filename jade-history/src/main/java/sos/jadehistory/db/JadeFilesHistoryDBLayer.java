@@ -22,6 +22,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     protected JadeFilesHistoryFilter filter = null;
     private static final Logger LOGGER = Logger.getLogger(JadeFilesHistoryDBLayer.class);
     private static final String AND = " and ";
+    private static final String JADE_ID = "jadeId";
 
     public JadeFilesHistoryDBLayer(String configurationFileName) {
         super();
@@ -190,7 +191,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             where += and + " history.jadeFilesDBItem.sourceHost=:sourceHost";
             and = AND;
         }
-        if (!where.trim().equals("")) {
+        if (!"".equals(where.trim())) {
             where = "where " + where;
         }
         return where;
@@ -207,36 +208,36 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             where += and + " created <= :createdTo ";
             and = AND;
         }
-        if (!where.trim().equals("")) {
+        if (!"".equals(where.trim())) {
             where = "where " + where;
         }
         return where;
     }
 
     private void setWhere(Query query) {
-        if (filter.getCreatedFrom() != null && !filter.getCreatedFrom().equals("")) {
+        if (filter.getCreatedFrom() != null && !"".equals(filter.getCreatedFrom())) {
             query.setTimestamp("createdFrom", filter.getCreatedFrom());
         }
-        if (filter.getCreatedTo() != null && !filter.getCreatedTo().equals("")) {
+        if (filter.getCreatedTo() != null && !"".equals(filter.getCreatedTo())) {
             query.setTimestamp("createdTo", filter.getCreatedTo());
         }
-        if (filter.getModifiedFrom() != null && !filter.getModifiedFrom().equals("")) {
+        if (filter.getModifiedFrom() != null && !"".equals(filter.getModifiedFrom())) {
             query.setTimestamp("modifiedFrom", filter.getModifiedFrom());
         }
-        if (filter.getModifiedTo() != null && !filter.getModifiedTo().equals("")) {
+        if (filter.getModifiedTo() != null && !"".equals(filter.getModifiedTo())) {
             query.setTimestamp("modifiedTo", filter.getModifiedTo());
         }
-        if (filter.getCreatedBy() != null && !filter.getCreatedBy().equals("")) {
+        if (filter.getCreatedBy() != null && !"".equals(filter.getCreatedBy())) {
             query.setText("createdBy", filter.getCreatedBy());
         }
-        if (filter.getModifiedBy() != null && !filter.getModifiedBy().equals("")) {
+        if (filter.getModifiedBy() != null && !"".equals(filter.getModifiedBy())) {
             query.setText("modifiedBy", filter.getModifiedBy());
         }
         if (filter.getGuid() != null && !"".equals(filter.getGuid())) {
             query.setText("guid", filter.getGuid());
         }
         if (filter.getJadeId() != null && !"".equals(filter.getJadeId())) {
-            query.setLong("jadeId", filter.getJadeId());
+            query.setLong(JADE_ID, filter.getJadeId());
         }
         if (filter.getOperation() != null && !"".equals(filter.getOperation())) {
             query.setText("operation", filter.getOperation());
@@ -305,7 +306,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             query.setInteger("jumpPort", filter.getJumpPort());
         }
         if (filter.getJadeFilesDBItem() != null && filter.getJadeFilesDBItem().getId() != null) {
-            query.setLong("jadeId", filter.getJadeFilesDBItem().getId());
+            query.setLong(JADE_ID, filter.getJadeFilesDBItem().getId());
         }
         if (filter.getMandator() != null && !"".equals(filter.getMandator())) {
             query.setText("mandator", filter.getMandator());
@@ -354,7 +355,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             connection.connect();
             connection.beginTransaction();
             Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
-            query.setLong("jadeId", jadeId);
+            query.setLong(JADE_ID, jadeId);
             resultset = query.list();
         } catch (Exception e) {
             LOGGER.error("Error occurred receiving DBItem: ", e);
@@ -371,7 +372,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             connection.connect();
             connection.beginTransaction();
             Query query = connection.createQuery("  from JadeFilesDBItem where id=:jadeId");
-            query.setLong("jadeId", jadeId);
+            query.setLong(JADE_ID, jadeId);
             resultset = query.list();
         } catch (Exception e) {
             LOGGER.error("Error occurred receiving DBItems: ", e);
@@ -447,6 +448,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
 
     @Override
     public void onAfterDeleting(DbItem h) {
+        // nothing to do
     }
 
     @Override
