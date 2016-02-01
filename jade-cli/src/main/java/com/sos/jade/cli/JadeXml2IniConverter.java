@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -21,8 +20,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.poi.ss.formula.ptg.RefNPtg;
-import org.apache.xpath.NodeSet;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -32,7 +29,7 @@ import sos.util.SOSString;
 
 public class JadeXml2IniConverter {
 	
-	private static Logger logger	= Logger.getLogger(JadeXml2IniConverter.class);
+	private static Logger LOGGER	= Logger.getLogger(JadeXml2IniConverter.class);
 	private static final String CHARSET = "UTF-8";
 	private static final String CLASSNAME = JadeXml2IniConverter.class.getSimpleName();
 	private static final int EXIT_CODE_ON_SUCCESS = 0;
@@ -77,10 +74,6 @@ public class JadeXml2IniConverter {
 		backgroundServiceFragment
 	}
 	
-	/**
-	 * 
-	 * @param args
-	 */
 	public static void main (String[] args){
 		
 		if(args.length < 3){
@@ -109,27 +102,27 @@ public class JadeXml2IniConverter {
 		
 		try {
 			setLogger(log4j);
-			logger.info("Arguments:");
+			LOGGER.info("Arguments:");
 			for(int i=0;i<args.length;i++){
-				logger.info(String.format("  %s",args[i]));
+				LOGGER.info(String.format("  %s",args[i]));
 			}
 			
 			JadeXml2IniConverter converter = new JadeXml2IniConverter();
 			converter.proccess(schemaFile,xmlFile,iniFile);
 			
-			logger.info("");
-			logger.info("Summary:");
-			logger.info(String.format("    %s General",converter.hasGlobalSection() ? "1" : "0"));
-			logger.info(String.format("    %s Protocol Fragments",converter.getCountProtocolFragments()));
-			logger.info(String.format("    %s Alternative Fragments",converter.getCountAlternativeFragments()));
-			logger.info(String.format("    %s Notification MailFragments",converter.getCountNotificationMailFragments()));
-			logger.info(String.format("    %s Notification BackgroundServiceFragments",converter.getCountNotificationBackgroundServiceFragments()));
-			logger.info(String.format("    %s CredentialStore Fragments",converter.getCountCredentialStoreFragments()));
-			logger.info(String.format("    %s MailServer Fragments",converter.getCountMailServerFragments()));
-			logger.info(String.format("    %s Profiles",converter.getCountProfiles()));
+			LOGGER.info("");
+			LOGGER.info("Summary:");
+			LOGGER.info(String.format("    %s General",converter.hasGlobalSection() ? "1" : "0"));
+			LOGGER.info(String.format("    %s Protocol Fragments",converter.getCountProtocolFragments()));
+			LOGGER.info(String.format("    %s Alternative Fragments",converter.getCountAlternativeFragments()));
+			LOGGER.info(String.format("    %s Notification MailFragments",converter.getCountNotificationMailFragments()));
+			LOGGER.info(String.format("    %s Notification BackgroundServiceFragments",converter.getCountNotificationBackgroundServiceFragments()));
+			LOGGER.info(String.format("    %s CredentialStore Fragments",converter.getCountCredentialStoreFragments()));
+			LOGGER.info(String.format("    %s MailServer Fragments",converter.getCountMailServerFragments()));
+			LOGGER.info(String.format("    %s Profiles",converter.getCountProfiles()));
 			if(converter.getCountWarnings() > 0){
-				logger.info("");
-				logger.info(String.format("    !!! Converted with %s warnings",converter.getCountWarnings()));
+				LOGGER.info("");
+				LOGGER.info(String.format("    !!! Converted with %s warnings",converter.getCountWarnings()));
 			}
 			
 			File f = new File(iniFile);
@@ -141,19 +134,12 @@ public class JadeXml2IniConverter {
 		
 		} catch (Exception e) {
 			exitCode = EXIT_CODE_ON_ERROR;
-			logger.error(e);
+			LOGGER.error(e);
 			e.printStackTrace();
 		}
 		System.exit(exitCode);
 	} 
 	
-	/**
-	 * 
-	 * @param schemaFilePath
-	 * @param xmlFilePath
-	 * @param iniFilePath
-	 * @throws Exception
-	 */
 	public void proccess(String schemaFilePath,String xmlFilePath, String iniFilePath) throws Exception{
 		InputSource schemaSource = new InputSource(schemaFilePath);
 		InputSource xmlSource = new InputSource(xmlFilePath);
@@ -256,10 +242,6 @@ public class JadeXml2IniConverter {
 		return _countAlternativeFragments;
 	}
 	
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void handleGeneral() throws Exception{
 		XPathExpression expression = _xpathXml.compile("./General");
 		Node general = (Node) expression.evaluate(_rootXml, XPathConstants.NODE);
@@ -271,7 +253,7 @@ public class JadeXml2IniConverter {
 		NodeList childs = general.getChildNodes();
 		String section = "[globals]";
 		writeLine(section);
-		logger.info(String.format("write %s",section));
+		LOGGER.info(String.format("write %s",section));
 		
 		for (int i = 0; i< childs.getLength(); i++) {
 			Node child = childs.item(i);
@@ -299,6 +281,13 @@ public class JadeXml2IniConverter {
 						}
 					}
 				}
+				if(child.getNodeName().equals("JavaPropertyFiles")){
+					String val = getJavaPropertyFilesEntry(child);
+					if(!SOSString.isEmpty(val)){
+						writeLine(val);
+						writeNewLine();
+					}
+				}
 				else{
 					handleChildNodes(child.getNodeName(), child, 0);
 					writeNewLine();
@@ -307,10 +296,43 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	/**
-	 * 
-	 * @throws Exception
-	 */
+	private String getJavaPropertyFilesEntry(Node parent){
+		StringBuffer sb = new StringBuffer();
+		NodeList childs = parent.getChildNodes();
+		for (int i = 0; i< childs.getLength(); i++) {
+			Node child = childs.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				String val = child.getFirstChild() == null ? child.getNodeValue() : child.getFirstChild().getNodeValue();
+				if(!SOSString.isEmpty(val)){
+					if(sb.length() > 0){
+						sb.append(";");
+					}
+					sb.append(val.trim());
+				}
+			}
+		}
+		
+		String paramName = "java_property_files";
+		if(sb.length() > 0){
+			try{
+				String xpath = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter[1]",parent.getNodeName());
+		
+				XPathExpression ex = _xpathSchema.compile(xpath);
+				Node fp = (Node)ex.evaluate(_rootSchema,XPathConstants.NODE);
+				if(fp != null){
+					if(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null){
+						paramName = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
+					}
+				}
+			}
+			catch(Exception ex){
+				LOGGER.warn(String.format("error on parse flat parameter for \"%s\": %s",parent.getNodeName(),ex.toString()));
+			}
+		}
+		
+		return sb.length() == 0 ? null : formatParameter(paramName,sb.toString());
+	}
+	
 	private void handleProtocolFragments() throws Exception{
 		
 		XPathExpression expression = _xpathXml.compile("./Fragments/ProtocolFragments");
@@ -344,7 +366,7 @@ public class JadeXml2IniConverter {
 				String sectionName = getFragmentName(Fragment.protocolFragment,child);
 				String section = "["+sectionName+"]";
 				writeLine(section);
-				logger.info(String.format("write %s",section));
+				LOGGER.info(String.format("write %s",section));
 				_countProtocolFragments++;
 				
 				XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter",
@@ -374,10 +396,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 		
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void handleCredentialStoreFragments() throws Exception{
 		
 		XPathExpression expression = _xpathXml.compile("./Fragments/CredentialStoreFragments");
@@ -402,7 +420,7 @@ public class JadeXml2IniConverter {
 				String sectionName = getFragmentName(Fragment.credentialStoreFragment,child);
 				String section = "["+sectionName+"]";
 				writeLine(section);
-				logger.info(String.format("write %s",section));
+				LOGGER.info(String.format("write %s",section));
 				_countCredentialStoreFragments++;
 				
 				XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter",
@@ -426,10 +444,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 		
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void handleNotificationBackgroundServiceFragments() throws Exception{
 		
 		XPathExpression expression = _xpathXml.compile("./Fragments/NotificationFragments/BackgroundServiceFragment");
@@ -453,7 +467,7 @@ public class JadeXml2IniConverter {
 				String sectionName = getFragmentName(Fragment.backgroundServiceFragment,child);
 				String section = "["+sectionName+"]";
 				writeLine(section);
-				logger.info(String.format("write %s",section));
+				LOGGER.info(String.format("write %s",section));
 				_countNotificationBackgroundServiceFragments ++;
 				
 				writeMainFlatParameters(child);
@@ -463,11 +477,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param child
-	 * @throws Exception
-	 */
 	private void writeMainFlatParameters(Node child) throws Exception{
 		XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter",
 				child.getNodeName()));
@@ -487,10 +496,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void handleNotificationMailFragments() throws Exception{
 		
 		XPathExpression expression = _xpathXml.compile("./Fragments/NotificationFragments/MailFragment");
@@ -512,7 +517,7 @@ public class JadeXml2IniConverter {
 				}
 				
 				String mailFragment = child.getAttributes().getNamedItem("name").getNodeValue();
-				logger.info(String.format("found Notification MailFragment \"%s\"",mailFragment));
+				LOGGER.info(String.format("found Notification MailFragment \"%s\"",mailFragment));
 				_countNotificationMailFragments++;
 				LinkedHashMap<String,String> mailFragmentParams = new LinkedHashMap<String, String>();
 				
@@ -536,10 +541,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void handleMailServerFragments() throws Exception{
 		XPathExpression expression = _xpathXml.compile("./Fragments/MailServerFragments");
 		Node fragments = (Node) expression.evaluate(_rootXml, XPathConstants.NODE);
@@ -560,7 +561,7 @@ public class JadeXml2IniConverter {
 				}
 				
 				String mailFragment = child.getAttributes().getNamedItem("name").getNodeValue();
-				logger.info(String.format("found MailServer Fragment \"%s\"",mailFragment));
+				LOGGER.info(String.format("found MailServer Fragment \"%s\"",mailFragment));
 				_countMailServerFragments++;
 				LinkedHashMap<String,String> mailFragmentParams = new LinkedHashMap<String, String>();
 				
@@ -583,10 +584,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void handleProfiles() throws Exception{
 		
 		XPathExpression expression = _xpathXml.compile("./Profiles/Profile");
@@ -611,7 +608,7 @@ public class JadeXml2IniConverter {
 			String sectionName = getProfileName(profile,attrProfileId);
 			String section = "["+sectionName+"]"; 
 			writeLine(section);
-			logger.info(String.format("write %s",section));
+			LOGGER.info(String.format("write %s",section));
 			_countProfiles++;
 			_profileJumpInclude = null;
 			
@@ -643,17 +640,18 @@ public class JadeXml2IniConverter {
 						writeNewLine();
 						handleProfileNotification(child.getNodeName(), child,0);
 					}
+					if(child.getNodeName().equals("JavaPropertyFiles")){
+						String val = getJavaPropertyFilesEntry(child);
+						if(!SOSString.isEmpty(val)){
+							writeNewLine();
+							writeLine(val);
+						}
+					}
 				}
 			}
 		}
 	}
 	
-	/**
-	 * 
-	 * @param operationNode
-	 * @param sectionName
-	 * @throws Exception
-	 */
 	private void handleProfileAlternativeOperation(Node operationNode, String sectionName) throws Exception{
 		
 		String xpath = String.format(".//*[contains(local-name(),'Alternative')]");
@@ -670,7 +668,7 @@ public class JadeXml2IniConverter {
 				ex = _xpathXml.compile(xpath);
 				Node firstChild = (Node)ex.evaluate(alternative,XPathConstants.NODE);
 				if(firstChild == null){
-					logger.warn(String.format("\"%s\": first child not found on \"%s\" element",sectionName,alternative.getNodeName()));
+					LOGGER.warn(String.format("\"%s\": first child not found on \"%s\" element",sectionName,alternative.getNodeName()));
 					_countWarnings++;
 					continue;
 				}
@@ -683,7 +681,7 @@ public class JadeXml2IniConverter {
 					ex = _xpathXml.compile(xpath);
 					Node protocolFragment = (Node)ex.evaluate(_rootXml,XPathConstants.NODE);
 					if(protocolFragment == null){
-						logger.warn(String.format("\"%s\": not found Protocol Fragment \"%s\" for %s",sectionName,xpath,alternative.getNodeName()));
+						LOGGER.warn(String.format("\"%s\": not found Protocol Fragment \"%s\" for %s",sectionName,xpath,alternative.getNodeName()));
 						_countWarnings++;
 						writeLine(formatParameter("alternative_"+prefix+"include",refName));
 					}
@@ -699,13 +697,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param parentNodeName
-	 * @param xmlNode
-	 * @param level
-	 * @throws Exception
-	 */
 	private void handleChildNodes(String parentNodeName,Node xmlNode,int level) throws Exception{
 		if(xmlNode.hasChildNodes()){
 			level++;
@@ -735,13 +726,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	
-	/**
-	 * 
-	 * @param parentNodeName
-	 * @param values
-	 * @throws Exception
-	 */
 	private void writeNotification2Profile(String parentNodeName,LinkedHashMap<String,String> values) throws Exception{
 		String prefix = "";
 		if(parentNodeName.equals("OnSuccess")){
@@ -760,24 +744,12 @@ public class JadeXml2IniConverter {
 		//writeNewLine();
 	}
 	
-	/**
-	 * 
-	 * @param values
-	 * @throws Exception
-	 */
 	private void writeParams(LinkedHashMap<String,String> values) throws Exception{
 		for(Entry<String, String> entry : values.entrySet()){
 			writeLine(formatParameter(entry.getKey(),entry.getValue()));
 		}
 	}
 	
-	/**
-	 * 
-	 * @param parentNodeName
-	 * @param xmlNode
-	 * @param level
-	 * @throws Exception
-	 */
 	private void handleProfileNotification(String parentNodeName,Node xmlNode,int level) throws Exception{
 		if(xmlNode.hasChildNodes()){
 			level++;
@@ -828,16 +800,11 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param xmlNode
-	 * @param level
-	 * @param prefixLevel
-	 * @param parentPrefix
-	 * @param childPrefix
-	 * @throws Exception
-	 */
-	private void handleAlternativeProtocolFragments(Node xmlNode,int level,int prefixLevel,String parentPrefix,String childPrefix) throws Exception{
+	private void handleAlternativeProtocolFragments(Node xmlNode,
+			int level,
+			int prefixLevel,
+			String parentPrefix,
+			String childPrefix) throws Exception{
 		
 		if(level == 0){
 			String xpathP = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter",xmlNode.getNodeName());
@@ -949,18 +916,13 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-
-	/**
-	 * 
-	 * @param xmlNode
-	 * @param sectionName
-	 * @param level
-	 * @param prefixLevel
-	 * @param parentPrefix
-	 * @param childPrefix
-	 * @throws Exception
-	 */
-	private void handleProtocolFragmentsChildNodes(Node xmlNode,String sectionName,int level,int prefixLevel,String parentPrefix,String childPrefix) throws Exception{
+	private void handleProtocolFragmentsChildNodes(Node xmlNode,
+			String sectionName,
+			int level,
+			int prefixLevel,
+			String parentPrefix,
+			String childPrefix) throws Exception{
+		
 		if(xmlNode.hasChildNodes()){
 			level++;
 			
@@ -1025,18 +987,14 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param xmlNode
-	 * @param sectionName
-	 * @param operation
-	 * @param level
-	 * @param prefixLevel
-	 * @param parentPrefix
-	 * @param childPrefix
-	 * @throws Exception
-	 */
-	private void handleProfileOperation(Node xmlNode,String sectionName,String operation,int level,int prefixLevel,String parentPrefix,String childPrefix) throws Exception{
+	private void handleProfileOperation(Node xmlNode,
+			String sectionName,
+			String operation,
+			int level,
+			int prefixLevel,
+			String parentPrefix,
+			String childPrefix) throws Exception{
+		
 		if(xmlNode.hasChildNodes()){
 			level++;
 			
@@ -1074,12 +1032,12 @@ public class JadeXml2IniConverter {
 											_profileJumpInclude = jumpInclude;
 										}
 										else{
-											logger.warn(String.format("Profile [%s]: include of \"%s\" skipped(\"%s\" already included)",sectionName,jumpInclude.replaceAll(" ",""),_profileJumpInclude.replaceAll(" ","")));
+											LOGGER.warn(String.format("Profile [%s]: include of \"%s\" skipped(\"%s\" already included)",sectionName,jumpInclude.replaceAll(" ",""),_profileJumpInclude.replaceAll(" ","")));
 											_countWarnings++;
 										}
 									}
 									else{
-										logger.warn(String.format("Profile [%s]: include of \"%s\" skipped(jump host with operation \"%s\" is not implemented)",sectionName,jumpInclude.replaceAll(" ",""),operation));
+										LOGGER.warn(String.format("Profile [%s]: include of \"%s\" skipped(jump host with operation \"%s\" is not implemented)",sectionName,jumpInclude.replaceAll(" ",""),operation));
 										_countWarnings++;
 									}
 								}
@@ -1090,7 +1048,7 @@ public class JadeXml2IniConverter {
 										include+=","+arr[1].trim();
 									}
 									else{
-										logger.warn(String.format("Profile [%s]: CredentialStore fragment cannot be included. Missing \"=\" character in \"%s\"",sectionName,csInclude));
+										LOGGER.warn(String.format("Profile [%s]: CredentialStore fragment cannot be included. Missing \"=\" character in \"%s\"",sectionName,csInclude));
 										_countWarnings++;
 									}
 								}
@@ -1175,14 +1133,6 @@ public class JadeXml2IniConverter {
 		}
 	}
 
-	/**
-	 * 
-	 * @param node
-	 * @param sectionName
-	 * @param value
-	 * @return
-	 * @throws Exception
-	 */
 	private String getProfileOperationValue(Node node,String sectionName,String value) throws Exception{
 		if((value.equals("copy") || value.equals("move")) && _jumpIncludes.size() > 0){
 			String xpath = String.format(".//*[contains(local-name(),'Source')]/*[string-length(@ref)!=0]");
@@ -1246,14 +1196,6 @@ public class JadeXml2IniConverter {
 		return value;
 	}
 	
-	/**
-	 * 
-	 * @param xmlNode
-	 * @param mailFragmentParams
-	 * @param level
-	 * @return
-	 * @throws Exception
-	 */
 	private LinkedHashMap<String,String> handleNotificationMailFragmentsChildNodes(Node xmlNode,LinkedHashMap<String,String> mailFragmentParams,int level) throws Exception{
 		if(xmlNode.hasChildNodes()){
 			level++;
@@ -1280,12 +1222,6 @@ public class JadeXml2IniConverter {
 		return mailFragmentParams;
 	}
 	
-	/**
-	 * 
-	 * @param fragment
-	 * @param node
-	 * @return
-	 */
 	private String getFragmentName(Fragment fragment, Node node){
 		StringBuffer sb = new StringBuffer();
 		
@@ -1304,12 +1240,6 @@ public class JadeXml2IniConverter {
 		return sb.toString();
 	}
 	
-	/**
-	 * 
-	 * @param node
-	 * @param attr
-	 * @return
-	 */
 	private String getProfileName(Node node,Node attr){
 		/**
 		StringBuffer sb = new StringBuffer(node.getNodeName().toLowerCase());
@@ -1319,13 +1249,6 @@ public class JadeXml2IniConverter {
 		return attr.getNodeValue();
 	}
 	
-	/**
-	 * 
-	 * @param node
-	 * @param prefix
-	 * @return
-	 * @throws Exception
-	 */
 	private String getFragmentInclude(Node node,String prefix) throws Exception{
 		String include = null;
 		
@@ -1351,7 +1274,7 @@ public class JadeXml2IniConverter {
 		if(fp == null){
 			//not found
 			include = formatParameter(prefix+"include",ref);
-			logger.warn(String.format("Node %s[@ref = %s]. Not found referenced Fragments/%s/%s[@name='%s'].", 
+			LOGGER.warn(String.format("Node %s[@ref = %s]. Not found referenced Fragments/%s/%s[@name='%s'].", 
 					node.getNodeName(),
 					ref,
 					fragments,
@@ -1365,12 +1288,6 @@ public class JadeXml2IniConverter {
 		return include;
 	}
 	
-	/**
-	 * 
-	 * @param flatParameter
-	 * @param node
-	 * @return
-	 */
 	private String getParameterValue(Node flatParameter,Node node){
 		String value = "";
 		if(flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null){
@@ -1394,39 +1311,19 @@ public class JadeXml2IniConverter {
 		return value;
 	}
 	
-	/**
-	 * 
-	 * @param name
-	 * @param value
-	 * @return
-	 */
 	private String formatParameter(String name, String value){
 		return String.format("%-35s = %s",name,value);
 	}
 	
-	/**
-	 * 
-	 * @param line
-	 * @throws Exception
-	 */
 	private void writeLine(String line) throws Exception{
 		_writer.write(line);
 		_writer.newLine();
 	}
 	
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void writeNewLine() throws Exception{
 		_writer.newLine();
 	}
 	
-	/**
-	 * 
-	 * @param path
-	 * @throws Exception
-	 */
 	private static void setLogger(String path) throws Exception{
 		if(!SOSString.isEmpty(path)){
 			File file = new File(path);
@@ -1437,13 +1334,9 @@ public class JadeXml2IniConverter {
 		if( !Logger.getRootLogger().getAllAppenders().hasMoreElements() ) {
 			BasicConfigurator.configure();
 		}
-		logger = Logger.getRootLogger();
+		LOGGER = Logger.getRootLogger();
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	private NamespaceContext getSchemaNamespaceContext(){
 		return new NamespaceContext() {
 			
