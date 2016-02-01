@@ -10,15 +10,10 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
-/**
- *	
- * @author Robert Ehrlich
- *
- */
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	private final String className = Jade4DMZ.class.getSimpleName();
-	private static final Logger logger = Logger.getLogger(Jade4DMZ.class);
+	private static final Logger LOGGER = Logger.getLogger(Jade4DMZ.class);
 	private SOSFileList		fileList   = null;
 	private String uuid = null;
 	private String sourceListFilename = null;
@@ -28,9 +23,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		copyToInternet, copyFromInternet
 	}
 
-	/**
-	 * 
-	 */
 	public void Execute() {
 		String dir = normalizeDirectoryPath(getOptions().jump_dir.Value());
 
@@ -61,13 +53,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param operation
-	 * @param dir
-	 */
 	private void transfer(Operation operation, String dir) {
-		logger.info(String.format("operation = %s, jump dir = %s",
+		LOGGER.info(String.format("operation = %s, jump dir = %s",
 				operation, dir));
 
 		JadeEngine jade = null;
@@ -76,7 +63,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			jade = new JadeEngine(getTransferOptions(operation, dir));
 					
 			jade.Execute();
-			
 			if(operation.equals(Operation.copyFromInternet) && objOptions.remove_files.value()){
 				jade.executeCommandOnSource(getJadeOnDMZCommand4RemoveSource());
 			}
@@ -90,7 +76,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			removeDirOnDMZ(jade, operation, dir);
 			
 			try {if (jade != null) {jade.Logout();}	}
-			catch (Exception e) {logger.warn(String.format("Logout failed: %s",e.toString()));}
+			catch (Exception e) {LOGGER.warn(String.format("Logout failed: %s",e.toString()));}
 		}
 	}
 	
@@ -157,7 +143,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	 * @return
 	 */
 	private JADEOptions getTransferOptions(Operation operation, String dir) throws Exception{
-		logger.debug(String.format("operation = %s, jump dir = %s", operation, dir));
+		LOGGER.debug(String.format("operation = %s, jump dir = %s", operation, dir));
 
 		JADEOptions options = null;
 		JADEOptions jumpCommandOptions;
@@ -193,13 +179,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return options;
 	}
 	
-	
-	/**
-	 * 
-	 * @param prefix
-	 * @param options
-	 * @return
-	 */
 	private SOSConnection2OptionsAlternate setDestinationOptionsPrefix(String prefix,SOSConnection2OptionsAlternate options){
 		options.protocol.setPrefix(prefix);
 		options.host.setPrefix(prefix);
@@ -223,12 +202,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return options;
 	}
 	
-	/**
-	 * 
-	 * @param prefix
-	 * @param dir
-	 * @return
-	 */
 	private SOSConnection2OptionsAlternate setLocalOptionsPrefixed(String prefix,String dir){
 		SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
 		options.protocol.Value("local");
@@ -241,12 +214,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return options;
 	}
 	
-	/**
-	 * Settings for receive from DMZ 
-	 * 
-	 * @param dir
-	 * @return
-	 */
 	private JADEOptions createTransferFromDMZOptions(String dir){
 		
 		JADEOptions options = new JADEOptions();
@@ -278,11 +245,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return options;
 	}
 	
-	/**
-	 * 
-	 * @param options
-	 * @return
-	 */
 	private JADEOptions addJADEOptionsForSource(JADEOptions options) {
 		
 		options.operation.Value("copy");
@@ -327,11 +289,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return options;
 	}
 	
-	/**
-	 * 
-	 * @param options
-	 * @return
-	 */
 	private JADEOptions addJADEOptionsForTarget(JADEOptions options) {
 		
 		options.operation.Value("copy");
@@ -359,18 +316,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
 		options.CreateIntegrityHashFile = objOptions.CreateIntegrityHashFile;
 		options.IntegrityHashType = objOptions.IntegrityHashType;
-//		options.CheckSecurityHash = objOptions.CheckSecurityHash;
-//		options.CreateSecurityHashFile = objOptions.CreateSecurityHashFile;
-//		options.SecurityHashType = objOptions.SecurityHashType;
+		//options.CheckSecurityHash = objOptions.CheckSecurityHash;
+		//options.CreateSecurityHashFile = objOptions.CreateSecurityHashFile;
+		//options.SecurityHashType = objOptions.SecurityHashType;
 
 		return options;
 	}
 	
-	/**
-	 * 
-	 * @param options
-	 * @return
-	 */
 	private JADEOptions addJADEOptionsOnClient(JADEOptions options) {
 		
 		options.mail_on_success = objOptions.mail_on_success;
@@ -407,17 +359,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		
 		options.ResultSetFileName = objOptions.ResultSetFileName;
 		
+		options.java_property_files = objOptions.java_property_files;
 		//not supported: options.result_list_file = objOptions.result_list_file;
 		//not supported: options.CreateResultSet = objOptions.CreateResultSet;
 
 		return options;
 	}
 	
-	/**
-	 * 
-	 * @param options
-	 * @return
-	 */
 	private String getJadeOnDMZCommand(JADEOptions options) {
 		
 		options.file.setNotDirty();
@@ -436,11 +384,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return command.toString();
 	}
 	
-	/**
-	 * 
-	 * @param options
-	 * @return
-	 */
 	private String getJadeOnDMZCommand4RemoveSource() {
 		JADEOptions opts = new JADEOptions();
 		opts.operation.Value("delete");
@@ -468,13 +411,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return command.toString();
 	}
 	
-	/**
-	 * wird nicht als PostProcessorCommands deklariert, wegen unterschiedlichen Faellen - Dateien nicht gefunden, Exception etc
-	 * 
-	 * @param jade
-	 * @param operation
-	 * @param dir
-	 */
 	private void removeDirOnDMZ(JadeEngine jade, Operation operation,String dir){
 		try{
 			if(jade == null){
@@ -482,7 +418,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			}
 			
 			String command = getRemoveDirCommand(dir);
-			logger.info(command);
+			LOGGER.info(command);
 			if(operation.equals(Operation.copyToInternet)){
 				jade.executeCommandOnTarget(command);
 			}
@@ -491,18 +427,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			}
 		}
 		catch(Exception ex){
-			logger.warn(String.format("%s",ex.toString()));
+			LOGGER.warn(String.format("%s",ex.toString()));
 		}
 	}
 	
-	/**
-	 * 
-	 * @param dir
-	 * @return
-	 */
 	private String getRemoveDirCommand(String dir){
 		if(objOptions.jump_platform.isWindows()) {
-			String sourceListFilename = getSourceListFilename().replace('/', '\\');
+			//String sourceListFilename = getSourceListFilename().replace('/', '\\');
 			dir = dir.replace('/', '\\');
 			return "rmdir \""+dir+"\" /s /q;del /F /Q " + dir + "* 2>nul";
 		}
@@ -511,17 +442,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		}
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public SOSFileList getFileList(){
 		return fileList;
 	}
 	
-	/**
-	 * 
-	 */
 	@Override
 	public JADEOptions getOptions() {
 		if (objOptions == null) {
@@ -530,9 +454,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return objOptions;
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public void run() {
 		@SuppressWarnings("unused")
@@ -546,20 +467,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		}
 	}
 
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
 	private String normalizeDirectoryPath(String path) {
 		path = path.replaceAll("\\\\", "/");
 		return path.endsWith("/") ? path : path + "/";
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	private String getUUID() {
 		if (uuid == null) {
 			uuid = UUID.randomUUID().toString();
@@ -567,10 +479,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return uuid;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	private String getSourceListFilename() {
 		if (sourceListFilename == null) {
 			sourceListFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".source.tmp";
@@ -578,15 +486,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		return sourceListFilename;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	private String getHistoryFilename() {
 		if (historyFilename == null) {
 			historyFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".history.csv";
 		}
 		return historyFilename;
 	}
-
 }

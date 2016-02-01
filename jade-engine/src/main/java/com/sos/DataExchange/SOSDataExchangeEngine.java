@@ -1,16 +1,58 @@
 package com.sos.DataExchange;
 
+import static com.sos.DataExchange.SOSJadeMessageCodes.EXCEPTION_RAISED;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_D_0200;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0098;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0099;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0100;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_E_0101;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0100;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0101;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0102;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0103;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_I_0115;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_T_0012;
+import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_T_0013;
+import static com.sos.DataExchange.SOSJadeMessageCodes.TRANSACTION_ABORTED;
+import static com.sos.DataExchange.SOSJadeMessageCodes.TRANSFER_ABORTED;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import sos.net.SOSMail;
+import sos.net.mail.options.SOSSmtpMailOptions;
+import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
+import sos.util.SOSString;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.Options.*;
+import com.sos.JSHelper.Options.JSOptionsClass;
+import com.sos.JSHelper.Options.SOSOptionBoolean;
+import com.sos.JSHelper.Options.SOSOptionCommandString;
+import com.sos.JSHelper.Options.SOSOptionFolderName;
+import com.sos.JSHelper.Options.SOSOptionRegExp;
+import com.sos.JSHelper.Options.SOSOptionTime;
+import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.DataElements.SOSTransferStateCounts;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.HistoryRecordType;
+import com.sos.VirtualFileSystem.DataElements.SOSTransferStateCounts;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
 import com.sos.VirtualFileSystem.Factory.VFSFactory;
 import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
@@ -25,31 +67,12 @@ import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
 import com.sos.scheduler.model.objects.Spooler;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-import sos.net.SOSMail;
-import sos.net.mail.options.SOSSmtpMailOptions;
-import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
-import sos.util.SOSString;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
-
-import static com.sos.DataExchange.SOSJadeMessageCodes.*;
-
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
-	public final String				conSVNVersion					= "$Id$";
-	
 	private ISOSVfsFileTransfer		targetClient					= null;
 	private ISOSVfsFileTransfer		sourceClient					= null;
 	
 	private final String			className						= SOSDataExchangeEngine.class.getSimpleName();
-	private final Logger			logger							= Logger.getLogger(SOSDataExchangeEngine.class);
+	private final static Logger		LOGGER							= Logger.getLogger(SOSDataExchangeEngine.class);
 	private final String			jadeLoggerName					= "JadeReportLog";
 	private final Logger			jadeReportLogger				= Logger.getLogger(jadeLoggerName);
 	private ISOSVFSHandler			targetHandler					= null;
@@ -66,47 +89,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	private static final String		KEYWORD_SKIPPED_TRANSFERS		= "skipped_transfers";
 	private static final String		KEYWORD_STATUS					= "status";
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	public SOSDataExchangeEngine() throws Exception {
 	}
 
-	/**
-	 * 
-	 * @param settings
-	 * @throws Exception
-	 */
 	public SOSDataExchangeEngine(final HashMap<String, String> settings) throws Exception {
 		this.getOptions();
 		objOptions.setAllOptions(settings);
 	}
 
-	/**
-	 * TODO Properties in die OptionsClasse weiterreichen
-	 * objOptions.setAllOptions(properties)
-	 * 
-	 * @param properties
-	 * @throws Exception
-	 */
 	public SOSDataExchangeEngine(final Properties properties) throws Exception {
 		this.getOptions();
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public SOSFileEntries getSOSFileEntries(){
 	    return sourceClient.getSOSFileEntries();
 	}
 
-	/**
-	 * 
-	 * @param jadeOptions
-	 * @throws Exception
-	 */
 	public SOSDataExchangeEngine(final JADEOptions jadeOptions) throws Exception {
 		super(jadeOptions);
 		objOptions = jadeOptions;
@@ -129,7 +127,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				allFilesAreSteady = true;
 				String msg = String.format("steady check (%s of %s):",(i+1),objOptions.CheckSteadyCount.value());
 				
-				logger.info(String.format("%s waiting %ss.",msg,interval));
+				LOGGER.info(String.format("%s waiting %ss.",msg,interval));
 				doSleep(interval);
 				
 				for (SOSFileListEntry entry : sourceFileList.List()) {
@@ -140,7 +138,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				if (allFilesAreSteady) {
 					//one extra check because of https://change.sos-berlin.com/browse/JADE-372
 					//more than one file could be updated SERIAL on the source.
-					logger.info(String.format("all files seem steady! Extra %s waiting %ss for late comers.",msg,interval));
+					LOGGER.info(String.format("all files seem steady! Extra %s waiting %ss for late comers.",msg,interval));
 					doSleep(interval);
 					
 					for (SOSFileListEntry entry : sourceFileList.List()) {
@@ -151,16 +149,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					}
 				}
 				if (allFilesAreSteady) {
-					logger.info(String.format("%s break steady check. all files are steady.",msg));
+					LOGGER.info(String.format("%s break steady check. all files are steady.",msg));
 					break;
 				}
 			}
 			if (allFilesAreSteady == false) {
 				String msg = "not all files are steady";
-				logger.error(msg);
+				LOGGER.error(msg);
 				for (SOSFileListEntry objFile : sourceFileList.List()) {
 					if (objFile.isSteady() == false) {
-						logger.info(String.format("File '%1$s' is not steady", objFile.SourceFileName()));
+						LOGGER.info(String.format("File '%1$s' is not steady", objFile.SourceFileName()));
 					}
 				}
 				if (objOptions.SteadyStateErrorState.isDirty()) {
@@ -186,11 +184,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			
 			if(entry.getLastCheckedFileSize().equals(entry.getFileSize())){
 				entry.setSteady(true);
-				logger.debug(String.format("%s Not changed. file size: %s bytes. '%s'",msg,entry.getLastCheckedFileSize(),entry.SourceFileName()));
+				LOGGER.debug(String.format("%s Not changed. file size: %s bytes. '%s'",msg,entry.getLastCheckedFileSize(),entry.SourceFileName()));
 			}
 			else{
 				fileIsSteady = false;
-				logger.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'",msg, entry.getFileSize(),entry.getLastCheckedFileSize(), entry.SourceFileName()));
+				LOGGER.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'",msg, entry.getFileSize(),entry.getLastCheckedFileSize(), entry.SourceFileName()));
 				
 			}
 			entry.setLastCheckedFileSize(entry.getFileSize());
@@ -246,7 +244,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					else {
 						try { // Test, wether the source folder is available. if not and polling is active, wait for the folder
 							if (sourceFile.notExists() == true) {
-								logger.info(String.format("directory %1$s not found. Wait for the directory due to polling mode.", sourceDir));
+								LOGGER.info(String.format("directory %1$s not found. Wait for the directory due to polling mode.", sourceDir));
 							}
 							else {
 								isSourceDirFounded = true;
@@ -276,7 +274,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						}
 					}
 					catch (Exception e) {
-						logger.error(e.getLocalizedMessage());
+						LOGGER.error(e.getLocalizedMessage());
 					}
 					if (objOptions.poll_minfiles.isNotDirty() && currentFilesCount > 0) { // amount
 						break PollingLoop; // minfiles not specified and one/some files found
@@ -311,10 +309,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return fileList;
 	}
 
-	/**
-	 * 
-	 * @param mailClasses
-	 */
 	private void doProcessMail(final enuMailClasses mailClasses) {
 		SOSSmtpMailOptions mailOptions = objOptions.getMailOptions();
 		SOSSmtpMailOptions mailOptionsWithMailClasses = mailOptions.getOptions(mailClasses);
@@ -324,10 +318,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		processSendMail(mailOptionsWithMailClasses);
 	}
 
-	/**
-	 * 
-	 * @param time
-	 */
 	private void doSleep(final long time) {
 		try {
 			Thread.sleep(time * 1000);
@@ -335,9 +325,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		catch (InterruptedException e) {} 
 	}
 
-	/**
-	 * 
-	 */
 	private void setLogger(){
 		VFSFactory.setParentLogger(jadeLoggerName);
 		
@@ -348,19 +335,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		else {
 			if (verbose > 8) {
 				Logger.getRootLogger().setLevel(Level.TRACE);
-				logger.setLevel(Level.TRACE);
-				logger.debug("set loglevel to TRACE due to option verbose = " + verbose);
+				LOGGER.setLevel(Level.TRACE);
+				LOGGER.debug("set loglevel to TRACE due to option verbose = " + verbose);
 			}
 			else {
 				Logger.getRootLogger().setLevel(Level.DEBUG);
-				logger.debug("set loglevel to DEBUG due to option verbose = " + verbose);
+				LOGGER.debug("set loglevel to DEBUG due to option verbose = " + verbose);
 			}
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	@Override 
 	public boolean Execute() throws Exception {
 		
@@ -400,9 +384,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return ok;
 	}
 	
-	/**
-	 * 
-	 */
 	private void showResult() {
 		String msg = "";
 		if (objOptions.banner_footer.isDirty()) {
@@ -414,15 +395,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		setTextProperties();
 		msg = objOptions.replaceVars(msg);
 		jadeReportLogger.info(msg);
-		logger.info(msg);
+		LOGGER.info(msg);
 	}
 	
-	/**
-	 * 
-	 * @param options
-	 * @param isSource
-	 * @return
-	 */
 	private String showBannerHeaderSource(SOSConnection2OptionsAlternate options, boolean isSource) {
 		StringBuffer sb = new StringBuffer();
 		String pattern4String 	= "  | %-22s= %s%n";
@@ -508,9 +483,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return sb.toString();
 	}
 
-	/**
-	 * 
-	 */
 	private void showBanner() {
 		StringBuffer sb = new StringBuffer();
 		if (objOptions.banner_header.isDirty()) {
@@ -562,14 +534,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			sb.append("\n");
 		}
 		jadeReportLogger.info(sb.toString());
-		logger.info(sb.toString());
+		LOGGER.info(sb.toString());
 	}
 
-	/**
-	 * 
-	 * @param fileList
-	 * @param sourceDir
-	 */
 	private void fillFileList(final String[] fileList, final String sourceDir) {
 		if (objOptions.MaxFiles.isDirty() == true && fileList.length > objOptions.MaxFiles.value()) {
 			for (int i = 0; i < objOptions.MaxFiles.value(); i++) {
@@ -581,18 +548,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public SOSFileList getFileList() {
 		return sourceFileList;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	private long getPollTimeout() {
 		long pollTimeout = 0;
 		if (objOptions.poll_timeout.isDirty()) {
@@ -604,10 +563,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return pollTimeout;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	private String getPollTimeoutText() {
 		String pollTimeout = "";
 		if (objOptions.poll_timeout.isDirty()) {
@@ -619,17 +574,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return pollTimeout;
 	} 
 
-	/**
-	 * 
-	 * @return
-	 */
 	private String[] getSingleFileNames() {
 		Vector<String> fileList = new Vector<String>();
 		String localDir = objOptions.SourceDir.ValueWithFileSeparator();
 		
 		if (objOptions.file_path.IsNotEmpty() == true) {
 			String filePath = objOptions.file_path.Value();
-			logger.debug(String.format("single file(s) specified : '%1$s'", filePath));
+			LOGGER.debug(String.format("single file(s) specified : '%1$s'", filePath));
 			
 			try {
 				String[] arr = filePath.split(";");
@@ -687,23 +638,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return (fileList.size() > 0) ? fileList.toArray(new String[fileList.size()]) : new String[0];
 	}
 
-	/**
-	 * 
-	 */
 	@Override 
 	public String getState() {
 		return (String) objOptions.getTextProperties().get(KEYWORD_STATE);
 	}
 
-	/**
-	 * 
-	 */
-	
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
 	protected boolean isAPathName(final String path) {
 		boolean ok = false;
 		String aPath = path.replaceAll("\\\\", "/");
@@ -726,9 +665,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return ok;
 	}
 
-	/**
-	 * 
-	 */
 	@Override 
 	public void Logout() {
 		try {
@@ -739,20 +675,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void makeDirs() {
 		if (objOptions.skip_transfer.isFalse()) {
 			makeDirs(objOptions.TargetDir.Value());
 		}
 	}
 
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
 	private boolean makeDirs(final String path) {
 		boolean cd = true;
 		try {
@@ -776,7 +704,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			// TODO alternative_remote_dir, wozu und wie gehen wir damit um?
 			/*if (cd == false && objOptions.alternative_remote_dir.IsNotEmpty()) {// alternative Parameter
 				String alternativeRemoteDir = objOptions.alternative_remote_dir.Value();
-				logger.debug("..try with alternative parameter [remoteDir=" + alternativeRemoteDir + "]");
+				LOGGER.debug("..try with alternative parameter [remoteDir=" + alternativeRemoteDir + "]");
 				cd = targetClient.isDirectory(alternativeRemoteDir);
 				objOptions.TargetDir.Value(alternativeRemoteDir);
 			}*/
@@ -787,11 +715,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return cd;
 	}
 
-	/**
-	 * 
-	 * @param sourceDir
-	 * @return
-	 */
 	private long oneOrMoreSingleFilesSpecified(final String sourceDir) {
 		long founded = 0;
 		//if (objOptions.skip_transfer.isFalse()) {
@@ -804,7 +727,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				while (true) {
 					founded = 0;
 					if (currentPollingTime > pollTimeout) { // time exceeded ?
-						logger.info(String.format("polling: time '%1$s' is over. polling terminated", 
+						LOGGER.info(String.format("polling: time '%1$s' is over. polling terminated", 
 								getPollTimeoutText()));
 						break;
 					}
@@ -837,9 +760,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return founded;
 	}
 
-	/**
-	 * 
-	 */
 	@Override 
 	public JADEOptions getOptions() {
 		if (objOptions == null) {
@@ -853,12 +773,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		objOptions = (JADEOptions)options;
 	}
 
-	/**
-	 * 
-	 * @param rc
-	 * @return
-	 * @throws Exception
-	 */
 	private boolean printState(boolean rc) throws Exception {
 		String state = "processing successful ended";
 
@@ -892,7 +806,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			}
 		}
 
-		logger.info(state);
+		LOGGER.info(state);
 		jadeReportLogger.info(state);
 		objOptions.getTextProperties().put(KEYWORD_STATE, state);
 		if (counts.getFailedTranfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0) {
@@ -901,10 +815,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return true;
 	}
 
-	/**
-	 * 
-	 * @param mailOptions
-	 */
 	private void processSendMail(final SOSSmtpMailOptions mailOptions) {
 		if (mailOptions != null && mailOptions.FileNotificationTo.isDirty() == true) {
 			try {
@@ -951,18 +861,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 				
 				SOSMail mail = new SOSMail(mailOptions.host.Value());
-				logger.debug(mailOptions.dirtyString());
+				LOGGER.debug(mailOptions.dirtyString());
 				mail.sendMail(mailOptions);
 			}
 			catch (Exception e) {
-				logger.error(e.getLocalizedMessage());
+				LOGGER.error(e.getLocalizedMessage());
 			}
 		}
 	} 
 	
-	/**
-	 * 
-	 */
 	@Override 
 	public void run() {
 		try {
@@ -1008,18 +915,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				executor.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
 			}
 			catch (InterruptedException e) {
-				logger.error(e.getLocalizedMessage());
+				LOGGER.error(e.getLocalizedMessage());
 			}
 		}
-//		if (objOptions.transactional.isFalse()) {
-//			fileList.EndTransaction();
-//			sendTransferHistory();
-//		}
 	}
 
-	/**
-	 * 
-	 */
 	private void sendNotifications() {
 		// TODO Nagios anbinden
 		// TODO Status über MQ senden
@@ -1038,15 +938,83 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 
-	/**
-	 * 
-	 * @param msg
-	 */
 	private void setInfo(final String msg) {
-		logger.info(msg);
+		LOGGER.info(msg);
 		objJSJobUtilities.setStateText(msg);
 	}
 
+	private void setSystemProperties(){
+		try{
+			if(!SOSString.isEmpty(getOptions().java_property_files.Value())){
+				String files = getOptions().java_property_files.Value();
+				if(!SOSString.isEmpty(files)){
+					LOGGER.info(String.format("set system properties from files: %s",files));
+					setSystemProperties(files);
+				}
+			}
+		}
+		catch(Exception ex){
+			LOGGER.warn("error on setSystemProperties: "+ex.toString());
+		}
+	}
+	
+	private void setSystemProperties(String files){
+		String[] arr = files.trim().split(";");
+		for (String file : arr) {
+			file = file.trim();
+			
+			BufferedReader in = null;
+			FileReader fr = null;
+			
+			try {
+				LOGGER.debug(String.format("read property file: %s",file));
+				//extra not use prop.load(input) - load() not read the properties in the original order
+				fr = new FileReader(file);
+				in = new BufferedReader(fr);
+				String line;
+				while ((line = in.readLine()) != null) {
+					line = line.trim();
+					if(!SOSString.isEmpty(line)){
+						Properties p = new Properties();
+						
+						StringReader s = null;
+						try{
+							s = new StringReader(line);
+							p.load(s);
+						}
+						catch (Exception e) {
+							LOGGER.warn(String.format("can't load property from line [%s]: %s",line,e.toString()));
+						}
+						finally{
+							if(s!= null){
+								try{s.close();}catch(Exception ex){}
+							}
+						}
+					    
+					    Optional<Entry<Object, Object>> o = p.entrySet().stream().findFirst();
+					    if(o.isPresent()){
+					    	String key = (String)o.get().getKey();
+					    	String value = (String)o.get().getValue();
+					    	
+					    	LOGGER.debug(String.format("set system property: %s = %s",key,value));
+					    	System.setProperty(key,value);
+					    }
+					}
+				}
+			} catch (Exception e) {
+				LOGGER.warn(String.format("error on read property file [%s]: ",file,e.toString()));
+			}
+			finally{
+				if(fr != null){
+					try{fr.close();}catch(Exception ex){}
+				}
+				if(in != null){
+					try{in.close();}catch(Exception ex){}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * TODO das muß beim JobScheduler-Job in die Parameter zurück, aber nur da
 	 * siehe hierzu das Interface ...
@@ -1067,10 +1035,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		objOptions.getTextProperties().put(KEYWORD_LAST_ERROR, JobSchedulerException.LastErrorMessage);
 	} 
 
-	/**
-	 * 
-	 * @return
-	 */
 	private long getSuccessfulTransfers() {
 		long count = 0;
 		if (sourceFileList != null) {
@@ -1093,36 +1057,24 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return counts;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public ISOSVfsFileTransfer getTargetClient() {
 		return targetClient;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public ISOSVfsFileTransfer getSourceClient() {
 		return sourceClient;
 	}
 	
-	/**
-	 * Send files by  .... from source to a target
-	 *
-	 * @return boolean
-	 * @throws Exception
-	 */
 	public boolean transfer() throws Exception {
 		boolean rc = false;
 		try { // to connect, authenticate and execute commands
 			getOptions().CheckMandatory();
 			
-			logger.debug(getOptions().dirtyString());
-			logger.debug("Source : " + getOptions().Source().dirtyString());
-			logger.debug("Target : " + getOptions().Target().dirtyString());
+			LOGGER.debug(getOptions().dirtyString());
+			LOGGER.debug("Source : " + getOptions().Source().dirtyString());
+			LOGGER.debug("Target : " + getOptions().Target().dirtyString());
+			
+			setSystemProperties();
 			setTextProperties();
 			
 			sourceFileList = new SOSFileList(targetHandler);
@@ -1155,7 +1107,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						if (sourceFileList.size() <= 0 && objOptions.PollingServer.isFalse()) {
 							if (objOptions.PollErrorState.isDirty()) {
 								String pollErrorState = objOptions.PollErrorState.Value();
-								logger.info("set order-state to " + pollErrorState);
+								LOGGER.info("set order-state to " + pollErrorState);
 								setNextNodeState(pollErrorState);
 								break PollingServerLoop;
 							}
@@ -1176,7 +1128,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 							else {
 								msg = SOSJADE_D_0200.params(sourceDir, objOptions.file_spec.Value());
 							}
-							logger.debug(msg);
+							LOGGER.debug(msg);
 							String integrityHashFileExtention = objOptions.CheckIntegrityHash.isTrue() ? "." + objOptions.IntegrityHashType.Value() : null;
 							selectFilesOnSource(fileHandle, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive, integrityHashFileExtention);
 						}
@@ -1189,7 +1141,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					try {
 						if (objOptions.operation.isOperationGetList()) {
 							String msg = SOSJADE_I_0115.get();
-							logger.info(msg);
+							LOGGER.info(msg);
 							jadeReportLogger.info(msg);
 							
 							objOptions.remove_files.setFalse();
@@ -1235,11 +1187,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 								long currentTime = System.currentTimeMillis() / 1000;
 								long duration = currentTime - startPollingServer;
 								if (duration >= objOptions.pollingServerDuration.getTimeAsSeconds()) {
-									logger.debug("PollingServerMode: time elapsed. terminate polling server");
+									LOGGER.debug("PollingServerMode: time elapsed. terminate polling server");
 									break PollingServerLoop;
 								}
 							}
-							logger.debug("PollingServerMode: start next polling cycle");
+							LOGGER.debug("PollingServerMode: start next polling cycle");
 							// TODO check external end signal for Polling server
 							// TODO end-time for polling server as an option
 							//							sendNotifications();
@@ -1255,13 +1207,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 						else{
 							msg = TRANSFER_ABORTED.get(e);
 						}
-						logger.error(msg);
+						LOGGER.error(msg);
 						jadeReportLogger.error(msg);
 						sourceFileList.Rollback();
 						sendTransferHistory();
 						throw e;
 					}
-				} // end while (true)
+				} 
 				rc = printState(rc);
 				return rc;
 			}
@@ -1281,11 +1233,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 	}
 	
-	
-	/**
-	 * 
-	 * @throws Exception
-	 */
 	private void executePreTransferCommands() throws Exception {
 		SOSConnection2OptionsAlternate target = objOptions.Target();
 		if (target.AlternateOptionsUsed.isTrue()) {
@@ -1309,12 +1256,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			targetClient.reconnect(target);
 		}
 	}
-	
-	
-	/**
-	 * 
-	 * @throws Exception
-	 */
+
 	private void executePostTransferCommands() throws Exception {
 		SOSConnection2OptionsAlternate target = objOptions.Target();
 		if (target.AlternateOptionsUsed.isTrue()) {
@@ -1338,11 +1280,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		executeTransferCommands(caller,sourceClient, source.PostTransferCommands);
 	}
 	
-	/**
-	 * 
-	 * @param command
-	 * @throws Exception
-	 */
 	public void executeCommandOnTarget(String command) throws Exception{
 		if(targetClient == null){
 			throw new Exception("objDataTargetClient is NULL");
@@ -1350,11 +1287,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		targetClient.getHandler().ExecuteCommand(command);
 	}
 	
-	/**
-	 * 
-	 * @param command
-	 * @throws Exception
-	 */
 	public void executeCommandOnSource(String command) throws Exception{
 		if(sourceClient == null){
 			throw new Exception("objDataSourceClient is NULL");
@@ -1372,22 +1304,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 	 */
 	private void executeTransferCommands(String commandCallerMethod,final ISOSVfsFileTransfer fileTransfer, final SOSOptionCommandString commands) throws Exception {
 		if (commands.IsNotEmpty()) {
-			logger.info(commandCallerMethod);
+			LOGGER.info(commandCallerMethod);
 			for (String command : commands.split()) {
 				fileTransfer.getHandler().ExecuteCommand(objOptions.replaceVars(command));
 			}
 		}
 	}
 
-	/**
-	 * 
-	 * @param localeFile
-	 * @param sourceDir
-	 * @param regExp
-	 * @param recursive
-	 * @return
-	 * @throws Exception
-	 */
 	private long selectFilesOnSource(final ISOSVirtualFile localeFile, 
 			final SOSOptionFolderName sourceDir, 
 			final SOSOptionRegExp regExp,
@@ -1414,27 +1337,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		return sourceFileList.size();
 	}
 	
-	
-	
-	/**
-	 *
-	 * \brief sendTransferHistory
-	 *
-	 * \details
-	 * Send the transfer history for all transferred files to the background service.
-	 *
-	 * \return void
-	 *
-	 */
 	public void sendTransferHistory() {
 		if (objOptions.SendTransferHistory.isTrue()) {
 			String schedulerHost = objOptions.scheduler_host.Value();
 			if (isEmpty(schedulerHost)) {
-				logger.info("No data sent to the background service due to missing host name");
+				LOGGER.info("No data sent to the background service due to missing host name");
 				return;
 			}
 			if (objOptions.scheduler_port.isNotDirty()) {
-				logger.info("No data sent to the background service due to missing port number");
+				LOGGER.info("No data sent to the background service due to missing port number");
 				return;
 			}
 			
@@ -1444,7 +1355,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 				}
 			}
 			// TODO I18N
-			logger.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s", 
+			LOGGER.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s", 
 					countSentHistoryRecords,
 					objOptions.scheduler_host.Value(),
 					objOptions.scheduler_port.Value(),
@@ -1453,7 +1364,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					));
 		}
 		else {
-			logger.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
+			LOGGER.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
 		}
 	}
 		
@@ -1479,7 +1390,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		}
 		JSCmdAddOrder addOrder = schedulerFactory.createAddOrder();
 		addOrder.setJobChain(objOptions.scheduler_job_chain.Value() /* "scheduler_sosftp_history" */);
-		//objOrder.setTitle(SOSVfs_Title_276.get());
 		
 		Params params = schedulerFactory.setParams(fileProperties);
 		addOrder.setParams(params);

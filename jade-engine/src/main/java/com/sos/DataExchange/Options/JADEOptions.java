@@ -1,8 +1,4 @@
-/**
- *
- */
 package com.sos.DataExchange.Options;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,59 +24,45 @@ import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
-/**
- * @author KB
- *
- */
 @I18NResourceBundle(baseName = "SOSVirtualFileSystem", defaultLocale = "en")
 public class JADEOptions extends SOSFTPOptions {
 
-	/**
-	 *
-	 */
 	private static final long	serialVersionUID	= -5788970501747521212L;
-	@SuppressWarnings("unused")
-	private static final String	conSVNVersion					= "$Id$";
-
-	@SuppressWarnings("unused") private final String conClassName = this.getClass().getSimpleName();
-	private final Logger logger = Logger.getLogger(this.getClass());
+	private static final String	CONFIG_FILE_EXTENSION	= ".jadeconf";
+	private static final Logger LOGGER = Logger.getLogger(JADEOptions.class);
 	
-
 	public JADEOptions() {
 		super();
 	}
-	
-	
-	public JADEOptions(final HashMap<String, String> JSSettings) throws Exception {
-		super(JSSettings);
+		
+	public JADEOptions(final HashMap<String, String> settings) throws Exception {
+		super(settings);
 	}
 	
-	public JADEOptions(final enuTransferTypes local, final enuTransferTypes enuTargetTransferType) {
-		super(local, enuTargetTransferType);
+	public JADEOptions(final enuTransferTypes source, final enuTransferTypes target) {
+		super(source, target);
 	}
-
-	private static final String	conFileNameExtensionJADEConfigFile	= ".jadeconf";
 	
 	@Override
 	public HashMap<String, String> ReadSettingsFile() {
-		Properties objP = new Properties();
+		Properties properties = new Properties();
 		HashMap<String, String> map = new HashMap<>();
 
-		String strSettingsFile = settings.Value();
-		if (strSettingsFile.endsWith(conFileNameExtensionJADEConfigFile)) {
+		String file = settings.Value();
+		if (file.endsWith(CONFIG_FILE_EXTENSION)) {
 			try {
 				JAXBContext jc = JAXBContext.newInstance(ConfigurationElement.class);
 				Unmarshaller u = jc.createUnmarshaller();
-				ConfigurationElement objJADEConfig = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.Value()));
-				Vector<Object> objProfileOrProfiles = (Vector<Object>) objJADEConfig.getIncludeOrProfileOrProfiles();
-				searchXMLProfile(objP, objProfileOrProfiles, "globals");
-				searchXMLProfile(objP, objProfileOrProfiles, profile.Value());
+				ConfigurationElement config = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.Value()));
+				Vector<Object> profileOrProfiles = (Vector<Object>) config.getIncludeOrProfileOrProfiles();
+				searchXMLProfile(properties, profileOrProfiles, "globals");
+				searchXMLProfile(properties, profileOrProfiles, profile.Value());
 			}
-			catch (JAXBException je) {
-				logger.error(je.getLocalizedMessage());
+			catch (JAXBException ex) {
+				LOGGER.error(ex.getLocalizedMessage());
 			}
-			catch (IOException ioe) {
-				logger.error(ioe.getLocalizedMessage());
+			catch (IOException ex) {
+				LOGGER.error(ex.getLocalizedMessage());
 			}
 		}
 		else {  // TODO any file extension is allowed for the ini-configuration file
@@ -89,144 +71,93 @@ public class JADEOptions extends SOSFTPOptions {
 		return map;
 	}
 	
-	private void processXMLProfile(final Properties objP, final JADEProfile objProfile) {
-		for (Object object2 : objProfile.getIncludeOrIncludesOrParams()) {
-			if (object2 instanceof JADEProfileIncludes) {
+	private void processXMLProfile(final Properties properties, final JADEProfile profile) {
+		for (Object obj : profile.getIncludeOrIncludesOrParams()) {
+			if (obj instanceof JADEProfileIncludes) {
 			}
 			else {
-				if (object2 instanceof JADEParam) {
-					processXMLParam(objP, (JADEParam) object2);
+				if (obj instanceof JADEParam) {
+					processXMLParam(properties, (JADEParam) obj);
 				}
 				else {
-					if (object2 instanceof JADEParams) {
-						processXMLParams(objP, (JADEParams) object2);
+					if (obj instanceof JADEParams) {
+						processXMLParams(properties, (JADEParams) obj);
 					}
 				}
 			}
 		}
 	}
 
-	private void searchXMLProfile(final Properties objP, final Vector<Object> objProfileOrProfiles, final String pstrProfileName) {
-		logger.debug("Profile = " + profile.Value());
-		for (Object object : objProfileOrProfiles) {
+	private void searchXMLProfile(final Properties properties, final Vector<Object> profileOrProfiles, final String profileName) {
+		LOGGER.debug("Profile = " + profile.Value());
+		for (Object object : profileOrProfiles) {
 			if (object instanceof JADEProfile) {
-				JADEProfile objProfile = (JADEProfile) object;
-				String strProfileName = objProfile.getName();
-				logger.debug(" ... Profile Name = " + strProfileName);
-				if (objProfile.getName().equalsIgnoreCase(pstrProfileName)) {
-					processXMLProfile(objP, objProfile);
+				JADEProfile profile = (JADEProfile) object;
+				String name = profile.getName();
+				LOGGER.debug(" ... Profile Name = " + name);
+				if (profile.getName().equalsIgnoreCase(profileName)) {
+					processXMLProfile(properties, profile);
 					break;
 				}
 			}
 			else {
 				if (object instanceof JADEProfiles) {
 					Vector<Object> lstProfileOrProfiles = (Vector<Object>) ((JADEProfiles) object).getIncludeOrProfile();
-					searchXMLProfile(objP, lstProfileOrProfiles, pstrProfileName);
+					searchXMLProfile(properties, lstProfileOrProfiles, profileName);
 					break;
 				}
 			}
 		}
 	}
 
-	private void processXMLParams(final Properties objP, final JADEParams pobjParams) {
-		for (Object object3 : pobjParams.getParamOrParams()) {
-			if (object3 instanceof JADEParam) {
-				processXMLParam(objP, (JADEParam) object3);
+	private void processXMLParams(final Properties properties, final JADEParams params) {
+		for (Object obj : params.getParamOrParams()) {
+			if (obj instanceof JADEParam) {
+				processXMLParam(properties, (JADEParam) obj);
 			}
 			else {
-				if (object3 instanceof JADEParams) {
-					processXMLParams(objP, (JADEParams) object3);
+				if (obj instanceof JADEParams) {
+					processXMLParams(properties, (JADEParams) obj);
 				}
 			}
 		}
 	}
 
-	private void processXMLParam(final Properties objP, final JADEParam pobjParam) {
-		JADEParam objParam = pobjParam;
+	private void processXMLParam(final Properties properties, final JADEParam param) {
+		JADEParam objParam = param;
 		System.out.println(" ... Param name = " + objParam.getName());
 		if (objParam.getValue() != null) {
-			objP.put(objParam.getName(), objParam.getValue());
+			properties.put(objParam.getName(), objParam.getValue());
 		}
 		else {
-			List<Object> objV = objParam.getIncludeOrValues();
-			for (Object objO2 : objV) {
-				if (objO2 instanceof JADEParamValues) {
-					JADEParamValues objValues = (JADEParamValues) objO2;
-					for (Object objV2 : objValues.getValue()) {
-						Value objValue = (Value) objV2;
-						System.out.println(String.format(" +++ value '%1$s' with prefix '%2$s'", objValue.getVal(), objValue.getPrefix()));
-						String strV = objValue.getVal();
-						String strPre = objValue.getPrefix();
-						if (strPre != null) {
-							strV = strPre + "_" + objParam.getName();
+			List<Object> includeOrValues = objParam.getIncludeOrValues();
+			for (Object obj : includeOrValues) {
+				if (obj instanceof JADEParamValues) {
+					JADEParamValues paramValues = (JADEParamValues) obj;
+					for (Object objV2 : paramValues.getValue()) {
+						Value value = (Value) objV2;
+						System.out.println(String.format(" +++ value '%1$s' with prefix '%2$s'", value.getVal(), value.getPrefix()));
+						String val = value.getVal();
+						String prefix = value.getPrefix();
+						if (prefix != null) {
+							val = prefix + "_" + objParam.getName();
 						}
 						else {
-							strPre = objParam.getName();
+							prefix = objParam.getName();
 						}
-						objP.put(strPre, strV);
-						logger.debug("Put to Properties Param = " + strPre + ", Value = " + strV);
+						properties.put(prefix, val);
+						LOGGER.debug("Put to Properties Param = " + prefix + ", Value = " + val);
 					}
 				}
 			}
 		}
 	}
 
-	@SuppressWarnings("unused") private void iterateProfile(final Object objP) {
-		if (objP instanceof JADEProfile) {
-			JADEProfile objProfile = (JADEProfile) objP;
-			System.out.println("--- Profile name = " + objProfile.getName());
-			for (Object object2 : objProfile.getIncludeOrIncludesOrParams()) {
-				if (object2 instanceof JADEProfileIncludes) {
-				}
-				else {
-					if (object2 instanceof JADEParam) {
-						JADEParam objParam = (JADEParam) object2;
-						System.out.println(" ... Param name = " + objParam.getName());
-						Object objV = objParam.getIncludeOrValues();
-						if (objV instanceof JADEParamValues) {
-							JADEParamValues objValues = (JADEParamValues) objV;
-							for (Object objV2 : objValues.getValue()) {
-								Value objValue = (Value) objV2;
-								System.out.println(String.format(" +++ value '%1$2' with prefix '%2$s'", objValue.getVal(), objValue.getPrefix()));
-							}
-						}
-					}
-					else {
-						if (object2 instanceof JADEParams) {
-							JADEParams objParams = (JADEParams) object2;
-							for (Object object3 : objParams.getParamOrParams()) {
-								if (object3 instanceof JADEParam) {
-									JADEParam objParam = (JADEParam) object3;
-									System.out.println("Param name = " + objParam.getName());
-									for (Object objV2 : objParam.getIncludeOrValues()) {
-										if (objV2 instanceof JADEParamValues) {
-											JADEParamValues objValues = (JADEParamValues) objV2;
-											for (Object objV3 : objValues.getValue()) {
-												Value objValue = (Value) objV3;
-												System.out.println(String.format(" +++ value '%1$s' with prefix '%2$s'", objValue.getVal(),
-														objValue.getPrefix()));
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 	
 	public JADEOptions getClone() {
-		@SuppressWarnings("unused") final String conMethodName = conClassName + "::getClone";
-		JADEOptions objClone = new JADEOptions();
-		//TODO hier werden zwei Methoden genutzt, die mit Cloning eigentlich nichts zu tun haben
-		//man könnte die aktuellen Options auch ein eine HashMap packen und der neuen JADEOptions instance uebergeben.
-		//Zumal CommandLineArgs buggy aussieht.
-		String strB = this.getOptionsAsCommandLine();
-		objClone.CommandLineArgs(strB);
-		return objClone;
-	} // public JADEOptions getClone
-
+		JADEOptions options = new JADEOptions();
+		options.CommandLineArgs(this.getOptionsAsCommandLine());
+		return options;
+	}
 
 }
