@@ -92,6 +92,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
 		options.strictHostKeyChecking.value(objOptions.jump_strict_hostkey_checking.value());
 		options.Directory.Value(dir);
+		options.configuration_files.Value(objOptions.jump_configuration_files.Value());
 		
 		return options;
 	}
@@ -187,7 +188,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.password.setPrefix(prefix);
 		options.ssh_auth_method.setPrefix(prefix);
 		options.ssh_auth_file.setPrefix(prefix);
-
+		options.configuration_files.setPrefix(prefix);
+		
 		options.proxy_protocol.setPrefix(prefix);
 		options.proxy_host.setPrefix(prefix);
 		options.proxy_port.setPrefix(prefix);
@@ -359,7 +361,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		
 		options.ResultSetFileName = objOptions.ResultSetFileName;
 		
-		options.java_property_files = objOptions.java_property_files;
+		options.system_property_files = objOptions.system_property_files;
 		//not supported: options.result_list_file = objOptions.result_list_file;
 		//not supported: options.CreateResultSet = objOptions.CreateResultSet;
 

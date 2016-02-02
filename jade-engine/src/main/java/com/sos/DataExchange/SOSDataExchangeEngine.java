@@ -945,8 +945,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
 	private void setSystemProperties(){
 		try{
-			if(!SOSString.isEmpty(getOptions().java_property_files.Value())){
-				String files = getOptions().java_property_files.Value();
+			if(!SOSString.isEmpty(getOptions().system_property_files.Value())){
+				String files = getOptions().system_property_files.Value();
 				if(!SOSString.isEmpty(files)){
 					LOGGER.info(String.format("set system properties from files: %s",files));
 					setSystemProperties(files);
@@ -1002,7 +1002,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 					}
 				}
 			} catch (Exception e) {
-				LOGGER.warn(String.format("error on read property file [%s]: ",file,e.toString()));
+				LOGGER.warn(String.format("error on read property file [%s]: %s",file,e.toString()));
 			}
 			finally{
 				if(fr != null){

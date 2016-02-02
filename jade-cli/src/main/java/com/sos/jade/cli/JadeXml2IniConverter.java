@@ -281,8 +281,8 @@ public class JadeXml2IniConverter {
 						}
 					}
 				}
-				if(child.getNodeName().equals("JavaPropertyFiles")){
-					String val = getJavaPropertyFilesEntry(child);
+				if(child.getNodeName().equals("SystemPropertyFiles")){
+					String val = getMergedChildsEntry(child,"system_property_files");
 					if(!SOSString.isEmpty(val)){
 						writeLine(val);
 						writeNewLine();
@@ -296,7 +296,7 @@ public class JadeXml2IniConverter {
 		}
 	}
 	
-	private String getJavaPropertyFilesEntry(Node parent){
+	private String getMergedChildsEntry(Node parent, String defaultParamName){
 		StringBuffer sb = new StringBuffer();
 		NodeList childs = parent.getChildNodes();
 		for (int i = 0; i< childs.getLength(); i++) {
@@ -312,7 +312,7 @@ public class JadeXml2IniConverter {
 			}
 		}
 		
-		String paramName = "java_property_files";
+		String paramName = defaultParamName;
 		if(sb.length() > 0){
 			try{
 				String xpath = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter[1]",parent.getNodeName());
@@ -640,13 +640,6 @@ public class JadeXml2IniConverter {
 						writeNewLine();
 						handleProfileNotification(child.getNodeName(), child,0);
 					}
-					if(child.getNodeName().equals("JavaPropertyFiles")){
-						String val = getJavaPropertyFilesEntry(child);
-						if(!SOSString.isEmpty(val)){
-							writeNewLine();
-							writeLine(val);
-						}
-					}
 				}
 			}
 		}
@@ -930,6 +923,22 @@ public class JadeXml2IniConverter {
 			for (int i = 0; i< childs.getLength(); i++) {
 				Node child = childs.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
+					
+					if(child.getNodeName().equals("SystemPropertyFiles")){
+						String val = getMergedChildsEntry(child,"system_property_files");
+						if(!SOSString.isEmpty(val)){
+							writeLine(val);
+						}
+						continue;
+					}
+					else if(child.getNodeName().equals("ConfigurationFiles")){
+						String val = getMergedChildsEntry(child,"configuration_files");
+						if(!SOSString.isEmpty(val)){
+							writeLine(val);
+						}
+						continue;
+					}
+					
 					if(child.getAttributes().getNamedItem("ref") != null){
 						//System.out.println(child.getNodeName()+" = "+child.getAttributes().getNamedItem("ref").getNodeValue());
 						if(child.getNodeName().equals("JumpFragmentRef")){
