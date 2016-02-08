@@ -198,6 +198,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		
 		options.PreTransferCommands.setPrefix(prefix);
 		options.PostTransferCommands.setPrefix(prefix);
+		options.post_transfer_commands_on_error.setPrefix(prefix);
+		options.post_transfer_commands_final.setPrefix(prefix);
 		
 		options.Directory.setPrefix(prefix);
 		
@@ -212,6 +214,20 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.protocol.setPrefix(prefix);
 		options.host.setPrefix(prefix);
 		options.Directory.setPrefix(prefix);
+		
+		options.Pre_Command.Value(objOptions.jump_pre_command.Value());
+		options.Post_Command.Value(objOptions.jump_post_command_on_success.Value());
+		options.PreTransferCommands.Value(objOptions.jump_pre_transfer_commands.Value());
+		options.post_transfer_commands_on_success.Value(objOptions.jump_post_transfer_commands_on_success.Value());
+		options.post_transfer_commands_on_error.Value(objOptions.jump_post_transfer_commands_on_error.Value());
+		options.post_transfer_commands_final.Value(objOptions.jump_post_transfer_commands_final.Value());
+		
+		options.Pre_Command.setPrefix(prefix);
+		options.Post_Command.setPrefix(prefix);
+		options.PreTransferCommands.setPrefix(prefix);
+		options.post_transfer_commands_on_success.setPrefix(prefix);
+		options.post_transfer_commands_on_error.setPrefix(prefix);
+		options.post_transfer_commands_final.setPrefix(prefix);
 		
 		return options;
 	}
@@ -404,6 +420,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		objOptions.Source().PreFtpCommands.setNotDirty();
 		objOptions.Source().PreTransferCommands.setNotDirty();
 		objOptions.Source().TFN_Post_Command.setNotDirty();
+		objOptions.Source().post_transfer_commands_on_success.setNotDirty();
+		objOptions.Source().post_transfer_commands_on_error.setNotDirty();
+		objOptions.Source().post_transfer_commands_final.setNotDirty();
 		
 		StringBuffer command = new StringBuffer(objOptions.jump_command.Value()+ " ");
 		command.append("-SendTransferHistory=false ");

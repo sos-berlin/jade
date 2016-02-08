@@ -1229,7 +1229,21 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 			setTextProperties();
 			objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0013.get());
 			jadeReportLogger.info(SOSJADE_E_0101.params(e.getLocalizedMessage()), e);
+			try{
+				executePostTransferCommandsOnError();
+			}
+			catch(Exception ex){
+				LOGGER.error("executePostTransferCommandsOnError: "+ex.toString());
+			}
 			throw e;
+		}
+		finally{
+			try{
+				executePostTransferCommandsFinal();
+			}
+			catch(Exception ex){
+				LOGGER.error("executePostTransferCommandsFinal: "+ex.toString());
+			}
 		}
 	}
 	
@@ -1278,6 +1292,111 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 		//needs more time than the source connection is still established
 		sourceClient.reconnect(source);
 		executeTransferCommands(caller,sourceClient, source.PostTransferCommands);
+	}
+	
+	private void executePostTransferCommandsOnError() throws Exception {
+		StringBuffer exception = new StringBuffer();
+		
+		SOSConnection2OptionsAlternate target = objOptions.Target();
+		String command = target.post_transfer_commands_on_error.Value();
+		if (target.AlternateOptionsUsed.isTrue()) {
+			command = target.Alternatives().post_transfer_commands_on_error.Value();
+		}
+		if(!SOSString.isEmpty(command)){
+			try{
+				executeCommandOnTarget(command);
+			}
+			catch(Exception ex){
+				exception.append("[target client");
+				if (target.AlternateOptionsUsed.isTrue()) {
+					exception.append(" alternate");
+				}
+				exception.append("] "+ex.toString());
+			}
+		}
+		
+		SOSConnection2OptionsAlternate source = objOptions.Source();
+		command = source.post_transfer_commands_on_error.Value();
+		if (source.AlternateOptionsUsed.isTrue()) {
+			command = source.Alternatives().post_transfer_commands_on_error.Value();
+		}
+		
+		if(!SOSString.isEmpty(command)){
+			try{
+				//with JADE4DMZ it could be that the target.PostTransferCommands 
+				//needs more time than the source connection is still established
+				if(sourceClient == null){
+					throw new Exception("objDataSourceClient is NULL");
+				}
+				sourceClient.reconnect(source);
+				executeCommandOnSource(command);
+			}
+			catch(Exception ex){
+				if(exception.length() > 0){
+					exception.append(", ");
+				}
+				exception.append("[source client");
+				if (source.AlternateOptionsUsed.isTrue()) {
+					exception.append(" alternate");
+				}
+				exception.append("] "+ex.toString());
+			}
+		}
+		if(exception.length() > 0){
+			throw new Exception(exception.toString());
+		}
+	}
+	
+	private void executePostTransferCommandsFinal() throws Exception {
+		StringBuffer exception = new StringBuffer();
+		
+		SOSConnection2OptionsAlternate target = objOptions.Target();
+		String command = target.post_transfer_commands_final.Value();
+		if (target.AlternateOptionsUsed.isTrue()) {
+			command = target.Alternatives().post_transfer_commands_final.Value();
+		}
+		if(!SOSString.isEmpty(command)){
+			try{
+				executeCommandOnTarget(command);
+			}
+			catch(Exception ex){
+				exception.append("[target client");
+				if (target.AlternateOptionsUsed.isTrue()) {
+					exception.append(" alternate");
+				}
+				exception.append("] "+ex.toString());
+			}
+		}
+		
+		SOSConnection2OptionsAlternate source = objOptions.Source();
+		command = source.post_transfer_commands_final.Value();
+		if (source.AlternateOptionsUsed.isTrue()) {
+			command = source.Alternatives().post_transfer_commands_final.Value();
+		}
+		if(!SOSString.isEmpty(command)){
+			try{
+				//with JADE4DMZ it could be that the target.PostTransferCommands 
+				//needs more time than the source connection is still established
+				if(sourceClient == null){
+					throw new Exception("objDataSourceClient is NULL");
+				}
+				sourceClient.reconnect(source);
+				executeCommandOnSource(command);
+			}
+			catch(Exception ex){
+				if(exception.length() > 0){
+					exception.append(", ");
+				}
+				exception.append("[source client");
+				if (source.AlternateOptionsUsed.isTrue()) {
+					exception.append(" alternate");
+				}
+				exception.append("] "+ex.toString());
+			}
+		}
+		if(exception.length() > 0){
+			throw new Exception(exception.toString());
+		}
 	}
 	
 	public void executeCommandOnTarget(String command) throws Exception{
