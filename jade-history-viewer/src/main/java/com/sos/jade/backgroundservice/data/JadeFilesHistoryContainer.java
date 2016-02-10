@@ -56,7 +56,7 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
                 Property transferStart = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_START.getName());
                 transferStart.setValue(historyItem.getTransferStart());
                 Property transferEnd = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_END.getName());
-                transferEnd.setValue(historyItem.getTransferStart());
+                transferEnd.setValue(historyItem.getTransferEnd());
                 Property operation = item.getItemProperty(JadeHistoryFileColumns.OPERATION.getName());
                 operation.setValue(historyItem.getOperation());
                 Property protocol = item.getItemProperty(JadeHistoryFileColumns.PROTOCOL.getName());
