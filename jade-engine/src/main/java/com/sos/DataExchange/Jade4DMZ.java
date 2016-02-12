@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import sos.util.SOSString;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
@@ -93,7 +95,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.strictHostKeyChecking.value(objOptions.jump_strict_hostkey_checking.value());
 		options.Directory.Value(dir);
 		options.configuration_files.Value(objOptions.jump_configuration_files.Value());
-		
 		return options;
 	}
 	
@@ -120,10 +121,26 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 	
 	private JADEOptions createPreTransferOptions(String dir){
 		//From Internet to DMZ as PreTransferCommands
+		String prefix = "target_";
 		JADEOptions options = new JADEOptions();
 		options = addJADEOptionsForSource(options);
 		SOSConnection2OptionsAlternate sourceOptions = objOptions.Source();
-		SOSConnection2OptionsAlternate targetOptions = setLocalOptionsPrefixed("target_",dir);
+		SOSConnection2OptionsAlternate targetOptions = setLocalOptionsPrefixed(prefix,dir);
+		
+		targetOptions.Pre_Command.Value(objOptions.jump_pre_command.Value());
+		targetOptions.Post_Command.Value(objOptions.jump_post_command_on_success.Value());
+		targetOptions.PreTransferCommands.Value(objOptions.jump_pre_transfer_commands.Value());
+		targetOptions.PostTransferCommands.Value(objOptions.jump_post_transfer_commands_on_success.Value());
+		targetOptions.post_transfer_commands_on_error.Value(objOptions.jump_post_transfer_commands_on_error.Value());
+		targetOptions.post_transfer_commands_final.Value(objOptions.jump_post_transfer_commands_final.Value());
+		
+		targetOptions.Pre_Command.setPrefix(prefix);
+		targetOptions.Post_Command.setPrefix(prefix);		
+		targetOptions.PreTransferCommands.setPrefix(prefix);
+		targetOptions.PostTransferCommands.setPrefix(prefix);
+		targetOptions.post_transfer_commands_on_error.setPrefix(prefix);
+		targetOptions.post_transfer_commands_final.setPrefix(prefix);
+		
 		options.getConnectionOptions().Source(sourceOptions);
 		options.getConnectionOptions().Target(targetOptions);
 		
@@ -156,7 +173,15 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 			
 			jumpCommandOptions = createPostTransferOptions(dir);
 			
-			jumpOptions.PostTransferCommands.Value(getJadeOnDMZCommand(jumpCommandOptions));
+			
+			jumpOptions.Pre_Command.Value(objOptions.jump_pre_command.Value());
+			jumpOptions.Post_Command.Value(objOptions.jump_post_command_on_success.Value());
+			jumpOptions.PreTransferCommands.Value(objOptions.jump_pre_transfer_commands.Value());
+			String firstCommand = SOSString.isEmpty(objOptions.jump_post_transfer_commands_on_success.Value()) ? "" : (objOptions.jump_post_transfer_commands_on_success.Value().endsWith(";") ? objOptions.jump_post_transfer_commands_on_success.Value() : objOptions.jump_post_transfer_commands_on_success.Value()+";");
+			jumpOptions.PostTransferCommands.Value(firstCommand+getJadeOnDMZCommand(jumpCommandOptions));
+			jumpOptions.post_transfer_commands_on_error.Value(objOptions.jump_post_transfer_commands_on_error.Value());
+			jumpOptions.post_transfer_commands_final.Value(objOptions.jump_post_transfer_commands_final.Value());
+
 			jumpOptions = setDestinationOptionsPrefix("target_",jumpOptions);
 			
 			options.getConnectionOptions().Source(objOptions.Source());
@@ -196,6 +221,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.proxy_user.setPrefix(prefix);
 		options.proxy_password.setPrefix(prefix);
 		
+		options.Pre_Command.setPrefix(prefix);
+		options.Post_Command.setPrefix(prefix);
 		options.PreTransferCommands.setPrefix(prefix);
 		options.PostTransferCommands.setPrefix(prefix);
 		options.post_transfer_commands_on_error.setPrefix(prefix);
@@ -214,21 +241,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		options.protocol.setPrefix(prefix);
 		options.host.setPrefix(prefix);
 		options.Directory.setPrefix(prefix);
-		
-		options.Pre_Command.Value(objOptions.jump_pre_command.Value());
-		options.Post_Command.Value(objOptions.jump_post_command_on_success.Value());
-		options.PreTransferCommands.Value(objOptions.jump_pre_transfer_commands.Value());
-		options.post_transfer_commands_on_success.Value(objOptions.jump_post_transfer_commands_on_success.Value());
-		options.post_transfer_commands_on_error.Value(objOptions.jump_post_transfer_commands_on_error.Value());
-		options.post_transfer_commands_final.Value(objOptions.jump_post_transfer_commands_final.Value());
-		
-		options.Pre_Command.setPrefix(prefix);
-		options.Post_Command.setPrefix(prefix);
-		options.PreTransferCommands.setPrefix(prefix);
-		options.post_transfer_commands_on_success.setPrefix(prefix);
-		options.post_transfer_commands_on_error.setPrefix(prefix);
-		options.post_transfer_commands_final.setPrefix(prefix);
-		
 		return options;
 	}
 	
@@ -420,7 +432,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 		objOptions.Source().PreFtpCommands.setNotDirty();
 		objOptions.Source().PreTransferCommands.setNotDirty();
 		objOptions.Source().TFN_Post_Command.setNotDirty();
-		objOptions.Source().post_transfer_commands_on_success.setNotDirty();
 		objOptions.Source().post_transfer_commands_on_error.setNotDirty();
 		objOptions.Source().post_transfer_commands_final.setNotDirty();
 		
