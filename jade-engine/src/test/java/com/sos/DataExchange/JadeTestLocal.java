@@ -1,10 +1,8 @@
-/**
- *
- */
 package com.sos.DataExchange;
 
 import static org.junit.Assert.assertTrue;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,339 +11,293 @@ import com.sos.JSHelper.DataElements.JSDataElementDate;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.JSHelper.io.Files.JSFile;
 
-/**
- * @author KB
- *
- */
 public class JadeTestLocal extends JadeTestBase {
 
+    private static final Logger LOGGER = Logger.getLogger(JadeTestLocal.class);
 
-	/**
-	 *
-	 */
-	public JadeTestLocal() {
-		// TODO Auto-generated constructor stub
-	}
+    @Override
+    @Test
+    public void testSendRegExpAsFileName() throws Exception {
+        super.testSendRegExpAsFileName();
+    }
 
-	@Override
-	@Test
-	public void testSendRegExpAsFileName() throws Exception {
-		super.testSendRegExpAsFileName();
-	}
+    @Override
+    @Test
+    public void testTransferUsingFilePath() throws Exception {
+        CreateTestFile("test.txt");
+        gstrFilePath = "test.txt";
+        super.testTransferUsingFilePath();
+    }
 
-	@Override
-	@Test
-	public void testTransferUsingFilePath() throws Exception {
-		CreateTestFile("test.txt");
-		gstrFilePath = "test.txt";
-		super.testTransferUsingFilePath();
-	}
+    @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
+    public void testTransferUsingWrongFilePath() throws Exception {
+        gstrFilePath = "test-test-test.txt";
+        super.testTransferUsingFilePath();
+    }
 
-	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class)
-	public void testTransferUsingWrongFilePath() throws Exception {
-		gstrFilePath = "test-test-test.txt";
-		super.testTransferUsingFilePath();
-	}
+    @Override
+    @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
+    public void testSendWrongFileSpec() throws Exception {
+        super.testSendWrongFileSpec();
+    }
 
-	@Override
-	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class)
-	public void testSendWrongFileSpec() throws Exception {
-		super.testSendWrongFileSpec();
-	}
-	/**
-	 * \brief setUp
-	 *
-	 * \details
-	 *
-	 * \return void
-	 *
-	 * @throws java.lang.Exception
-	 */
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-		enuSourceTransferType = enuTransferTypes.local;
-		enuTargetTransferType = enuTransferTypes.local;
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        enuSourceTransferType = enuTransferTypes.local;
+        enuTargetTransferType = enuTransferTypes.local;
+        objTestOptions.SourceDir.Value(strTestPathName);
+        objTestOptions.TargetDir.Value(strTestPathName + "/SOSMDX/");
+        objTestOptions.Source().protocol.Value(enuSourceTransferType);
+        objTestOptions.Target().protocol.Value(enuTargetTransferType);
+    }
 
-		objTestOptions.SourceDir.Value(strTestPathName );
-		objTestOptions.TargetDir.Value(strTestPathName + "/SOSMDX/");
+    @Test
+    public void testUseSubstitution() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("substitute_example");
+        objOptions.ReadSettingsFile();
+        LOGGER.info(objOptions.dirtyString());
+    }
 
-		objTestOptions.Source().protocol.Value(enuSourceTransferType);
-		objTestOptions.Target().protocol.Value(enuTargetTransferType);
-	}
+    @Override
+    @Test
+    public void testUseProfile() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("getList_example");
+        super.testUseProfile();
+    }
 
-	@Test
-	public void testUseSubstitution() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("substitute_example");
-		objOptions.ReadSettingsFile();
+    @Test
+    public void testgetList_variable_filespec_example() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("getList_variable_filespec_example");
+        CreateTestFile(String.format("TestFile_%1$s.123", JSDataElementDate.getCurrentTimeAsString("yyyyMMdd")));
+        super.testUseProfile2();
+    }
 
-		logger.info(objOptions.dirtyString());
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testFtpReceive2Wilma() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("ftp_receive_2_wilma");
+        super.testUseProfile();
+    }
 
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyAndRenameSourceAndTarget() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("CopyAndRenameSourceAndTarget_Local2Local");
+        super.testUseProfile();
+    }
 
-	@Override
-	@Test
-	public void testUseProfile() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("getList_example");
-		super.testUseProfile();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyAndCreateVariableFolder() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("CopyAndCreateVariableFolder_Local2Local");
+        super.testUseProfile();
+    }
 
-	@Test
-	public void testgetList_variable_filespec_example() throws Exception {
-		final String conMethodName = conClassName + "::getList_variable_filespec_example";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("getList_variable_filespec_example");
-		CreateTestFile(String.format("TestFile_%1$s.123", JSDataElementDate.getCurrentTimeAsString("yyyyMMdd")));
-		super.testUseProfile2();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyAndMoveSource() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("CopyAndMoveSource_Local2Local");
+        super.testUseProfile();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testFtpReceive2Wilma() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("ftp_receive_2_wilma");
-		super.testUseProfile();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyAndMoveSource2NewFolder() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("CopyAndMoveSource2NewFolder_Local2Local");
+        super.testUseProfile();
+        JSFile objFile = new JSFile(strTestPathName, "UNKNOWNFOLDER/Masstest00000.txt");
+        assertTrue("File " + objFile.getAbsolutePath() + " must exist", objFile.exists());
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyAndRenameSourceAndTarget() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndRenameSourceAndTarget_Local2Local";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("CopyAndRenameSourceAndTarget_Local2Local");
-		super.testUseProfile();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyAndRenameSource() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("CopyAndRenameSource_Local2Local");
+        super.testUseProfile();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyAndCreateVariableFolder() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndRenameSourceAndTarget";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("CopyAndCreateVariableFolder_Local2Local");
-		super.testUseProfile();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyUsingUNCNames() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("Copy_Local2Local_UNC");
+        super.testUseProfileWOCreatingTestFiles();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyAndMoveSource() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndMoveSource";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("CopyAndMoveSource_Local2Local");
-		super.testUseProfile();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyUsingUNCNamesWithNetUse() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("Copy_Local2Local_UNC_withNetUse");
+        super.testUseProfileWOCreatingTestFiles();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyAndMoveSource2NewFolder() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndMoveSource2NewFolder";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("CopyAndMoveSource2NewFolder_Local2Local");
-		super.testUseProfile();
-		JSFile objFile = new JSFile(strTestPathName, "UNKNOWNFOLDER/Masstest00000.txt");
-		assertTrue("File " + objFile.getAbsolutePath() + " must exist", objFile.exists());
-	}
+    @Test
+    public void Copy_Local2Local_recursive() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("Copy_Local2Local_recursive");
+        super.testUseProfileWOCreatingTestFiles();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyAndRenameSource() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndRenameSource";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("CopyAndRenameSource_Local2Local");
-		super.testUseProfile();
-	}
+    @Override
+    @Test
+    public void testExecuteGetFileList() throws Exception {
+        super.testExecuteGetFileList();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyUsingUNCNames() throws Exception {
-		final String conMethodName = conClassName + "::CopyUsingUNCNames";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("Copy_Local2Local_UNC");
-		super.testUseProfileWOCreatingTestFiles();
-	}
+    @Override
+    @Test
+    public void testCopyAndCreateVariableFolder() throws Exception {
+        super.testCopyAndCreateVariableFolder();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyUsingUNCNamesWithNetUse() throws Exception {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::CopyUsingUNCNamesWithNetUse";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("Copy_Local2Local_UNC_withNetUse");
-		super.testUseProfileWOCreatingTestFiles();
-	}
+    @Override
+    @Test
+    public void testCopyAndRenameSourceAndTarget() throws Exception {
+        super.testCopyAndRenameSourceAndTarget();
+    }
 
-	@Test
-	public void Copy_Local2Local_recursive() throws Exception {
-		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::Copy_Local2Local_recursive";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("Copy_Local2Local_recursive");
-		super.testUseProfileWOCreatingTestFiles();
-	}
+    @Override
+    @Test
+    public void testCopyAndRenameSource() throws Exception {
+        super.testCopyAndRenameSource();
+    }
 
-	@Override
-	@Test
-	public void testExecuteGetFileList() throws Exception {
-		super.testExecuteGetFileList();
-	}
+    @Override
+    @Test
+    public void testCopyMultipleFiles() throws Exception {
+        super.testCopyMultipleFiles();
+    }
 
-	@Override
-	@Test
-	public void testCopyAndCreateVariableFolder() throws Exception {
-		super.testCopyAndCreateVariableFolder();
-	}
+    @Override
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testCopyMultipleFilesThreaded() throws Exception {
+        super.testCopyMultipleFilesThreaded();
+    }
 
-	@Override
-	@Test
-	public void testCopyAndRenameSourceAndTarget() throws Exception {
-		super.testCopyAndRenameSourceAndTarget();
-	}
+    @Override
+    @Test
+    @Ignore("Test set to Ignore for later examination, test runs endlessly")
+    public void testBigCopyThreaded() throws Exception {
+        this.testBigCopy();
+    }
 
-	@Override
-	@Test
-	public void testCopyAndRenameSource() throws Exception {
-		super.testCopyAndRenameSource();
-	}
+    @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
+    @Ignore("Test set to Ignore for later examination")
+    public void testSendWithPollingWithoutWait4SourceDir() throws Exception {
+        objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+        super.testSendWithPolling();
+    }
 
-	@Override
-	@Test
-	public void testCopyMultipleFiles() throws Exception {
-		super.testCopyMultipleFiles();
-	}
+    @Override
+    @Test
+    public void testSendWithPolling() throws Exception {
+        objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+        objTestOptions.pollingWait4SourceFolder.setTrue();
+        super.testSendWithPolling();
+    }
 
-	@Override
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testCopyMultipleFilesThreaded() throws Exception {
-		super.testCopyMultipleFilesThreaded();
-	}
+    @Override
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testCopyWithFileList() throws Exception {
+        super.testCopyWithFileList();
+    }
 
-	@Override
-	@Test
-	@Ignore("Test set to Ignore for later examination, test runs endlessly")
-	public void testBigCopyThreaded() throws Exception {
-		this.testBigCopy();
-	}
+    @Override
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testBigCopy() throws Exception {
+        objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS);
+        objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS);
+        super.testBigCopy();
+    }
 
-	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class)
-	@Ignore("Test set to Ignore for later examination")
-	public void testSendWithPollingWithoutWait4SourceDir() throws Exception  {
-		final String conMethodName = conClassName + "::testSendWithPolling";
-		logMethodName(conMethodName);
-		objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testBigCopy2() throws Exception {
+        objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS + "SOSVirtualFileSystem/");
+        objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS + "SOSVirtualFileSystem/");
+        super.testBigCopy();
+    }
 
-		super.testSendWithPolling();
-	}
+    @Override
+    @Test
+    public void testCopyMultipleResultList() throws Exception {
+        super.testCopyMultipleResultList();
+    }
 
-	  @Override @Test
-	public void testSendWithPolling() throws Exception {
-		final String conMethodName = conClassName + "::testSendWithPolling";
-		logMethodName(conMethodName);
-		objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
-		objTestOptions.pollingWait4SourceFolder.setTrue();
-		super.testSendWithPolling();
-	}
+    @Override
+    @Test
+    public void testSendAndDeleteMultipleFiles() throws Exception {
+        super.testSendAndDeleteMultipleFiles();
+    }
 
+    @Override
+    @Test
+    public void testRenameFiles() throws Exception {
+        super.testRenameFiles();
+    }
 
-	@Override
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testCopyWithFileList() throws Exception {
-		super.testCopyWithFileList();
-	}
+    @Override
+    @Test
+    public void testSend() throws Exception {
+        super.testSend();
+    }
 
-	@Override
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testBigCopy() throws Exception {
-		objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS);
-		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS);
-		super.testBigCopy();
-	}
+    @Test
+    public void testSendAndCreateMd5Hash() throws Exception {
+        objTestOptions.CreateSecurityHash.setTrue();
+        objTestOptions.CreateSecurityHashFile.setTrue();
+        super.testSend();
+    }
 
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testBigCopy2() throws Exception {
-		objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS + "SOSVirtualFileSystem/");
-		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS+  "SOSVirtualFileSystem/");
-		super.testBigCopy();
-	}
+    @Test
+    public void testSendAndCreatesha256Hash() throws Exception {
+        objTestOptions.CreateSecurityHash.setTrue();
+        objTestOptions.CreateSecurityHashFile.setTrue();
+        objTestOptions.SecurityHashType.Value("SHA-256");
+        super.testSend();
+    }
 
-	@Override
-	@Test
-	public void testCopyMultipleResultList() throws Exception {
-		super.testCopyMultipleResultList();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testSendWithMd5Check() throws Exception {
+        objTestOptions.CheckSecurityHash.setTrue();
+        super.testSend();
+    }
 
-	@Override
-	@Test
-	public void testSendAndDeleteMultipleFiles() throws Exception {
-		super.testSendAndDeleteMultipleFiles();
-	}
+    @Override
+    @Test
+    public void testDeleteFiles2() throws Exception {
+        super.testDeleteFiles2();
+    }
 
-	@Override
-	@Test
-	public void testRenameFiles() throws Exception {
-		super.testRenameFiles();
-	}
+    @Override
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void testCopyWithFolderInSourceDir() throws Exception {
+        super.testCopyWithFolderInSourceDir();
+    }
 
-	@Override
-	@Test
-	public void testSend() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
-		super.testSend();
-	}
-
-	@Test
-	public void testSendAndCreateMd5Hash() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
-		objTestOptions.CreateSecurityHash.setTrue();
-		objTestOptions.CreateSecurityHashFile.setTrue();
-		super.testSend();
-	}
-
-	@Test
-	public void testSendAndCreatesha256Hash() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
-		objTestOptions.CreateSecurityHash.setTrue();
-		objTestOptions.CreateSecurityHashFile.setTrue();
-		objTestOptions.SecurityHashType.Value("SHA-256");
-		super.testSend();
-	}
-
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testSendWithMd5Check() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
-		objTestOptions.CheckSecurityHash.setTrue();
-		super.testSend();
-	}
-
-	@Override
-	@Test
-	public void testDeleteFiles2() throws Exception {
-		super.testDeleteFiles2();
-	}
-
-	@Override
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void testCopyWithFolderInSourceDir() throws Exception {
-		super.testCopyWithFolderInSourceDir();
-	}
-
-	@Test
-	@Ignore("Test set to Ignore for later examination")
-	public void CopyAndCheckSteadyState_Local2Local() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndCheckSteadyState_Local2Local";
-		objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("CopyAndCheckSteadyState_Local2Local");
-		super.testUseProfile();
-	}
+    @Test
+    @Ignore("Test set to Ignore for later examination")
+    public void CopyAndCheckSteadyState_Local2Local() throws Exception {
+        objOptions.settings.Value(strSettingsFile);
+        objOptions.profile.Value("CopyAndCheckSteadyState_Local2Local");
+        super.testUseProfile();
+    }
 
 }
