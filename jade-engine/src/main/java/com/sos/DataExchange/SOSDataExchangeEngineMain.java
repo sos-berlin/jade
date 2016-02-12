@@ -13,193 +13,131 @@ import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
-
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
-	
-	private static Logger		logger			= Logger.getLogger(SOSDataExchangeEngineMain.class);
-	protected JADEOptions		jadeOptions		= null;
 
-	/**
-	 * 
-	 * @param args
-	 */
-	public final static void main(final String[] args) {
+    private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngineMain.class);
+    protected JADEOptions jadeOptions = null;
+    @I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."),
+            @I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", explanation = "JADE client - Main"),
+            @I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE Client - Main") },
+            msgnum = "SOSJADE_I_9999", msgurl = "")
+    public static final String SOSDX_Intro = "SOSDataExchangeEngineMain.SOSDX-Intro";
 
-		SOSDataExchangeEngineMain main = new SOSDataExchangeEngineMain();
-		main.Execute(args);
-	}
+    @I18NMessages(value = {
+            @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"),
+            @I18NMessage(value = "%1$s: Error occurred ...: %2$s, exit-code %3$s raised", locale = "en_UK", explanation = "%1$s: Error occurred ...: %2$s"),
+            @I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", explanation = "%1$s: Error occurred ...: %2$s") },
+            msgnum = "SOSJADE_E_0001", msgurl = "")
+    public static final String SOSDX_E_0001 = "SOSDataExchangeEngineMain.SOSDX_E_0001";
 
-	protected SOSDataExchangeEngineMain() {
-		super("SOSDataExchange");
-	}
+    @I18NMessages(value = { @I18NMessage("%1$s - ended without errors"),
+            @I18NMessage(value = "%1$s - ended without errors", locale = "en_UK", explanation = "%1$s - ended without errors"),
+            @I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", explanation = "%1$s - ended without errors") },
+            msgnum = "SOSJADE_I_106", msgurl = "")
+    public static final String SOS_EXIT_WO_ERRORS = "SOSDataExchangeEngineMain.SOS_EXIT_WO_ERRORS";
 
-	/**
-	 * 
-	 * @param args
-	 */
-	private void Execute(final String[] args) {
-		final String method = "Execute";
+    @I18NMessages(value = { @I18NMessage("%1$s - terminated with exit-code %2$d"),
+            @I18NMessage(value = "%1$s - terminated with exit-code %2$d", locale = "en_UK", explanation = "%1$s - terminated with exit-code %2$d"),
+            @I18NMessage(value = "%1$s - Fehlercode %2$d wurde gesetzt", locale = "de", explanation = "%1$s - terminated with exit-code %2$d") },
+            msgnum = "SOSJADE_E_0002", msgurl = "")
+    public static final String SOS_EXIT_CODE_RAISED = "SOSDataExchangeEngineMain.SOS_EXIT_CODE_RAISED";
 
-		SOSDataExchangeEngine engine = null;
-		int exitCode = 0;
-		try {
-			
-			engine = new SOSDataExchangeEngine();
+    public final static void main(final String[] args) {
+        SOSDataExchangeEngineMain main = new SOSDataExchangeEngineMain();
+        main.Execute(args);
+    }
+
+    protected SOSDataExchangeEngineMain() {
+        super("SOSDataExchange");
+    }
+
+    private void Execute(final String[] args) {
+        final String method = "Execute";
+        SOSDataExchangeEngine engine = null;
+        int exitCode = 0;
+        try {
+            engine = new SOSDataExchangeEngine();
 			JADEOptions options = engine.getOptions();
-			//options.AllowEmptyParameterList.setFalse();
+            engine.setJSJobUtilites(this);
+            options.SendTransferHistory.value(true);
+            options.CommandLineArgs(args);
+            try {
+                if (options.log4jPropertyFileName.isDirty()) {
+                    File log4jPropFile = new File(options.log4jPropertyFileName.Value());
+                    if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
+                        PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
+                    }
+                }
+            } catch (Exception e) {
+                //
+            }
+            // if rootLogger gets basis configuration if it doesn't have already
+            // an appender
+            if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
+                BasicConfigurator.configure();
+            }
+            LOGGER.info(getMsg(SOSDX_Intro));
+            engine.Execute();
+            LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
+        } catch (Exception e) {
+            exitCode = 99;
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode));
+        } finally {
+            try {
+                if (engine != null) {
+                    engine.Logout();
+                }
+            } catch (Exception ex) {
+                LOGGER.warn(String.format("exception on logout: %s", ex.toString()));
+            }
+        }
+        System.exit(exitCode);
+    }
 
-			engine.setJSJobUtilites(this);
-			options.SendTransferHistory.value(true);
-			options.CommandLineArgs(args);
+    @Override
+    public String myReplaceAll(final String source, final String what, final String replacement) {
+        return source;
+    }
 
-			try {
-				if (options.log4jPropertyFileName.isDirty()) {
-					File log4jPropFile = new File(options.log4jPropertyFileName.Value());
-					if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
-						PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
-					}
-				}
-			} catch (Exception e) {
-				//
-			}
-			
-			//if rootLogger gets basis configuration if it doesn't have already an appender 
-			if( !Logger.getRootLogger().getAllAppenders().hasMoreElements() ) {
-				BasicConfigurator.configure();
-			}
-			
-			logger = Logger.getRootLogger();
-			logger.info(getMsg(SOSDX_Intro));
-			
-			engine.Execute();
-			
-			logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
-		}
-		catch (Exception e) {
-			exitCode = 99;
-			logger.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode));
-			// TODO check for exit-code from the configuration: make it possible to define exit-code dependend on the error
-			// e.g. no connection = 10
-			//      invalid login = 11
-			//      no files found = 12
-			//      ...
-		}
-		finally{
-			try{
-				if(engine != null){
-					engine.Logout();
-				}
-			}
-			catch(Exception ex){
-				logger.warn(String.format("exception on logout: %s",ex.toString()));
-			}
-		}
-		
-		System.exit(exitCode);
+    @Override
+    public String replaceSchedulerVars(final boolean isWindows, final String pstrString2Modify) {
+        return pstrString2Modify;
+    }
 
-	} // private void Execute
+    @Override
+    public void setJSParam(final String pstrKey, final String pstrValue) {
+        //
+    }
 
-	@I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."), //
-			@I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", //
-			explanation = "JADE client - Main" //
-			), //
-			@I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", //
-			explanation = "JADE Client - Main" //
-			) //
-	}, msgnum = "SOSJADE_I_9999", msgurl = "")
-	
-	/*!
-	 * \var SOSDX-Intro
-	 * \brief SOSDataExchange - Main
-	 */
-	public static final String	SOSDX_Intro				= "SOSDataExchangeEngineMain.SOSDX-Intro";
+    @Override
+    public void setJSParam(final String pstrKey, final StringBuffer pstrValue) {
+        //
+    }
 
-	@I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"), //
-			@I18NMessage(value = "%1$s: Error occurred ...: %2$s, exit-code %3$s raised", locale = "en_UK", //
-			explanation = "%1$s: Error occurred ...: %2$s" //
-			), //
-			@I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", //
-			explanation = "%1$s: Error occurred ...: %2$s" //
-			) //
-	}, msgnum = "SOSJADE_E_0001", msgurl = "")
-	
-	/*!
-	 * \var SOSDX_E_0001
-	 * \brief %1$s: Error occurred ...: %2$s
-	 */
-	public static final String	SOSDX_E_0001			= "SOSDataExchangeEngineMain.SOSDX_E_0001";
+    @Override
+    public String getCurrentNodeName() {
+        return "";
+    }
 
-	@I18NMessages(value = { @I18NMessage("%1$s - ended without errors"), //
-			@I18NMessage(value = "%1$s - ended without errors", locale = "en_UK", //
-			explanation = "%1$s - ended without errors" //
-			), //
-			@I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", //
-			explanation = "%1$s - ended without errors" //
-			) //
-	}, msgnum = "SOSJADE_I_106", msgurl = "")
-	
-	/*!
-	 * \var SOS_EXIT_WO_ERRORS
-	 * \brief %1$s - ended without errorsended without errors
-	 */
-	public static final String	SOS_EXIT_WO_ERRORS		= "SOSDataExchangeEngineMain.SOS_EXIT_WO_ERRORS";
+    @Override
+    public void setJSJobUtilites(final JSJobUtilities pobjJSJobUtilities) {
+        //
+    }
 
-	@I18NMessages(value = { @I18NMessage("%1$s - terminated with exit-code %2$d"), //
-			@I18NMessage(value = "%1$s - terminated with exit-code %2$d", locale = "en_UK", //
-			explanation = "%1$s - terminated with exit-code %2$d" //
-			), //
-			@I18NMessage(value = "%1$s - Fehlercode %2$d wurde gesetzt", locale = "de", //
-			explanation = "%1$s - terminated with exit-code %2$d" //
-			) //
-	}, msgnum = "SOSJADE_E_0002", msgurl = "")
-	
-	/*!
-	 * \var SOS_EXIT_CODE_RAISED
-	 * \brief %1$s - terminated with exit-code %2$d
-	 */
-	public static final String	SOS_EXIT_CODE_RAISED	= "SOSDataExchangeEngineMain.SOS_EXIT_CODE_RAISED";
+    @Override
+    public void setStateText(final String pstrStateText) {
+        //
+    }
 
-	@Override
-	public String myReplaceAll(final String source, final String what, final String replacement) {
-		return source;
-	}
+    @Override
+    public void setCC(final int pintCC) {
+        //
+    }
 
-	@Override
-	public String replaceSchedulerVars(final boolean isWindows, final String pstrString2Modify) {
-		return pstrString2Modify;
-	}
+    @Override
+    public void setNextNodeState(final String pstrNodeName) {
+        //
+    }
 
-	@Override
-	public void setJSParam(final String pstrKey, final String pstrValue) {
-	}
-
-	@Override
-	public void setJSParam(final String pstrKey, final StringBuffer pstrValue) {
-	}
-
-	@Override
-	public String getCurrentNodeName() {
-		return "";
-	}
-
-	@Override
-	public void setJSJobUtilites(final JSJobUtilities pobjJSJobUtilities) {
-
-	}
-
-	@Override
-	public void setStateText(final String pstrStateText) {
-
-	}
-
-	@Override
-	public void setCC(final int pintCC) {
-
-	}
-
-	@Override public void setNextNodeState(final String pstrNodeName) {
-
-	}
-
-} // class SOSDataExchangeEngineMain
+}

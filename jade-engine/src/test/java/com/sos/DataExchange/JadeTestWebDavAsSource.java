@@ -98,7 +98,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy() throws Exception {
 		objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/");
-		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS);
+		objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
 		super.testBigCopy();
 	}
 
@@ -106,7 +106,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy2() throws Exception {
 		objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
-		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
+		objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
 		super.testBigCopy();
 	}
 
@@ -135,7 +135,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testSend() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
+		final String conMethodName = CLASS_NAME + "::testSend";
 		super.testSend();
 	}
 	
@@ -143,7 +143,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testSend2() throws Exception {
-		final String conMethodName = conClassName + "::testSend2";
+		final String conMethodName = CLASS_NAME + "::testSend2";
 		// /jade liegt in /tmp/test/jade
 		objTestOptions.SourceDir.Value("/jade/out");
 		homerAsSource();
@@ -155,7 +155,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendFileSpec() throws Exception {
 		//in /jade/out sind Unterverzeichnisse
-		final String conMethodName = conClassName + "::testSendFileSpec";
+		final String conMethodName = CLASS_NAME + "::testSendFileSpec";
 		objTestOptions.SourceDir.Value("/jade/out");
 		homerAsSource();
 		objTestOptions.recursive.value(false);
@@ -167,7 +167,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendFileSpecWithProxy() throws Exception {
 		//in /jade/out sind Unterverzeichnisse
-		final String conMethodName = conClassName + "::testSendFileSpecWithProxy";
+		final String conMethodName = CLASS_NAME + "::testSendFileSpecWithProxy";
 		objTestOptions.SourceDir.Value("/jade/out");
 		homerAsSource();
 		sourceBehindProxy();
@@ -181,7 +181,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendFileSpec2() throws Exception {
 		//in /jade/massive sind keine Unterverzeichnisse
-		final String conMethodName = conClassName + "::testSendFileSpec";
+		final String conMethodName = CLASS_NAME + "::testSendFileSpec";
 		objTestOptions.SourceDir.Value("/jade/massive");
 		homerAsSource();
 		objTestOptions.recursive.value(false);
@@ -193,7 +193,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendRecursive() throws Exception {
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::testSendRecursive";
+		final String conMethodName = CLASS_NAME + "::testSendRecursive";
 		objTestOptions.SourceDir.Value("/jade/out");
 		homerAsSource();
 		objTestOptions.recursive.value(true);
@@ -205,7 +205,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendRecursiveWithProxy() throws Exception {
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::testSendRecursiveWithProxy";
+		final String conMethodName = CLASS_NAME + "::testSendRecursiveWithProxy";
 		objTestOptions.SourceDir.Value("/jade/out");
 		homerAsSource();
 		sourceBehindProxy();

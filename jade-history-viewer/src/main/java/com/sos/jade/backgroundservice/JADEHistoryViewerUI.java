@@ -31,16 +31,17 @@ public class JADEHistoryViewerUI extends UI {
     private static final long serialVersionUID = 1L;
     public static final JadeBackgroundServiceOptions JADE_BS_OPTIONS = new JadeBackgroundServiceOptions();
     public static final Preferences PREFS = JADE_BS_OPTIONS.getPreferenceStore();
-    public static String parentNodeName;
+    public String parentNodeName;
     private MainView mainView;
     private FilterLayoutWindow modalWindow;
     private AboutWindow aboutWindow;
-    public static String hibernateConfigFile;
-    public static String log4jPropertiesFile;
-    public static String log4jFileOutputPath;
-    public static final Logger LOGGER = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
+    public String hibernateConfigFile;
+    public String log4jPropertiesFile;
+    public String log4jFileOutputPath;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
 
     @WebServlet(value = "/*", asyncSupported = true)
+    /* productionMode = true doesn´t work when the web app ist started from an IDE integrated webserver! */
     @VaadinServletConfiguration(productionMode = true, ui = JADEHistoryViewerUI.class)
     public static class Servlet extends VaadinServlet {
 

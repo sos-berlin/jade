@@ -77,7 +77,7 @@ public class JadeTestLocal extends JadeTestBase {
 
 	@Test
 	public void testUseSubstitution() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
+		final String conMethodName = CLASS_NAME + "::testUseProfile";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("substitute_example");
 		objOptions.ReadSettingsFile();
@@ -89,7 +89,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Override
 	@Test
 	public void testUseProfile() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
+		final String conMethodName = CLASS_NAME + "::testUseProfile";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("getList_example");
 		super.testUseProfile();
@@ -97,7 +97,7 @@ public class JadeTestLocal extends JadeTestBase {
 
 	@Test
 	public void testgetList_variable_filespec_example() throws Exception {
-		final String conMethodName = conClassName + "::getList_variable_filespec_example";
+		final String conMethodName = CLASS_NAME + "::getList_variable_filespec_example";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("getList_variable_filespec_example");
 		CreateTestFile(String.format("TestFile_%1$s.123", JSDataElementDate.getCurrentTimeAsString("yyyyMMdd")));
@@ -107,7 +107,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testFtpReceive2Wilma() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
+		final String conMethodName = CLASS_NAME + "::testUseProfile";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("ftp_receive_2_wilma");
 		super.testUseProfile();
@@ -116,7 +116,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndRenameSourceAndTarget() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndRenameSourceAndTarget_Local2Local";
+		final String conMethodName = CLASS_NAME + "::CopyAndRenameSourceAndTarget_Local2Local";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("CopyAndRenameSourceAndTarget_Local2Local");
 		super.testUseProfile();
@@ -125,7 +125,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndCreateVariableFolder() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndRenameSourceAndTarget";
+		final String conMethodName = CLASS_NAME + "::CopyAndRenameSourceAndTarget";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("CopyAndCreateVariableFolder_Local2Local");
 		super.testUseProfile();
@@ -134,7 +134,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndMoveSource() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndMoveSource";
+		final String conMethodName = CLASS_NAME + "::CopyAndMoveSource";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("CopyAndMoveSource_Local2Local");
 		super.testUseProfile();
@@ -143,7 +143,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndMoveSource2NewFolder() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndMoveSource2NewFolder";
+		final String conMethodName = CLASS_NAME + "::CopyAndMoveSource2NewFolder";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("CopyAndMoveSource2NewFolder_Local2Local");
 		super.testUseProfile();
@@ -154,7 +154,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndRenameSource() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndRenameSource";
+		final String conMethodName = CLASS_NAME + "::CopyAndRenameSource";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("CopyAndRenameSource_Local2Local");
 		super.testUseProfile();
@@ -163,7 +163,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyUsingUNCNames() throws Exception {
-		final String conMethodName = conClassName + "::CopyUsingUNCNames";
+		final String conMethodName = CLASS_NAME + "::CopyUsingUNCNames";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("Copy_Local2Local_UNC");
 		super.testUseProfileWOCreatingTestFiles();
@@ -173,7 +173,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyUsingUNCNamesWithNetUse() throws Exception {
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::CopyUsingUNCNamesWithNetUse";
+		final String conMethodName = CLASS_NAME + "::CopyUsingUNCNamesWithNetUse";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("Copy_Local2Local_UNC_withNetUse");
 		super.testUseProfileWOCreatingTestFiles();
@@ -182,7 +182,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	public void Copy_Local2Local_recursive() throws Exception {
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::Copy_Local2Local_recursive";
+		final String conMethodName = CLASS_NAME + "::Copy_Local2Local_recursive";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("Copy_Local2Local_recursive");
 		super.testUseProfileWOCreatingTestFiles();
@@ -235,7 +235,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test (expected=com.sos.JSHelper.Exceptions.JobSchedulerException.class)
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendWithPollingWithoutWait4SourceDir() throws Exception  {
-		final String conMethodName = conClassName + "::testSendWithPolling";
+		final String conMethodName = CLASS_NAME + "::testSendWithPolling";
 		logMethodName(conMethodName);
 		objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
 
@@ -244,7 +244,7 @@ public class JadeTestLocal extends JadeTestBase {
 
 	  @Override @Test
 	public void testSendWithPolling() throws Exception {
-		final String conMethodName = conClassName + "::testSendWithPolling";
+		final String conMethodName = CLASS_NAME + "::testSendWithPolling";
 		logMethodName(conMethodName);
 		objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
 		objTestOptions.pollingWait4SourceFolder.setTrue();
@@ -263,16 +263,16 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy() throws Exception {
-		objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS);
-		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS);
+		objTestOptions.SourceDir.Value(SOURCE_OF_DOXYGEN_DOCS);
+		objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
 		super.testBigCopy();
 	}
 
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testBigCopy2() throws Exception {
-		objTestOptions.SourceDir.Value(conSourceOfDOXYGEN_DOCS + "SOSVirtualFileSystem/");
-		objTestOptions.TargetDir.Value(conTargetOfDOXYGEN_DOCS+  "SOSVirtualFileSystem/");
+		objTestOptions.SourceDir.Value(SOURCE_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
+		objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS+  "SOSVirtualFileSystem/");
 		super.testBigCopy();
 	}
 
@@ -297,20 +297,20 @@ public class JadeTestLocal extends JadeTestBase {
 	@Override
 	@Test
 	public void testSend() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
+		final String conMethodName = CLASS_NAME + "::testSend";
 		super.testSend();
 	}
 
 	@Test
 	public void testSendAndCreateMd5Hash() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
+		final String conMethodName = CLASS_NAME + "::testSend";
 		objTestOptions.CreateSecurityHashFile.setTrue();
 		super.testSend();
 	}
 
 	@Test
 	public void testSendAndCreatesha256Hash() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
+		final String conMethodName = CLASS_NAME + "::testSend";
 		objTestOptions.CreateSecurityHashFile.setTrue();
 		objTestOptions.SecurityHashType.Value("SHA-256");
 		super.testSend();
@@ -319,7 +319,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testSendWithMd5Check() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
+		final String conMethodName = CLASS_NAME + "::testSend";
 		objTestOptions.CheckSecurityHash.setTrue();
 		super.testSend();
 	}
@@ -340,7 +340,7 @@ public class JadeTestLocal extends JadeTestBase {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void CopyAndCheckSteadyState_Local2Local() throws Exception {
-		final String conMethodName = conClassName + "::CopyAndCheckSteadyState_Local2Local";
+		final String conMethodName = CLASS_NAME + "::CopyAndCheckSteadyState_Local2Local";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("CopyAndCheckSteadyState_Local2Local");
 		super.testUseProfile();

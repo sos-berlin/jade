@@ -42,8 +42,8 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 		objTestOptions.TargetDir.Value(strTestPathName);
 
 		objTestOptions.Target().protocol.Value(enuTargetTransferType);
-		objTestOptions.Target().user.Value(conUserIdTest);
-		objTestOptions.Target().password.Value(conPasswordTest);
+		objTestOptions.Target().user.Value(USER_ID_TEST);
+		objTestOptions.Target().password.Value(PASSWORD_TEST);
 		objTestOptions.Target().host.Value("local");
 		objTestOptions.Target().protocol.Value(enuTargetTransferType);
 
@@ -52,13 +52,13 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 
 		objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
 //		objTestOptions.SourceDir.Value("/home/test/jadetest");
-		objTestOptions.Source().host.Value(conHostNameWILMA_SOS);
+		objTestOptions.Source().host.Value(HOST_NAME_WILMA_SOS);
 		objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4SFTP);
-		objTestOptions.Source().user.Value(conUserIdTest);
-		objTestOptions.Source().password.Value(conPasswordTest);
+		objTestOptions.Source().user.Value(USER_ID_TEST);
+		objTestOptions.Source().password.Value(PASSWORD_TEST);
 		objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.password);
 
-		objOptions.profile.Value(conClassName);
+		objOptions.profile.Value(CLASS_NAME);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 	@Override
 	@Test
 	public void testUseProfileWithoutCreatingTestFiles() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfile";
+		final String conMethodName = CLASS_NAME + "::testUseProfile";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("getList_example_sftp");
 		super.testUseProfileWithoutCreatingTestFiles();
@@ -238,7 +238,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 	@Override
 	@Test
 	public void testSendFileSpec() throws Exception {
-		final String conMethodName = conClassName + "::testSend";
+		final String conMethodName = CLASS_NAME + "::testSend";
 		super.testSendFileSpec();
 	}
 
@@ -332,7 +332,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 	 */
 	@Test
 	public void testSendWithOutAccessToOneFileInSourceFolder() throws Exception {
-		final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
+		final String conMethodName = CLASS_NAME + "::testSendWithOutAccessToOneFileInSourceFolder";
 		objTestOptions.SourceDir.Value("/home/test/noaccess");
 		objTestOptions.file_spec.Value("\\.txt$");
 		objTestOptions.force_files.value(false);
@@ -342,7 +342,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 	
  @Test
 	public void testSendWithOutAccessToOneFileInSourceFolder2() throws Exception {
-		final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
+		final String conMethodName = CLASS_NAME + "::testSendWithOutAccessToOneFileInSourceFolder";
 		objTestOptions.SourceDir.Value("/home/test/noaccess");
 		objTestOptions.file_spec.Value("\\.txt$");
 		objTestOptions.force_files.value(true);
@@ -368,7 +368,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
   */
 	@Test
 	public void testSendWithOutAccessToSourceFolder() throws Exception {
-		final String conMethodName = conClassName + "::testSendWithOutAccessToSourceFolder";
+		final String conMethodName = CLASS_NAME + "::testSendWithOutAccessToSourceFolder";
 		objTestOptions.SourceDir.Value("/root");
 		objTestOptions.file_spec.Value("\\.txt$");
 		objTestOptions.force_files.value(false);
