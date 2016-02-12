@@ -46,7 +46,7 @@ public class JadeTestMail extends JadeTestBase {
 	@Test
 	public void testMailWithNotification() throws Exception {
 		//use file_notification_* params
-		final String conMethodName = conClassName + "::testMailWithNotification";
+		final String conMethodName = CLASS_NAME + "::testMailWithNotification";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("copy_files_with_notification");
 		super.testUseProfile();
@@ -55,7 +55,7 @@ public class JadeTestMail extends JadeTestBase {
 	@Test
 	public void testMailOnSuccess() throws Exception {
 		//use mail_on_success_* params
-		final String conMethodName = conClassName + "::testMailOnSuccess";
+		final String conMethodName = CLASS_NAME + "::testMailOnSuccess";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("copy_files_on_success");
 		super.testUseProfile();
@@ -65,7 +65,7 @@ public class JadeTestMail extends JadeTestBase {
 	@Ignore("Test set to Ignore for later examination")
 	public void testMailOnError() throws Exception {
 		//use mail_on_error_* params
-		final String conMethodName = conClassName + "::testMailOnError";
+		final String conMethodName = CLASS_NAME + "::testMailOnError";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("copy_files_on_error");
 		super.testUseProfile();
@@ -74,7 +74,7 @@ public class JadeTestMail extends JadeTestBase {
 	@Test
 	public void testMailOnErrorButNoErrorOccurs() throws Exception {
 		//use mail_on_error_* params
-		final String conMethodName = conClassName + "::testMailOnErrorButNoErrorOccurs";
+		final String conMethodName = CLASS_NAME + "::testMailOnErrorButNoErrorOccurs";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("copy_files_without_error_and_mail_on_error");
 		super.testUseProfile();

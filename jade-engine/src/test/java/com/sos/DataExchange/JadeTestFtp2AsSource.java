@@ -53,7 +53,7 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
 	@Override
 	@Test
 	public void testUseProfileWithAsciiMode() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfileWithAsciiMode";
+		final String conMethodName = CLASS_NAME + "::testUseProfileWithAsciiMode";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("copyWithAsciiMode");
 		super.testUseProfileWithoutCreatingTestFiles();
@@ -62,7 +62,7 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
 	@Test
 	@Ignore("Test set to Ignore for later examination")
 	public void testUseProfileWithOperationReceive() throws Exception {
-		final String conMethodName = conClassName + "::testUseProfileWithOperationReceive";
+		final String conMethodName = CLASS_NAME + "::testUseProfileWithOperationReceive";
 		objOptions.settings.Value(strSettingsFile);
 		objOptions.profile.Value("receive");
 		super.testUseProfileWithoutCreatingTestFiles();

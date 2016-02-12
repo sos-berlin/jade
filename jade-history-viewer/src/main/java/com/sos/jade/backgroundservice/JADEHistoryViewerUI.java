@@ -36,11 +36,12 @@ public class JADEHistoryViewerUI extends UI {
     private FilterLayoutWindow modalWindow;
     private AboutWindow aboutWindow;
     public static String hibernateConfigFile;
-    public static String log4jPropertiesFile;
-    public static String log4jFileOutputPath;
-    public static final Logger LOGGER = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
+    public String log4jPropertiesFile;
+    public String log4jFileOutputPath;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
 
     @WebServlet(value = "/*", asyncSupported = true)
+    /* productionMode = true does not work when the web app ist started from an IDE integrated webserver! */
     @VaadinServletConfiguration(productionMode = true, ui = JADEHistoryViewerUI.class)
     public static class Servlet extends VaadinServlet {
 

@@ -13,8 +13,6 @@ import com.sos.DataExchange.Options.JADEOptions;
  *
  */
 public class JadeEngine extends SOSDataExchangeEngine {
-	@SuppressWarnings({ "unused", "hiding" }) private final String	conSVNVersion	= "$Id$";
-	@SuppressWarnings("unused") private final String				conClassName	= this.getClass().getName();
 
 	/**
 	 * @throws Exception

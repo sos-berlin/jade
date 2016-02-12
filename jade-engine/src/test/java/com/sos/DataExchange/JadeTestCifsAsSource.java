@@ -93,7 +93,7 @@ public class JadeTestCifsAsSource extends JadeTestBase {
 	@Test
 	public void testSendRecursive() throws Exception {
 		@SuppressWarnings("unused")
-		final String conMethodName = conClassName + "::testSendRecursive";
+		final String conMethodName = CLASS_NAME + "::testSendRecursive";
 		objTestOptions.recursive.value(true);
 		objTestOptions.file_spec.Value("1\\.txt$");
 		super.testSendFileSpec2();

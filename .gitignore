@@ -20,3 +20,7 @@
 *.jar
 
 .sonar
+
+jade-converter/target
+
+jade-history/target
