@@ -11,7 +11,6 @@ import com.sos.JSHelper.DataElements.JSDataElementDate;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.JSHelper.io.Files.JSFile;
 
-/** @author KB */
 public class JadeTestLocal extends JadeTestBase {
 
     private static final Logger LOGGER = Logger.getLogger(JadeTestLocal.class);

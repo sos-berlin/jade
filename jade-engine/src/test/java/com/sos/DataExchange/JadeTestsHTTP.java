@@ -9,9 +9,6 @@ import com.sos.DataExchange.Options.JADEOptions;
 
 public class JadeTestsHTTP extends JadeTestBase {
 
-    public JadeTestsHTTP() {
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
