@@ -13,11 +13,11 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-public class TestJADEConfiguration {
+public class testJADEConfiguration {
 
-    private static final Logger LOGGER = Logger.getLogger(TestJADEConfiguration.class);
+    private static final Logger LOGGER = Logger.getLogger(testJADEConfiguration.class);
 
-    public TestJADEConfiguration() {
+    public testJADEConfiguration() {
         // nothing to do
     }
 
