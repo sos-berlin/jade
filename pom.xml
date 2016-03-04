@@ -27,7 +27,6 @@
 		<module>jade-file-watcher</module>
 		<!-- z.Zt. aus dem Build entfernt wegen build error -->
 		<!--module>jade-cockpit</module -->
-		<module>jade-cli</module>
 		<!-- z.Zt. aus dem Build entfernt wegen build error -->
 		<!--module>jade-vaadin-cockpit</module -->
 		<!-- z.Zt. aus dem Build entfernt -->

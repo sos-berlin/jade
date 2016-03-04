@@ -1,4 +1,4 @@
-package com.sos.jade.cli;
+package com.sos.jade.converter;
 
 import java.io.BufferedWriter;
 import java.io.File;
