@@ -122,53 +122,10 @@ public class JADEOptionsTest {
         JSFile objIni2 = new JSFile(constrSettingsTestFile2);
         objIni2.deleteOnExit();
         try {
-            objIni.WriteLine("[globals]")
-                    .WriteLine("user=kb")
-                    .WriteLine("password=kb")
-                    .WriteLine("temp=this_is_temp")
-                    .WriteLine("[include1]")
-                    .WriteLine("host=hostFromInclude1")
-                    .WriteLine("[include2]")
-                    .WriteLine("port=88")
-                    .WriteLine("[include3]")
-                    .WriteLine("protocol=scp")
-                    .WriteLine("[include5]")
-                    .WriteLine("protocol=scp")
-                    .WriteLine("host=hostFromInclude5")
-                    .WriteLine("user=test")
-                    .WriteLine("[include4]")
-                    .WriteLine("protocol=sftp")
-                    .WriteLine("include=include1,include2,include5")
-                    .WriteLine("[include_as_source]")
-                    .WriteLine("source_include=include4")
-                    .WriteLine("[include_as_target]")
-                    .WriteLine("target_include=include4")
-                    .WriteLine("[include-Test]")
-                    .WriteLine("include=include1,include2,include3")
-                    .WriteLine("[include-TestWithNonexistenceInclude]")
-                    .WriteLine("include=include1,includeabcd2,include3")
-                    .WriteLine("[include-Test2]")
-                    .WriteLine("include=include1,include2,include3")
-                    .WriteLine("host=willi")
-                    .WriteLine("user=testtest")
-                    .WriteLine("[substitute-Test]")
-                    .WriteLine("user=${USERNAME}")
-                    .WriteLine("host=${COMPUTERNAME}")
-                    .WriteLine("title=${temp}")
-                    .WriteLine("cannotsubstitutet=${waltraut}")
-                    .WriteLine("target_host=${host}-abc")
-                    .WriteLine("target_host=${host}")
-                    .WriteLine("alternate_target_host=${host}-abc")
-                    .WriteLine("[external_includes]")
-                    .WriteLine("include=file:" + constrSettingsTestFile2 + "\\globals,file:" + "./JADEOptionsTest2.ini" + "/include1")
-                    .close();
+            objIni.WriteLine("[globals]").WriteLine("user=kb").WriteLine("password=kb").WriteLine("temp=this_is_temp").WriteLine("[include1]").WriteLine("host=hostFromInclude1").WriteLine("[include2]").WriteLine("port=88").WriteLine("[include3]").WriteLine("protocol=scp").WriteLine("[include5]").WriteLine("protocol=scp").WriteLine("host=hostFromInclude5").WriteLine("user=test").WriteLine("[include4]").WriteLine("protocol=sftp").WriteLine("include=include1,include2,include5").WriteLine("[include_as_source]").WriteLine("source_include=include4").WriteLine("[include_as_target]").WriteLine("target_include=include4").WriteLine("[include-Test]").WriteLine("include=include1,include2,include3").WriteLine("[include-TestWithNonexistenceInclude]").WriteLine("include=include1,includeabcd2,include3").WriteLine("[include-Test2]").WriteLine("include=include1,include2,include3").WriteLine("host=willi").WriteLine("user=testtest").WriteLine("[substitute-Test]").WriteLine("user=${USERNAME}").WriteLine("host=${COMPUTERNAME}").WriteLine("title=${temp}").WriteLine("cannotsubstitutet=${waltraut}").WriteLine("target_host=${host}-abc").WriteLine("target_host=${host}").WriteLine("alternate_target_host=${host}-abc").WriteLine("[external_includes]").WriteLine("include=file:"
+                    + constrSettingsTestFile2 + "\\globals,file:" + "./JADEOptionsTest2.ini" + "/include1").close();
             objIni2.WriteLine("[globals]") //
-            .WriteLine("user=test")
-                    .WriteLine("password=testtest")
-                    .WriteLine("temp=this_is_temp")
-                    .WriteLine("[include1]")
-                    .WriteLine("host=externalFileHost")
-                    .close();
+            .WriteLine("user=test").WriteLine("password=testtest").WriteLine("temp=this_is_temp").WriteLine("[include1]").WriteLine("host=externalFileHost").close();
         } catch (IOException e) {
             LOGGER.error("", e);
         }

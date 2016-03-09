@@ -251,7 +251,9 @@ public class MainView extends CustomComponent implements View {
 
     private void setLanguageIconClickHandlers() {
         lblDE.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void layoutClick(LayoutClickEvent event) {
                 currentLocale = Locale.GERMANY;
@@ -261,7 +263,9 @@ public class MainView extends CustomComponent implements View {
             }
         });
         lblUK.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void layoutClick(LayoutClickEvent event) {
                 currentLocale = Locale.UK;
@@ -271,7 +275,9 @@ public class MainView extends CustomComponent implements View {
             }
         });
         lblUS.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void layoutClick(LayoutClickEvent event) {
                 currentLocale = Locale.US;
@@ -281,7 +287,9 @@ public class MainView extends CustomComponent implements View {
             }
         });
         lblES.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void layoutClick(LayoutClickEvent event) {
                 currentLocale = new Locale("es", "ES");
@@ -366,7 +374,9 @@ public class MainView extends CustomComponent implements View {
         btnResetColumnWith.setDescription("reset column width to default");
         hlResetAndProgress.addComponent(btnResetColumnWith);
         btnResetColumnWith.addClickListener(new Button.ClickListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 tblFileHistory.resetColumnWidths();
@@ -398,7 +408,9 @@ public class MainView extends CustomComponent implements View {
         tblFileHistory = new JadeFileHistoryTable(historyItems, messages);
         splitter.addComponent(tblFileHistory);
         tblFileHistory.addItemClickListener(new ItemClickListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void itemClick(ItemClickEvent event) {
                 if (markedRow == null || !markedRow.equals(event.getItemId())) {
@@ -410,7 +422,9 @@ public class MainView extends CustomComponent implements View {
             }
         });
         tblFileHistory.addValueChangeListener(new ValueChangeListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void valueChange(ValueChangeEvent event) {
                 progress.setPrimaryStyleName("jadeProgressBar");
@@ -463,8 +477,10 @@ public class MainView extends CustomComponent implements View {
     }
 
     public class AutoRefreshThread extends Thread {
+
         Date actual = null;
         Date started = new Date();
+
         @Override
         public void run() {
             try {
@@ -487,12 +503,15 @@ public class MainView extends CustomComponent implements View {
     }
 
     private class FilterThread extends Thread {
+
         private JadeFilesHistoryFilter filter;
         private boolean updateMenuBar;
+
         public FilterThread(JadeFilesHistoryFilter filter, boolean updateMenuBar) {
             this.filter = filter;
             this.updateMenuBar = updateMenuBar;
         }
+
         @Override
         public void run() {
             try {
@@ -501,6 +520,7 @@ public class MainView extends CustomComponent implements View {
                 fileListener.logException(e);
             }
             UI.getCurrent().access(new Runnable() {
+
                 @Override
                 public void run() {
                     if (updateMenuBar) {
@@ -520,6 +540,7 @@ public class MainView extends CustomComponent implements View {
                 }
             });
             UI.getCurrent().access(new Runnable() {
+
                 @Override
                 public void run() {
                     if (updateMenuBar) {
@@ -531,6 +552,7 @@ public class MainView extends CustomComponent implements View {
                 }
             });
             UI.getCurrent().access(new Runnable() {
+
                 @Override
                 public void run() {
                     lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());

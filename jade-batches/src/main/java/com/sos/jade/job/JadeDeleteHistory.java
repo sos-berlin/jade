@@ -55,6 +55,6 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
 
     private void doInitialize() {
         // doInitialize
-    } 
+    }
 
 }

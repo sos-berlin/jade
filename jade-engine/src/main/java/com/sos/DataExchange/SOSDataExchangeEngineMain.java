@@ -20,27 +20,23 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
     protected JADEOptions jadeOptions = null;
     @I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."),
             @I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", explanation = "JADE client - Main"),
-            @I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE Client - Main") },
-            msgnum = "SOSJADE_I_9999", msgurl = "")
+            @I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE Client - Main") }, msgnum = "SOSJADE_I_9999", msgurl = "")
     public static final String SOSDX_Intro = "SOSDataExchangeEngineMain.SOSDX-Intro";
 
     @I18NMessages(value = {
             @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"),
             @I18NMessage(value = "%1$s: Error occurred ...: %2$s, exit-code %3$s raised", locale = "en_UK", explanation = "%1$s: Error occurred ...: %2$s"),
-            @I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", explanation = "%1$s: Error occurred ...: %2$s") },
-            msgnum = "SOSJADE_E_0001", msgurl = "")
+            @I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", explanation = "%1$s: Error occurred ...: %2$s") }, msgnum = "SOSJADE_E_0001", msgurl = "")
     public static final String SOSDX_E_0001 = "SOSDataExchangeEngineMain.SOSDX_E_0001";
 
     @I18NMessages(value = { @I18NMessage("%1$s - ended without errors"),
             @I18NMessage(value = "%1$s - ended without errors", locale = "en_UK", explanation = "%1$s - ended without errors"),
-            @I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", explanation = "%1$s - ended without errors") },
-            msgnum = "SOSJADE_I_106", msgurl = "")
+            @I18NMessage(value = "%1$s - Programm wurde ohne Fehler beendet", locale = "de", explanation = "%1$s - ended without errors") }, msgnum = "SOSJADE_I_106", msgurl = "")
     public static final String SOS_EXIT_WO_ERRORS = "SOSDataExchangeEngineMain.SOS_EXIT_WO_ERRORS";
 
     @I18NMessages(value = { @I18NMessage("%1$s - terminated with exit-code %2$d"),
             @I18NMessage(value = "%1$s - terminated with exit-code %2$d", locale = "en_UK", explanation = "%1$s - terminated with exit-code %2$d"),
-            @I18NMessage(value = "%1$s - Fehlercode %2$d wurde gesetzt", locale = "de", explanation = "%1$s - terminated with exit-code %2$d") },
-            msgnum = "SOSJADE_E_0002", msgurl = "")
+            @I18NMessage(value = "%1$s - Fehlercode %2$d wurde gesetzt", locale = "de", explanation = "%1$s - terminated with exit-code %2$d") }, msgnum = "SOSJADE_E_0002", msgurl = "")
     public static final String SOS_EXIT_CODE_RAISED = "SOSDataExchangeEngineMain.SOS_EXIT_CODE_RAISED";
 
     public final static void main(final String[] args) {

@@ -392,7 +392,7 @@ public abstract class JadeTestBase extends JSToolBox {
         objOptions.remove_files.value(true);
         LOGGER.info(objOptions.dirtyString());
         if (flgCreateFiles == true) {
-            Thread thread = new Thread(new WriteFiles4Polling()); 
+            Thread thread = new Thread(new WriteFiles4Polling());
             thread.start();
         }
         startTransfer(objOptions);
@@ -448,7 +448,7 @@ public abstract class JadeTestBase extends JSToolBox {
         objHsh.put("replacement", replacement);
         objHsh.put("verbose", "9");
         objOptions = new JADEOptions();
-        objOptions.setAllOptions(objOptions.DeletePrefix((HashMap)objHsh, "ftp_"));
+        objOptions.setAllOptions(objOptions.DeletePrefix((HashMap) objHsh, "ftp_"));
     }
 
     private void setMailOptions() {
@@ -838,7 +838,7 @@ public abstract class JadeTestBase extends JSToolBox {
         objHsh.put("SendTransferHistory", "false");
         objHsh.put("log_filename", "c:/temp/test.log");
         objOptions = new JADEOptions();
-        objOptions.setAllOptions(objOptions.DeletePrefix((HashMap)objHsh, "ftp_"));
+        objOptions.setAllOptions(objOptions.DeletePrefix((HashMap) objHsh, "ftp_"));
         assertEquals("", conHostNameWILMA_SOS, objOptions.getConnectionOptions().Source().host.Value());
         assertEquals("", "tux.sos", objOptions.getConnectionOptions().Target().host.Value());
         assertEquals("", "/srv/www/htdocs/test/", objOptions.TargetDir.Value());

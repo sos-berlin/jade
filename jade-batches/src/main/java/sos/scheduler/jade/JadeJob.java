@@ -4,7 +4,7 @@ import sos.scheduler.job.SOSDExJSAdapterClass;
 
 public class JadeJob extends SOSDExJSAdapterClass {
 
-	public JadeJob() {
-		super();
-	}
+    public JadeJob() {
+        super();
+    }
 }

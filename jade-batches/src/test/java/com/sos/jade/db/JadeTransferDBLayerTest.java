@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/** @author Uwe Risse  */
+/** @author Uwe Risse */
 
 public class JadeTransferDBLayerTest {
 

@@ -169,8 +169,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 LOGGER.debug(String.format("%s Not changed. file size: %s bytes. '%s'", msg, entry.getLastCheckedFileSize(), entry.SourceFileName()));
             } else {
                 fileIsSteady = false;
-                LOGGER.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'", msg, entry.getFileSize(), 
-                        entry.getLastCheckedFileSize(), entry.SourceFileName()));
+                LOGGER.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'", msg, entry.getFileSize(), entry.getLastCheckedFileSize(), entry.SourceFileName()));
 
             }
             entry.setLastCheckedFileSize(entry.getFileSize());
@@ -237,20 +236,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     } catch (Exception e) {
                         LOGGER.error(e.getLocalizedMessage());
                     }
-                    if ((objOptions.poll_minfiles.isNotDirty() && currentFilesCount > 0) 
+                    if ((objOptions.poll_minfiles.isNotDirty() && currentFilesCount > 0)
                             || (objOptions.poll_minfiles.isDirty() && currentFilesCount >= objOptions.poll_minfiles.value())) {
                         break;
                     }
                 }
-                setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'",
-                        pollInterval,
-                        objOptions.file_spec.Value()));
+                setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", pollInterval, objOptions.file_spec.Value()));
                 doSleep(pollInterval);
                 currentPollingTime += pollInterval;
-                setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.",
-                        currentFilesCount,
-                        objOptions.file_spec.Value(),
-                        sourceDir));
+                setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", currentFilesCount, objOptions.file_spec.Value(), sourceDir));
                 if (filesCount >= currentFilesCount && filesCount != 0) {
                     if (objOptions.WaitingForLateComers.isTrue()) {
                         objOptions.WaitingForLateComers.setFalse();
@@ -570,10 +564,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         String aPath = path.replaceAll("\\\\", "/");
         if (!(aPath.startsWith("./") || aPath.startsWith("../"))) {
             // drive:/, protocol:/, /, ~/, $ (Unix Env), %...% (Windows Env)
-            if (aPath.matches("^[a-zA-Z]+:/.*")
-                    || aPath.startsWith("/")
-                    || aPath.startsWith("~/")
-                    || aPath.startsWith("$")
+            if (aPath.matches("^[a-zA-Z]+:/.*") || aPath.startsWith("/") || aPath.startsWith("~/") || aPath.startsWith("$")
                     || aPath.matches("^%[a-zA-Z_0-9.-]+%.*")) {
                 ok = true;
             } else {
@@ -649,10 +640,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (objOptions.poll_minfiles.value() > 0 && founded >= objOptions.poll_minfiles.value()) {
                     break;
                 }
-                String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files",
-                        pollInterval,
-                        founded,
-                        currentFounded);
+                String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", pollInterval, founded, currentFounded);
                 setInfo(msg);
                 doSleep(pollInterval);
                 currentPollingTime += pollInterval;
@@ -772,7 +760,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void sendFiles(final SOSFileList fileList) {
         int maxParallelTransfers = 0;
         if (objOptions.ConcurrentTransfer.isTrue()) {
-            // TODO resolve problem with apache ftp client in multithreading mode
+            // TODO resolve problem with apache ftp client in multithreading
+            // mode
         }
         if (maxParallelTransfers <= 0 || objOptions.CumulateFiles.isTrue()) {
             for (SOSFileListEntry entry : fileList.List()) {
@@ -807,12 +796,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void sendNotifications() {
         // TODO Status über MQ senden
         SOSSmtpMailOptions mailOptions = objOptions.getMailOptions();
-        if (objOptions.mail_on_success.isTrue() && sourceFileList.FailedTransfers() <= 0
-                || mailOptions.FileNotificationTo.isDirty()) {
+        if (objOptions.mail_on_success.isTrue() && sourceFileList.FailedTransfers() <= 0 || mailOptions.FileNotificationTo.isDirty()) {
             doProcessMail(enuMailClasses.MailOnSuccess);
         }
-        if (objOptions.mail_on_error.isTrue() && (sourceFileList.FailedTransfers() > 0
-                || JobSchedulerException.LastErrorMessage.length() > 0)) {
+        if (objOptions.mail_on_error.isTrue() && (sourceFileList.FailedTransfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0)) {
             doProcessMail(enuMailClasses.MailOnError);
         }
         if (objOptions.mail_on_empty_files.isTrue() && sourceFileList.getZeroByteCount() > 0) {
@@ -1068,9 +1055,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
     }
 
-    private long selectFilesOnSource(final ISOSVirtualFile localeFile,
-            final SOSOptionFolderName sourceDir,
-            final SOSOptionRegExp regExp,
+    private long selectFilesOnSource(final ISOSVirtualFile localeFile, final SOSOptionFolderName sourceDir, final SOSOptionRegExp regExp,
             final SOSOptionBoolean recursive) throws Exception {
         if (sourceClient instanceof SOSVfsHTTP) {
             throw new JobSchedulerException("a file spec selection is not supported with http(s) protocol");
@@ -1107,13 +1092,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     countSentHistoryRecords++;
                 }
             }
-            LOGGER.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s",
-                    countSentHistoryRecords,
-                    objOptions.scheduler_host.Value(),
-                    objOptions.scheduler_port.Value(),
-                    objOptions.scheduler_job_chain.Value(),
-                    objOptions.Scheduler_Transfer_Method.Value()
-                    ));
+            LOGGER.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s", countSentHistoryRecords, objOptions.scheduler_host.Value(), objOptions.scheduler_port.Value(), objOptions.scheduler_job_chain.Value(), objOptions.Scheduler_Transfer_Method.Value()));
         } else {
             LOGGER.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
         }

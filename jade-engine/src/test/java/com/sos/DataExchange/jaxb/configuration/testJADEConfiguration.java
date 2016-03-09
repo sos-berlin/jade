@@ -85,8 +85,7 @@ public class testJADEConfiguration {
                                     JADEParamValues objValues = (JADEParamValues) objV2;
                                     for (Object objV3 : objValues.getValue()) {
                                         Value objValue = (Value) objV3;
-                                        LOGGER.info(String.format(" +++ value '%1$s' with prefix '%2$s'", objValue.getVal(),
-                                                objValue.getPrefix()));
+                                        LOGGER.info(String.format(" +++ value '%1$s' with prefix '%2$s'", objValue.getVal(), objValue.getPrefix()));
                                     }
                                 }
                             }

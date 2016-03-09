@@ -32,9 +32,9 @@ public class JadeFileHistoryTable extends Table {
     private static final Logger LOGGER = LoggerFactory.getLogger(JadeFileHistoryTable.class);
     private static final String MESSAGE_RESOURCE_BASE = "JadeMenuBar.";
     private static final Object[] VISIBLE_COLUMNS = new String[] { JadeHistoryFileColumns.STATUS.getName(), JadeFileColumns.MANDATOR.getName(),
-            JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), JadeHistoryFileColumns.OPERATION.getName(),
-            JadeHistoryFileColumns.PROTOCOL.getName(), JadeHistoryFileColumns.TARGET_FILENAME.getName(), JadeFileColumns.FILE_SIZE.getName(),
-            JadeFileColumns.SOURCE_HOST.getName(), JadeHistoryFileColumns.TARGET_HOST.getName() };
+            JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), JadeHistoryFileColumns.OPERATION.getName(), JadeHistoryFileColumns.PROTOCOL.getName(),
+            JadeHistoryFileColumns.TARGET_FILENAME.getName(), JadeFileColumns.FILE_SIZE.getName(), JadeFileColumns.SOURCE_HOST.getName(),
+            JadeHistoryFileColumns.TARGET_HOST.getName() };
     private static final String COLUMN_COLLAPSE_KEY = "columnCollapse";
     private List<JadeFilesHistoryDBItem> historyItems;
     private JadeFilesHistoryContainer container;
@@ -95,8 +95,7 @@ public class JadeFileHistoryTable extends Table {
 
     private void setPreferencesColumnsWidth() {
         for (Object key : VISIBLE_COLUMNS) {
-            int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS)
-                    .getInt(key.toString(), 0);
+            int width = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).getInt(key.toString(), 0);
             if (width != 0) {
                 setColumnWidth(key.toString(), width);
             }
@@ -108,16 +107,13 @@ public class JadeFileHistoryTable extends Table {
         setColumnHeader(JadeFileColumns.MANDATOR.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()));
         setColumnHeader(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName()));
-        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
-                + JadeHistoryFileColumns.OPERATION.getName()));
-        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
-                + JadeHistoryFileColumns.PROTOCOL.getName()));
+        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()));
+        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()));
         setColumnHeader(JadeHistoryFileColumns.TARGET_FILENAME.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TARGET_FILENAME.getName()));
         setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.FILE_SIZE.getName()));
         setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()));
-        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
-                + JadeHistoryFileColumns.TARGET_HOST.getName()));
+        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()));
     }
 
     public void refreshColumnHeaders(Locale locale) {
@@ -125,16 +121,13 @@ public class JadeFileHistoryTable extends Table {
         setColumnHeader(JadeFileColumns.MANDATOR.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
         setColumnHeader(JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TRANSFER_TIMESTAMP.getName(), locale));
-        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
-                + JadeHistoryFileColumns.OPERATION.getName(), locale));
-        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
-                + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
+        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName(), locale));
+        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
         setColumnHeader(JadeHistoryFileColumns.TARGET_FILENAME.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TARGET_FILENAME.getName(), locale));
         setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.FILE_SIZE.getName(), locale));
         setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName(), locale));
-        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
-                + JadeHistoryFileColumns.TARGET_HOST.getName(), locale));
+        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName(), locale));
     }
 
     public void populateDatasource(List<JadeFilesHistoryDBItem> historyItems) {
@@ -207,8 +200,7 @@ public class JadeFileHistoryTable extends Table {
             public void columnCollapse(ColumnCollapseEvent event) {
                 Object column = event.getPropertyId();
                 setColumnCollapsed(column, event.getCollapsed());
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE)
-                    .putBoolean(column.toString(), event.getCollapsed());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).putBoolean(column.toString(), event.getCollapsed());
 
             }
         });
@@ -217,8 +209,7 @@ public class JadeFileHistoryTable extends Table {
     private void getColumnsCollapsed() {
         if (container != null) {
             for (Object column : container.getContainerPropertyIds()) {
-                setColumnCollapsed(column, prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE)
-                        .node(JadeBSConstants.PREF_NODE_COLLAPSE).getBoolean(column.toString(), false));
+                setColumnCollapsed(column, prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).getBoolean(column.toString(), false));
             }
         }
     }
@@ -284,6 +275,7 @@ public class JadeFileHistoryTable extends Table {
     }
 
     public static class ColumnCollapseEvent extends Component.Event {
+
         private static final long serialVersionUID = 1L;
         public static final java.lang.reflect.Method COLUMN_COLLAPSE_METHOD;
         static {
@@ -295,20 +287,24 @@ public class JadeFileHistoryTable extends Table {
         }
         private final boolean collapsed;
         private final Object columnPropertyId;
+
         public ColumnCollapseEvent(Component source, Object propertyId, boolean collapsed) {
             super(source);
             this.collapsed = collapsed;
             columnPropertyId = propertyId;
         }
+
         public Object getPropertyId() {
             return columnPropertyId;
         }
+
         public boolean getCollapsed() {
             return collapsed;
         }
     }
 
     public interface ColumnCollapseListener extends Serializable {
+
         public void columnCollapse(ColumnCollapseEvent event);
     }
 

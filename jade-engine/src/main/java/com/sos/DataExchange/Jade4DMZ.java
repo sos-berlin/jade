@@ -31,11 +31,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         String subDir = dir + uuid;
         Operation operation = null;
         try {
-            if (objOptions.operation.isOperationCopyToInternet()
-                    || objOptions.operation.isOperationSendUsingDMZ()) {
+            if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
-            } else if (objOptions.operation.isOperationCopyFromInternet()
-                    || objOptions.operation.isOperationReceiveUsingDMZ()) {
+            } else if (objOptions.operation.isOperationCopyFromInternet() || objOptions.operation.isOperationReceiveUsingDMZ()) {
                 operation = Operation.copyFromInternet;
             } else {
                 throw new JobSchedulerException(Messages.getMsg("Jade4DMZ-E-001"));

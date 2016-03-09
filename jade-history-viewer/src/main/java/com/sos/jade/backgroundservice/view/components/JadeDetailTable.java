@@ -107,12 +107,13 @@ public class JadeDetailTable extends Table {
 
     private void initConfigurationChangeListeners() {
         this.addColumnResizeListener(new Table.ColumnResizeListener() {
+
             private static final long serialVersionUID = 1L;
+
             @Override
             public void columnResize(ColumnResizeEvent event) {
                 for (Object col : VISIBLE_COLUMNS) {
-                    prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE)
-                        .node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(col.toString(), getColumnWidth(col));
+                    prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_DETAIL_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(col.toString(), getColumnWidth(col));
                     LOGGER.debug("actual width of " + col.toString() + " = " + String.valueOf(getColumnWidth(col)));
                 }
                 try {

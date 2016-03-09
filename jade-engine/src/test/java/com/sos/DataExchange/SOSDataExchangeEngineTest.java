@@ -156,8 +156,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.auth_method.Value(enuAuthenticationMethods.password);
         if (flgUseFilePath) {
             objOptions.file_path.Value("R:/backup/sos/java/junittests/testdata/SOSDataExchange/test-0.poll");
-        }
-        else {
+        } else {
             objOptions.FileNamePatternRegExp.Value("^.*\\.poll$");
             objOptions.poll_minfiles.value(1);
         }
