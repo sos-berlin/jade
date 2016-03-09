@@ -103,7 +103,7 @@ public class JadeFileWatchingUtility implements Runnable {
     private void registerAll(final Path pstrStartFolderName) throws IOException {
 
         Files.walkFileTree(pstrStartFolderName, new SimpleFileVisitor<Path>() {
-        
+
             @Override
             public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
                 register(dir);
@@ -175,5 +175,5 @@ public class JadeFileWatchingUtility implements Runnable {
     public void run() {
         this.processEvents();
     }
-    
+
 }

@@ -41,7 +41,10 @@ public class JADEHistoryViewerUI extends UI {
     private static final Logger LOGGER = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
 
     @WebServlet(value = "/*", asyncSupported = true)
-    /* productionMode = true does not work when the web app is started from an IDE integrated webserver! */
+    /*
+     * productionMode = true does not work when the web app is started from an
+     * IDE integrated webserver!
+     */
     @VaadinServletConfiguration(productionMode = true, ui = JADEHistoryViewerUI.class)
     public static class Servlet extends VaadinServlet {
 

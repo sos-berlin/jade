@@ -18,24 +18,22 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private SOSFileList fileList = null;
     private String uuid = null;
     private String sourceListFilename = null;
-	private String historyFilename = null;
+    private String historyFilename = null;
 
     private enum Operation {
         copyToInternet, copyFromInternet
     }
 
     public void Execute() {
-		String dir = normalizeDirectoryPath(getOptions().jump_dir.Value());
+        String dir = normalizeDirectoryPath(getOptions().jump_dir.Value());
 
         String uuid = "jade-dmz-" + getUUID();
         String subDir = dir + uuid;
         Operation operation = null;
         try {
-            if (objOptions.operation.isOperationCopyToInternet()
-                    || objOptions.operation.isOperationSendUsingDMZ()) {
+            if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
-            } else if (objOptions.operation.isOperationCopyFromInternet()
-                    || objOptions.operation.isOperationReceiveUsingDMZ()) {
+            } else if (objOptions.operation.isOperationCopyFromInternet() || objOptions.operation.isOperationReceiveUsingDMZ()) {
                 operation = Operation.copyFromInternet;
             } else {
                 throw new JobSchedulerException(Messages.getMsg("Jade4DMZ-E-001"));
@@ -76,7 +74,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         }
     }
 
-	private SOSConnection2OptionsAlternate createJumpOptions(String dir){
+    private SOSConnection2OptionsAlternate createJumpOptions(String dir) {
         SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
         options.protocol.Value("sftp");
         options.host.Value(objOptions.jump_host.Value());
@@ -85,8 +83,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.password.Value(objOptions.jump_password.Value());
         options.ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
         options.ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
-		options.strictHostKeyChecking.value(objOptions.jump_strict_hostkey_checking.value());
-		options.Directory.Value(dir);
+        options.strictHostKeyChecking.value(objOptions.jump_strict_hostkey_checking.value());
+        options.Directory.Value(dir);
         return options;
     }
 
@@ -135,7 +133,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         LOGGER.debug(String.format("operation = %s, jump dir = %s", operation, dir));
         JADEOptions options = null;
         JADEOptions jumpCommandOptions;
-		SOSConnection2OptionsAlternate jumpOptions = createJumpOptions(dir);
+        SOSConnection2OptionsAlternate jumpOptions = createJumpOptions(dir);
         jumpOptions = setJumpProxy(jumpOptions);
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(dir);
@@ -153,7 +151,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             options.getConnectionOptions().Target(objOptions.Target());
         }
         options.setDmzOption("operation", operation.name());
-		options.setDmzOption("history", getHistoryFilename());
+        options.setDmzOption("history", getHistoryFilename());
         options.setDmzOption("resultfile", getSourceListFilename());
         return options;
     }
@@ -176,8 +174,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.proxy_password.setPrefix(prefix);
         options.PreTransferCommands.setPrefix(prefix);
         options.PostTransferCommands.setPrefix(prefix);
-		options.Directory.setPrefix(prefix);
-		
+        options.Directory.setPrefix(prefix);
+
         return options;
     }
 
@@ -252,9 +250,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.KeepModificationDate = objOptions.KeepModificationDate;
         options.verbose = objOptions.verbose;
         options.zero_byte_transfer = objOptions.zero_byte_transfer;
-		options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
-		options.IntegrityHashType = objOptions.IntegrityHashType;
-		
+        options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
+        options.IntegrityHashType = objOptions.IntegrityHashType;
+
         return options;
     }
 
@@ -279,9 +277,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.keep_modification_date = objOptions.keep_modification_date;
         options.verbose = objOptions.verbose;
         options.zero_byte_transfer = objOptions.zero_byte_transfer;
-		options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
-		options.CreateIntegrityHashFile = objOptions.CreateIntegrityHashFile;
-		options.IntegrityHashType = objOptions.IntegrityHashType;
+        options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
+        options.CreateIntegrityHashFile = objOptions.CreateIntegrityHashFile;
+        options.IntegrityHashType = objOptions.IntegrityHashType;
         return options;
     }
 
@@ -300,7 +298,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.scheduler_port = objOptions.scheduler_port;
         options.Scheduler_Transfer_Method = objOptions.Scheduler_Transfer_Method;
         options.history = objOptions.history;
-		options.HistoryFileName = objOptions.HistoryFileName;
+        options.HistoryFileName = objOptions.HistoryFileName;
         options.history_repeat = objOptions.history_repeat;
         options.history_repeat_interval = objOptions.history_repeat_interval;
         options.HistoryFileAppendMode = objOptions.HistoryFileAppendMode;
@@ -324,7 +322,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private String getJadeOnDMZCommand(JADEOptions options) {
         options.file.setNotDirty();
         options.user.DefaultValue("");
-		options.history.Value(getHistoryFilename());
+        options.history.Value(getHistoryFilename());
         options.Source().user.DefaultValue("");
         options.Target().user.DefaultValue("");
         StringBuilder command = new StringBuilder(objOptions.jump_command.Value() + " ");
@@ -400,7 +398,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     }
 
     @Override
-	public JADEOptions getOptions() {
+    public JADEOptions getOptions() {
         if (objOptions == null) {
             objOptions = new JADEOptions();
         }
@@ -437,13 +435,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             sourceListFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".source.tmp";
         }
         return sourceListFilename;
-	}
-	
-	private String getHistoryFilename() {
-		if (historyFilename == null) {
-			historyFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".history.csv";
-		}
-		return historyFilename;
+    }
+
+    private String getHistoryFilename() {
+        if (historyFilename == null) {
+            historyFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".history.csv";
+        }
+        return historyFilename;
     }
 
 }

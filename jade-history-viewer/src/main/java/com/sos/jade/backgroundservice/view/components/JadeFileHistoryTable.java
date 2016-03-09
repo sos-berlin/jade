@@ -39,9 +39,9 @@ public class JadeFileHistoryTable extends Table {
     private Preferences prefs = JADE_BS_OPTIONS.getPreferenceStore();
 
     private static final Object[] VISIBLE_COLUMNS = new String[] { JadeHistoryFileColumns.STATUS.getName(), JadeFileColumns.MANDATOR.getName(),
-            JadeHistoryFileColumns.TRANSFER_START.getName(), JadeHistoryFileColumns.TRANSFER_END.getName(), JadeHistoryFileColumns.OPERATION.getName(),
-            JadeHistoryFileColumns.PROTOCOL.getName(), JadeHistoryFileColumns.TARGET_FILENAME.getName(), JadeFileColumns.FILE_SIZE.getName(),
-            JadeFileColumns.SOURCE_HOST.getName(), JadeHistoryFileColumns.TARGET_HOST.getName() };
+            JadeHistoryFileColumns.TRANSFER_START.getName(), JadeHistoryFileColumns.TRANSFER_END.getName(),
+            JadeHistoryFileColumns.OPERATION.getName(), JadeHistoryFileColumns.PROTOCOL.getName(), JadeHistoryFileColumns.TARGET_FILENAME.getName(),
+            JadeFileColumns.FILE_SIZE.getName(), JadeFileColumns.SOURCE_HOST.getName(), JadeHistoryFileColumns.TARGET_HOST.getName() };
 
     public JadeFileHistoryTable(List<JadeFilesHistoryDBItem> historyItems, JadeBSMessages messages) {
         if (historyItems == null) {
@@ -82,8 +82,7 @@ public class JadeFileHistoryTable extends Table {
 
     private void setPreferencesColumnOrder() {
         String strVc = null;
-        strVc = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER)
-                .get(JadeBSConstants.PREF_KEY_ORDER, null);
+        strVc = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).get(JadeBSConstants.PREF_KEY_ORDER, null);
         if (strVc != null && ((historyItems != null && !historyItems.isEmpty()) || this.container != null)) {
             if (strVc.contains("transferTimestamp")) {
                 strVc.replace("transferTimestamp", "transferEnd");
@@ -111,14 +110,18 @@ public class JadeFileHistoryTable extends Table {
         setColumnHeader(JadeFileColumns.MANDATOR.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName()));
         setColumnHeader(JadeHistoryFileColumns.TRANSFER_START.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TRANSFER_START.getName()));
-        setColumnHeader(JadeHistoryFileColumns.TRANSFER_END.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_END.getName()));
-        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName()));
-        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName()));
+        setColumnHeader(JadeHistoryFileColumns.TRANSFER_END.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.TRANSFER_END.getName()));
+        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.OPERATION.getName()));
+        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.PROTOCOL.getName()));
         setColumnHeader(JadeHistoryFileColumns.TARGET_FILENAME.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TARGET_FILENAME.getName()));
         setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.FILE_SIZE.getName()));
         setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName()));
-        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName()));
+        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.TARGET_HOST.getName()));
     }
 
     public void refreshColumnHeaders(Locale locale) {
@@ -126,18 +129,18 @@ public class JadeFileHistoryTable extends Table {
         setColumnHeader(JadeFileColumns.MANDATOR.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.MANDATOR.getName(), locale));
         setColumnHeader(JadeHistoryFileColumns.TRANSFER_START.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TRANSFER_START.getName(), locale));
-        setColumnHeader(JadeHistoryFileColumns.TRANSFER_END.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TRANSFER_END.getName(), 
-                locale));
-        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.OPERATION.getName(), 
-                locale));
-        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.PROTOCOL.getName(), 
-                locale));
+        setColumnHeader(JadeHistoryFileColumns.TRANSFER_END.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.TRANSFER_END.getName(), locale));
+        setColumnHeader(JadeHistoryFileColumns.OPERATION.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.OPERATION.getName(), locale));
+        setColumnHeader(JadeHistoryFileColumns.PROTOCOL.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.PROTOCOL.getName(), locale));
         setColumnHeader(JadeHistoryFileColumns.TARGET_FILENAME.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
                 + JadeHistoryFileColumns.TARGET_FILENAME.getName(), locale));
         setColumnHeader(JadeFileColumns.FILE_SIZE.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.FILE_SIZE.getName(), locale));
         setColumnHeader(JadeFileColumns.SOURCE_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeFileColumns.SOURCE_HOST.getName(), locale));
-        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE + JadeHistoryFileColumns.TARGET_HOST.getName(), 
-                locale));
+        setColumnHeader(JadeHistoryFileColumns.TARGET_HOST.getName(), messages.getValue(MESSAGE_RESOURCE_BASE
+                + JadeHistoryFileColumns.TARGET_HOST.getName(), locale));
     }
 
     public void populateDatasource(List<JadeFilesHistoryDBItem> historyItems) {
@@ -149,11 +152,13 @@ public class JadeFileHistoryTable extends Table {
     }
 
     private class StatusCellStyleGenerator implements CellStyleGenerator {
+
         private static final long serialVersionUID = 1L;
+
         @Override
         public String getStyle(Table source, Object itemId, Object propertyId) {
             if (itemId != null && propertyId != null && JadeHistoryFileColumns.STATUS.getName().equals(propertyId)) {
-                if ("transferred".equals(((JadeFilesHistoryDBItem) itemId).getStatus()) 
+                if ("transferred".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "success".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "compressed".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "renamed".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
@@ -170,7 +175,7 @@ public class JadeFileHistoryTable extends Table {
                         || "waiting4transfer".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "transferUndefined".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "IgnoredDueToZerobyteConstraint".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
-                        || "setBack".equals(((JadeFilesHistoryDBItem) itemId).getStatus()) 
+                        || "setBack".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "polling".equals(((JadeFilesHistoryDBItem) itemId).getStatus())
                         || "deleted".equals(((JadeFilesHistoryDBItem) itemId).getStatus())) {
                     ((Label) source.getItem(itemId).getItemProperty(propertyId).getValue()).setStyleName("jadeStatusTransferLabel");
@@ -199,8 +204,7 @@ public class JadeFileHistoryTable extends Table {
             @Override
             public void columnResize(ColumnResizeEvent event) {
                 for (Object col : VISIBLE_COLUMNS) {
-                    prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS)
-                    .putInt(col.toString(), getColumnWidth(col));
+                    prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_WIDTHS).putInt(col.toString(), getColumnWidth(col));
                     LOGGER.debug("actual width of {} = {}", col.toString(), String.valueOf(getColumnWidth(col)));
                 }
                 try {
@@ -218,8 +222,7 @@ public class JadeFileHistoryTable extends Table {
             public void columnCollapse(ColumnCollapseEvent event) {
                 Object column = event.getPropertyId();
                 setColumnCollapsed(column, event.getCollapsed());
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).putBoolean(column.toString(), 
-                        event.getCollapsed());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).putBoolean(column.toString(), event.getCollapsed());
 
             }
         });
@@ -228,8 +231,7 @@ public class JadeFileHistoryTable extends Table {
     private void getColumnsCollapsed() {
         if (container != null) {
             for (Object column : container.getContainerPropertyIds()) {
-                setColumnCollapsed(column, prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE)
-                        .getBoolean(column.toString(), false));
+                setColumnCollapsed(column, prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_COLLAPSE).getBoolean(column.toString(), false));
             }
         }
     }
@@ -248,8 +250,7 @@ public class JadeFileHistoryTable extends Table {
     }
 
     private void setOrderedColumnsPreferencesNode(Object[] orderedCols) {
-        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).put(JadeBSConstants.PREF_KEY_ORDER, 
-                createOrderedColumnsString(orderedCols));
+        prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_HISTORY_TABLE).node(JadeBSConstants.PREF_NODE_ORDER).put(JadeBSConstants.PREF_KEY_ORDER, createOrderedColumnsString(orderedCols));
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
