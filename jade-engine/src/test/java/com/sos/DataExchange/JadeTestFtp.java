@@ -204,7 +204,7 @@ public class JadeTestFtp extends JadeTestBase {
     @Test
     public void testcopyLocal2ftp() throws Exception {
         objOptions.settings.Value(strSettingsFile);
-		objOptions.profile.Value("copy_passive2ftp");
+        objOptions.profile.Value("copy_passive2ftp");
         super.testUseProfileWOCreatingTestFiles();
     }
 

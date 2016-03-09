@@ -107,8 +107,7 @@ public class JadeMenuBar extends MenuBar {
 
     private void createFileMenuItems() {
         this.smLoadFilter = mFile.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadFilter", actualLocale), null);
-        this.ssmLoadDetailsFilter = smLoadFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadDetailsFilter", actualLocale), 
-                new Command() {
+        this.ssmLoadDetailsFilter = smLoadFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadDetailsFilter", actualLocale), new Command() {
 
             private static final long serialVersionUID = 1L;
 
@@ -117,8 +116,7 @@ public class JadeMenuBar extends MenuBar {
                 // nothing to do
             }
         });
-        this.ssmLoadHistoryFilter = smLoadFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadHistoryFilter", actualLocale), 
-                new Command() {
+        this.ssmLoadHistoryFilter = smLoadFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "loadHistoryFilter", actualLocale), new Command() {
 
             private static final long serialVersionUID = 1L;
 
@@ -128,8 +126,7 @@ public class JadeMenuBar extends MenuBar {
             }
         });
         this.smSaveFilter = mFile.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveFilter", actualLocale), null);
-        this.ssmSaveDetailsFilter = smSaveFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveDetailsFilter", actualLocale), 
-                new Command() {
+        this.ssmSaveDetailsFilter = smSaveFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveDetailsFilter", actualLocale), new Command() {
 
             private static final long serialVersionUID = 1L;
 
@@ -138,8 +135,7 @@ public class JadeMenuBar extends MenuBar {
                 // nothing to do
             }
         });
-        this.ssmSaveHistoryFilter = smSaveFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveHistoryFilter", actualLocale), 
-                new Command() {
+        this.ssmSaveHistoryFilter = smSaveFilter.addItem(messages.getValue(MESSAGE_RESOURCE_BASE + MESSAGE_RESOURCE_FILE_MENU + "saveHistoryFilter", actualLocale), new Command() {
 
             private static final long serialVersionUID = 1L;
 
@@ -184,8 +180,7 @@ public class JadeMenuBar extends MenuBar {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER)
-                    .node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, selectedItem.isChecked());
                 if (mainView == null) {
                     mainView = getMainViewFromCurrentUI();
                 }
@@ -217,8 +212,7 @@ public class JadeMenuBar extends MenuBar {
                 } else {
                     ((IndexedContainer) mainView.getTblFileHistory().getContainerDataSource()).removeContainerFilter(duplicatesFilter);
                 }
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER)
-                    .node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, selectedItem.isChecked());
             }
         });
         this.smDuplicatesFilter.setCheckable(true);
@@ -232,8 +226,7 @@ public class JadeMenuBar extends MenuBar {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER)
-                    .node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).putBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, selectedItem.isChecked());
             }
         });
         smPreferencesReuseFilter.setCheckable(true);
@@ -247,8 +240,7 @@ public class JadeMenuBar extends MenuBar {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_DE, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_DE, selectedItem.isChecked());
                 if (mainView == null) {
                     mainView = getMainViewFromCurrentUI();
                 }
@@ -263,8 +255,7 @@ public class JadeMenuBar extends MenuBar {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_UK, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_UK, selectedItem.isChecked());
                 if (mainView == null) {
                     mainView = getMainViewFromCurrentUI();
                 }
@@ -279,8 +270,7 @@ public class JadeMenuBar extends MenuBar {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_US, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_US, selectedItem.isChecked());
                 if (mainView == null) {
                     mainView = getMainViewFromCurrentUI();
                 }
@@ -295,8 +285,7 @@ public class JadeMenuBar extends MenuBar {
 
             @Override
             public void menuSelected(MenuItem selectedItem) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_ES, selectedItem.isChecked());
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_ES, selectedItem.isChecked());
                 if (mainView == null) {
                     mainView = getMainViewFromCurrentUI();
                 }
@@ -316,14 +305,10 @@ public class JadeMenuBar extends MenuBar {
                 ssmEnglishUKCheck.setChecked(true);
                 ssmEnglishUSCheck.setChecked(true);
                 ssmSpanishCheck.setChecked(true);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_DE, true);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_UK, true);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_US, true);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_ES, true);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_DE, true);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_UK, true);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_US, true);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_ES, true);
                 if (mainView == null) {
                     mainView = getMainViewFromCurrentUI();
                 }
@@ -347,14 +332,10 @@ public class JadeMenuBar extends MenuBar {
                 ssmEnglishUKCheck.setChecked(false);
                 ssmEnglishUSCheck.setChecked(false);
                 ssmSpanishCheck.setChecked(false);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_DE, false);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_UK, false);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_US, false);
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_ES, false);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_DE, false);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_UK, false);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_US, false);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).putBoolean(JadeBSConstants.PREF_KEY_ES, false);
                 uncheckAllLangs();
                 Locale defaultLocale = Locale.getDefault();
                 if (defaultLocale.getCountry().equals(new Locale("de", "DE").getCountry())) {
@@ -432,8 +413,7 @@ public class JadeMenuBar extends MenuBar {
     public void refreshAutoRefreshOnInit() {
         try {
             if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)) {
-                boolean refresh = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER)
-                        .node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, false);
+                boolean refresh = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, false);
                 smAutoRefresh.setChecked(refresh);
                 if (mainView != null) {
                     mainView.setAutoRefresh(refresh);
@@ -450,16 +430,11 @@ public class JadeMenuBar extends MenuBar {
 
     public void refreshSelectedLangOnInit() {
         try {
-            if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .nodeExists(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS)) {
-                boolean german = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                        .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_DE, true);
-                boolean englishUK = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                        .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_UK, true);
-                boolean englishUS = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                        .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_US, true);
-                boolean spanish = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                        .node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_ES, true);
+            if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).nodeExists(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS)) {
+                boolean german = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_DE, true);
+                boolean englishUK = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_UK, true);
+                boolean englishUS = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_US, true);
+                boolean spanish = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_AVAILABLE_LANGS).getBoolean(JadeBSConstants.PREF_KEY_ES, true);
                 ssmGermanCheck.setChecked(german);
                 ssmEnglishUKCheck.setChecked(englishUK);
                 ssmEnglishUSCheck.setChecked(englishUS);
@@ -488,8 +463,7 @@ public class JadeMenuBar extends MenuBar {
 
     public void refreshSelectedDetailsOnInit() {
         try {
-            if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .nodeExists(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS)) {
+            if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).nodeExists(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS)) {
                 for (MenuItem item : smPreferencesDetails.getChildren()) {
                     for (String key : globalDetailKeys) {
                         if (item.getText().equals(messages.getValue(key, actualLocale))) {
@@ -501,8 +475,7 @@ public class JadeMenuBar extends MenuBar {
                             } else {
                                 target = MESSAGE_RESOURCE_BASE;
                             }
-                            item.setChecked(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                                    .node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).getBoolean(key.replace(target, ""), false));
+                            item.setChecked(prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).getBoolean(key.replace(target, ""), false));
                             break;
                         }
                     }
@@ -608,11 +581,9 @@ public class JadeMenuBar extends MenuBar {
                 target = MESSAGE_RESOURCE_BASE;
             }
             if (itemMessageKeysToFilter.contains(detail)) {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).putBoolean(detail.replace(target, ""), true);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).putBoolean(detail.replace(target, ""), true);
             } else {
-                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES)
-                    .node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).putBoolean(detail.replace(target, ""), false);
+                prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_MENU_BAR).node(JadeBSConstants.PREF_NODE_PREFERENCES).node(JadeBSConstants.PREF_NODE_VISIBLE_DETAILS).putBoolean(detail.replace(target, ""), false);
             }
         }
         detailFilter = new DetailFilter(itemMessageKeysToFilter);

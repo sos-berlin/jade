@@ -19,7 +19,8 @@ public class JADEHistory {
     private static final String DB_CLASS = "db_class";
     private static boolean _doDebug = false;
 
-    public static SOSConnection getConnection(final Spooler spooler, SOSConnection conn, final Variable_set parameters, final SOSLogger log) throws Exception {
+    public static SOSConnection getConnection(final Spooler spooler, SOSConnection conn, final Variable_set parameters, final SOSLogger log)
+            throws Exception {
         try {
             if (parameters.value(DB_CLASS) != null && parameters.value(DB_CLASS).length() > 0) {
                 if (conn != null) {
@@ -31,8 +32,7 @@ public class JADEHistory {
                     }
                 }
                 log.debug3("connecting to database using order params ...");
-                conn = SOSConnection.createInstance(parameters.value(DB_CLASS), parameters.value("db_driver"), parameters.value("db_url"), 
-                        parameters.value("db_user"), parameters.value("db_password"), log);
+                conn = SOSConnection.createInstance(parameters.value(DB_CLASS), parameters.value("db_driver"), parameters.value("db_url"), parameters.value("db_user"), parameters.value("db_password"), log);
                 conn.connect();
                 log.debug3("connected to database using order params");
             } else {

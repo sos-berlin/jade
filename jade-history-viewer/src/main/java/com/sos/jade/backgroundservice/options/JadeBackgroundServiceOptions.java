@@ -12,7 +12,7 @@ public class JadeBackgroundServiceOptions extends JadeBackgroundServiceOptionsSu
     private static final long serialVersionUID = 8646735260210717840L;
 
     public JadeBackgroundServiceOptions() {
-        // Nothing to do        
+        // Nothing to do
     }
 
     public JadeBackgroundServiceOptions(final JSListener pobjListener) {

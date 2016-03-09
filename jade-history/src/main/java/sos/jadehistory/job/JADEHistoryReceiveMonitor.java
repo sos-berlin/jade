@@ -7,7 +7,7 @@ import sos.util.SOSClassUtil;
 import sos.util.SOSSchedulerLogger;
 
 public class JADEHistoryReceiveMonitor extends Monitor_impl {
-    
+
     private static final int LENGTH128 = 128;
     private static final int LENGTH255 = 255;
 
@@ -97,15 +97,14 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
             String lastLocalFileName = conn.getSingleValue(sql.toString());
             if (lastLocalFileName == null || lastLocalFileName.length() == 0) {
                 sql = new StringBuffer("insert into " + JADEHistory.TABLE_FILES_POSITIONS
-                    + "(\"HOST\",\"REMOTE_DIR\",\"REMOTE_FILENAME\",\"LOCAL_FILENAME\",\"FILE_SIZE\",\"POSITION\") ")
-                    .append("values('" + JADEHistory.getNormalizedField(conn, host, LENGTH128) + "','" 
-                    + JADEHistory.getNormalizedField(conn, remoteDir, LENGTH255) + "','" 
-                    + JADEHistory.getNormalizedField(conn, remoteFilename, LENGTH255) + "','" 
-                    + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "',0,0)");
+                        + "(\"HOST\",\"REMOTE_DIR\",\"REMOTE_FILENAME\",\"LOCAL_FILENAME\",\"FILE_SIZE\",\"POSITION\") ").append("values('"
+                        + JADEHistory.getNormalizedField(conn, host, LENGTH128) + "','" + JADEHistory.getNormalizedField(conn, remoteDir, LENGTH255)
+                        + "','" + JADEHistory.getNormalizedField(conn, remoteFilename, LENGTH255) + "','"
+                        + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "',0,0)");
             } else {
                 sql = new StringBuffer("update " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("set \"LOCAL_FILENAME\" = '"
-                    + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "' ").append("where \"LOCAL_FILENAME\" = '"
-                    + JADEHistory.getNormalizedField(conn, lastLocalFileName, LENGTH255) + "'");
+                        + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "' ").append("where \"LOCAL_FILENAME\" = '"
+                        + JADEHistory.getNormalizedField(conn, lastLocalFileName, LENGTH255) + "'");
             }
             conn.execute(sql.toString());
             conn.commit();

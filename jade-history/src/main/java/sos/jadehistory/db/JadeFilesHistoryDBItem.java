@@ -83,7 +83,7 @@ public class JadeFilesHistoryDBItem extends DbItem {
     public void setJadeId(Long jadeId) {
         this.jadeId = jadeId;
     }
-   
+
     @Column(name = "`OPERATION`", nullable = false)
     public String getOperation() {
         return operation;
@@ -217,7 +217,7 @@ public class JadeFilesHistoryDBItem extends DbItem {
     public String getStatus() {
         return status;
     }
-   
+
     @Column(name = "`LAST_ERROR_MESSAGE`", nullable = true)
     public void setLastErrorMessage(String lastErrorMessage) {
         this.lastErrorMessage = lastErrorMessage;
@@ -287,7 +287,7 @@ public class JadeFilesHistoryDBItem extends DbItem {
     public Integer getJumpPort() {
         return jumpPort;
     }
-   
+
     @Column(name = "`MODIFIED_BY`", nullable = false)
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;

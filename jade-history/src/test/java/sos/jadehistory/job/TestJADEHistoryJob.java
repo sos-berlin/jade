@@ -44,8 +44,7 @@ public class TestJADEHistoryJob {
     public void testGUID() throws Exception {
         JADEHistoryJob jadeHistoryJob = new JADEHistoryJob();
         jadeHistoryJob.init();
-        jadeHistoryJob.setConnection(SOSConnection.createInstance("SOSOracleConnection", "oracle.jdbc.driver.OracleDriver", 
-                "jdbc:oracle:thin:@localhost:1521:test", "test", "test"));
+        jadeHistoryJob.setConnection(SOSConnection.createInstance("SOSOracleConnection", "oracle.jdbc.driver.OracleDriver", "jdbc:oracle:thin:@localhost:1521:test", "test", "test"));
         String randomUUIDString = UUID.randomUUID().toString();
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("guid", randomUUIDString);

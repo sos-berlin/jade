@@ -283,7 +283,8 @@ public class JadeHistoryDBLayer {
 
     public long deleteInterval() throws Exception {
         connection.beginTransaction();
-        String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getFilesWhereFromTo() + ")";
+        String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getFilesWhereFromTo()
+                + ")";
         Query query = connection.createQuery(q);
         if (filesFilter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filesFilter.getCreatedFrom());
