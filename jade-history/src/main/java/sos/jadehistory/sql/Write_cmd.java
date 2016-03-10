@@ -7,20 +7,21 @@ import java.text.*;
 import sos.connection.SOSConnection;
 import sos.util.SOSLogger;
 
+/** @author Joacim Zschimmer */
 public abstract class Write_cmd extends Cmd {
+
+    public List field_value_list;
+    boolean ignore_null = false;
 
     class Field_value {
 
-        static final char TYPE_STRING = 'S';
-        static final char TYPE_DIRECT = 'I';
-        static final char TYPE_DATETIME = 'D';
-        static final char TYPE_TIME = 't';
-
+        static final char type_string = 'S';
+        static final char type_direct = 'I';
+        static final char type_datetime = 'D';
+        static final char type_time = 't';
         String field_name;
         Object value;
         char type;
-
-        // possible types are S: String, N: Numerisch, T: Datetime
 
         public Field_value(String f, Object v, char type) {
             field_name = f;
@@ -30,24 +31,22 @@ public abstract class Write_cmd extends Cmd {
 
         public String sql_value() {
             switch (type) {
-            case TYPE_STRING:
+            case type_string:
                 return quoted(value.toString());
-            case TYPE_DIRECT:
+            case type_direct:
                 return value.toString();
-            case TYPE_DATETIME:
+            case type_datetime:
                 SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 date_format.setTimeZone(new SimpleTimeZone(0, "GMT"));
                 return "{ts'" + date_format.format((Timestamp) value) + "'}";
-            case TYPE_TIME:
+            case type_time:
                 return "{t'" + value.toString().replaceAll("'", "''") + "'}";
             default:
                 throw new RuntimeException("Stmt.sql_value type=" + type);
             }
         }
-    }
 
-    public List field_value_list;
-    boolean ignore_null = false;
+    }
 
     Write_cmd(SOSConnection conn_, SOSLogger logger_) {
         super(conn_, logger_);
@@ -55,11 +54,8 @@ public abstract class Write_cmd extends Cmd {
     }
 
     private void set(String field_name, Object value, char type) {
-        if (value == null) {
-            if (!ignore_null) {
-                set_direct(field_name, "NULL");
-                // Das ist rekursiv, aber dann gilt value != null
-            }
+        if (value == null &&  !ignore_null) {
+            set_direct(field_name, "NULL");
         } else {
             Field_value f = new Field_value(field_name, value, type);
             for (int i = 0; i < field_value_list.size(); i++) {
@@ -77,18 +73,18 @@ public abstract class Write_cmd extends Cmd {
     }
 
     public void set(String field_name, Timestamp value) {
-        set(field_name, value, Field_value.TYPE_DATETIME);
+        set(field_name, value, Field_value.type_datetime);
     }
 
     public void set(String field_name, String value) {
-        set(field_name, value, Field_value.TYPE_STRING);
+        set(field_name, value, Field_value.type_string);
     }
 
     public void setNull(String field_name, String value) {
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             value = "NULL";
         }
-        set(field_name, value, Field_value.TYPE_STRING);
+        set(field_name, value, Field_value.type_string);
     }
 
     public void set_truncate(String field_name, String value, int field_size) {
@@ -100,22 +96,22 @@ public abstract class Write_cmd extends Cmd {
     }
 
     public void set_direct(String field_name, String value) {
-        set(field_name, value, Field_value.TYPE_DIRECT);
+        set(field_name, value, Field_value.type_direct);
     }
 
     public void set_num(String field_name, Object value) {
-        set(field_name, value, Field_value.TYPE_DIRECT);
+        set(field_name, value, Field_value.type_direct);
     }
 
     public void set_numNull(String field_name, String value) {
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             value = "NULL";
         }
-        set(field_name, value, Field_value.TYPE_DIRECT);
+        set(field_name, value, Field_value.type_direct);
     }
 
     public void set_num(String field_name, long value) {
-        set(field_name, Long.toString(value), Field_value.TYPE_DIRECT);
+        set(field_name, Long.toString(value), Field_value.type_direct);
     }
 
     public void set_later(String field_name) {
@@ -123,7 +119,7 @@ public abstract class Write_cmd extends Cmd {
     }
 
     public void set_datetime(String field_name, Timestamp value) {
-        set(field_name, value, Field_value.TYPE_DATETIME);
+        set(field_name, value, Field_value.type_datetime);
     }
 
     public boolean empty() {
@@ -143,7 +139,7 @@ public abstract class Write_cmd extends Cmd {
         }
         for (int i = 0; i < field_value_list.size(); i++) {
             Field_value fv = (Field_value) field_value_list.get(i);
-            if (names.length() > 0) {
+            if (!names.isEmpty()) {
                 names += ',';
                 values += ',';
             }

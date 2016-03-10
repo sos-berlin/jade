@@ -3,9 +3,9 @@ package sos.jadehistory.sql;
 import java.util.ArrayList;
 
 import sos.connection.SOSConnection;
-import sos.jadehistory.sql.Write_cmd.Field_value;
 import sos.util.SOSLogger;
 
+/** @author joacim */
 public class Update_cmd extends Write_cmd {
 
     public boolean single = false;
@@ -32,7 +32,7 @@ public class Update_cmd extends Write_cmd {
         }
         for (int i = 0; i < field_value_list.size(); i++) {
             Field_value fv = (Field_value) field_value_list.get(i);
-            if (settings.length() > 0) {
+            if (!settings.isEmpty()) {
                 settings += ", ";
             }
             settings += q + fv.field_name + q + "=" + fv.sql_value();
