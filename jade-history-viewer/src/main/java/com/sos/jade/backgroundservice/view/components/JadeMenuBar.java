@@ -415,14 +415,16 @@ public class JadeMenuBar extends MenuBar {
             if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)) {
                 boolean refresh = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_AUTO_REFRESH, false);
                 smAutoRefresh.setChecked(refresh);
-                if (mainView != null)
+                if (mainView != null) {
                     mainView.setAutoRefresh(refresh);
+                }
             }
         } catch (BackingStoreException e) {
             LOGGER.warn(UNABLE_TO_READ_PREF_STORE_MSG);
             smAutoRefresh.setChecked(false);
-            if (mainView != null)
+            if (mainView != null) {
                 mainView.setAutoRefresh(false);
+            }
         }
     }
 
