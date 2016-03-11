@@ -197,10 +197,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             long filesCount = 0;
             long currentFilesCount = sourceFileList.size();
             ISOSVirtualFile sourceFile = null;
+            PollingLoop:
             while (true) {
                 if (currentPollingTime > pollTimeout) {
                     setInfo(String.format("file-polling: time '%1$s' is over. polling terminated", getPollTimeoutText()));
-                    break;
+                    break PollingLoop;
                 }
                 if (!isSourceDirFounded) {
                     sourceFile = sourceClient.getFileHandle(sourceDir);
@@ -238,7 +239,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     }
                     if ((objOptions.poll_minfiles.isNotDirty() && currentFilesCount > 0)
                             || (objOptions.poll_minfiles.isDirty() && currentFilesCount >= objOptions.poll_minfiles.value())) {
-                        break;
+                        break PollingLoop;
                     }
                 }
                 setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", pollInterval, objOptions.file_spec.Value()));
@@ -884,6 +885,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 long startPollingServer = System.currentTimeMillis() / CONST1000;
                 countPollingServerFiles = 0;
                 executePreTransferCommands();
+                PollingServerLoop:
                 while (true) {
                     if (objOptions.isFilePollingEnabled()) {
                         doPollingForFiles();
@@ -891,7 +893,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             String pollErrorState = objOptions.PollErrorState.Value();
                             LOGGER.info("set order-state to " + pollErrorState);
                             setNextNodeState(pollErrorState);
-                            break;
+                            break PollingServerLoop;
                         }
                     } else {
                         if (objOptions.OneOrMoreSingleFilesSpecified()) {
@@ -909,8 +911,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             selectFilesOnSource(fileHandle, objOptions.SourceDir, objOptions.file_spec, objOptions.recursive);
                         }
                     }
-                    if (checkSteadyStateOfFiles()) {
-                        break;
+                    if (!checkSteadyStateOfFiles()) {
+                        break PollingServerLoop;
                     }
                     sourceFileList.handleZeroByteFiles();
                     try {
@@ -948,14 +950,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                 targetClient.close();
                             }
                             sourceClient.close();
-                            break;
+                            break PollingServerLoop;
                         } else {
                             if (objOptions.pollingServerDuration.isDirty() && objOptions.PollingServerPollForever.isFalse()) {
                                 long currentTime = System.currentTimeMillis() / CONST1000;
                                 long duration = currentTime - startPollingServer;
                                 if (duration >= objOptions.pollingServerDuration.getTimeAsSeconds()) {
                                     LOGGER.debug("PollingServerMode: time elapsed. terminate polling server");
-                                    break;
+                                    break PollingServerLoop;
                                 }
                             }
                             LOGGER.debug("PollingServerMode: start next polling cycle");
