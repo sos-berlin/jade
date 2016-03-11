@@ -199,8 +199,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             long filesCount = 0;
             long currentFilesCount = sourceFileList.size();
             ISOSVirtualFile sourceFile = null;
-            PollingLoop:
-            while (true) {
+            PollingLoop: while (true) {
                 if (currentPollingTime > pollTimeout) {
                     setInfo(String.format("file-polling: time '%1$s' is over. polling terminated", getPollTimeoutText()));
                     break PollingLoop;
@@ -254,7 +253,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     if (objOptions.WaitingForLateComers.isTrue()) {
                         objOptions.WaitingForLateComers.setFalse();
                     } else {
-                        break;
+                        break PollingLoop;
                     }
                 }
             }
@@ -314,7 +313,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 showBanner();
             }
             ok = transfer();
-            if (JobSchedulerException.LastErrorMessage.length() > 0) {
+            if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }
         } catch (JobSchedulerException e) {
@@ -522,8 +521,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 String[] arr = filePath.split(";");
                 for (String filename : arr) {
                     filename = filename.trim();
-                    if (filename.length() > 0) {
-                        if (localDir.trim().length() > 0 && !isAPathName(filename)) {
+                    if (!filename.isEmpty()) {
+                        if (!localDir.trim().isEmpty() && !isAPathName(filename)) {
                             filename = localDir + filename;
                         }
                         fileList.add(filename);
@@ -617,7 +616,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     cd = targetClient.isDirectory(path);
                 }
             } else {
-                if (path != null && path.length() > 0) {
+                if (path != null && !path.isEmpty()) {
                     cd = targetClient.isDirectory(path);
                 }
             }
@@ -631,7 +630,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         long founded = 0;
         sourceFileList.add(getSingleFileNames(), sourceDir, true);
         long currentFounded = sourceFileList.size();
-        if (objOptions.isFilePollingEnabled() == true) {
+        if (objOptions.isFilePollingEnabled()) {
             long currentPollingTime = 0;
             long pollInterval = objOptions.poll_interval.getTimeAsSeconds();
             long pollTimeout = getPollTimeout();
@@ -712,7 +711,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         LOGGER.info(state);
         JADE_REPORT_LOGGER.info(state);
         objOptions.getTextProperties().put(KEYWORD_STATE, state);
-        if (counts.getFailedTranfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0) {
+        if (counts.getFailedTranfers() > 0 || !JobSchedulerException.LastErrorMessage.isEmpty()) {
             return false;
         }
         return true;
@@ -741,7 +740,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                         mailOptions.attachment.Value(attachment.toString());
                     }
                 }
-                if (mailOptions.subject.isDirty()) {
+                if (!mailOptions.subject.isDirty()) {
                     mailOptions.subject.Value("JADE: ");
                 }
                 StringBuilder subject = new StringBuilder(mailOptions.subject.Value());
@@ -752,7 +751,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     body.append(entry.getSourceFilename().replaceAll("\\\\", "/")).append("\n");
                 }
                 mailOptions.body.Value(body.toString());
-                if (mailOptions.from.isDirty()) {
+                if (!mailOptions.from.isDirty()) {
                     mailOptions.from.Value("JADE@sos-berlin.com");
                 }
                 SOSMail mail = new SOSMail(mailOptions.host.Value());
@@ -896,8 +895,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 long startPollingServer = System.currentTimeMillis() / CONST1000;
                 countPollingServerFiles = 0;
                 executePreTransferCommands();
-                PollingServerLoop:
-                while (true) {
+                PollingServerLoop: while (true) {
                     if (objOptions.isFilePollingEnabled()) {
                         doPollingForFiles();
                         if (sourceFileList.size() <= 0 && objOptions.PollingServer.isFalse() && objOptions.PollErrorState.isDirty()) {
