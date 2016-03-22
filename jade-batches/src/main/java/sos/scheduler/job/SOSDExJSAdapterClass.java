@@ -63,6 +63,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         return signalSuccess();
     }
+    
+
 
     private void doProcessing() throws Exception {
 
