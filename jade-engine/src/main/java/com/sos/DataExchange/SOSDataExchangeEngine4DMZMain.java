@@ -83,11 +83,6 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
     }
 
     @Override
-    public String myReplaceAll(final String source, final String what, final String replacement) {
-        return source;
-    }
-
-    @Override
     public String replaceSchedulerVars(final boolean isWindows, final String pstrString2Modify) {
         return pstrString2Modify;
     }
