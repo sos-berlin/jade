@@ -90,21 +90,25 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
             String[] fp = file.split("/");
             localFilename = fp[fp.length - 1];
             remoteFilename = localFilename.toLowerCase().replaceAll("(\\{sos)(.)*(sos\\})(\\.csv)$", "\\.csv");
-            sql = new StringBuffer("select \"LOCAL_FILENAME\" from " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("where \"HOST\" = '"
-                    + JADEHistory.getNormalizedField(conn, host, LENGTH128) + "' and ").append("   \"REMOTE_DIR\" = '"
-                    + JADEHistory.getNormalizedField(conn, remoteDir, LENGTH255) + "' and ").append("   \"REMOTE_FILENAME\" = '"
-                    + JADEHistory.getNormalizedField(conn, remoteFilename, LENGTH255) + "'");
+            sql =
+                    new StringBuffer("select \"LOCAL_FILENAME\" from " + JADEHistory.TABLE_FILES_POSITIONS + " ").append(
+                            "where \"HOST\" = '" + JADEHistory.getNormalizedField(conn, host, LENGTH128) + "' and ").append(
+                            "   \"REMOTE_DIR\" = '" + JADEHistory.getNormalizedField(conn, remoteDir, LENGTH255) + "' and ").append(
+                            "   \"REMOTE_FILENAME\" = '" + JADEHistory.getNormalizedField(conn, remoteFilename, LENGTH255) + "'");
             String lastLocalFileName = conn.getSingleValue(sql.toString());
             if (lastLocalFileName == null || lastLocalFileName.length() == 0) {
-                sql = new StringBuffer("insert into " + JADEHistory.TABLE_FILES_POSITIONS
-                        + "(\"HOST\",\"REMOTE_DIR\",\"REMOTE_FILENAME\",\"LOCAL_FILENAME\",\"FILE_SIZE\",\"POSITION\") ").append("values('"
-                        + JADEHistory.getNormalizedField(conn, host, LENGTH128) + "','" + JADEHistory.getNormalizedField(conn, remoteDir, LENGTH255)
-                        + "','" + JADEHistory.getNormalizedField(conn, remoteFilename, LENGTH255) + "','"
-                        + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "',0,0)");
+                sql =
+                        new StringBuffer("insert into " + JADEHistory.TABLE_FILES_POSITIONS
+                                + "(\"HOST\",\"REMOTE_DIR\",\"REMOTE_FILENAME\",\"LOCAL_FILENAME\",\"FILE_SIZE\",\"POSITION\") ").append("values('"
+                                + JADEHistory.getNormalizedField(conn, host, LENGTH128) + "','"
+                                + JADEHistory.getNormalizedField(conn, remoteDir, LENGTH255) + "','"
+                                + JADEHistory.getNormalizedField(conn, remoteFilename, LENGTH255) + "','"
+                                + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "',0,0)");
             } else {
-                sql = new StringBuffer("update " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("set \"LOCAL_FILENAME\" = '"
-                        + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "' ").append("where \"LOCAL_FILENAME\" = '"
-                        + JADEHistory.getNormalizedField(conn, lastLocalFileName, LENGTH255) + "'");
+                sql =
+                        new StringBuffer("update " + JADEHistory.TABLE_FILES_POSITIONS + " ").append(
+                                "set \"LOCAL_FILENAME\" = '" + JADEHistory.getNormalizedField(conn, localFilename, LENGTH255) + "' ").append(
+                                "where \"LOCAL_FILENAME\" = '" + JADEHistory.getNormalizedField(conn, lastLocalFileName, LENGTH255) + "'");
             }
             conn.execute(sql.toString());
             conn.commit();

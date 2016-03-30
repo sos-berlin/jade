@@ -166,7 +166,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
      * @return */
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         if (jobSchedulerFactory == null) {
-            jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.order_jobscheduler_host.Value(), jadeOptions.order_jobscheduler_port.value());
+            jobSchedulerFactory =
+                    new SchedulerObjectFactory(jadeOptions.order_jobscheduler_host.Value(), jadeOptions.order_jobscheduler_port.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
             jobSchedulerFactory.Options().TransferMethod.Set(jadeOptions.Scheduler_Transfer_Method);
             jobSchedulerFactory.Options().PortNumber.Set(jadeOptions.order_jobscheduler_port);

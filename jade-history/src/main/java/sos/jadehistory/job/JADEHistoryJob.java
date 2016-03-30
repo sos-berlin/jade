@@ -96,8 +96,9 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
             }
             setConnection(JADEHistory.getConnection(spooler, getConnection(), parameters, getLogger()));
             recordCount = this.doImport(parameters);
-            getLogger().info("records: imported = " + recordCount + " ( found = " + recordFoundCount + " skipped = " + recordSkippedCount
-                    + " skipped [error] = " + recordSkippedErrorCount + " )");
+            getLogger().info(
+                    "records: imported = " + recordCount + " ( found = " + recordFoundCount + " skipped = " + recordSkippedCount
+                            + " skipped [error] = " + recordSkippedErrorCount + " )");
             return spooler_job.order_queue() != null ? rc : false;
         } catch (Exception e) {
             spooler_log.error("error occurred " + e.getMessage());
@@ -269,10 +270,11 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
                 this.getLogger().debug("opening file source: " + filePrefixLocal + hwFile.getAbsolutePath());
                 localFilename = hwFile.getName().toLowerCase();
                 importFileSize = hwFile.length();
-                this.getLogger().info("getting file position for  local filename = " + localFilename + " (current import file size = "
-                        + importFileSize + ")");
-                sql = new StringBuffer("select \"POSITION\",\"FILE_SIZE\" from " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("where \"LOCAL_FILENAME\" = '"
-                        + JADEHistory.getNormalizedField(getConnection(), localFilename, LENGTH255) + "'");
+                this.getLogger().info(
+                        "getting file position for  local filename = " + localFilename + " (current import file size = " + importFileSize + ")");
+                sql =
+                        new StringBuffer("select \"POSITION\",\"FILE_SIZE\" from " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("where \"LOCAL_FILENAME\" = '"
+                                + JADEHistory.getNormalizedField(getConnection(), localFilename, LENGTH255) + "'");
                 try {
                     if (parameters.value(POSITION_REPEAT_COUNT_KEY) != null && parameters.value(POSITION_REPEAT_COUNT_KEY).length() > 0) {
                         positionRepeatCountLocal = Integer.parseInt(parameters.value(POSITION_REPEAT_COUNT_KEY));
@@ -298,17 +300,19 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
                     if (recordPos != null && !recordPos.isEmpty()) {
                         fileSize = Long.parseLong(recordPos.get("file_size").toString());
                         if (importFileSize < fileSize) {
-                            this.getLogger().debug1("last found file position in database: " + recordPos.get("position").toString()
-                                    + " (position will be not used : current import file size(" + importFileSize + ") < db file size(" + fileSize
-                                    + ") )");
+                            this.getLogger().debug1(
+                                    "last found file position in database: " + recordPos.get("position").toString()
+                                            + " (position will be not used : current import file size(" + importFileSize + ") < db file size("
+                                            + fileSize + ") )");
                         } else {
                             position = Long.parseLong(recordPos.get("position").toString());
                             this.getLogger().debug1("last found file position in database: " + position + " (position will be used)");
                         }
                         foundPosition = true;
                     } else {
-                        this.getLogger().debug1("not found file position for \"" + localFilename + "\" in database : try in "
-                                + positionRepeatIntervalLocal + "s again");
+                        this.getLogger().debug1(
+                                "not found file position for \"" + localFilename + "\" in database : try in " + positionRepeatIntervalLocal
+                                        + "s again");
                     }
                     if (foundPosition) {
                         break;
@@ -359,8 +363,8 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
                     }
                 } catch (Exception e) {
                     recordSkippedErrorCount++;
-                    getLogger().error("error occurred importing file line " + (recordFoundCount + 1) + " (record " + recordFoundCount + ") : "
-                            + e.getMessage());
+                    getLogger().error(
+                            "error occurred importing file line " + (recordFoundCount + 1) + " (record " + recordFoundCount + ") : " + e.getMessage());
                     try {
                         getConnection().rollback();
                     } catch (Exception ex) {
@@ -374,9 +378,10 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
             hwFile.close();
             if (foundPosition && position < recordFoundCount) {
                 try {
-                    sql = new StringBuffer("update " + JADEHistory.TABLE_FILES_POSITIONS + " ").append("set \"FILE_SIZE\" = " + importFileSize + ", ").append("    \"POSITION\" = "
-                            + recordFoundCount + " ").append("where \"LOCAL_FILENAME\" = '"
-                            + JADEHistory.getNormalizedField(getConnection(), localFilename, LENGTH255) + "'");
+                    sql =
+                            new StringBuffer("update " + JADEHistory.TABLE_FILES_POSITIONS + " ").append(
+                                    "set \"FILE_SIZE\" = " + importFileSize + ", ").append("    \"POSITION\" = " + recordFoundCount + " ").append(
+                                    "where \"LOCAL_FILENAME\" = '" + JADEHistory.getNormalizedField(getConnection(), localFilename, LENGTH255) + "'");
                     getConnection().execute(sql.toString());
                     getConnection().commit();
                 } catch (Exception ee) {
@@ -511,10 +516,10 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
                     doLineDebug(isOrder, RECORD + recordFoundCount + ": " + key.toLowerCase() + " = " + entry);
                 }
             }
-            sql.append("select \"ID\" ").append("from " + JADEHistory.TABLE_FILES + " ").append("where \"MANDATOR\" = '" + mandator + AND).append("       \"SOURCE_HOST\" = '"
-                    + sourceHost + AND).append("       \"SOURCE_HOST_IP\" = '" + sourceHostIp + AND).append("       \"SOURCE_DIR\" = '" + sourceDir
-                    + AND).append("       \"SOURCE_FILENAME\" = '" + sourceFilename + AND).append("       \"SOURCE_USER\" = '" + sourceUser + AND).append("       \"MD5\" = '"
-                    + md5 + "'");
+            sql.append("select \"ID\" ").append("from " + JADEHistory.TABLE_FILES + " ").append("where \"MANDATOR\" = '" + mandator + AND).append(
+                    "       \"SOURCE_HOST\" = '" + sourceHost + AND).append("       \"SOURCE_HOST_IP\" = '" + sourceHostIp + AND).append(
+                    "       \"SOURCE_DIR\" = '" + sourceDir + AND).append("       \"SOURCE_FILENAME\" = '" + sourceFilename + AND).append(
+                    "       \"SOURCE_USER\" = '" + sourceUser + AND).append("       \"MD5\" = '" + md5 + "'");
             String filesId = getConnection().getSingleValue(sql.toString());
             if (filesId == null || filesId.length() == 0 || "0".equals(filesId)) {
                 Insert_cmd insert1 = new Insert_cmd(getConnection(), getLogger(), JADEHistory.TABLE_FILES);
