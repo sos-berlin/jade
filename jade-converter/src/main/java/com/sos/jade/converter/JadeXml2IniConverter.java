@@ -281,15 +281,17 @@ public class JadeXml2IniConverter {
                 writeLine(section);
                 LOGGER.info(String.format("write %s", section));
                 _countProtocolFragments++;
-                XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
+                XPathExpression ex =
+                        _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
                 NodeList flatParameters = (NodeList) ex.evaluate(_rootSchema, XPathConstants.NODESET);
                 if (flatParameters != null) {
                     for (int j = 0; j < flatParameters.getLength(); j++) {
                         Node fp = flatParameters.item(j);
                         if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
                                 && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                            String param = formatParameter(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), 
-                                    fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
+                            String param =
+                                    formatParameter(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(),
+                                            fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
                             writeLine(param);
                             if (j == 0) {
                                 writeNewLine();
@@ -330,15 +332,17 @@ public class JadeXml2IniConverter {
                 writeLine(section);
                 LOGGER.info(String.format("write %s", section));
                 _countCredentialStoreFragments++;
-                XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
+                XPathExpression ex =
+                        _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
                 NodeList flatParameters = (NodeList) ex.evaluate(_rootSchema, XPathConstants.NODESET);
                 if (flatParameters != null) {
                     for (int j = 0; j < flatParameters.getLength(); j++) {
                         Node fp = flatParameters.item(j);
                         if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
                                 && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                            String param = formatParameter(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), 
-                                    fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
+                            String param =
+                                    formatParameter(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(),
+                                            fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
                             writeLine(param);
                             if (j == 0) {
                                 writeNewLine();
@@ -381,14 +385,16 @@ public class JadeXml2IniConverter {
     }
 
     private void writeMainFlatParameters(Node child) throws Exception {
-        XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
+        XPathExpression ex =
+                _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
         NodeList params = (NodeList) ex.evaluate(_rootSchema, XPathConstants.NODESET);
         if (params != null) {
             for (int i = 0; i < params.getLength(); i++) {
                 Node fp = params.item(i);
                 if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                    String param = formatParameter(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), 
-                            fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
+                    String param =
+                            formatParameter(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), fp.getAttributes().getNamedItem(
+                                    SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
                     writeLine(param);
                     if (i == 0) {
                         writeNewLine();
@@ -419,14 +425,15 @@ public class JadeXml2IniConverter {
                 LOGGER.info(String.format("found Notification MailFragment \"%s\"", mailFragment));
                 _countNotificationMailFragments++;
                 LinkedHashMap<String, String> mailFragmentParams = new LinkedHashMap<String, String>();
-                XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
+                XPathExpression ex =
+                        _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
                 NodeList flatParameters = (NodeList) ex.evaluate(_rootSchema, XPathConstants.NODESET);
                 if (flatParameters != null) {
                     for (int j = 0; j < flatParameters.getLength(); j++) {
                         Node fp = flatParameters.item(j);
                         if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
                                 && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), 
+                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(),
                                     fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
                         }
                     }
@@ -458,14 +465,15 @@ public class JadeXml2IniConverter {
                 LOGGER.info(String.format("found MailServer Fragment \"%s\"", mailFragment));
                 _countMailServerFragments++;
                 LinkedHashMap<String, String> mailFragmentParams = new LinkedHashMap<String, String>();
-                XPathExpression ex = _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
+                XPathExpression ex =
+                        _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
                 NodeList flatParameters = (NodeList) ex.evaluate(_rootSchema, XPathConstants.NODESET);
                 if (flatParameters != null) {
                     for (int j = 0; j < flatParameters.getLength(); j++) {
                         Node fp = flatParameters.item(j);
                         if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
                                 && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), 
+                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(),
                                     fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue());
                         }
                     }
@@ -840,12 +848,13 @@ public class JadeXml2IniConverter {
                                             writeNewLine();
                                             _profileJumpInclude = jumpInclude;
                                         } else {
-                                            LOGGER.warn(String.format("Profile [%s]: include of \"%s\" skipped(\"%s\" already included)", 
+                                            LOGGER.warn(String.format("Profile [%s]: include of \"%s\" skipped(\"%s\" already included)",
                                                     sectionName, jumpInclude.replaceAll(" ", ""), _profileJumpInclude.replaceAll(" ", "")));
                                             _countWarnings++;
                                         }
                                     } else {
-                                        LOGGER.warn(String.format("Profile [%s]: include of \"%s\" skipped(jump host with operation \"%s\" is not implemented)", 
+                                        LOGGER.warn(String.format(
+                                                "Profile [%s]: include of \"%s\" skipped(jump host with operation \"%s\" is not implemented)",
                                                 sectionName, jumpInclude.replaceAll(" ", ""), operation));
                                         _countWarnings++;
                                     }
@@ -856,7 +865,8 @@ public class JadeXml2IniConverter {
                                     if (arr.length == 2) {
                                         include += "," + arr[1].trim();
                                     } else {
-                                        LOGGER.warn(String.format("Profile [%s]: CredentialStore fragment cannot be included. Missing \"=\" character in \"%s\"", 
+                                        LOGGER.warn(String.format(
+                                                "Profile [%s]: CredentialStore fragment cannot be included. Missing \"=\" character in \"%s\"",
                                                 sectionName, csInclude));
                                         _countWarnings++;
                                     }
@@ -896,7 +906,8 @@ public class JadeXml2IniConverter {
                                         if (addition.length() > 0) {
                                             addition.append(System.getProperty("line.separator"));
                                         }
-                                        addition.append(formatParameter(addName, sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue()));
+                                        addition.append(formatParameter(addName,
+                                                sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue()));
                                     }
                                     sibling = sibling.getNextSibling();
                                 }
@@ -935,8 +946,9 @@ public class JadeXml2IniConverter {
             if (fp != null) {
                 if ("ReadableAlternativeFragmentRef".equals(fp.getNodeName()) || "WriteadableAlternativeFragmentRef".equals(fp.getNodeName())) {
                     String altName = fp.getNodeName().substring(0, fp.getNodeName().length() - 3);
-                    xpath = String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName, 
-                            fp.getAttributes().getNamedItem("ref").getNodeValue());
+                    xpath =
+                            String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName,
+                                    fp.getAttributes().getNamedItem("ref").getNodeValue());
                     ex = _xpathXml.compile(xpath);
                     Node altFp = (Node) ex.evaluate(_rootXml, XPathConstants.NODE);
                     if (altFp != null) {
@@ -959,8 +971,9 @@ public class JadeXml2IniConverter {
             if (fp != null) {
                 if ("ReadableAlternativeFragmentRef".equals(fp.getNodeName()) || "WriteadableAlternativeFragmentRef".equals(fp.getNodeName())) {
                     String altName = fp.getNodeName().substring(0, fp.getNodeName().length() - 3);
-                    xpath = String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName, 
-                            fp.getAttributes().getNamedItem("ref").getNodeValue());
+                    xpath =
+                            String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName,
+                                    fp.getAttributes().getNamedItem("ref").getNodeValue());
                     ex = _xpathXml.compile(xpath);
                     Node altFp = (Node) ex.evaluate(_rootXml, XPathConstants.NODE);
                     if (altFp != null) {
@@ -994,9 +1007,11 @@ public class JadeXml2IniConverter {
                     Node fp = (Node) ex.evaluate(_rootSchema, XPathConstants.NODE);
                     if (fp != null) {
                         if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_MAIL_NAME) != null) {
-                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_MAIL_NAME).getNodeValue(), getParameterValue(fp, child));
+                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_MAIL_NAME).getNodeValue(), getParameterValue(fp,
+                                    child));
                         } else if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
-                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(), getParameterValue(fp, child));
+                            mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(),
+                                    getParameterValue(fp, child));
                         }
                     }
                     mailFragmentParams = handleNotificationMailFragmentsChildNodes(child, mailFragmentParams, level);
@@ -1043,7 +1058,8 @@ public class JadeXml2IniConverter {
         Node fp = (Node) ex.evaluate(_rootXml, XPathConstants.NODE);
         if (fp == null) {
             include = formatParameter(prefix + "include", ref);
-            LOGGER.warn(String.format("Node %s[@ref = %s]. Not found referenced Fragments/%s/%s[@name='%s'].", node.getNodeName(), ref, fragments, name, ref));
+            LOGGER.warn(String.format("Node %s[@ref = %s]. Not found referenced Fragments/%s/%s[@name='%s'].", node.getNodeName(), ref, fragments,
+                    name, ref));
             _countWarnings++;
         } else {
             include = formatParameter(prefix + "include", getFragmentName(fragment, fp));

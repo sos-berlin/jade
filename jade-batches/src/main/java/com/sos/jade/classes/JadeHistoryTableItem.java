@@ -49,8 +49,9 @@ public class JadeHistoryTableItem extends TableItem {
     public void setColumns() {
         JadeTransferDBItem h = jadeTransferDBItem;
 
-        textBuffer = new String[] { h.getProfileName(), h.getSourceDir(), h.getTargetDir(), h.getStartTimeIso(), h.getEndTimeIso(),
-                String.valueOf(h.getStatusValue()), };
+        textBuffer =
+                new String[] { h.getProfileName(), h.getSourceDir(), h.getTargetDir(), h.getStartTimeIso(), h.getEndTimeIso(),
+                        String.valueOf(h.getStatusValue()), };
         this.setText(textBuffer);
     }
 

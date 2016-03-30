@@ -54,7 +54,7 @@ public abstract class Write_cmd extends Cmd {
     }
 
     private void set(String field_name, Object value, char type) {
-        if (value == null &&  !ignore_null) {
+        if (value == null && !ignore_null) {
             set_direct(field_name, "NULL");
         } else {
             Field_value f = new Field_value(field_name, value, type);
