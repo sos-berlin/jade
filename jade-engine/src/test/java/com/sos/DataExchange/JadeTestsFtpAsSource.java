@@ -20,40 +20,26 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         enuTargetTransferType = enuTransferTypes.local;
     }
 
-    /** \brief setUp
-     *
-     * \details
-     *
-     * \return void
-     *
-     * @throws java.lang.Exceptionf */
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
         enuSourceTransferType = enuTransferTypes.sftp;
         enuTargetTransferType = enuTransferTypes.local;
-
         objTestOptions.TargetDir.Value(strTestPathName);
-
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().user.Value(conUserIdTest);
         objTestOptions.Target().password.Value(conPasswordTest);
         objTestOptions.Target().host.Value("local");
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
-
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
-
         objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
-        // objTestOptions.SourceDir.Value("/home/test/jadetest");
         objTestOptions.Source().host.Value(conHostNameWILMA_SOS);
         objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4SFTP);
         objTestOptions.Source().user.Value(conUserIdTest);
         objTestOptions.Source().password.Value(conPasswordTest);
         objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.password);
-
         objOptions.profile.Value(conClassName);
     }
 
@@ -66,7 +52,6 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testUseProfileWithoutCreatingTestFiles() throws Exception {
-        final String conMethodName = conClassName + "::testUseProfile";
         objOptions.settings.Value(strSettingsFile);
         objOptions.profile.Value("getList_example_sftp");
         super.testUseProfileWithoutCreatingTestFiles();
@@ -75,8 +60,6 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testTransferUsingFilePath() throws Exception {
-        /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
-         * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "myfile_20120801.csv";
         objTestOptions.SourceDir.Value("/home/test/tmp/");
         super.testTransferUsingFilePath();
@@ -84,29 +67,19 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 
     @Test
     public void testTransferUsingAbsolutFilePath() throws Exception {
-        /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
-         * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv";
         objTestOptions.SourceDir.Value("");
-        // objTestOptions.remove_files.value(true);
-        // objTestOptions.Source().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
-
         super.testTransferUsingFilePath();
     }
 
     @Test
     public void testTransferUsingAbsolutFilePath2() throws Exception {
-        /** Felsing-test */
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv";
         super.testTransferUsingFilePath();
     }
 
     @Test
     public void testTransferUsingRelativeFilePath() throws Exception {
-        /*
-         * source_dir is empty: default is the directory of the user on the
-         * server (e.g. ftp pwd).
-         */
         gstrFilePath = "./tmp/myfile_20120801.csv";
         objTestOptions.SourceDir.Value("");
         objOptions.profile.Value("testTransferUsingRelativeFilePath");
@@ -153,12 +126,12 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testBigCopy() throws Exception {
-        // not relevant; local 2 local
+        //
     }
 
     @Test
     public void testBigCopy2() throws Exception {
-        // not relevant; local 2 local
+        //
     }
 
     @Override
@@ -189,7 +162,6 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     public void testSendWithHistoryAndBackgroundServiceAndEmptyHostUser() throws Exception {
         objTestOptions.Target().user.Value("");
         objTestOptions.Target().host.Value("");
-
         JSCsvFile csvFile = new JSCsvFile("R:/nobackup/junittests/testdata/JADE/history_files/historyWithEmptyHost.csv");
         if (csvFile.exists()) {
             csvFile.delete();
@@ -197,7 +169,6 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         objOptions.HistoryFileName.Value(csvFile.getAbsolutePath());
         setOptions4BackgroundService();
         super.testSend();
-
         String[] strValues = null;
         csvFile.loadHeaders();
         String[] strHeader = csvFile.Headers();
@@ -206,14 +177,13 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         String remote_user = "";
         strValues = csvFile.readCSVLine();
         for (int j = 0; j < strValues.length; j++) {
-            // System.out.println(strHeader[j]+"="+strValues[j]);
-            if (strHeader[j].equals("remote_host")) {
+            if ("remote_host".equals(strHeader[j])) {
                 remote_host = strValues[j];
             }
-            if (strHeader[j].equals("remote_host_ip")) {
+            if ("remote_host_ip".equals(strHeader[j])) {
                 remote_host_ip = strValues[j];
             }
-            if (strHeader[j].equals("remote_user")) {
+            if ("remote_user".equals(strHeader[j])) {
                 remote_user = strValues[j];
             }
         }
@@ -226,7 +196,6 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testSendFileSpec() throws Exception {
-        final String conMethodName = conClassName + "::testSend";
         super.testSendFileSpec();
     }
 
@@ -302,48 +271,24 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         super.testSend();
     }
 
-    /** \brief testSendWithOutAccessToOneFileInSourceFolder
-     *
-     * \details Test zu https://sourceforge.net/p/sosftp/bug-reports/5/
-     * "Im Source Verzeichnis kann gelesen werden, aber nicht alle Dateien sind lesbar."
-     * 
-     * Obwohl keine Dateien übertragen werden muß ein Fehler ausgelöst werden,
-     * trotz force_files=false.
-     * 
-     * \return void */
     @Test
     public void testSendWithOutAccessToOneFileInSourceFolder() throws Exception {
-        final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
         objTestOptions.SourceDir.Value("/home/test/noaccess");
         objTestOptions.file_spec.Value("\\.txt$");
         objTestOptions.force_files.value(false);
         super.testCopyMultipleFiles();
-        // assertTrue("error expected", objJadeEngine.flgGlobalError);
     }
 
     @Test
     public void testSendWithOutAccessToOneFileInSourceFolder2() throws Exception {
-        final String conMethodName = conClassName + "::testSendWithOutAccessToOneFileInSourceFolder";
         objTestOptions.SourceDir.Value("/home/test/noaccess");
         objTestOptions.file_spec.Value("\\.txt$");
         objTestOptions.force_files.value(true);
         super.testCopyMultipleFiles();
-        // assertTrue("error expected", objJadeEngine.flgGlobalError);
     }
 
-    /** \brief testSendWithOutAccessToSourceFolder
-     *
-     * \details Test zu https://sourceforge.net/p/sosftp/bug-reports/4/
-     * "Kein Zugriff auf Source Verzeichnis."
-     *
-     * Hier werden keine Dateien gefunden, was auch verständlich ist, da in dem
-     * Verzeichnis keine Lese-Rechte bestehen. Es gibt aber keine Exception
-     * (siehe SOSVfsSFtpJCraft.listNames) und damit ist auch der Exit-Code=0.
-     * 
-     * \return void */
     @Test
     public void testSendWithOutAccessToSourceFolder() throws Exception {
-        final String conMethodName = conClassName + "::testSendWithOutAccessToSourceFolder";
         objTestOptions.SourceDir.Value("/root");
         objTestOptions.file_spec.Value("\\.txt$");
         objTestOptions.force_files.value(false);
@@ -353,8 +298,6 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
             System.out.println("Exit code must me not equal to zero = " + e.getExitCode().ExitCode);
             e.printStackTrace();
         }
-        // assertTrue("error expected (could not access folder)",
-        // objJadeEngine.flgGlobalError);
     }
 
 }
