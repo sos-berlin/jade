@@ -63,9 +63,6 @@ import com.sos.scheduler.model.objects.Spooler;
 
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
 
-    private ISOSVfsFileTransfer targetClient = null;
-    private ISOSVfsFileTransfer sourceClient = null;
-
     private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngine.class);
     private static final String JADE_LOGGER_NAME = "JadeReportLog";
     private static final Logger JADE_REPORT_LOGGER = Logger.getLogger(JADE_LOGGER_NAME);
@@ -76,13 +73,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private static final String KEYWORD_SKIPPED_TRANSFERS = "skipped_transfers";
     private static final String KEYWORD_STATUS = "status";
     private static final int CONST1000 = 1000;
-
     private ISOSVFSHandler targetHandler = null;
     private SOSFileList sourceFileList = null;
     private SOSVfsConnectionFactory factory = null;
     private SchedulerObjectFactory schedulerFactory = null;
     private long countPollingServerFiles = 0;
     private long countSentHistoryRecords = 0;
+    private ISOSVfsFileTransfer targetClient = null;
+    private ISOSVfsFileTransfer sourceClient = null;
 
     public SOSDataExchangeEngine() throws Exception {
         this.Options();
@@ -169,7 +167,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 LOGGER.debug(String.format("%s Not changed. file size: %s bytes. '%s'", msg, entry.getLastCheckedFileSize(), entry.SourceFileName()));
             } else {
                 fileIsSteady = false;
-                LOGGER.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'", msg, entry.getFileSize(), entry.getLastCheckedFileSize(), entry.SourceFileName()));
+                LOGGER.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'", msg, entry.getFileSize(),
+                        entry.getLastCheckedFileSize(), entry.SourceFileName()));
 
             }
             entry.setLastCheckedFileSize(entry.getFileSize());
@@ -244,7 +243,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", pollInterval, objOptions.file_spec.Value()));
                 doSleep(pollInterval);
                 currentPollingTime += pollInterval;
-                setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", currentFilesCount, objOptions.file_spec.Value(), sourceDir));
+                setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", currentFilesCount, objOptions.file_spec.Value(),
+                        sourceDir));
                 if (filesCount >= currentFilesCount && filesCount != 0) {
                     if (objOptions.WaitingForLateComers.isTrue()) {
                         objOptions.WaitingForLateComers.setFalse();
@@ -640,7 +640,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (objOptions.poll_minfiles.value() > 0 && founded >= objOptions.poll_minfiles.value()) {
                     break;
                 }
-                String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", pollInterval, founded, currentFounded);
+                String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", pollInterval,
+                        founded, currentFounded);
                 setInfo(msg);
                 doSleep(pollInterval);
                 currentPollingTime += pollInterval;
@@ -1092,7 +1093,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     countSentHistoryRecords++;
                 }
             }
-            LOGGER.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s", countSentHistoryRecords, objOptions.scheduler_host.Value(), objOptions.scheduler_port.Value(), objOptions.scheduler_job_chain.Value(), objOptions.Scheduler_Transfer_Method.Value()));
+            LOGGER.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s",
+                    countSentHistoryRecords, objOptions.scheduler_host.Value(), objOptions.scheduler_port.Value(), objOptions.scheduler_job_chain.Value(),
+                    objOptions.Scheduler_Transfer_Method.Value()));
         } else {
             LOGGER.info(String.format("No data sent to the background service due to parameter '%1$s' = false", objOptions.SendTransferHistory.getShortKey()));
         }
