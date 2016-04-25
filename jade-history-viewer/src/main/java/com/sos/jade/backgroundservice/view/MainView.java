@@ -312,7 +312,7 @@ public class MainView extends CustomComponent implements View {
             lblEntryCount = new Label();
             lblEntryCount.addStyleName("jadeEntryCountLabel");
         }
-        if (historyItems == null || (historyItems != null && historyItems.size() == 0)) {
+        if (historyItems == null || (historyItems != null && historyItems.isEmpty())) {
             lblEntryCount.setValue(messages.getValue("MainView.noEntries", locale));
         } else {
             lblEntryCount.setValue(messages.getValue("MainView.entryCount", locale) + " " + historyItems.size());
@@ -396,7 +396,7 @@ public class MainView extends CustomComponent implements View {
         progress.setVisible(false);
         lblEntryCount = new Label();
         lblEntryCount.addStyleName("jadeEntryCountLabel");
-        if (historyItems == null || (historyItems != null && historyItems.size() == 0)) {
+        if (historyItems == null || (historyItems != null && historyItems.isEmpty())) {
             lblEntryCount.setValue(messages.getValue("MainView.noEntries", currentLocale));
         } else {
             lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());
@@ -563,7 +563,7 @@ public class MainView extends CustomComponent implements View {
                         lblEntryCount = new Label();
                         lblEntryCount.addStyleName("jadeEntryCountLabel");
                     }
-                    if (historyItems == null || (historyItems != null && historyItems.size() == 0)) {
+                    if (historyItems == null || (historyItems != null && historyItems.isEmpty())) {
                         lblEntryCount.setValue(messages.getValue("MainView.noEntries", currentLocale));
                     } else {
                         lblEntryCount.setValue(messages.getValue("MainView.entryCount", currentLocale) + " " + historyItems.size());
@@ -595,7 +595,8 @@ public class MainView extends CustomComponent implements View {
         boolean lastUsed = false;
         try {
             if (prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).nodeExists(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)) {
-                lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
+                lastUsed = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+                        .getBoolean(JadeBSConstants.PREF_KEY_LAST_USED_FILTER, false);
             }
         } catch (BackingStoreException e) {
             LOGGER.warn("Unable to read from PreferenceStore, using defaults.");
@@ -604,49 +605,60 @@ public class MainView extends CustomComponent implements View {
     }
 
     private boolean checkRemoveDuplicatesSettings() {
-        boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL).getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
+        boolean removeDuplicates = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_PREFERENCES_GENERAL)
+                .getBoolean(JadeBSConstants.PREF_KEY_REMOVE_DUPLICATES, false);
         return removeDuplicates;
     }
 
     private JadeFilesHistoryFilter createReusedFilter() {
         JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
-        Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, 0L);
+        Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, 0L);
         if (timeFrom != 0L) {
             filter.setTransferStartFrom(new Date(timeFrom));
         }
-        Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L);
+        Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, 0L);
         if (timeTo != 0L) {
             filter.setTransferStartTo(new Date(timeTo));
         }
-        String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
+        String protocol = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_PROTOCOL, null);
         if (protocol != null && !"".equals(protocol)) {
             filter.setProtocol(protocol);
         }
-        String status = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_STATUS, null);
+        String status = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_STATUS, null);
         if (status != null && !"".equals(status)) {
             filter.setStatus(status);
         }
-        String operation = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_OPERATION, null);
+        String operation = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_OPERATION, null);
         if (operation != null && !"".equals(operation)) {
             filter.setOperation(operation);
         }
-        String sourceFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, null);
+        String sourceFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_SOURCE_FILE, null);
         if (sourceFile != null && !"".equals(sourceFile)) {
             filter.setSourceFile(sourceFile);
         }
-        String sourceHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, null);
+        String sourceHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_SOURCE_HOST, null);
         if (sourceHost != null && !"".equals(sourceHost)) {
             filter.setSourceHost(sourceHost);
         }
-        String targetFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_TARGET_FILE, null);
+        String targetFile = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_TARGET_FILE, null);
         if (targetFile != null && !"".equals(targetFile)) {
             filter.setTargetFilename(targetFile);
         }
-        String targetHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_TARGET_HOST, null);
+        String targetHost = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_TARGET_HOST, null);
         if (targetHost != null && !"".equals(targetHost)) {
             filter.setTargetHost(targetHost);
         }
-        String mandator = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER).get(JadeBSConstants.FILTER_OPTION_MANDATOR, null);
+        String mandator = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
+                .get(JadeBSConstants.FILTER_OPTION_MANDATOR, null);
         if (mandator != null && !"".equals(mandator)) {
             filter.setMandator(mandator);
         }
