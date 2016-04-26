@@ -613,12 +613,12 @@ public class MainView extends CustomComponent implements View {
     private JadeFilesHistoryFilter createReusedFilter() {
         JadeFilesHistoryFilter filter = new JadeFilesHistoryFilter();
         Long timeFrom = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_FROM, 0L);
+                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_FROM, 0L);
         if (timeFrom != 0L) {
             filter.setTransferStartFrom(new Date(timeFrom));
         }
         Long timeTo = prefs.node(parentNodeName).node(JadeBSConstants.PRIMARY_NODE_FILTER).node(JadeBSConstants.PREF_NODE_LAST_USED_FILTER)
-                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_TIMESTAMP_TO, 0L);
+                .getLong(JadeBSConstants.FILTER_OPTION_TRANSFER_START_TO, 0L);
         if (timeTo != 0L) {
             filter.setTransferStartTo(new Date(timeTo));
         }
