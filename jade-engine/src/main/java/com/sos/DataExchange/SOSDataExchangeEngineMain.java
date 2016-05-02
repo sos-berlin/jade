@@ -92,7 +92,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
     }
 
     @Override
-    public String replaceSchedulerVars(final boolean isWindows, final String pstrString2Modify) {
+    public String replaceSchedulerVars(final String pstrString2Modify) {
         return pstrString2Modify;
     }
 
