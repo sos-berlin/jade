@@ -1,19 +1,15 @@
 package com.sos.jade.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -94,7 +90,6 @@ public class JadeTransferDetailDBLayerTest {
         jadeTransferDetailDBLayer.commit();
         List transferList = jadeTransferDetailDBLayer.getTransferList(0);
         assertEquals(0, transferList.size());
-        // Test mit delete eines Eintrages
         JadeTransferDBLayer d = new JadeTransferDBLayer(configurationFile);
         d.beginTransaction();
         JadeTransferDetailDBItem jadeTransferDetailDBItem = this.getNewTransferDetailDBItem();
@@ -127,10 +122,8 @@ public class JadeTransferDetailDBLayerTest {
             for (int i = 0; i < resultList.size(); i++) {
                 JadeTransferDetailDBItem transfer = (JadeTransferDetailDBItem) resultList.get(i);
                 if (transfer != null) {
-                    if (i == 0) {
-                        if (transfer.getCommand() != null) {
-                            assertEquals("myCommand", transfer.getCommand());
-                        }
+                    if (i == 0 && transfer.getCommand() != null) {
+                        assertEquals("myCommand", transfer.getCommand());
                     }
                     LOGGER.info("History: " + transfer.getTransferId());
                 }

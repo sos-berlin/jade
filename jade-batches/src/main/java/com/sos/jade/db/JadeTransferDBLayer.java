@@ -150,7 +150,7 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     }
 
     public void setWhereStartTime(String whereStartTime) throws ParseException {
-        if (whereStartTime.equals("")) {
+        if ("".equals(whereStartTime)) {
             this.whereStartTime = null;
         } else {
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
@@ -160,7 +160,7 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     }
 
     public void setWhereEndTime(String whereEndTime) throws ParseException {
-        if (whereEndTime.equals("")) {
+        if ("".equals(whereEndTime)) {
             this.whereEndTime = null;
         } else {
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");

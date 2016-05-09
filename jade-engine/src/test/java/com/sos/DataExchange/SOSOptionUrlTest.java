@@ -82,7 +82,7 @@ public class SOSOptionUrlTest {
 
     @Test
     public void testGetOptions() {
-        // fail("Not yet implemented");
+        //
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
@@ -90,4 +90,5 @@ public class SOSOptionUrlTest {
         objU = new SOSOptionUrl(null, "url", "descr", "", "", false);
         objU.getOptions(new SOSConnection2Options());
     }
+
 }

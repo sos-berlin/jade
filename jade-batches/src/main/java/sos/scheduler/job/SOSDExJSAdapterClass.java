@@ -18,36 +18,29 @@ import java.io.File;
 
 import static com.sos.scheduler.messages.JSMessages.*;
 
-/** \file SOSDExJSAdapterClass.java \class SOSDExJSAdapterClass
- *
- * \brief AdapterClass of SOSDEx for the SOSJobScheduler
- *
- * This Class SOSDExJSAdapterClass works as an adapter-class between the SOS
- * JobScheduler and the worker-class SOSDEx. */
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
-    private final String conClassName = "SOSDExJSAdapterClass";
-    private final String conVarname_ftp_result_files = "ftp_result_files";
-    private final String conVarname_ftp_result_zero_byte_files = "ftp_result_zero_byte_files";
-    private final String conVarname_ftp_result_filenames = "ftp_result_filenames";
-    private final String conVarname_ftp_result_filepaths = "ftp_result_filepaths";
-    private final String conVarname_ftp_result_error_message = "ftp_result_error_message";
-    private static final String conOrderParameterSCHEDULER_FILE_PATH = "scheduler_file_path";
-    private static final String conOrderParameterSCHEDULER_FILE_PARENT = "scheduler_file_parent";
-    private static final String conOrderParameterSCHEDULER_FILE_NAME = "scheduler_file_name";
-    private static final String conOrderParameterSCHEDULER_TARGET_FILE_PARENT = "scheduler_target_file_parent";
-    private static final String conOrderParameterSCHEDULER_TARGET_FILE_NAME = "scheduler_target_file_name";
-    private static final String conOrderParameterSCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
-    private static final String conOrderParameterSCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
-
+    private static final String CLASSNAME = "SOSDExJSAdapterClass";
+    private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
+    private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
+    private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
+    private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
+    private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
+    private static final String ORDER_PARAMETER_SCHEDULER_FILE_PATH = "scheduler_file_path";
+    private static final String ORDER_PARAMETER_SCHEDULER_FILE_PARENT = "scheduler_file_parent";
+    private static final String ORDER_PARAMETER_SCHEDULER_FILE_NAME = "scheduler_file_name";
+    private static final String ORDER_PARAMETER_SCHEDULER_TARGET_FILE_PARENT = "scheduler_target_file_parent";
+    private static final String ORDER_PARAMETER_SCHEDULER_TARGET_FILE_NAME = "scheduler_target_file_name";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private SOSFileList transfFiles = null;
     private SOSFTPOptions jadeOptions = null;
     private JadeEngine jadeEngine = null;
     private SchedulerObjectFactory jobSchedulerFactory = null;
+    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
+    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
+    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
 
     public SOSDExJSAdapterClass() {
         super();
@@ -59,22 +52,19 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            logger.error(String.format("%1$s ended with error: %2$s", conClassName, e.getMessage()));
+            logger.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()));
             logger.debug("", e);
             throw e;
-        } finally {
         }
         return signalSuccess();
     }
 
     private void doProcessing() throws Exception {
-
         jadeOptions = null;
         jadeEngine = new JadeEngine();
         jadeOptions = jadeEngine.getOptions();
         jadeOptions.CurrentNodeName(getCurrentNodeName());
         jadeOptions.setAllOptions2(jadeOptions.DeletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
-        // objJadeOptions.CheckMandatory(); //is made in Execute method
         int intLogLevel = -1 * spooler_log.level();
         if (intLogLevel > jadeOptions.verbose.value()) {
             jadeOptions.verbose.value(intLogLevel);
@@ -89,14 +79,12 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         transfFiles = jadeEngine.getFileList();
         int resultSetSize = transfFiles.List().size();
-        if (resultSetSize <= 0 && isOrderJob()) {
-            if (jadeOptions.PollErrorState.isDirty()) {
-                String pollErrorState = jadeOptions.PollErrorState.Value();
-                logger.info("set order-state to " + pollErrorState);
-                setNextNodeState(pollErrorState);
-                spooler_task.order().params().set_var(conVarname_ftp_result_error_message, "");
-                spooler_task.order().set_state_text("ended with no files found");
-            }
+        if (resultSetSize <= 0 && isOrderJob() && jadeOptions.PollErrorState.isDirty()) {
+            String pollErrorState = jadeOptions.PollErrorState.Value();
+            logger.info("set order-state to " + pollErrorState);
+            setNextNodeState(pollErrorState);
+            spooler_task.order().params().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
+            spooler_task.order().set_state_text("ended with no files found");
         }
         if (isJobchain()) {
             String onEmptyResultSetState = jadeOptions.on_empty_result_set.Value();
@@ -108,7 +96,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         String raiseErrorIfResultSetIs = jadeOptions.raise_error_if_result_set_is.Value();
         if (isNotEmpty(raiseErrorIfResultSetIs)) {
             boolean flgR = jadeOptions.expected_size_of_result_set.compare(raiseErrorIfResultSetIs, resultSetSize);
-            if (flgR == true) {
+            if (flgR) {
                 String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expected_size_of_result_set.value());
                 logger.error(strM);
                 throw new JobSchedulerException(strM);
@@ -125,10 +113,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 createOrder(transfFiles.List().get(0), jobChainName);
             }
         }
-    } // doProcessing
+    }
 
-    /** @param listItem
-     * @param jobChainName */
     protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
         String feedback;
         if (jadeOptions.order_jobscheduler_host.isNotEmpty()) {
@@ -139,9 +125,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         logger.info(feedback);
     }
 
-    /** @param listItem
-     * @param jobChainName
-     * @return */
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         if (jobSchedulerFactory == null) {
             jobSchedulerFactory =
@@ -153,63 +136,52 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         JSCmdAddOrder order = jobSchedulerFactory.createAddOrder();
         String targetFilename = listItem.TargetFileName().replace('\\', '/');
-        ;
         order.setId(targetFilename);
         order.setJobChain(jobChainName);
         order.setParams(jobSchedulerFactory.setParams(buildOrderParams(listItem)));
-        // logger.debug(objOrder.toXMLString());
-        String feedback = JSJ_I_0018.get(targetFilename, jobChainName); // "Order '%1$s' created for JobChain '%2$s'."
+        String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
         if (changeOrderState()) {
             String strNextState = jadeOptions.next_state.Value();
             order.setState(strNextState);
-            feedback += " " + JSJ_I_0019.get(strNextState); // "Next State is '%1$s'."
+            feedback += " " + JSJ_I_0019.get(strNextState);
         }
         order.run();
         return feedback;
     }
 
-    /** @param listItem
-     * @param jobChainName
-     * @return */
     protected String createOrderOnLocalJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         Order order = spooler.create_order();
         String targetFilename = listItem.TargetFileName().replace('\\', '/');
         order.set_id(targetFilename);
-        String feedback = JSJ_I_0018.get(targetFilename, jobChainName); // "Order '%1$s' created for JobChain '%2$s'."
+        String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
         if (changeOrderState()) {
             String nextState = jadeOptions.next_state.Value();
             order.set_state(nextState);
-            feedback += " " + JSJ_I_0019.get(nextState); // "Next State is '%1$s'."
+            feedback += " " + JSJ_I_0019.get(nextState);
         }
         order.set_params(buildOrderParams(listItem));
-        order.set_title(JSJ_I_0017.get(spooler_task.job().name())); // "Order created by %1$s"
+        order.set_title(JSJ_I_0017.get(spooler_task.job().name()));
         spooler.job_chain(jobChainName).add_order(order);
         return feedback;
     }
 
-    /** @param listItem
-     * @return */
     private Variable_set buildOrderParams(SOSFileListEntry listItem) {
         Variable_set orderParams = spooler.create_variable_set();
-        // kb: merge actual parameters into created order params (2012-07-25)
         if (jadeOptions.MergeOrderParameter.isTrue()) {
             orderParams.merge(spooler_task.order().params());
         }
         String[] targetFile = getFilenameParts(jadeOptions.TargetDir.Value(), listItem.TargetFileName());
-        orderParams.set_value(conOrderParameterSCHEDULER_FILE_PATH, targetFile[0]);
-        orderParams.set_value(conOrderParameterSCHEDULER_FILE_PARENT, targetFile[1]);
-        orderParams.set_value(conOrderParameterSCHEDULER_FILE_NAME, targetFile[2]);
-        orderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_PARENT, targetFile[1]);
-        orderParams.set_value(conOrderParameterSCHEDULER_TARGET_FILE_NAME, targetFile[2]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PATH, targetFile[0]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PARENT, targetFile[1]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_NAME, targetFile[2]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_TARGET_FILE_PARENT, targetFile[1]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_TARGET_FILE_NAME, targetFile[2]);
         String[] sourceFile = getFilenameParts(jadeOptions.SourceDir.Value(), listItem.SourceFileName());
-        orderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_PARENT, sourceFile[1]);
-        orderParams.set_value(conOrderParameterSCHEDULER_SOURCE_FILE_NAME, sourceFile[2]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT, sourceFile[1]);
+        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME, sourceFile[2]);
         return orderParams;
     }
 
-    /** @param folder
-     * @param filename
-     * @return */
     private String[] getFilenameParts(String folder, String filename) {
         String[] file = { "", "", "" };
         if (folder == null) {
@@ -230,7 +202,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return file;
     }
 
-    /** @return */
     private boolean changeOrderState() {
         return isNotEmpty(jadeOptions.next_state.Value());
     }
@@ -248,18 +219,13 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 objParams = spooler_task.params();
             }
             if (objParams != null) {
-                // Die Anzahl in intNoOfHitsInResultSet ist redundant.
-                // Eigentlich ist transfFiles.size entscheidend
                 long intNoOfHitsInResultSet = transfFiles.List().size();
                 if (intNoOfHitsInResultSet > 0) {
                     for (SOSFileListEntry objListItem : transfFiles.List()) {
-                        // filePaths += objListItem.getTargetFilename() + ";";
-                        // fileNames += objListItem.getTargetFilename() + ";";
                         String strT = objListItem.getFileName4ResultList();
                         filePaths += strT + ";";
                         fileNames += strT + ";";
                     }
-                    // remove last ";"
                     filePaths = filePaths.substring(0, filePaths.length() - 1);
                     fileNames = fileNames.substring(0, fileNames.length() - 1);
                 }
@@ -287,12 +253,10 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, fileNames);
                     setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
                 }
-                // Wo ist das dokumentiert, dass diese Order-/Job-Parameter
-                // versorgt werden? Im XML des Jobs unter jobdoc
-                objParams.set_var(conVarname_ftp_result_files, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(conVarname_ftp_result_zero_byte_files, Integer.toString(transfFiles.getZeroByteCount()));
-                objParams.set_var(conVarname_ftp_result_filenames, fileNames);
-                objParams.set_var(conVarname_ftp_result_filepaths, filePaths);
+                objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
+                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Integer.toString(transfFiles.getZeroByteCount()));
+                objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
+                objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }
         } catch (JobSchedulerException e) {
             logger.error("error occurred creating order Parameter: " + e.getMessage());
@@ -301,4 +265,5 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);
         }
     }
+
 }

@@ -13,41 +13,6 @@ public class Jade4DMZTest {
     private static final Logger LOGGER = Logger.getLogger(Jade4DMZTest.class);
     private static final String PATH_OF_TEST_INIS = "R:/backup/sos/java/development/SOSDataExchange/examples/";
 
-    /** Test method for {@link com.sos.DataExchange.Jade4DMZ#Jade4DMZ()}. */
-    @Test
-    public final void testJade4DMZ() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for
-     * {@link com.sos.DataExchange.Jade4DMZ#Jade4DMZ(java.util.Properties)}. */
-    @Test
-    public final void testJade4DMZProperties() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for
-     * {@link com.sos.DataExchange.Jade4DMZ#Jade4DMZ(com.sos.VirtualFileSystem.Options.JADEOptions)}
-     * . */
-    @Test
-    public final void testJade4DMZJADEOptions() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for
-     * {@link com.sos.DataExchange.Jade4DMZ#Jade4DMZ(java.util.HashMap)}. */
-    @Test
-    public final void testJade4DMZHashMapOfStringString() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for {@link com.sos.DataExchange.Jade4DMZ#Options()}. */
-    @Test
-    public final void testOptions() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for {@link com.sos.DataExchange.Jade4DMZ#Execute()}. */
     @Test
     @Ignore("Test set to Ignore for later examination")
     public final void testExecute() {

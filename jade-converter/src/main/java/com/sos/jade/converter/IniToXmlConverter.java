@@ -50,7 +50,7 @@ public class IniToXmlConverter {
     public static Logger logger = LoggerFactory.getLogger(IniToXmlConverter.class);
 
     public IniToXmlConverter() {
-
+        //
     }
 
     public static void main(String[] args) {
@@ -2080,13 +2080,9 @@ public class IniToXmlConverter {
         }
         // Rename
         if (isRenameSpecified(connectionOptions)
-                || (connectionOptions.getPrefix().equalsIgnoreCase("target_") && isUnprefixedRenameSpecified(options))) {
+                || ("target_".equalsIgnoreCase(connectionOptions.getPrefix()) && isUnprefixedRenameSpecified(options))) {
             RenameType rename = createRename(options, connectionOptions);
             localSource.setRename(rename);
-        }
-        // Zip
-        if (connectionOptions.protocol.Value().equals("zip")) {
-            // localSource.setZip(true);
         }
         return localSource;
     }
@@ -2111,7 +2107,7 @@ public class IniToXmlConverter {
         }
         // ProxyForHTTP
         if (isProxySpecified(connectionOptions)) {
-            if (connectionOptions.proxy_protocol.Value().equalsIgnoreCase("http") || connectionOptions.proxy_protocol.Value().isEmpty()) {
+            if ("http".equalsIgnoreCase(connectionOptions.proxy_protocol.Value()) || connectionOptions.proxy_protocol.Value().isEmpty()) {
                 if (connectionOptions.proxy_protocol.Value().isEmpty()) {
                     logger.info("No value was specified for parameter '" + connectionOptions.getPrefix()
                             + "proxy_protocol'. I assume you meant 'http'.");
@@ -2291,8 +2287,8 @@ public class IniToXmlConverter {
             ftpsFragment.setFTPSClientSecurity(ftpsClientSecurityType);
             // SecurityMode
             if (connectionOptions.ftps_client_security.isDirty()) {
-                if (connectionOptions.ftps_client_security.equalsIgnoreCase("explicit")
-                        || connectionOptions.ftps_client_security.equalsIgnoreCase("implicit")) {
+                if ("explicit".equalsIgnoreCase(connectionOptions.ftps_client_security.Value())
+                        || "implicit".equalsIgnoreCase(connectionOptions.ftps_client_security. Value())) {
                     ftpsClientSecurityType.setSecurityMode(connectionOptions.ftps_client_security.Value());
                 } else {
                     logger.warn("Invalid value specified for option 'ftps_client_security'. Only values 'explicit' and 'implicit' are allowed.");
