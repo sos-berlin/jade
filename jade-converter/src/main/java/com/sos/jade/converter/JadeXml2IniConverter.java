@@ -72,8 +72,12 @@ public class JadeXml2IniConverter {
             LOGGER.info("     3 - required - INI file path");
             LOGGER.info("     4 - optional - log4j.properties file path");
             LOGGER.info("e.g.:");
-            LOGGER.info(String.format("%s \"http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd\" \"C:/Temp/jade_settings.xml\" \"C:/Temp/jade_settings.ini\"", CLASSNAME));
-            LOGGER.info(String.format("%s \"http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd\" \"C:/Temp/jade_settings.xml\" \"C:/Temp/jade_settings.ini\" \"C:/Temp/log4j.properties\"", CLASSNAME));
+            LOGGER.info(String.format(
+                    "%s \"http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd\" \"C:/Temp/jade_settings.xml\" \"C:/Temp/jade_settings.ini\"",
+                    CLASSNAME));
+            LOGGER.info(String.format(
+                    "%s \"http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd\" \"C:/Temp/jade_settings.xml\" \"C:/Temp/jade_settings.ini\" "
+                    + "\"C:/Temp/log4j.properties\"", CLASSNAME));
             System.exit(EXIT_CODE_ON_ERROR);
         }
         String log4j = null;
@@ -223,22 +227,20 @@ public class JadeXml2IniConverter {
                 if ("notifications".equals(child.getNodeName().toLowerCase()) && child.hasChildNodes()) {
                     for (int j = 0; j < child.getChildNodes().getLength(); j++) {
                         Node nChild = child.getChildNodes().item(j);
-                        if (nChild.getNodeType() == Node.ELEMENT_NODE) {
-                            if (nChild.getAttributes().getNamedItem("ref") != null) {
-                                String refName = nChild.getAttributes().getNamedItem("ref").getNodeValue();
-                                if ("MailServerFragmentRef".equals(nChild.getNodeName())) {
-                                    if (_mailServerFragments.containsKey(refName)) {
-                                        writeParams(_mailServerFragments.get(refName));
-                                        writeNewLine();
-                                    }
-                                } else if ("BackgroundServiceFragmentRef".equals(nChild.getNodeName())) {
-                                    String include = getFragmentInclude(nChild, "");
-                                    if (include != null) {
-                                        writeLine(include);
-                                    }
+                        if (nChild.getNodeType() == Node.ELEMENT_NODE && nChild.getAttributes().getNamedItem("ref") != null) {
+                            String refName = nChild.getAttributes().getNamedItem("ref").getNodeValue();
+                            if ("MailServerFragmentRef".equals(nChild.getNodeName())) {
+                                if (_mailServerFragments.containsKey(refName)) {
+                                    writeParams(_mailServerFragments.get(refName));
+                                    writeNewLine();
                                 }
-                                continue;
+                            } else if ("BackgroundServiceFragmentRef".equals(nChild.getNodeName())) {
+                                String include = getFragmentInclude(nChild, "");
+                                if (include != null) {
+                                    writeLine(include);
+                                }
                             }
+                            continue;
                         }
                     }
                 }
@@ -348,13 +350,11 @@ public class JadeXml2IniConverter {
     }
 
     private void handleCredentialStoreFragments() throws Exception {
-
         XPathExpression expression = _xpathXml.compile("./Fragments/CredentialStoreFragments");
         Node fragments = (Node) expression.evaluate(_rootXml, XPathConstants.NODE);
         if (fragments == null) {
             return;
         }
-
         NodeList childs = fragments.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
@@ -396,7 +396,6 @@ public class JadeXml2IniConverter {
     }
 
     private void handleNotificationBackgroundServiceFragments() throws Exception {
-
         XPathExpression expression = _xpathXml.compile("./Fragments/NotificationFragments/BackgroundServiceFragment");
         NodeList fragments = (NodeList) expression.evaluate(_rootXml, XPathConstants.NODESET);
         if (fragments == null) {
@@ -461,7 +460,6 @@ public class JadeXml2IniConverter {
                 if (attrName == null) {
                     throw new Exception(String.format("attribute \"name\" not found. node = %s", child.getNodeName()));
                 }
-
                 String mailFragment = child.getAttributes().getNamedItem("name").getNodeValue();
                 LOGGER.info(String.format("found Notification MailFragment \"%s\"", mailFragment));
                 _countNotificationMailFragments++;
@@ -472,7 +470,6 @@ public class JadeXml2IniConverter {
                 if (flatParameters != null) {
                     for (int j = 0; j < flatParameters.getLength(); j++) {
                         Node fp = flatParameters.item(j);
-
                         if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
                                 && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
                             mailFragmentParams.put(fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue(),
@@ -552,22 +549,22 @@ public class JadeXml2IniConverter {
             for (int j = 0; j < childs.getLength(); j++) {
                 Node child = childs.item(j);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    if (child.getNodeName().toLowerCase().equals("operation")) {
+                    if ("operation".equalsIgnoreCase(child.getNodeName())) {
                         handleProfileOperation(child, sectionName, "", 0, 0, "", "");
                         handleProfileAlternativeOperation(child, sectionName);
-                    } else if (child.getNodeName().toLowerCase().equals("client")) {
+                    } else if ("client".equalsIgnoreCase(child.getNodeName())) {
                         writeNewLine();
                         handleChildNodes(child.getNodeName(), child, 0);
-                    } else if (child.getNodeName().toLowerCase().equals("logging")) {
+                    } else if ("logging".equalsIgnoreCase(child.getNodeName())) {
                         writeNewLine();
                         handleChildNodes(child.getNodeName(), child, 0);
-                    } else if (child.getNodeName().toLowerCase().equals("jobscheduler")) {
+                    } else if ("jobscheduler".equalsIgnoreCase(child.getNodeName())) {
                         writeNewLine();
                         handleChildNodes(child.getNodeName(), child, 0);
-                    } else if (child.getNodeName().toLowerCase().equals("notifications")) {
+                    } else if ("notifications".equalsIgnoreCase(child.getNodeName())) {
                         writeNewLine();
                         handleProfileNotification(child.getNodeName(), child, 0);
-                    } else if (child.getNodeName().toLowerCase().equals("notificationtriggers")) {
+                    } else if ("notificationtriggers".equalsIgnoreCase(child.getNodeName())) {
                         writeNewLine();
                         handleProfileNotification(child.getNodeName(), child, 0);
                     }
@@ -594,7 +591,6 @@ public class JadeXml2IniConverter {
                     continue;
                 }
                 if (firstChild.getAttributes() != null && firstChild.getAttributes().getNamedItem("ref") != null) {
-                    // JumpFragmentRef -> JumpFragment
                     String elementName = firstChild.getNodeName().substring(0, firstChild.getNodeName().length() - 3);
                     String refName = firstChild.getAttributes().getNamedItem("ref").getNodeValue();
                     xpath = String.format("./Fragments/ProtocolFragments/%s[@name='%s']", elementName, refName);
@@ -622,18 +618,15 @@ public class JadeXml2IniConverter {
                 Node child = childs.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     if (child.getAttributes().getNamedItem("ref") != null) {
-                        //
                         continue;
                     }
                     String xpath = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter[1]", child.getNodeName());
                     XPathExpression ex = _xpathSchema.compile(xpath);
                     Node fp = (Node) ex.evaluate(_rootSchema, XPathConstants.NODE);
-                    if (fp != null) {
-                        if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
-                            String name = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
-                            String value = getParameterValue(fp, child);
-                            writeLine(formatParameter(name, value));
-                        }
+                    if (fp != null && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
+                        String name = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
+                        String value = getParameterValue(fp, child);
+                        writeLine(formatParameter(name, value));
                     }
                     handleChildNodes(parentNodeName, child, level);
                 }
@@ -643,11 +636,11 @@ public class JadeXml2IniConverter {
 
     private void writeNotification2Profile(String parentNodeName, LinkedHashMap<String, String> values) throws Exception {
         String prefix = "";
-        if (parentNodeName.equals("OnSuccess")) {
+        if ("OnSuccess".equals(parentNodeName)) {
             prefix = "mail_on_success_";
-        } else if (parentNodeName.equals("OnError")) {
+        } else if ("OnError".equals(parentNodeName)) {
             prefix = "mail_on_error_";
-        } else if (parentNodeName.equals("OnEmptyFiles")) {
+        } else if ("OnEmptyFiles".equals(parentNodeName)) {
             prefix = "mail_on_empty_files_";
         }
         for (Entry<String, String> entry : values.entrySet()) {
@@ -670,15 +663,15 @@ public class JadeXml2IniConverter {
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     if (child.getAttributes().getNamedItem("ref") != null) {
                         String refName = child.getAttributes().getNamedItem("ref").getNodeValue();
-                        if (child.getNodeName().equals("MailFragmentRef")) {
+                        if ("MailFragmentRef".equals(child.getNodeName())) {
                             if (_mailFragments.containsKey(refName)) {
                                 writeNotification2Profile(child.getParentNode().getNodeName(), _mailFragments.get(refName));
                             }
-                        } else if (child.getNodeName().equals("MailServerFragmentRef")) {
+                        } else if ("MailServerFragmentRef".equals(child.getNodeName())) {
                             if (_mailServerFragments.containsKey(refName)) {
                                 writeParams(_mailServerFragments.get(refName));
                             }
-                        } else if (child.getNodeName().equals("BackgroundServiceFragmentRef")) {
+                        } else if ("BackgroundServiceFragmentRef".equals(child.getNodeName())) {
                             String include = getFragmentInclude(child, "");
                             if (include != null) {
                                 writeLine(include);
@@ -718,10 +711,8 @@ public class JadeXml2IniConverter {
                     if (fpP.getAttributes() == null) {
                         continue;
                     }
-                    if (i > 0) {
-                        if (fpP.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null) {
-                            continue;
-                        }
+                    if (i > 0 && fpP.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null) {
+                        continue;
                     }
                     String nameP = null;
                     if (fpP.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_ALTERNATIVE_NAME) != null) {
@@ -734,15 +725,14 @@ public class JadeXml2IniConverter {
                             prefixLevel = 0;
                             childPrefix = "";
                         }
-                        if (childPrefix.length() > 0 && !nameP.toLowerCase().startsWith(childPrefix)) {
+                        if (!childPrefix.isEmpty() && !nameP.toLowerCase().startsWith(childPrefix)) {
                             nameP = childPrefix + nameP;
                         }
 
-                        if (parentPrefix.length() > 0 && !parentPrefix.equals("jump_") && !nameP.toLowerCase().startsWith(parentPrefix)) {
+                        if (!parentPrefix.isEmpty() && !"jump_".equals(parentPrefix) && !nameP.toLowerCase().startsWith(parentPrefix)) {
                             nameP = parentPrefix + nameP;
                         }
                         String valueP = getParameterValue(fpP, xmlNode);
-
                         writeLine(formatParameter(nameP, valueP));
                     }
                 }
@@ -768,10 +758,8 @@ public class JadeXml2IniConverter {
                                 if (fp.getAttributes() == null) {
                                     continue;
                                 }
-                                if (j > 0) {
-                                    if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null) {
-                                        continue;
-                                    }
+                                if (j > 0 && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null) {
+                                    continue;
                                 }
                                 String name = null;
                                 if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_ALTERNATIVE_NAME) != null) {
@@ -784,15 +772,13 @@ public class JadeXml2IniConverter {
                                         prefixLevel = 0;
                                         childPrefix = "";
                                     }
-                                    if (childPrefix.length() > 0 && !name.toLowerCase().startsWith(childPrefix)) {
+                                    if (!childPrefix.isEmpty() && !name.toLowerCase().startsWith(childPrefix)) {
                                         name = childPrefix + name;
                                     }
-
-                                    if (parentPrefix.length() > 0 && !parentPrefix.equals("jump_") && !name.toLowerCase().startsWith(parentPrefix)) {
+                                    if (!parentPrefix.isEmpty() && !"jump_".equals(parentPrefix) && !name.toLowerCase().startsWith(parentPrefix)) {
                                         name = parentPrefix + name;
                                     }
                                     String value = getParameterValue(fp, child);
-
                                     writeLine(formatParameter(name, value));
                                 }
                             }
@@ -816,13 +802,13 @@ public class JadeXml2IniConverter {
             for (int i = 0; i < childs.getLength(); i++) {
                 Node child = childs.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
-                    if (child.getNodeName().equals("SystemPropertyFiles")) {
+                    if ("SystemPropertyFiles".equals(child.getNodeName())) {
                         String val = getMergedChildsEntry(child, "system_property_files");
                         if (!SOSString.isEmpty(val)) {
                             writeLine(val);
                         }
                         continue;
-                    } else if (child.getNodeName().equals("ConfigurationFiles")) {
+                    } else if ("ConfigurationFiles".equals(child.getNodeName())) {
                         String val = getMergedChildsEntry(child, "configuration_files");
                         if (!SOSString.isEmpty(val)) {
                             writeLine(val);
@@ -830,10 +816,10 @@ public class JadeXml2IniConverter {
                         continue;
                     }
                     if (child.getAttributes().getNamedItem("ref") != null) {
-                        if (child.getNodeName().equals("JumpFragmentRef")) {
+                        if ("JumpFragmentRef".equals(child.getNodeName())) {
                             String include = getFragmentInclude(child, "jump_");
                             _jumpIncludes.put(sectionName, include);
-                        } else if (child.getNodeName().equals("CredentialStoreFragmentRef")) {
+                        } else if ("CredentialStoreFragmentRef".equals(child.getNodeName())) {
                             String include = getFragmentInclude(child, "");
                             _credentialStoreIncludes.put(sectionName, include);
                         } else {
@@ -849,22 +835,20 @@ public class JadeXml2IniConverter {
                     String xpath = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter[1]", child.getNodeName());
                     XPathExpression ex = _xpathSchema.compile(xpath);
                     Node fp = (Node) ex.evaluate(_rootSchema, XPathConstants.NODE);
-                    if (fp != null) {
-                        if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
-                            if (level <= prefixLevel) {
-                                prefixLevel = 0;
-                                childPrefix = "";
-                            }
-                            String name = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
-                            if (childPrefix.length() > 0 && !name.toLowerCase().startsWith(childPrefix)) {
-                                name = childPrefix + name;
-                            }
-                            if (parentPrefix.length() > 0 && !parentPrefix.equals("jump_") && !name.toLowerCase().startsWith(parentPrefix)) {
-                                name = parentPrefix + name;
-                            }
-                            String value = getParameterValue(fp, child);
-                            writeLine(formatParameter(name, value));
+                    if (fp != null && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
+                        if (level <= prefixLevel) {
+                            prefixLevel = 0;
+                            childPrefix = "";
                         }
+                        String name = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
+                        if (!childPrefix.isEmpty() && !name.toLowerCase().startsWith(childPrefix)) {
+                            name = childPrefix + name;
+                        }
+                        if (!parentPrefix.isEmpty() && !"jump_".equals(parentPrefix) && !name.toLowerCase().startsWith(parentPrefix)) {
+                            name = parentPrefix + name;
+                        }
+                        String value = getParameterValue(fp, child);
+                        writeLine(formatParameter(name, value));
                     }
                     if (child.getNodeName().toLowerCase().startsWith("proxy")) {
                         childPrefix = "proxy_";
@@ -890,7 +874,7 @@ public class JadeXml2IniConverter {
                     if (level <= prefixLevel) {
                         prefixLevel = 0;
                         childPrefix = "";
-                        if (parentPrefix.length() == 0) {
+                        if (parentPrefix.isEmpty()) {
                             writeNewLine();
                         }
                     }
@@ -902,7 +886,7 @@ public class JadeXml2IniConverter {
                                 String includeName = arr[1].trim().split(",")[0].trim();
                                 if (_jumpIncludes.containsKey(includeName)) {
                                     String jumpInclude = _jumpIncludes.get(includeName);
-                                    if (operation.equals("copyfrominternet") || operation.equals("copytointernet")) {
+                                    if ("copyfrominternet".equals(operation) || "copytointernet".equals(operation)) {
                                         if (_profileJumpInclude == null) {
                                             writeLine(jumpInclude);
                                             writeNewLine();
@@ -938,50 +922,46 @@ public class JadeXml2IniConverter {
                     String xpath = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter[1]", child.getNodeName());
                     XPathExpression ex = _xpathSchema.compile(xpath);
                     Node fp = (Node) ex.evaluate(_rootSchema, XPathConstants.NODE);
-                    if (fp != null) {
-                        if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
-                            String name = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
-                            Node suppressPrefix = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_SUPPRESS_PREFIX);
-                            if (suppressPrefix != null && suppressPrefix.getNodeValue().equalsIgnoreCase("true")) {
-
-                            } else {
-                                if (childPrefix.length() > 0 && !name.toLowerCase().startsWith(childPrefix)) {
-                                    name = childPrefix + name;
-                                }
-                                if (parentPrefix.length() > 0 && !name.toLowerCase().startsWith(parentPrefix)) {
-                                    name = parentPrefix + name;
-                                }
+                    if (fp != null && fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null) {
+                        String name = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
+                        Node suppressPrefix = fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_SUPPRESS_PREFIX);
+                        if (!(suppressPrefix != null && "true".equalsIgnoreCase(suppressPrefix.getNodeValue()))) {
+                            if (!childPrefix.isEmpty() && !name.toLowerCase().startsWith(childPrefix)) {
+                                name = childPrefix + name;
                             }
-                            String value = getParameterValue(fp, child);
-                            StringBuffer addition = null;
-                            if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                                addition = new StringBuffer();
-                                Node sibling = fp.getNextSibling();
-                                while (sibling != null) {
-                                    if (sibling.getNodeType() == Node.ELEMENT_NODE && sibling.getAttributes() != null
-                                            && sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
-                                            && sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
-                                        String addName = sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
-                                        if (childPrefix.length() > 0 && !addName.toLowerCase().startsWith(childPrefix)) {
-                                            addName = childPrefix + addName;
-                                        }
-                                        if (addition.length() > 0) {
-                                            addition.append(System.getProperty("line.separator"));
-                                        }
-                                        addition.append(formatParameter(addName,
-                                                sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue()));
+                            if (!parentPrefix.isEmpty() && !name.toLowerCase().startsWith(parentPrefix)) {
+                                name = parentPrefix + name;
+                            }
+                        }
+                        String value = getParameterValue(fp, child);
+                        StringBuilder addition = null;
+                        if (fp.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
+                            addition = new StringBuilder();
+                            Node sibling = fp.getNextSibling();
+                            while (sibling != null) {
+                                if (sibling.getNodeType() == Node.ELEMENT_NODE && sibling.getAttributes() != null
+                                        && sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME) != null
+                                        && sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) != null) {
+                                    String addName = sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME).getNodeValue();
+                                    if (!childPrefix.isEmpty() && !addName.toLowerCase().startsWith(childPrefix)) {
+                                        addName = childPrefix + addName;
                                     }
-                                    sibling = sibling.getNextSibling();
+                                    if (addition.length() > 0) {
+                                        addition.append(System.getProperty("line.separator"));
+                                    }
+                                    addition.append(formatParameter(addName,
+                                            sibling.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue()));
                                 }
+                                sibling = sibling.getNextSibling();
                             }
-                            if (level == 1 && name.equals("operation")) {
-                                value = getProfileOperationValue(child, sectionName, value);
-                                operation = value;
-                            }
-                            writeLine(formatParameter(name, value));
-                            if (addition != null && addition.length() > 0) {
-                                writeLine(addition.toString());
-                            }
+                        }
+                        if (level == 1 && "operation".equals(name)) {
+                            value = getProfileOperationValue(child, sectionName, value);
+                            operation = value;
+                        }
+                        writeLine(formatParameter(name, value));
+                        if (addition != null && addition.length() > 0) {
+                            writeLine(addition.toString());
                         }
                     }
                     if (child.getNodeName().toLowerCase().endsWith("source")) {
@@ -1001,15 +981,14 @@ public class JadeXml2IniConverter {
     }
 
     private String getProfileOperationValue(Node node, String sectionName, String value) throws Exception {
-        if ((value.equals("copy") || value.equals("move")) && _jumpIncludes.size() > 0) {
+        if (("copy".equals(value) || "move".equals(value)) && !_jumpIncludes.isEmpty()) {
             String xpath = String.format(".//*[contains(local-name(),'Source')]/*[string-length(@ref)!=0]");
             XPathExpression ex = _xpathXml.compile(xpath);
             Node fp = (Node) ex.evaluate(node, XPathConstants.NODE);
             if (fp != null) {
-                if (fp.getNodeName().equals("ReadableAlternativeFragmentRef") || fp.getNodeName().equals("WriteadableAlternativeFragmentRef")) {
+                if ("ReadableAlternativeFragmentRef".equals(fp.getNodeName()) || "WriteadableAlternativeFragmentRef".equals(fp.getNodeName())) {
                     String altName = fp.getNodeName().substring(0, fp.getNodeName().length() - 3);
-                    xpath =
-                            String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName,
+                    xpath = String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName,
                                     fp.getAttributes().getNamedItem("ref").getNodeValue());
                     ex = _xpathXml.compile(xpath);
                     Node altFp = (Node) ex.evaluate(_rootXml, XPathConstants.NODE);
@@ -1018,7 +997,6 @@ public class JadeXml2IniConverter {
                     }
                 }
                 for (Entry<String, String> entry : _jumpIncludes.entrySet()) {
-                    // protocol_fragment_https@https_fragment
                     String[] arr = entry.getKey().split("@");
                     if (arr.length > 1) {
                         String fragmentXmlName = arr[1].trim();
@@ -1032,11 +1010,9 @@ public class JadeXml2IniConverter {
             ex = _xpathXml.compile(xpath);
             fp = (Node) ex.evaluate(node, XPathConstants.NODE);
             if (fp != null) {
-                if (fp.getNodeName().equals("ReadableAlternativeFragmentRef") || fp.getNodeName().equals("WriteadableAlternativeFragmentRef")) {
-
+                if ("ReadableAlternativeFragmentRef".equals(fp.getNodeName()) || "WriteadableAlternativeFragmentRef".equals(fp.getNodeName())) {
                     String altName = fp.getNodeName().substring(0, fp.getNodeName().length() - 3);
-                    xpath =
-                            String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName,
+                    xpath = String.format("./Fragments/AlternativeFragments/%s[@name='%s']/*[string-length(@ref)!=0][1]", altName,
                                     fp.getAttributes().getNamedItem("ref").getNodeValue());
 
                     ex = _xpathXml.compile(xpath);
@@ -1046,7 +1022,6 @@ public class JadeXml2IniConverter {
                     }
                 }
                 for (Entry<String, String> entry : _jumpIncludes.entrySet()) {
-                    // protocol_fragment_https@https_fragment
                     String[] arr = entry.getKey().split("@");
                     if (arr.length > 1) {
                         String fragmentXmlName = arr[1].trim();
@@ -1088,7 +1063,7 @@ public class JadeXml2IniConverter {
     }
 
     private String getFragmentName(Fragment fragment, Node node) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (fragment.equals(Fragment.protocolFragment)) {
             sb.append("protocol_fragment_");
             sb.append(node.getNodeName().toLowerCase().replace("fragment", ""));
@@ -1109,14 +1084,13 @@ public class JadeXml2IniConverter {
     private String getFragmentInclude(Node node, String prefix) throws Exception {
         String include = null;
         String ref = node.getAttributes().getNamedItem("ref").getNodeValue();
-        // JumpFragmentRef -> JumpFragment
         String name = node.getNodeName().substring(0, node.getNodeName().length() - 3);
         String fragments = "ProtocolFragments";
         Fragment fragment = Fragment.protocolFragment;
-        if (node.getNodeName().equalsIgnoreCase("CredentialStoreFragmentRef")) {
+        if ("CredentialStoreFragmentRef".equalsIgnoreCase(node.getNodeName())) {
             fragments = "CredentialStoreFragments";
             fragment = Fragment.credentialStoreFragment;
-        } else if (node.getNodeName().equalsIgnoreCase("BackgroundServiceFragmentRef")) {
+        } else if ("BackgroundServiceFragmentRef".equalsIgnoreCase(node.getNodeName())) {
             fragments = "NotificationFragments";
             fragment = Fragment.backgroundServiceFragment;
         }
@@ -1124,7 +1098,6 @@ public class JadeXml2IniConverter {
         XPathExpression ex = _xpathXml.compile(xpath);
         Node fp = (Node) ex.evaluate(_rootXml, XPathConstants.NODE);
         if (fp == null) {
-            // not found
             include = formatParameter(prefix + "include", ref);
             LOGGER.warn(String.format("Node %s[@ref = %s]. Not found referenced Fragments/%s/%s[@name='%s'].", node.getNodeName(), ref, fragments,
                     name, ref));
@@ -1141,12 +1114,11 @@ public class JadeXml2IniConverter {
             if (node.getFirstChild() != null) {
                 value = node.getFirstChild().getNodeValue();
                 Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
-                if (oppositeValue != null && oppositeValue.getNodeValue().equals("true")) {
-                    value = value.equalsIgnoreCase("true") ? "false" : "true";
+                if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
+                    value = "true".equalsIgnoreCase(value) ? "false" : "true";
                 }
             }
         } else {
-            // Value from Schema appInfo";
             value = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue();
         }
         return value;
@@ -1196,4 +1168,5 @@ public class JadeXml2IniConverter {
             }
         };
     }
+
 }

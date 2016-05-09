@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +39,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 
     protected String dynamicClassNameSource = null;
     protected String strSettingsFile = "src/test/resources/examples/jade_settings.ini";
-
     private static final String HOST_NAME_WILMA_SOS = "wilma.sos";
     private static final String HOST_NAME_8OF9_SOS = "8of9.sos";
     private static final String CLASS_NAME = "SOSDataExchangeEngineTest";
@@ -76,25 +74,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
             objFile.close();
         } catch (IOException e) {
             LOGGER.error("", e);
-        }
-    }
-
-    private void createBigTestFile(final String pstrFileName, final int fileSize) {
-        JSFile objFile = new JSFile(TEST_PATH_NAME, pstrFileName);
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(objFile);
-            out.write(new byte[fileSize]);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        } finally {
-            if (out != null) {
-                try {
-                    out.flush();
-                    out.close();
-                } catch (Exception x) {
-                }
-            }
         }
     }
 
@@ -296,26 +275,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     }
 
     private void logMethodName(final String pstrName) {
-        // ???
-    }
-
-    /** Test method for
-     * {@link JadeEngine.net.sosftp.SOSFTPCommandSend#SOSFTPCommandSend(java.util.Properties)}
-     * . */
-    public void testSOSFTPCommandSendProperties() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for
-     * {@link sos.net.sosftp.SOSFTPCommandSend#SOSFTPCommandSend(java.util.HashMap)}
-     * . */
-    public void testSOSFTPCommandSendHashMapOfStringString() {
-        // fail("Not yet implemented");
-    }
-
-    /** Test method for {@link sos.net.sosftp.SOSFTPCommandSend#Options()}. */
-    public void testOptions() {
-        // fail("Not yet implemented");
+        //
     }
 
     @Test
@@ -437,9 +397,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objJadeEngine.Logout();
     }
 
-    /** Test method for {@link sos.net.sosftp.SOSFTPCommandSend#send()}.
-     * 
-     * @throws Exception */
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSend() throws Exception {
@@ -509,7 +466,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.log_filename.Value("c:/temp/test.log");
         objOptions.profile.Value(conMethodName);
         objOptions.PreFtpCommands.Value("del %{remote_dir}/t.1");
-        objOptions.Target().Post_Command.Value("echo 'File: $TargetFileName' >> c:\\temp\\a\\t.1 & type $TargetFileName >> c:\\temp\\a\\t.1 & del $TargetFileName");
+        objOptions.Target().Post_Command.Value("echo 'File: $TargetFileName' >> c:\\temp\\a\\t.1 & type $TargetFileName >>"
+                + " c:\\temp\\a\\t.1 & del $TargetFileName");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/home/kb/" + strTestFileName).FileExists();
@@ -1865,7 +1823,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objHsh.put("ssh_auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Default: ssh_auth_method", SOSOptionAuthenticationMethod.enuAuthenticationMethods.publicKey.Text().toLowerCase(), objOptions.auth_method.DefaultValue());
+        assertEquals("Default: ssh_auth_method", SOSOptionAuthenticationMethod.enuAuthenticationMethods.publicKey.Text().toLowerCase(),
+                objOptions.auth_method.DefaultValue());
         assertEquals("Alias: ssh_auth_method", strPassword, objOptions.auth_method.Value());
         objHsh.put("source_ssh_auth_method", strPassword);
         objOptions = new JADEOptions();
@@ -2042,7 +2001,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
 
     @Test
     public void testControlMChar() {
-        char x0d = 0x0d;
         Pattern SECTION_PATTERN = Pattern.compile("^\\s*\\[([^\\]]*)\\].*$");
         String strT = "[profilename]\r";
         strT = strT.replaceAll("\\r", "");
@@ -2060,4 +2018,5 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         }
         LOGGER.info(strT);
     }
+
 }

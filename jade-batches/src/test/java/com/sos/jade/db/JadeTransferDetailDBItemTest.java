@@ -272,4 +272,5 @@ public class JadeTransferDetailDBItemTest {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
 }

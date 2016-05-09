@@ -17,7 +17,6 @@ import com.sos.JSHelper.io.Files.JSFile;
 
 public class JADEOptionsTest {
 
-    private final String conClassName = "JADEOptionsTest";
     private final static Logger LOGGER = Logger.getLogger(JADEOptionsTest.class);
     private JADEOptions objO = null;
     private String constrSettingsTestFile = "";
@@ -30,36 +29,6 @@ public class JADEOptionsTest {
     public void setUp() throws Exception {
         objO = new JADEOptions();
         objO.file_spec.Value(".*");
-    }
-
-    @Test
-    public void testCheckMandatory() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testJADEOptions() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testJADEOptionsJSListener() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testJADEOptionsHashMapOfStringString() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testReadSettingsFile() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testSubstituteVariablesStringPropertiesStringString() {
-        // fail("Not yet implemented");
     }
 
     @Test
@@ -122,10 +91,20 @@ public class JADEOptionsTest {
         JSFile objIni2 = new JSFile(constrSettingsTestFile2);
         objIni2.deleteOnExit();
         try {
-            objIni.WriteLine("[globals]").WriteLine("user=kb").WriteLine("password=kb").WriteLine("temp=this_is_temp").WriteLine("[include1]").WriteLine("host=hostFromInclude1").WriteLine("[include2]").WriteLine("port=88").WriteLine("[include3]").WriteLine("protocol=scp").WriteLine("[include5]").WriteLine("protocol=scp").WriteLine("host=hostFromInclude5").WriteLine("user=test").WriteLine("[include4]").WriteLine("protocol=sftp").WriteLine("include=include1,include2,include5").WriteLine("[include_as_source]").WriteLine("source_include=include4").WriteLine("[include_as_target]").WriteLine("target_include=include4").WriteLine("[include-Test]").WriteLine("include=include1,include2,include3").WriteLine("[include-TestWithNonexistenceInclude]").WriteLine("include=include1,includeabcd2,include3").WriteLine("[include-Test2]").WriteLine("include=include1,include2,include3").WriteLine("host=willi").WriteLine("user=testtest").WriteLine("[substitute-Test]").WriteLine("user=${USERNAME}").WriteLine("host=${COMPUTERNAME}").WriteLine("title=${temp}").WriteLine("cannotsubstitutet=${waltraut}").WriteLine("target_host=${host}-abc").WriteLine("target_host=${host}").WriteLine("alternate_target_host=${host}-abc").WriteLine("[external_includes]").WriteLine("include=file:"
-                    + constrSettingsTestFile2 + "\\globals,file:" + "./JADEOptionsTest2.ini" + "/include1").close();
-            objIni2.WriteLine("[globals]") //
-            .WriteLine("user=test").WriteLine("password=testtest").WriteLine("temp=this_is_temp").WriteLine("[include1]").WriteLine("host=externalFileHost").close();
+            objIni.WriteLine("[globals]").WriteLine("user=kb").WriteLine("password=kb").WriteLine("temp=this_is_temp").WriteLine("[include1]")
+                .WriteLine("host=hostFromInclude1").WriteLine("[include2]").WriteLine("port=88").WriteLine("[include3]").WriteLine("protocol=scp")
+                .WriteLine("[include5]").WriteLine("protocol=scp").WriteLine("host=hostFromInclude5").WriteLine("user=test").WriteLine("[include4]")
+                .WriteLine("protocol=sftp").WriteLine("include=include1,include2,include5").WriteLine("[include_as_source]")
+                .WriteLine("source_include=include4").WriteLine("[include_as_target]").WriteLine("target_include=include4").WriteLine("[include-Test]")
+                .WriteLine("include=include1,include2,include3").WriteLine("[include-TestWithNonexistenceInclude]")
+                .WriteLine("include=include1,includeabcd2,include3").WriteLine("[include-Test2]").WriteLine("include=include1,include2,include3")
+                .WriteLine("host=willi").WriteLine("user=testtest").WriteLine("[substitute-Test]").WriteLine("user=${USERNAME}")
+                .WriteLine("host=${COMPUTERNAME}").WriteLine("title=${temp}").WriteLine("cannotsubstitutet=${waltraut}")
+                .WriteLine("target_host=${host}-abc").WriteLine("target_host=${host}").WriteLine("alternate_target_host=${host}-abc")
+                .WriteLine("[external_includes]").WriteLine("include=file:" + constrSettingsTestFile2 + "\\globals,file:" + "./JADEOptionsTest2.ini"
+                + "/include1").close();
+            objIni2.WriteLine("[globals]").WriteLine("user=test").WriteLine("password=testtest").WriteLine("temp=this_is_temp")
+                .WriteLine("[include1]").WriteLine("host=externalFileHost").close();
         } catch (IOException e) {
             LOGGER.error("", e);
         }
@@ -189,23 +168,4 @@ public class JADEOptionsTest {
         LOGGER.info(objO.operation.value());
     }
 
-    @Test
-    public final void testGetlog_filename() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public final void testSetlog_filename() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public final void testGetlog4jPropertyFileName() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public final void testSetlog4jPropertyFileName() {
-        // fail("Not yet implemented");
-    }
 }

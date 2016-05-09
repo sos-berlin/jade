@@ -72,7 +72,7 @@ public class JadeFileWatchingUtility implements Runnable {
             }
             for (WatchEvent<?> event : key.pollEvents()) {
                 Kind<?> kind = event.kind();
-                if (kind == OVERFLOW) {
+                if (kind.equals(OVERFLOW)) {
                     LOGGER.debug(String.format("Overflow occurred processing Folder %1$s", strFolderName2Watch4));
                     continue;
                 }
@@ -80,7 +80,7 @@ public class JadeFileWatchingUtility implements Runnable {
                 Path name = ev.context();
                 Path child = dir.resolve(name);
                 LOGGER.debug(String.format("%s: %s\n", event.kind().name(), child));
-                if (recursive && kind == ENTRY_CREATE) {
+                if (recursive && kind.equals(ENTRY_CREATE)) {
                     try {
                         if (Files.isDirectory(child, NOFOLLOW_LINKS)) {
                             registerAll(child);
@@ -101,7 +101,6 @@ public class JadeFileWatchingUtility implements Runnable {
     }
 
     private void registerAll(final Path pstrStartFolderName) throws IOException {
-
         Files.walkFileTree(pstrStartFolderName, new SimpleFileVisitor<Path>() {
 
             @Override

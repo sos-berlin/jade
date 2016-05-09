@@ -10,10 +10,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -131,10 +128,8 @@ public class JadeTransferDetailDBLayerTest {
             for (int i = 0; i < resultList.size(); i++) {
                 JadeTransferDetailDBItem transfer = (JadeTransferDetailDBItem) resultList.get(i);
                 if (transfer != null) {
-                    if (i == 0) {
-                        if (transfer.getCommand() != null) {
-                            assertEquals("myCommand", transfer.getCommand());
-                        }
+                    if (i == 0 && transfer.getCommand() != null) {
+                        assertEquals("myCommand", transfer.getCommand());
                     }
                     LOGGER.info("History: " + transfer.getTransferId());
                 }

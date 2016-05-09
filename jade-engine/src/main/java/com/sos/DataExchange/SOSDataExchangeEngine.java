@@ -697,7 +697,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             state = SOSJADE_E_0100.params(objOptions.file_spec.Value());
         }
         SOSTransferStateCounts counts = getTransferCounts();
-        if (sourceFileList.size() == 0) {
+        if (sourceFileList.isEmpty()) {
             if (objOptions.force_files.isTrue()) {
                 objOptions.getTextProperties().put(KEYWORD_STATE, state);
                 throw new JobSchedulerException(state);
@@ -983,7 +983,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 PollingServerLoop: while (true) {
                     if (objOptions.isFilePollingEnabled()) {
                         doPollingForFiles();
-                        if (sourceFileList.size() <= 0 && objOptions.PollingServer.isFalse() && objOptions.PollErrorState.isDirty()) {
+                        if (sourceFileList.isEmpty() && objOptions.PollingServer.isFalse() && objOptions.PollErrorState.isDirty()) {
                             String pollErrorState = objOptions.PollErrorState.Value();
                             LOGGER.info("set order-state to " + pollErrorState);
                             setNextNodeState(pollErrorState);
@@ -1024,7 +1024,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             sourceFileList.CreateResultSetFile();
                         } else {
                             sourceFileList.CreateResultSetFile();
-                            if (sourceFileList.size() > 0 && objOptions.skip_transfer.isFalse()) {
+                            if (!sourceFileList.isEmpty() && objOptions.skip_transfer.isFalse()) {
                                 if (objOptions.LazyConnectionMode.isTrue()) {
                                     targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();
                                     sourceFileList.objDataTargetClient = targetClient;

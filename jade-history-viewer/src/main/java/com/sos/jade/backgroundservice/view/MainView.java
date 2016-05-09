@@ -572,7 +572,7 @@ public class MainView extends CustomComponent implements View {
                     markAsDirty();
                 }
             });
-        };
+        }
     }
 
     private void autoRefresh() {
