@@ -80,11 +80,8 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
 
     @Override
     public void setAllOptions(final HashMap<String, String> pobjJSSettings) {
-        flgSetAllOptions = true;
         objSettings = pobjJSSettings;
-        super.Settings(objSettings);
         super.setAllOptions(pobjJSSettings);
-        flgSetAllOptions = false;
     }
 
     @Override
