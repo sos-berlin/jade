@@ -26,7 +26,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         super.setUp();
         enuSourceTransferType = enuTransferTypes.sftp;
         enuTargetTransferType = enuTransferTypes.local;
-        objTestOptions.TargetDir.Value(strTestPathName);
+        objTestOptions.targetDir.Value(strTestPathName);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().user.Value(USER_ID_TEST);
         objTestOptions.Target().password.Value(PASSWORD_TEST);
@@ -34,12 +34,12 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
+        objTestOptions.sourceDir.Value("/home/test/jadetest/SOSDEX");
         objTestOptions.Source().host.Value(HOST_NAME_WILMA_SOS);
         objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4SFTP);
         objTestOptions.Source().user.Value(USER_ID_TEST);
         objTestOptions.Source().password.Value(PASSWORD_TEST);
-        objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.password);
+        objTestOptions.Source().authMethod.Value(enuAuthenticationMethods.password);
         objOptions.profile.Value(CLASS_NAME);
     }
 
@@ -61,14 +61,14 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Test
     public void testTransferUsingFilePath() throws Exception {
         gstrFilePath = "myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("/home/test/tmp/");
+        objTestOptions.sourceDir.Value("/home/test/tmp/");
         super.testTransferUsingFilePath();
     }
 
     @Test
     public void testTransferUsingAbsolutFilePath() throws Exception {
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.Value("");
         super.testTransferUsingFilePath();
     }
 
@@ -81,14 +81,14 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Test
     public void testTransferUsingRelativeFilePath() throws Exception {
         gstrFilePath = "./tmp/myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.Value("");
         objOptions.profile.Value("testTransferUsingRelativeFilePath");
         super.testTransferUsingFilePath();
     }
 
     @Test
     public void testTransferUsingRelativeFilePath2() throws Exception {
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.Value("");
         gstrFilePath = "tmp/myfile_20120801.csv";
         super.testTransferUsingFilePath();
     }
@@ -166,7 +166,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         if (csvFile.exists()) {
             csvFile.delete();
         }
-        objOptions.HistoryFileName.Value(csvFile.getAbsolutePath());
+        objOptions.historyFileName.Value(csvFile.getAbsolutePath());
         setOptions4BackgroundService();
         super.testSend();
         String[] strValues = null;
@@ -221,26 +221,26 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testDeleteFiles() throws Exception {
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.fileNameRegExp.Value("^Masstest.\\.txt$");
         super.testDeleteFiles();
     }
 
     @Test
     public void testDeleteFilesWithForce() throws Exception {
-        objTestOptions.ErrorOnNoDataFound.push();
-        objTestOptions.ErrorOnNoDataFound.setFalse();
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.errorOnNoDataFound.push();
+        objTestOptions.errorOnNoDataFound.setFalse();
+        objTestOptions.fileNameRegExp.Value("^Masstest.\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.ErrorOnNoDataFound.pop();
+        objTestOptions.errorOnNoDataFound.pop();
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testDeleteFilesWithError() throws Exception {
-        objTestOptions.ErrorOnNoDataFound.push();
-        objTestOptions.ErrorOnNoDataFound.setTrue();
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.errorOnNoDataFound.push();
+        objTestOptions.errorOnNoDataFound.setTrue();
+        objTestOptions.fileNameRegExp.Value("^Masstest.\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.ErrorOnNoDataFound.pop();
+        objTestOptions.errorOnNoDataFound.pop();
     }
 
     @Test
@@ -252,10 +252,10 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
         objTestOptions.password.Value("12345");
         objTestOptions.port.value(SOSOptionPortNumber.conPort4SFTP);
         objTestOptions.protocol.Value(enuSourceTransferType);
-        objTestOptions.auth_method.Value(enuAuthenticationMethods.password);
-        objTestOptions.remote_dir.Value("/tmp/test/jade/out");
-        objTestOptions.local_dir.Value("\\\\8of9\\c\\tmp\\sftpreceive");
-        objTestOptions.file_spec.Value(".*");
+        objTestOptions.authMethod.Value(enuAuthenticationMethods.password);
+        objTestOptions.remoteDir.Value("/tmp/test/jade/out");
+        objTestOptions.localDir.Value("\\\\8of9\\c\\tmp\\sftpreceive");
+        objTestOptions.fileSpec.Value(".*");
         objTestOptions.recursive.value(true);
         objTestOptions.verbose.value(9);
         JadeEngine objJadeEngine = new JadeEngine(objTestOptions);
@@ -265,7 +265,7 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 
     @Test
     public void testSendWithMail() throws Exception {
-        objOptions.mail_on_success.isTrue();
+        objOptions.mailOnSuccess.isTrue();
         objOptions.getMailOptions().FileNotificationTo.Value("oh@sos-berlin.com");
         objOptions.getMailOptions().SMTPHost.Value("smtp.sos");
         super.testSend();
@@ -273,25 +273,25 @@ public class JadeTestsFtpAsSource extends JadeTestBase {
 
     @Test
     public void testSendWithOutAccessToOneFileInSourceFolder() throws Exception {
-        objTestOptions.SourceDir.Value("/home/test/noaccess");
-        objTestOptions.file_spec.Value("\\.txt$");
-        objTestOptions.force_files.value(false);
+        objTestOptions.sourceDir.Value("/home/test/noaccess");
+        objTestOptions.fileSpec.Value("\\.txt$");
+        objTestOptions.forceFiles.value(false);
         super.testCopyMultipleFiles();
     }
 
     @Test
     public void testSendWithOutAccessToOneFileInSourceFolder2() throws Exception {
-        objTestOptions.SourceDir.Value("/home/test/noaccess");
-        objTestOptions.file_spec.Value("\\.txt$");
-        objTestOptions.force_files.value(true);
+        objTestOptions.sourceDir.Value("/home/test/noaccess");
+        objTestOptions.fileSpec.Value("\\.txt$");
+        objTestOptions.forceFiles.value(true);
         super.testCopyMultipleFiles();
     }
 
     @Test
     public void testSendWithOutAccessToSourceFolder() throws Exception {
-        objTestOptions.SourceDir.Value("/root");
-        objTestOptions.file_spec.Value("\\.txt$");
-        objTestOptions.force_files.value(false);
+        objTestOptions.sourceDir.Value("/root");
+        objTestOptions.fileSpec.Value("\\.txt$");
+        objTestOptions.forceFiles.value(false);
         try {
             super.testCopyMultipleFiles();
         } catch (JADEException e) {

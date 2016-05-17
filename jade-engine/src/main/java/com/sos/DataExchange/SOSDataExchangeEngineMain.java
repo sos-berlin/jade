@@ -56,8 +56,8 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             engine = new SOSDataExchangeEngine();
             JADEOptions options = engine.getOptions();
             engine.setJSJobUtilites(this);
-            options.SendTransferHistory.value(true);
-            options.CommandLineArgs(args);
+            options.sendTransferHistory.value(true);
+            options.commandLineArgs(args);
             try {
                 if (options.log4jPropertyFileName.isDirty()) {
                     File log4jPropFile = new File(options.log4jPropertyFileName.Value());

@@ -52,8 +52,8 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             jade4dmz = new Jade4DMZ();
             JADEOptions options = jade4dmz.getOptions();
             jade4dmz.setJSJobUtilites(this);
-            options.SendTransferHistory.value(true);
-            options.CommandLineArgs(args);
+            options.sendTransferHistory.value(true);
+            options.commandLineArgs(args);
             try {
                 if (options.log4jPropertyFileName.isDirty()) {
                     File log4j = new File(options.log4jPropertyFileName.Value());

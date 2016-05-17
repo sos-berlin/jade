@@ -25,8 +25,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     }
 
     public void Execute() {
-        String dir = normalizeDirectoryPath(getOptions().jump_dir.Value());
-
+        String dir = normalizeDirectoryPath(getOptions().jumpDir.Value());
         String uuid = "jade-dmz-" + getUUID();
         String subDir = dir + uuid;
         Operation operation = null;
@@ -50,13 +49,12 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
      * @param dir */
     private void transfer(Operation operation, String dir) {
         LOGGER.info(String.format("operation = %s, jump dir = %s", operation, dir));
-
         JadeEngine jade = null;
         fileList = null;
         try {
             jade = new JadeEngine(getTransferOptions(operation, dir));
             jade.Execute();
-            if (operation.equals(Operation.copyFromInternet) && objOptions.remove_files.value()) {
+            if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 jade.executeCommandOnSource(getJadeOnDMZCommand4RemoveSource());
             }
             fileList = jade.getFileList();
@@ -77,23 +75,23 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private SOSConnection2OptionsAlternate createJumpOptions(String dir) {
         SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
         options.protocol.Value("sftp");
-        options.host.Value(objOptions.jump_host.Value());
-        options.port.Value(objOptions.jump_port.Value());
-        options.user.Value(objOptions.jump_user.Value());
-        options.password.Value(objOptions.jump_password.Value());
-        options.ssh_auth_method.Value(objOptions.jump_ssh_auth_method.Value());
-        options.ssh_auth_file.Value(objOptions.jump_ssh_auth_file.Value());
-        options.strictHostKeyChecking.value(objOptions.jump_strict_hostkey_checking.value());
-        options.Directory.Value(dir);
+        options.host.Value(objOptions.jumpHost.Value());
+        options.port.Value(objOptions.jumpPort.Value());
+        options.user.Value(objOptions.jumpUser.Value());
+        options.password.Value(objOptions.jumpPassword.Value());
+        options.sshAuthMethod.Value(objOptions.jumpSshAuthMethod.Value());
+        options.sshAuthFile.Value(objOptions.jumpSshAuthFile.Value());
+        options.strictHostKeyChecking.value(objOptions.jumpStrictHostkeyChecking.value());
+        options.directory.Value(dir);
         return options;
     }
 
     private SOSConnection2OptionsAlternate setJumpProxy(SOSConnection2OptionsAlternate options) {
-        options.proxy_protocol.Value(objOptions.jump_proxy_protocol.Value());
-        options.proxy_host.Value(objOptions.jump_proxy_host.Value().trim());
-        options.proxy_port.Value(objOptions.jump_proxy_port.Value().trim());
-        options.proxy_user.Value(objOptions.jump_proxy_user.Value().trim());
-        options.proxy_password.Value(objOptions.jump_proxy_password.Value());
+        options.proxyProtocol.Value(objOptions.jumpProxyProtocol.Value());
+        options.proxyHost.Value(objOptions.jumpProxyHost.Value().trim());
+        options.proxyPort.Value(objOptions.jumpProxyPort.Value().trim());
+        options.proxyUser.Value(objOptions.jumpProxyUser.Value().trim());
+        options.proxyPassword.Value(objOptions.jumpProxyPassword.Value());
         return options;
     }
 
@@ -117,9 +115,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.getConnectionOptions().Source(sourceOptions);
         options.getConnectionOptions().Target(targetOptions);
         // Remove source files at Internet as PostTransferCommands
-        options.remove_files.value(false);
-        if (objOptions.remove_files.value() || objOptions.ResultSetFileName.isDirty()) {
-            options.ResultSetFileName.Value(getSourceListFilename());
+        options.removeFiles.value(false);
+        if (objOptions.removeFiles.value() || objOptions.resultSetFileName.isDirty()) {
+            options.resultSetFileName.Value(getSourceListFilename());
         }
         return options;
     }
@@ -165,16 +163,16 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.port.setPrefix(prefix);
         options.user.setPrefix(prefix);
         options.password.setPrefix(prefix);
-        options.ssh_auth_method.setPrefix(prefix);
-        options.ssh_auth_file.setPrefix(prefix);
-        options.proxy_protocol.setPrefix(prefix);
-        options.proxy_host.setPrefix(prefix);
-        options.proxy_port.setPrefix(prefix);
-        options.proxy_user.setPrefix(prefix);
-        options.proxy_password.setPrefix(prefix);
+        options.sshAuthMethod.setPrefix(prefix);
+        options.sshAuthFile.setPrefix(prefix);
+        options.proxyProtocol.setPrefix(prefix);
+        options.proxyHost.setPrefix(prefix);
+        options.proxyPort.setPrefix(prefix);
+        options.proxyUser.setPrefix(prefix);
+        options.proxyPassword.setPrefix(prefix);
         options.PreTransferCommands.setPrefix(prefix);
         options.PostTransferCommands.setPrefix(prefix);
-        options.Directory.setPrefix(prefix);
+        options.directory.setPrefix(prefix);
 
         return options;
     }
@@ -185,11 +183,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private SOSConnection2OptionsAlternate setLocalOptionsPrefixed(String prefix, String dir) {
         SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
         options.protocol.Value("local");
-        options.host.Value(objOptions.jump_host.Value());
-        options.Directory.Value(dir);
+        options.host.Value(objOptions.jumpHost.Value());
+        options.directory.Value(dir);
         options.protocol.setPrefix(prefix);
         options.host.setPrefix(prefix);
-        options.Directory.setPrefix(prefix);
+        options.directory.setPrefix(prefix);
         return options;
     }
 
@@ -201,8 +199,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         JADEOptions options = new JADEOptions();
         options = addJADEOptionsOnClient(options);
         options = addJADEOptionsForTarget(options);
-        options.SourceDir.Value(dir);
-        options.TargetDir.Value(objOptions.Target().Directory.Value());
+        options.sourceDir.Value(dir);
+        options.targetDir.Value(objOptions.Target().directory.Value());
         return options;
     }
 
@@ -214,9 +212,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         JADEOptions options = new JADEOptions();
         options = addJADEOptionsOnClient(options);
         options = addJADEOptionsForSource(options);
-        options.SourceDir.Value(objOptions.Source().Directory.Value());
-        options.TargetDir.Value(dir);
-        options.remove_files = objOptions.remove_files;
+        options.sourceDir.Value(objOptions.Source().directory.Value());
+        options.targetDir.Value(dir);
+        options.removeFiles = objOptions.removeFiles;
         return options;
     }
 
@@ -225,33 +223,33 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private JADEOptions addJADEOptionsForSource(JADEOptions options) {
         options.operation.Value("copy");
         options.transactional.value(true);
-        options.atomic_prefix = objOptions.atomic_prefix;
-        options.atomic_suffix = objOptions.atomic_suffix;
-        options.BufferSize = objOptions.BufferSize;
-        options.CheckSteadyCount = objOptions.CheckSteadyCount;
-        options.CheckSteadyStateInterval = objOptions.CheckSteadyStateInterval;
-        options.CheckSteadyStateOfFiles = objOptions.CheckSteadyStateOfFiles;
+        options.atomicPrefix = objOptions.atomicPrefix;
+        options.atomicSuffix = objOptions.atomicSuffix;
+        options.bufferSize = objOptions.bufferSize;
+        options.checkSteadyCount = objOptions.checkSteadyCount;
+        options.checkSteadyStateInterval = objOptions.checkSteadyStateInterval;
+        options.checkSteadyStateOfFiles = objOptions.checkSteadyStateOfFiles;
         options.pollingWait4SourceFolder = objOptions.pollingWait4SourceFolder;
         options.pollingEndAt = objOptions.pollingEndAt;
-        options.PollingServerPollForever = objOptions.PollingServerPollForever;
+        options.pollingServerPollForever = objOptions.pollingServerPollForever;
         options.pollingServerDuration = objOptions.pollingServerDuration;
-        options.PollKeepConnection = objOptions.PollKeepConnection;
-        options.poll_interval = objOptions.poll_interval;
-        options.poll_minfiles = objOptions.poll_minfiles;
-        options.PollingDuration = objOptions.PollingDuration;
-        options.poll_timeout = objOptions.poll_timeout;
-        options.MaxFiles = objOptions.MaxFiles;
-        options.FileListName = objOptions.FileListName;
-        options.file_path = objOptions.file_path;
-        options.file_spec = objOptions.file_spec;
-        options.force_files = objOptions.force_files;
+        options.pollKeepConnection = objOptions.pollKeepConnection;
+        options.pollInterval = objOptions.pollInterval;
+        options.pollMinfiles = objOptions.pollMinfiles;
+        options.pollingDuration = objOptions.pollingDuration;
+        options.pollTimeout = objOptions.pollTimeout;
+        options.maxFiles = objOptions.maxFiles;
+        options.fileListName = objOptions.fileListName;
+        options.filePath = objOptions.filePath;
+        options.fileSpec = objOptions.fileSpec;
+        options.forceFiles = objOptions.forceFiles;
         options.recursive = objOptions.recursive;
-        options.skip_transfer = objOptions.skip_transfer;
-        options.KeepModificationDate = objOptions.KeepModificationDate;
+        options.skipTransfer = objOptions.skipTransfer;
+        options.keepModificationDate = objOptions.keepModificationDate;
         options.verbose = objOptions.verbose;
-        options.zero_byte_transfer = objOptions.zero_byte_transfer;
-        options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
-        options.IntegrityHashType = objOptions.IntegrityHashType;
+        options.zeroByteTransfer = objOptions.zeroByteTransfer;
+        options.checkIntegrityHash = objOptions.checkIntegrityHash;
+        options.integrityHashType = objOptions.integrityHashType;
 
         return options;
     }
@@ -261,59 +259,59 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private JADEOptions addJADEOptionsForTarget(JADEOptions options) {
         options.operation.Value("copy");
         options.transactional.value(true);
-        options.file_spec.Value(".*");
-        options.atomic_prefix = objOptions.atomic_prefix;
-        options.atomic_suffix = objOptions.atomic_suffix;
-        options.BufferSize = objOptions.BufferSize;
+        options.fileSpec.Value(".*");
+        options.atomicPrefix = objOptions.atomicPrefix;
+        options.atomicSuffix = objOptions.atomicSuffix;
+        options.bufferSize = objOptions.bufferSize;
         options.makeDirs = objOptions.makeDirs;
-        options.append_files = objOptions.append_files;
-        options.check_interval = objOptions.check_interval;
-        options.check_retry = objOptions.check_retry;
-        options.check_size = objOptions.check_size;
-        options.force_files = objOptions.force_files;
-        options.overwrite_files = objOptions.overwrite_files;
+        options.appendFiles = objOptions.appendFiles;
+        options.checkInterval = objOptions.checkInterval;
+        options.checkRetry = objOptions.checkRetry;
+        options.checkSize = objOptions.checkSize;
+        options.forceFiles = objOptions.forceFiles;
+        options.overwriteFiles = objOptions.overwriteFiles;
         options.recursive = objOptions.recursive;
-        options.skip_transfer = objOptions.skip_transfer;
-        options.keep_modification_date = objOptions.keep_modification_date;
+        options.skipTransfer = objOptions.skipTransfer;
+        options.keepModificationDate = objOptions.keepModificationDate;
         options.verbose = objOptions.verbose;
-        options.zero_byte_transfer = objOptions.zero_byte_transfer;
-        options.CheckIntegrityHash = objOptions.CheckIntegrityHash;
-        options.CreateIntegrityHashFile = objOptions.CreateIntegrityHashFile;
-        options.IntegrityHashType = objOptions.IntegrityHashType;
+        options.zeroByteTransfer = objOptions.zeroByteTransfer;
+        options.checkIntegrityHash = objOptions.checkIntegrityHash;
+        options.createIntegrityHashFile = objOptions.createIntegrityHashFile;
+        options.integrityHashType = objOptions.integrityHashType;
         return options;
     }
 
     /** @param options
      * @return */
     private JADEOptions addJADEOptionsOnClient(JADEOptions options) {
-        options.mail_on_success = objOptions.mail_on_success;
-        options.mail_on_error = objOptions.mail_on_error;
-        options.mail_on_empty_files = objOptions.mail_on_empty_files;
-        options.SendTransferHistory = objOptions.SendTransferHistory;
-        options.BackgroundServiceHost = objOptions.BackgroundServiceHost;
-        options.BackgroundServiceJobChainName = objOptions.BackgroundServiceJobChainName;
-        options.BackgroundServicePort = objOptions.BackgroundServicePort;
-        options.scheduler_host = objOptions.scheduler_host;
-        options.scheduler_job_chain = objOptions.scheduler_job_chain;
-        options.scheduler_port = objOptions.scheduler_port;
-        options.Scheduler_Transfer_Method = objOptions.Scheduler_Transfer_Method;
+        options.mailOnSuccess = objOptions.mailOnSuccess;
+        options.mailOnError = objOptions.mailOnError;
+        options.mailOnEmptyFiles = objOptions.mailOnEmptyFiles;
+        options.sendTransferHistory = objOptions.sendTransferHistory;
+        options.backgroundServiceHost = objOptions.backgroundServiceHost;
+        options.backgroundServiceJobChainName = objOptions.backgroundServiceJobChainName;
+        options.backgroundServicePort = objOptions.backgroundServicePort;
+        options.schedulerHost = objOptions.schedulerHost;
+        options.schedulerJobChain = objOptions.schedulerJobChain;
+        options.schedulerPort = objOptions.schedulerPort;
+        options.schedulerTransferMethod = objOptions.schedulerTransferMethod;
         options.history = objOptions.history;
-        options.HistoryFileName = objOptions.HistoryFileName;
-        options.history_repeat = objOptions.history_repeat;
-        options.history_repeat_interval = objOptions.history_repeat_interval;
-        options.HistoryFileAppendMode = objOptions.HistoryFileAppendMode;
+        options.historyFileName = objOptions.historyFileName;
+        options.historyRepeat = objOptions.historyRepeat;
+        options.historyRepeatInterval = objOptions.historyRepeatInterval;
+        options.historyFileAppendMode = objOptions.historyFileAppendMode;
         options.mandator = objOptions.mandator;
-        options.compress_files = objOptions.compress_files;
-        options.compressed_file_extension = objOptions.compressed_file_extension;
-        options.CumulateFiles = objOptions.CumulateFiles;
-        options.CumulativeFileName = objOptions.CumulativeFileName;
-        options.CumulativeFileSeparator = objOptions.CumulativeFileSeparator;
-        options.CumulativeFileDelete = objOptions.CumulativeFileDelete;
-        options.expected_size_of_result_set = objOptions.expected_size_of_result_set;
-        options.raise_error_if_result_set_is = objOptions.raise_error_if_result_set_is;
+        options.compressFiles = objOptions.compressFiles;
+        options.compressedFileExtension = objOptions.compressedFileExtension;
+        options.cumulateFiles = objOptions.cumulateFiles;
+        options.cumulativeFileName = objOptions.cumulativeFileName;
+        options.cumulativeFileSeparator = objOptions.cumulativeFileSeparator;
+        options.cumulativeFileDelete = objOptions.cumulativeFileDelete;
+        options.expectedSizeOfResultSet = objOptions.expectedSizeOfResultSet;
+        options.raiseErrorIfResultSetIs = objOptions.raiseErrorIfResultSetIs;
         options.log_filename = objOptions.log_filename;
         options.log4jPropertyFileName = objOptions.log4jPropertyFileName;
-        options.ResultSetFileName = objOptions.ResultSetFileName;
+        options.resultSetFileName = objOptions.resultSetFileName;
         return options;
     }
 
@@ -325,7 +323,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.history.Value(getHistoryFilename());
         options.Source().user.DefaultValue("");
         options.Target().user.DefaultValue("");
-        StringBuilder command = new StringBuilder(objOptions.jump_command.Value() + " ");
+        StringBuilder command = new StringBuilder(objOptions.jumpCommand.Value() + " ");
         command.append("-SendTransferHistory=false ");
         command.append(options.getOptionsAsQuotedCommandLine());
         command.append(options.Source().getOptionsAsQuotedCommandLine());
@@ -339,32 +337,26 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         JADEOptions opts = new JADEOptions();
         opts.operation.Value("delete");
         opts.verbose = objOptions.verbose;
-        opts.FileListName.Value(getSourceListFilename());
-        opts.force_files.value(false);
+        opts.fileListName.Value(getSourceListFilename());
+        opts.forceFiles.value(false);
         opts.user.DefaultValue("");
         objOptions.user.DefaultValue("");
         objOptions.Source().user.DefaultValue("");
-        objOptions.Source().Directory.setNotDirty();
-        objOptions.Source().Post_Command.setNotDirty();
+        objOptions.Source().directory.setNotDirty();
+        objOptions.Source().postCommand.setNotDirty();
         objOptions.Source().PostTransferCommands.setNotDirty();
         objOptions.Source().PostFtpCommands.setNotDirty();
-        objOptions.Source().Pre_Command.setNotDirty();
+        objOptions.Source().preCommand.setNotDirty();
         objOptions.Source().PreFtpCommands.setNotDirty();
         objOptions.Source().PreTransferCommands.setNotDirty();
-        objOptions.Source().TFN_Post_Command.setNotDirty();
-        StringBuilder command = new StringBuilder(objOptions.jump_command.Value() + " ");
+        objOptions.Source().tfnPostCommand.setNotDirty();
+        StringBuilder command = new StringBuilder(objOptions.jumpCommand.Value() + " ");
         command.append("-SendTransferHistory=false ");
         command.append(opts.getOptionsAsQuotedCommandLine());
         command.append(objOptions.Source().getOptionsAsQuotedCommandLine());
         return command.toString();
     }
 
-    /** wird nicht als PostProcessorCommands deklariert, wegen unterschiedlichen
-     * Faellen - Dateien nicht gefunden, Exception etc
-     * 
-     * @param jade
-     * @param operation
-     * @param dir */
     private void removeDirOnDMZ(JadeEngine jade, Operation operation, String dir) {
         try {
             if (jade == null) {
@@ -385,7 +377,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     /** @param dir
      * @return */
     private String getRemoveDirCommand(String dir) {
-        if (objOptions.jump_platform.isWindows()) {
+        if (objOptions.jumpPlatform.isWindows()) {
             dir = dir.replace('/', '\\');
             return "rmdir \"" + dir + "\" /s /q;del /F /Q " + dir + "* 2>nul";
         } else {
@@ -432,14 +424,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
     private String getSourceListFilename() {
         if (sourceListFilename == null) {
-            sourceListFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".source.tmp";
+            sourceListFilename = normalizeDirectoryPath(objOptions.jumpDir.Value()) + "jade-dmz-" + getUUID() + ".source.tmp";
         }
         return sourceListFilename;
     }
 
     private String getHistoryFilename() {
         if (historyFilename == null) {
-            historyFilename = normalizeDirectoryPath(objOptions.jump_dir.Value()) + "jade-dmz-" + getUUID() + ".history.csv";
+            historyFilename = normalizeDirectoryPath(objOptions.jumpDir.Value()) + "jade-dmz-" + getUUID() + ".history.csv";
         }
         return historyFilename;
     }

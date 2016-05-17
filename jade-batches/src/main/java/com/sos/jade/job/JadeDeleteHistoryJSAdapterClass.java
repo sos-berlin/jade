@@ -84,7 +84,7 @@ public class JadeDeleteHistoryJSAdapterClass extends JobSchedulerJobAdapter impl
         JadeDeleteHistoryOptions objO = objR.getOptions();
         objO.CurrentNodeName(getCurrentNodeName());
         objO.setAllOptions(getSchedulerParameterAsProperties(getParameters()));
-        objO.CheckMandatory();
+        objO.checkMandatory();
         objR.setJSJobUtilites(this);
 
         Object objSp = objJSCommands.getSpoolerObject();

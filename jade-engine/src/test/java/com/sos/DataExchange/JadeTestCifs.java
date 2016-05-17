@@ -17,13 +17,13 @@ public class JadeTestCifs extends JadeTestBase {
     public void setUp() throws Exception {
         super.setUp();
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.SourceDir.Value(strTestPathName);
+        objTestOptions.sourceDir.Value(strTestPathName);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().host.Value("wilma.sos");
         objTestOptions.Target().user.Value("test");
         objTestOptions.Target().password.Value("12345");
         objTestOptions.Target().domain.Value("sos");
-        objTestOptions.TargetDir.Value("test/jadetest" + "/SOSDEX/");
+        objTestOptions.targetDir.Value("test/jadetest" + "/SOSDEX/");
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JadeTestCifs extends JadeTestBase {
     @Override
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testSend2() throws Exception {
-        objTestOptions.TargetDir.Value("test/tmp/403");
+        objTestOptions.targetDir.Value("test/tmp/403");
         super.testSend();
     }
 
@@ -91,16 +91,16 @@ public class JadeTestCifs extends JadeTestBase {
     @Test
     public void testSendFileSpec() throws Exception {
         objTestOptions.recursive.value(false);
-        objTestOptions.file_spec.Value("\\.txt$");
-        objTestOptions.SourceDir.Value(strTestPathName + "recursive");
+        objTestOptions.fileSpec.Value("\\.txt$");
+        objTestOptions.sourceDir.Value(strTestPathName + "recursive");
         super.testSendFileSpec2();
     }
 
     @Test
     public void testSendRecursive() throws Exception {
-        objTestOptions.file_spec.Value("\\.txt$");
+        objTestOptions.fileSpec.Value("\\.txt$");
         objTestOptions.recursive.value(true);
-        objTestOptions.SourceDir.Value(strTestPathName + "recursive");
+        objTestOptions.sourceDir.Value(strTestPathName + "recursive");
         super.testSendFileSpec2();
     }
 

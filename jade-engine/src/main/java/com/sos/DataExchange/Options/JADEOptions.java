@@ -214,7 +214,7 @@ public class JADEOptions extends SOSFTPOptions {
         // neuen JADEOptions instance uebergeben.
         // Zumal CommandLineArgs buggy aussieht.
         String strB = this.getOptionsAsCommandLine();
-        objClone.CommandLineArgs(strB);
+        objClone.commandLineArgs(strB);
         return objClone;
     } // public JADEOptions getClone
 

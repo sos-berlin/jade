@@ -28,8 +28,8 @@ public class JadeTestJCraftsFtp extends JadeTestBase {
         super.setUp();
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.sftp;
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value("/home/test/jadetest" + "/SOSDEX/");
+        objTestOptions.sourceDir.Value(strTestPathName);
+        objTestOptions.targetDir.Value("/home/test/jadetest" + "/SOSDEX/");
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().host.Value(HOST_NAME_WILMA_SOS);
@@ -38,7 +38,7 @@ public class JadeTestJCraftsFtp extends JadeTestBase {
         objTestOptions.Target().password.Value("12345");
         objTestOptions.Source().user.Value("test");
         objTestOptions.Source().password.Value("12345");
-        objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.password);
+        objTestOptions.Target().authMethod.Value(enuAuthenticationMethods.password);
         objTestOptions.Source().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
         objTestOptions.Target().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
     }
@@ -76,14 +76,14 @@ public class JadeTestJCraftsFtp extends JadeTestBase {
     @Override
     @Test
     public void testBigCopy() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/");
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS);
         super.testBigCopy();
     }
 
     @Test
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -119,9 +119,9 @@ public class JadeTestJCraftsFtp extends JadeTestBase {
 
     @Test
     public void testLocal2sftpWithNotEnoughSpaceOnTarget() throws Exception {
-        objTestOptions.TargetDir.Value("/media/ramdisk");
-        objTestOptions.SourceDir.Value("R:/nobackup/junittests/testdata/JADE/testLocal2sftpWithNotEnoughSpaceOnTarget");
-        objTestOptions.force_files.value(false);
+        objTestOptions.targetDir.Value("/media/ramdisk");
+        objTestOptions.sourceDir.Value("R:/nobackup/junittests/testdata/JADE/testLocal2sftpWithNotEnoughSpaceOnTarget");
+        objTestOptions.forceFiles.value(false);
         super.testCopyMultipleFiles();
     }
 

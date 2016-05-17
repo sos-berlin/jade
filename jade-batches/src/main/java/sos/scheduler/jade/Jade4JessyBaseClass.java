@@ -84,7 +84,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
         objO.CurrentNodeName(getCurrentNodeName());
         hsmParameters = getSchedulerParameterAsProperties(getParameters());
         objO.setAllOptions2(objO.DeletePrefix(hsmParameters, "ftp_"));
-        objO.CheckMandatory();
+        objO.checkMandatory();
         setSpecialOptions();
         int intLogLevel = spooler_log.level();
         if (intLogLevel < 0) {

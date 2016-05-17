@@ -26,18 +26,18 @@ public class JadeTestWebDav extends JadeTestBase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        objTestOptions.SourceDir.Value(strTestPathName);
+        objTestOptions.sourceDir.Value(strTestPathName);
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Source().user.Value("test");
         objTestOptions.Source().password.Value("12345");
         objTestOptions.Source().host.Value("local");
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.TargetDir.Value(REMOTE_BASE_PATH);
+        objTestOptions.targetDir.Value(REMOTE_BASE_PATH);
         objTestOptions.Target().host.Value(WEB_URI);
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value(WEB_USER);
         objTestOptions.Target().password.Value(WEB_PASS);
-        objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.url);
+        objTestOptions.Target().authMethod.Value(enuAuthenticationMethods.url);
     }
 
     @Test
@@ -121,16 +121,16 @@ public class JadeTestWebDav extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/");
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS);
         super.testBigCopy();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -163,15 +163,15 @@ public class JadeTestWebDav extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendViaProxy() throws Exception {
-        objTestOptions.Target().proxy_host.Value("proxy.sos");
-        objTestOptions.Target().proxy_port.Value("3128");
+        objTestOptions.Target().proxyHost.Value("proxy.sos");
+        objTestOptions.Target().proxyPort.Value("3128");
         super.testSend();
     }
 
     @Override
     @Test
     public void testSend2() throws Exception {
-        objTestOptions.TargetDir.Value("/webdav/kb/");
+        objTestOptions.targetDir.Value("/webdav/kb/");
         objTestOptions.Target().host.Value("http://homer.sos/webdav");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");
@@ -181,7 +181,7 @@ public class JadeTestWebDav extends JadeTestBase {
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testSend3() throws Exception {
-        objTestOptions.TargetDir.Value("/jade/403");
+        objTestOptions.targetDir.Value("/jade/403");
         objTestOptions.Target().host.Value("http://homer.sos/jade/");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");
@@ -192,25 +192,25 @@ public class JadeTestWebDav extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendViaMonkAsProxy() throws Exception {
-        objTestOptions.TargetDir.Value("/webdav2/kb/");
+        objTestOptions.targetDir.Value("/webdav2/kb/");
         objTestOptions.Target().host.Value("http://homer.sos/webdav2/");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");
         objTestOptions.Target().password.Value("12345");
-        objTestOptions.Target().proxy_host.Value("proxy.sos");
-        objTestOptions.Target().proxy_port.Value("3128");
+        objTestOptions.Target().proxyHost.Value("proxy.sos");
+        objTestOptions.Target().proxyPort.Value("3128");
         super.testSend();
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testSendViaUnknownProxy() throws Exception {
-        objTestOptions.TargetDir.Value("/webdav2/kb/");
+        objTestOptions.targetDir.Value("/webdav2/kb/");
         objTestOptions.Target().host.Value("http://homer.sos/webdav2");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");
         objTestOptions.Target().password.Value("12345");
-        objTestOptions.Target().proxy_host.Value("proxi.sos");
-        objTestOptions.Target().proxy_port.Value("3128");
+        objTestOptions.Target().proxyHost.Value("proxi.sos");
+        objTestOptions.Target().proxyPort.Value("3128");
         super.testSend();
     }
 
@@ -218,32 +218,32 @@ public class JadeTestWebDav extends JadeTestBase {
     @Test
     public void testSendFileSpec() throws Exception {
         objTestOptions.recursive.value(false);
-        objTestOptions.file_spec.Value("^test.*\\.txt$");
+        objTestOptions.fileSpec.Value("^test.*\\.txt$");
         super.testSendFileSpec2();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendRecursive() throws Exception {
-        objTestOptions.TargetDir.Value("/webdav/kb");
+        objTestOptions.targetDir.Value("/webdav/kb");
         objTestOptions.Target().host.Value("http://homer.sos/webdav");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");
         objTestOptions.Target().password.Value("12345");
-        objTestOptions.file_spec.Value("^test.txt$");
+        objTestOptions.fileSpec.Value("^test.txt$");
         objTestOptions.recursive.value(true);
         super.testSendFileSpec2();
     }
 
     @Test
     public void testSendRecursive2() throws Exception {
-        objTestOptions.SourceDir.Value("R:/nobackup/junittests/testdata/JADE/recursive");
-        objTestOptions.TargetDir.Value("/webdav/kb");
+        objTestOptions.sourceDir.Value("R:/nobackup/junittests/testdata/JADE/recursive");
+        objTestOptions.targetDir.Value("/webdav/kb");
         objTestOptions.Target().host.Value("http://homer.sos/webdav");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");
         objTestOptions.Target().password.Value("12345");
-        objTestOptions.file_spec.Value("\\.(txt|dot)$");
+        objTestOptions.fileSpec.Value("\\.(txt|dot)$");
         objTestOptions.recursive.value(true);
         super.testSendFileSpec2();
     }
@@ -251,7 +251,7 @@ public class JadeTestWebDav extends JadeTestBase {
     @Override
     @Test
     public void testCopyAndRenameSourceAndTarget() throws Exception {
-        objTestOptions.TargetDir.Value("/webdav/kb");
+        objTestOptions.targetDir.Value("/webdav/kb");
         objTestOptions.Target().host.Value("http://homer.sos/webdav/");
         objTestOptions.Target().port.value(8080);
         objTestOptions.Target().user.Value("test");

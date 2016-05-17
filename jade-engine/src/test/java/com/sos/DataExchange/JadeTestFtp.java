@@ -20,8 +20,8 @@ public class JadeTestFtp extends JadeTestBase {
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.ftp;
         super.setUp();
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value("/home/test/jadetest" + "/SOSDEX/");
+        objTestOptions.sourceDir.Value(strTestPathName);
+        objTestOptions.targetDir.Value("/home/test/jadetest" + "/SOSDEX/");
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().host.Value(HOST_NAME_WILMA_SOS);
@@ -30,7 +30,7 @@ public class JadeTestFtp extends JadeTestBase {
         objTestOptions.Target().password.Value("12345");
         objTestOptions.Source().user.Value("test");
         objTestOptions.Source().password.Value("12345");
-        objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.password);
+        objTestOptions.Target().authMethod.Value(enuAuthenticationMethods.password);
     }
 
     @Override
@@ -74,8 +74,8 @@ public class JadeTestFtp extends JadeTestBase {
 
     @Test
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
-        objTestOptions.TargetDir.Value("/home/test/doc/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.targetDir.Value("/home/test/doc/doxygen-docs/com.sos.VirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -141,7 +141,7 @@ public class JadeTestFtp extends JadeTestBase {
 
     @Test
     public void testSendWithPollingAndSteadyStateError() throws Exception {
-        objOptions.Steady_state_error_state.Value("nextState");
+        objOptions.steadyStateErrorState.Value("nextState");
         super.sendWithPollingAndSteadyStateError();
     }
 

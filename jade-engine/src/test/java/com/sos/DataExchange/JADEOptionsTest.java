@@ -28,7 +28,7 @@ public class JADEOptionsTest {
     @Before
     public void setUp() throws Exception {
         objO = new JADEOptions();
-        objO.file_spec.Value(".*");
+        objO.fileSpec.Value(".*");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class JADEOptionsTest {
         objO.Target().protocol.Value(enuTransferTypes.ftp);
         objO.ReplaceWhat.setNull();
         objO.ReplaceWith.setNull();
-        objO.CheckMandatory();
+        objO.checkMandatory();
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
@@ -123,7 +123,7 @@ public class JADEOptionsTest {
         objO.Target().protocol.Value(enuTransferTypes.ftp);
         objO.ReplaceWhat.setNull();
         objO.ReplaceWith.Value("Hello JADE");
-        objO.CheckMandatory();
+        objO.checkMandatory();
     }
 
     @Test
@@ -131,7 +131,7 @@ public class JADEOptionsTest {
         objO.Target().protocol.Value(enuTransferTypes.ftp);
         objO.ReplaceWhat.Value("Hello World");
         objO.ReplaceWith.setNull();
-        objO.CheckMandatory();
+        objO.checkMandatory();
     }
 
     @Test
@@ -139,7 +139,7 @@ public class JADEOptionsTest {
         objO.Target().protocol.Value(enuTransferTypes.ftp);
         objO.ReplaceWhat.Value("Hello World");
         objO.ReplaceWith.Value("");
-        objO.CheckMandatory();
+        objO.checkMandatory();
     }
 
     @Test
@@ -147,7 +147,7 @@ public class JADEOptionsTest {
         objO.Target().protocol.Value(enuTransferTypes.ftp);
         objO.ReplaceWhat.Value("Hello World");
         objO.ReplaceWith.Value("Hello JADE");
-        objO.CheckMandatory();
+        objO.checkMandatory();
     }
 
     @Test
@@ -158,8 +158,8 @@ public class JADEOptionsTest {
 
     @Test
     public void testSourceDir() {
-        objO.SourceDir.Value("test-[date:yyyy-MM-dd]");
-        LOGGER.info(objO.SourceDir.Value());
+        objO.sourceDir.Value("test-[date:yyyy-MM-dd]");
+        LOGGER.info(objO.sourceDir.Value());
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)

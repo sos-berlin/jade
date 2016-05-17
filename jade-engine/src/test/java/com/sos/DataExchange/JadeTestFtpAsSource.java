@@ -25,8 +25,8 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         enuSourceTransferType = enuTransferTypes.ftp;
         enuTargetTransferType = enuTransferTypes.local;
         super.setUp();
-        objTestOptions.passive_mode.setTrue();
-        objTestOptions.TargetDir.Value(strTestPathName);
+        objTestOptions.passiveMode.setTrue();
+        objTestOptions.targetDir.Value(strTestPathName);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().user.Value(USER_ID_TEST);
         objTestOptions.Target().password.Value(PASSWORD_TEST);
@@ -35,7 +35,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         objTestOptions.Target().port.value(SOSOptionPortNumber.conPort4FTP);
         objOptions.Target().port.value(SOSOptionPortNumber.conPort4FTP);
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX/");
+        objTestOptions.sourceDir.Value("/home/test/jadetest/SOSDEX/");
         objTestOptions.Source().host.Value(HOST_NAME_WILMA_SOS);
         objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4FTP);
         objTestOptions.Source().user.Value(USER_ID_TEST);
@@ -94,7 +94,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
     public void testCopyRecursiveWithFolderInSourceDir() throws Exception {
         objTestOptions.recursive.setTrue();
         objTestOptions.makeDirs.setTrue();
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
+        objTestOptions.sourceDir.Value("/home/test/jadetest/SOSDEX");
         super.testCopyWithFolderInSourceDir();
         objTestOptions.recursive.setFalse();
     }
@@ -108,36 +108,36 @@ public class JadeTestFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testCopyWithFolderInSourceDir() throws Exception {
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
+        objTestOptions.sourceDir.Value("/home/test/jadetest/SOSDEX");
         super.testCopyWithFolderInSourceDir();
     }
 
     @Override
     @Test
     public void testDeleteFiles() throws Exception {
-        objTestOptions.FileNameRegExp.push();
-        objTestOptions.FileNameRegExp.Value("^Masstest.*\\.txt$");
+        objTestOptions.fileNameRegExp.push();
+        objTestOptions.fileNameRegExp.Value("^Masstest.*\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.FileNameRegExp.pop();
+        objTestOptions.fileNameRegExp.pop();
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     @Ignore("Test set to Ignore for later examination")
     public void testDeleteFilesWithError() throws Exception {
-        objTestOptions.ErrorOnNoDataFound.push();
-        objTestOptions.ErrorOnNoDataFound.setTrue();
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.errorOnNoDataFound.push();
+        objTestOptions.errorOnNoDataFound.setTrue();
+        objTestOptions.fileNameRegExp.Value("^Masstest.\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.ErrorOnNoDataFound.pop();
+        objTestOptions.errorOnNoDataFound.pop();
     }
 
     @Test
     public void testDeleteFilesWithForce() throws Exception {
-        objTestOptions.ErrorOnNoDataFound.push();
-        objTestOptions.ErrorOnNoDataFound.setFalse();
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.errorOnNoDataFound.push();
+        objTestOptions.errorOnNoDataFound.setFalse();
+        objTestOptions.fileNameRegExp.Value("^Masstest.\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.ErrorOnNoDataFound.pop();
+        objTestOptions.errorOnNoDataFound.pop();
     }
 
     @Override
@@ -202,7 +202,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.Value("");
         super.testTransferUsingFilePath();
     }
 
@@ -211,7 +211,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv;/home/test/tmp/test.kb";
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.Value("");
         super.testTransferUsingFilePath();
     }
 
@@ -221,7 +221,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("/home/test/tmp/");
+        objTestOptions.sourceDir.Value("/home/test/tmp/");
         super.testTransferUsingFilePath();
     }
 
@@ -230,7 +230,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "myfile_20120801.csv;test.kb";
-        objTestOptions.SourceDir.Value("/home/test/tmp/");
+        objTestOptions.sourceDir.Value("/home/test/tmp/");
         super.testTransferUsingFilePath();
     }
 

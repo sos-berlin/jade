@@ -100,7 +100,7 @@ public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter impleme
 
         objO.configuration_file.Value(configuration_file);
 
-        objO.CheckMandatory();
+        objO.checkMandatory();
         objR.setJSJobUtilites(this);
         objR.Execute();
     } // doProcessing

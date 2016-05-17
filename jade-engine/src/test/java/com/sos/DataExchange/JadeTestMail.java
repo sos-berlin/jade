@@ -31,8 +31,8 @@ public class JadeTestMail extends JadeTestBase {
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.local;
 
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value(strTestPathName + "/SOSMDX/");
+        objTestOptions.sourceDir.Value(strTestPathName);
+        objTestOptions.targetDir.Value(strTestPathName + "/SOSMDX/");
 
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);

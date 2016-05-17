@@ -47,8 +47,8 @@ public class JadeTestLocal extends JadeTestBase {
         super.setUp();
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.local;
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value(strTestPathName + "/SOSMDX/");
+        objTestOptions.sourceDir.Value(strTestPathName);
+        objTestOptions.targetDir.Value(strTestPathName + "/SOSMDX/");
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
     }
@@ -197,14 +197,14 @@ public class JadeTestLocal extends JadeTestBase {
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     @Ignore("Test set to Ignore for later examination")
     public void testSendWithPollingWithoutWait4SourceDir() throws Exception {
-        objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+        objTestOptions.sourceDir.Value(strTestPathName + "/badname/");
         super.testSendWithPolling();
     }
 
     @Override
     @Test
     public void testSendWithPolling() throws Exception {
-        objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+        objTestOptions.sourceDir.Value(strTestPathName + "/badname/");
         objTestOptions.pollingWait4SourceFolder.setTrue();
         super.testSendWithPolling();
     }
@@ -220,16 +220,16 @@ public class JadeTestLocal extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy() throws Exception {
-        objTestOptions.SourceDir.Value(SOURCE_OF_DOXYGEN_DOCS);
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
+        objTestOptions.sourceDir.Value(SOURCE_OF_DOXYGEN_DOCS);
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS);
         super.testBigCopy();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value(SOURCE_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
+        objTestOptions.sourceDir.Value(SOURCE_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -259,21 +259,21 @@ public class JadeTestLocal extends JadeTestBase {
 
     @Test
     public void testSendAndCreateMd5Hash() throws Exception {
-        objTestOptions.CreateSecurityHashFile.setTrue();
+        objTestOptions.createSecurityHashFile.setTrue();
         super.testSend();
     }
 
     @Test
     public void testSendAndCreatesha256Hash() throws Exception {
-        objTestOptions.CreateSecurityHashFile.setTrue();
-        objTestOptions.SecurityHashType.Value("SHA-256");
+        objTestOptions.createSecurityHashFile.setTrue();
+        objTestOptions.securityHashType.Value("SHA-256");
         super.testSend();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendWithMd5Check() throws Exception {
-        objTestOptions.CheckSecurityHash.setTrue();
+        objTestOptions.checkSecurityHash.setTrue();
         super.testSend();
     }
 

@@ -32,7 +32,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void setUp() throws Exception {
         super.setUp();
 
-        objTestOptions.TargetDir.Value(strTestPathName);
+        objTestOptions.targetDir.Value(strTestPathName);
 
         objTestOptions.Target().protocol.Value(enuTargetTransferType);
         objTestOptions.Target().user.Value("test");
@@ -42,12 +42,12 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
 
         objTestOptions.Source().protocol.Value(enuSourceTransferType);
 
-        objTestOptions.SourceDir.Value(REMOTE_BASE_PATH);
+        objTestOptions.sourceDir.Value(REMOTE_BASE_PATH);
         objTestOptions.Source().host.Value(WEB_URI);
         objTestOptions.Source().port.value(8080);
         objTestOptions.Source().user.Value(WEB_USER);
         objTestOptions.Source().password.Value(WEB_PASS);
-        objTestOptions.Source().auth_method.Value(enuAuthenticationMethods.url);
+        objTestOptions.Source().authMethod.Value(enuAuthenticationMethods.url);
     }
 
     public void homerAsSource() throws Exception {
@@ -57,8 +57,8 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     }
 
     public void sourceBehindProxy() throws Exception {
-        objTestOptions.Source().proxy_host.Value("proxy.sos");
-        objTestOptions.Source().proxy_port.value(3128);
+        objTestOptions.Source().proxyHost.Value("proxy.sos");
+        objTestOptions.Source().proxyPort.value(3128);
     }
 
     @Override
@@ -93,16 +93,16 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/");
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS);
         super.testBigCopy();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
+        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.targetDir.Value(TARGET_OF_DOXYGEN_DOCS + "com.sos.VirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -141,7 +141,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void testSend2() throws Exception {
         final String conMethodName = CLASS_NAME + "::testSend2";
         // /jade liegt in /tmp/test/jade
-        objTestOptions.SourceDir.Value("/jade/out");
+        objTestOptions.sourceDir.Value("/jade/out");
         homerAsSource();
         super.testSend();
     }
@@ -152,10 +152,10 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void testSendFileSpec() throws Exception {
         // in /jade/out sind Unterverzeichnisse
         final String conMethodName = CLASS_NAME + "::testSendFileSpec";
-        objTestOptions.SourceDir.Value("/jade/out");
+        objTestOptions.sourceDir.Value("/jade/out");
         homerAsSource();
         objTestOptions.recursive.value(false);
-        objTestOptions.file_spec.Value(".*");
+        objTestOptions.fileSpec.Value(".*");
         super.testSendFileSpec2();
     }
 
@@ -164,11 +164,11 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void testSendFileSpecWithProxy() throws Exception {
         // in /jade/out sind Unterverzeichnisse
         final String conMethodName = CLASS_NAME + "::testSendFileSpecWithProxy";
-        objTestOptions.SourceDir.Value("/jade/out");
+        objTestOptions.sourceDir.Value("/jade/out");
         homerAsSource();
         sourceBehindProxy();
         objTestOptions.recursive.value(false);
-        objTestOptions.file_spec.Value(".*");
+        objTestOptions.fileSpec.Value(".*");
         super.testSendFileSpec2();
     }
 
@@ -178,10 +178,10 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void testSendFileSpec2() throws Exception {
         // in /jade/massive sind keine Unterverzeichnisse
         final String conMethodName = CLASS_NAME + "::testSendFileSpec";
-        objTestOptions.SourceDir.Value("/jade/massive");
+        objTestOptions.sourceDir.Value("/jade/massive");
         homerAsSource();
         objTestOptions.recursive.value(false);
-        objTestOptions.file_spec.Value(".*");
+        objTestOptions.fileSpec.Value(".*");
         super.testSendFileSpec2();
     }
 
@@ -190,10 +190,10 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void testSendRecursive() throws Exception {
         @SuppressWarnings("unused")
         final String conMethodName = CLASS_NAME + "::testSendRecursive";
-        objTestOptions.SourceDir.Value("/jade/out");
+        objTestOptions.sourceDir.Value("/jade/out");
         homerAsSource();
         objTestOptions.recursive.value(true);
-        objTestOptions.file_spec.Value("\\.txt$");
+        objTestOptions.fileSpec.Value("\\.txt$");
         super.testSendFileSpec2();
     }
 
@@ -202,11 +202,11 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     public void testSendRecursiveWithProxy() throws Exception {
         @SuppressWarnings("unused")
         final String conMethodName = CLASS_NAME + "::testSendRecursiveWithProxy";
-        objTestOptions.SourceDir.Value("/jade/out");
+        objTestOptions.sourceDir.Value("/jade/out");
         homerAsSource();
         sourceBehindProxy();
         objTestOptions.recursive.value(true);
-        objTestOptions.file_spec.Value("\\.txt$");
+        objTestOptions.fileSpec.Value("\\.txt$");
         super.testSendFileSpec2();
     }
 
@@ -214,7 +214,7 @@ public class JadeTestWebDavAsSource extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testCopyAndRenameSourceAndTarget() throws Exception {
-        objTestOptions.SourceDir.Value("/jade/out");
+        objTestOptions.sourceDir.Value("/jade/out");
         homerAsSource();
         super.testCopyAndRenameSourceAndTarget();
     }
