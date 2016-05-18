@@ -26,7 +26,7 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
         final String methodName = "JadeTransferDetailDBLayerTest::Execute";
         LOGGER.debug(String.format(Messages.getMsg("JSJ-I-110"), methodName));
         try {
-            getOptions().CheckMandatory();
+            getOptions().checkMandatory();
             LOGGER.debug(getOptions().toString());
             JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(objOptions.configuration_file.Value());
             jadeTransferDBLayer.setAge(objOptions.age_exceeding_days.value());

@@ -34,11 +34,11 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendWithPolling0Files() throws Exception {
-        objTestOptions.PollingServer.value(true);
-        objTestOptions.VerbosityLevel.value(2);
-        objTestOptions.poll_minfiles.value(1);
+        objTestOptions.pollingServer.value(true);
+        objTestOptions.verbosityLevel.value(2);
+        objTestOptions.pollMinfiles.value(1);
         objTestOptions.pollingServerDuration.Value("04:30");
-        objTestOptions.force_files.setFalse();
+        objTestOptions.forceFiles.setFalse();
         super.testSendWithPolling0Files();
     }
 

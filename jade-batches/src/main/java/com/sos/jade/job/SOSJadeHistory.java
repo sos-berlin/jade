@@ -31,7 +31,7 @@ public class SOSJadeHistory extends JSJobUtilitiesClass<SOSJadeHistoryOptions> {
         SOSJadeImport sosJadeImport = null;
         LOGGER.debug(String.format(Messages.getMsg("JSJ-I-110"), methodName));
         try {
-            getOptions().CheckMandatory();
+            getOptions().checkMandatory();
             LOGGER.debug(getOptions().toString());
             sosJadeImport = new SOSJadeImport(new File(objOptions.getconfiguration_file().Value()));
             SOSJadeImportData sosJadeImportData = new SOSJadeImportData();

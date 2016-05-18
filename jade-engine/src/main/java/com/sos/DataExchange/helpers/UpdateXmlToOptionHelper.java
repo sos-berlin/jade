@@ -217,12 +217,12 @@ public class UpdateXmlToOptionHelper {
                                 options.Source().protocol.Value(sourceCredentials.get(key));
                                 break;
                             case "authMethodName":
-                                LOGGER.info("Overwriting Source AUTH_METHOD <" + options.Source().auth_method.Value() + "> with: " + sourceCredentials.get(key));
-                                options.Source().auth_method.Value(sourceCredentials.get(key));
+                                LOGGER.info("Overwriting Source AUTH_METHOD <" + options.Source().authMethod.Value() + "> with: " + sourceCredentials.get(key));
+                                options.Source().authMethod.Value(sourceCredentials.get(key));
                                 break;
                             case "publickey":
-                                LOGGER.info("Overwriting Source AUTH_FILE <" + options.Source().auth_file.Value() + "> with: " + sourceCredentials.get(key));
-                                options.Source().auth_file.Value(sourceCredentials.get(key));
+                                LOGGER.info("Overwriting Source AUTH_FILE <" + options.Source().authFile.Value() + "> with: " + sourceCredentials.get(key));
+                                options.Source().authFile.Value(sourceCredentials.get(key));
                                 break;
                             case "connectionUrl":
                                 LOGGER.info("Overwriting Source CONNECTION_URL <" + options.Source().url.Value() + "> with: " + sourceCredentials.get(key));
@@ -263,12 +263,12 @@ public class UpdateXmlToOptionHelper {
                                 options.Target().protocol.Value(targetCredentials.get(key));
                                 break;
                             case "authMethodName":
-                                LOGGER.info("Overwriting Target AUTH_METHOD <" + options.Target().auth_method.Value() + "> with: " + targetCredentials.get(key));
-                                options.Target().auth_method.Value(targetCredentials.get(key));
+                                LOGGER.info("Overwriting Target AUTH_METHOD <" + options.Target().authMethod.Value() + "> with: " + targetCredentials.get(key));
+                                options.Target().authMethod.Value(targetCredentials.get(key));
                                 break;
                             case "publickey":
-                                LOGGER.info("Overwriting Target AUTH_FILE <" + options.Target().auth_file.Value() + "> with: " + targetCredentials.get(key));
-                                options.Target().auth_file.Value(targetCredentials.get(key));
+                                LOGGER.info("Overwriting Target AUTH_FILE <" + options.Target().authFile.Value() + "> with: " + targetCredentials.get(key));
+                                options.Target().authFile.Value(targetCredentials.get(key));
                                 break;
                             case "connectionUrl":
                                 LOGGER.info("Overwriting Target CONNECTION_URL <" + options.Target().url.Value() + "> with: " + targetCredentials.get(key));
@@ -286,28 +286,28 @@ public class UpdateXmlToOptionHelper {
                     for (String key : jumpCredentials.keySet()) {
                         switch (key) {
                         case "host":
-                            LOGGER.info("Overwriting jump HOST <" + options.jump_host.Value() + "> with: " + jumpCredentials.get(key));
-                            options.jump_host.Value(jumpCredentials.get(key));
+                            LOGGER.info("Overwriting jump HOST <" + options.jumpHost.Value() + "> with: " + jumpCredentials.get(key));
+                            options.jumpHost.Value(jumpCredentials.get(key));
                             break;
                         case "user":
-                            LOGGER.info("Overwriting jump USER <" + options.jump_user.Value() + "> with: " + jumpCredentials.get(key));
-                            options.jump_user.Value(jumpCredentials.get(key));
+                            LOGGER.info("Overwriting jump USER <" + options.jumpUser.Value() + "> with: " + jumpCredentials.get(key));
+                            options.jumpUser.Value(jumpCredentials.get(key));
                             break;
                         case "password":
                             LOGGER.info("Overwriting jump PWD <*****> with: new PWD *****");
-                            options.jump_password.Value(jumpCredentials.get(key));
+                            options.jumpPassword.Value(jumpCredentials.get(key));
                             break;
                         case "authMethodName":
-                            LOGGER.info("Overwriting jump AUTH_METHOD <" + options.jump_ssh_auth_method.Value() + "> with: " + jumpCredentials.get(key));
-                            options.jump_ssh_auth_method.Value(jumpCredentials.get(key));
+                            LOGGER.info("Overwriting jump AUTH_METHOD <" + options.jumpSshAuthMethod.Value() + "> with: " + jumpCredentials.get(key));
+                            options.jumpSshAuthMethod.Value(jumpCredentials.get(key));
                             break;
                         case "publickey":
-                            LOGGER.info("Overwriting jump AUTH_FILE <" + options.jump_ssh_auth_file.Value() + "> with: " + jumpCredentials.get(key));
-                            options.jump_ssh_auth_file.Value(jumpCredentials.get(key));
+                            LOGGER.info("Overwriting jump AUTH_FILE <" + options.jumpSshAuthFile.Value() + "> with: " + jumpCredentials.get(key));
+                            options.jumpSshAuthFile.Value(jumpCredentials.get(key));
                             break;
                         case "JumpCommand":
-                            LOGGER.info("Overwriting jump COMMAND <" + options.jump_command.Value() + "> with: " + jumpCredentials.get(key));
-                            options.jump_command.Value(jumpCredentials.get(key));
+                            LOGGER.info("Overwriting jump COMMAND <" + options.jumpCommand.Value() + "> with: " + jumpCredentials.get(key));
+                            options.jumpCommand.Value(jumpCredentials.get(key));
                             break;
                         default:
                             break;
@@ -326,23 +326,23 @@ public class UpdateXmlToOptionHelper {
             LOGGER.error("", e);
         }
         if (filePath != null && !filePath.isEmpty()) {
-            LOGGER.info("Overwriting Source FILE_PATH <" + options.file_path.Value() + "> with: " + filePath);
-            options.file_path.Value(filePath);
-            LOGGER.info("Overwriting Source DIRECTORY <" + options.Source().Directory.Value() + "> with: " + filePathDir);
-            options.Source().Directory.Value(filePathDir);
+            LOGGER.info("Overwriting Source FILE_PATH <" + options.filePath.Value() + "> with: " + filePath);
+            options.filePath.Value(filePath);
+            LOGGER.info("Overwriting Source DIRECTORY <" + options.Source().directory.Value() + "> with: " + filePathDir);
+            options.Source().directory.Value(filePathDir);
         } else if (fileSpec != null && !fileSpec.isEmpty()) {
-            LOGGER.info("Overwriting Source FILE_SPEC <" + options.file_spec.Value() + "> with: " + fileSpec);
-            options.file_spec.Value(fileSpec);
-            LOGGER.info("Overwriting Source DIRECTORY <" + options.Source().Directory.Value() + "> with: " + fileSpecDir);
-            options.Source().Directory.Value(fileSpecDir);
+            LOGGER.info("Overwriting Source FILE_SPEC <" + options.fileSpec.Value() + "> with: " + fileSpec);
+            options.fileSpec.Value(fileSpec);
+            LOGGER.info("Overwriting Source DIRECTORY <" + options.Source().directory.Value() + "> with: " + fileSpecDir);
+            options.Source().directory.Value(fileSpecDir);
         } else if (fileList != null && !fileList.isEmpty()) {
-            LOGGER.info("Overwriting Source FILE_LIST <" + options.FileListName.Value() + "> with: " + fileList);
-            options.FileListName.Value(fileList);
-            LOGGER.info("Overwriting Source DIRECTORY <" + options.Source().Directory.Value() + "> with: " + fileListDir);
-            options.Source().Directory.Value(fileListDir);
+            LOGGER.info("Overwriting Source FILE_LIST <" + options.fileListName.Value() + "> with: " + fileList);
+            options.fileListName.Value(fileList);
+            LOGGER.info("Overwriting Source DIRECTORY <" + options.Source().directory.Value() + "> with: " + fileListDir);
+            options.Source().directory.Value(fileListDir);
         } else if (targetDir != null && !targetDir.isEmpty()) {
-            LOGGER.info("Overwriting Target DIRECTORY <" + options.Target().Directory.Value() + "> with: " + targetDir);
-            options.Target().Directory.Value(targetDir);
+            LOGGER.info("Overwriting Target DIRECTORY <" + options.Target().directory.Value() + "> with: " + targetDir);
+            options.Target().directory.Value(targetDir);
         }
     }
 

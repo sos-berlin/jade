@@ -116,7 +116,7 @@ public class Jade4DMZTest {
         LOGGER.info(strB);
         LOGGER.info(strC);
         JADEOptions objNewO = new JADEOptions();
-        objNewO.CommandLineArgs(strC.split(" "));
+        objNewO.commandLineArgs(strC.split(" "));
         LOGGER.info("\nobjNewO : " + objNewO.getOptionsAsCommandLine());
     }
 

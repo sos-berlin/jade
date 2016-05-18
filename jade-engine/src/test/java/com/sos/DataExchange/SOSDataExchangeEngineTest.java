@@ -132,21 +132,21 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.port.value(SOSOptionPortNumber.conPort4SSH);
         objOptions.user.Value("test");
         objOptions.password.Value("12345");
-        objOptions.auth_method.Value(enuAuthenticationMethods.password);
+        objOptions.authMethod.Value(enuAuthenticationMethods.password);
         if (flgUseFilePath) {
-            objOptions.file_path.Value("R:/backup/sos/java/junittests/testdata/SOSDataExchange/test-0.poll");
+            objOptions.filePath.Value("R:/backup/sos/java/junittests/testdata/SOSDataExchange/test-0.poll");
         } else {
-            objOptions.FileNamePatternRegExp.Value("^.*\\.poll$");
-            objOptions.poll_minfiles.value(1);
+            objOptions.fileNamePatternRegExp.Value("^.*\\.poll$");
+            objOptions.pollMinfiles.value(1);
         }
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         objOptions.log_filename.Value(objOptions.TempDir() + "test.log");
         objOptions.profile.Value(conMethodName);
-        objOptions.poll_interval.Value("0:30");
-        objOptions.PollingDuration.Value("05:00");
-        objOptions.ErrorOnNoDataFound.value(flgForceFiles);
-        objOptions.remove_files.value(true);
+        objOptions.pollInterval.Value("0:30");
+        objOptions.pollingDuration.Value("05:00");
+        objOptions.errorOnNoDataFound.value(flgForceFiles);
+        objOptions.removeFiles.value(true);
         LOGGER.info(objOptions.dirtyString());
         if (flgCreateFiles) {
             Thread thread = new Thread(new WriteFiles4Polling());
@@ -162,8 +162,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.Source().url.Value("file:///R:/backup/projects/anubex-dws/JCLs");
         objOptions.ReplaceWhat.Value(strReplaceWhat);
         objOptions.ReplaceWith.Value("\\1.jcl;;;");
-        objOptions.FileNameRegExp.Value(strReplaceWhat);
-        objOptions.MaxFiles.value(10);
+        objOptions.fileNameRegExp.Value(strReplaceWhat);
+        objOptions.maxFiles.value(10);
         objOptions.verbose.value(-1);
         startTransfer();
     }
@@ -175,9 +175,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.Source().url.Value("filse:///R:/backup/projects/anubex-dws/JCLs");
         objOptions.ReplaceWhat.Value(strReplaceWhat);
         objOptions.ReplaceWith.Value("\\1.jcl;;;");
-        objOptions.FileNameRegExp.Value(strReplaceWhat);
-        objOptions.MaxFiles.value(10);
-        objOptions.VerbosityLevel.value(-1);
+        objOptions.fileNameRegExp.Value(strReplaceWhat);
+        objOptions.maxFiles.value(10);
+        objOptions.verbosityLevel.value(-1);
         objOptions.verbose.value(-1);
         startTransfer();
     }
@@ -188,12 +188,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         String strReplaceWhat = "^([^\\.]{8})\\.([0-9]{5})(\\.000)$";
         objOptions.operation.Value(enuJadeOperations.rename);
         objOptions.Source().protocol.Value("filse");
-        objOptions.Source().Directory.Value("R:/backup/projects/anubex-dws/JCLs");
+        objOptions.Source().directory.Value("R:/backup/projects/anubex-dws/JCLs");
         objOptions.ReplaceWhat.Value(strReplaceWhat);
         objOptions.ReplaceWith.Value("\\1.jcl;;;");
-        objOptions.FileNameRegExp.Value(strReplaceWhat);
-        objOptions.MaxFiles.value(10);
-        objOptions.VerbosityLevel.value(-1);
+        objOptions.fileNameRegExp.Value(strReplaceWhat);
+        objOptions.maxFiles.value(10);
+        objOptions.verbosityLevel.value(-1);
         objOptions.verbose.value(-1);
         startTransfer();
     }
@@ -203,12 +203,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         String strReplaceWhat = "^([^\\.]{8})\\.([0-9]{5})(\\.000)$";
         objOptions.operation.Value(enuJadeOperations.rename);
         objOptions.Source().protocol.Value("file");
-        objOptions.SourceDir.Value("R:/backup/projects/anubex-dws/JCLs");
+        objOptions.sourceDir.Value("R:/backup/projects/anubex-dws/JCLs");
         objOptions.ReplaceWhat.Value(strReplaceWhat);
         objOptions.ReplaceWith.Value("\\1.jcl;;;");
-        objOptions.FileNameRegExp.Value(strReplaceWhat);
-        objOptions.MaxFiles.value(10);
-        objOptions.VerbosityLevel.value(-1);
+        objOptions.fileNameRegExp.Value(strReplaceWhat);
+        objOptions.maxFiles.value(10);
+        objOptions.verbosityLevel.value(-1);
         objOptions.verbose.value(-1);
         startTransfer();
     }
@@ -229,7 +229,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     public void testEmptyCommandLineParameter() throws Exception {
         try {
             objOptions.AllowEmptyParameterList.setFalse();
-            objOptions.CommandLineArgs(new String[] {});
+            objOptions.commandLineArgs(new String[] {});
         } catch (Exception e) {
             throw e;
         }
@@ -239,7 +239,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     public void testEmptyCommandLineParameter2() {
         try {
             objOptions.AllowEmptyParameterList.setTrue();
-            objOptions.CommandLineArgs(new String[] {});
+            objOptions.commandLineArgs(new String[] {});
         } catch (Exception e) {
             LOGGER.error("", e);
         }
@@ -283,24 +283,24 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     public void testSendServer2Server() throws Exception {
         createTestFile();
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
-        objConn.Source().HostName.Value(HOST_NAME_WILMA_SOS);
+        objConn.Source().hostName.Value(HOST_NAME_WILMA_SOS);
         objConn.Source().port.value(21);
         objConn.Source().protocol.Value(SOSOptionTransferType.enuTransferTypes.ftp);
         objConn.Source().user.Value("kb");
         objConn.Source().password.Value("kb");
-        objConn.Target().HostName.Value(HOST_NAME_8OF9_SOS);
+        objConn.Target().hostName.Value(HOST_NAME_8OF9_SOS);
         objConn.Target().port.value(21);
         objConn.Target().protocol.Value(SOSOptionTransferType.enuTransferTypes.ftp);
         objConn.Target().user.Value("kb");
         objConn.Target().password.Value("kb");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.SourceDir.Value("/home/kb");
-        objOptions.TargetDir.Value("/kb");
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.sourceDir.Value("/home/kb");
+        objOptions.targetDir.Value("/kb");
         objOptions.operation.Value("copy");
-        objOptions.CheckMandatory();
+        objOptions.checkMandatory();
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
-        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
+        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.targetDir.Value() + strTestFileName).FileExists();
         assertTrue("File must exist", flgResult);
         objJadeEngine.Logout();
     }
@@ -310,28 +310,28 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     public void testSendServer2ServerWithJCraft() throws Exception {
         createTestFile();
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
-        objConn.Source().HostName.Value(HOST_NAME_WILMA_SOS);
+        objConn.Source().hostName.Value(HOST_NAME_WILMA_SOS);
         objConn.Source().port.value(SOSOptionPortNumber.getStandardSFTPPort());
         objConn.Source().protocol.Value(SOSOptionTransferType.enuTransferTypes.sftp);
         objConn.Source().user.Value("kb");
         objConn.Source().password.Value("kb");
-        objConn.Source().ssh_auth_method.Value("password");
+        objConn.Source().sshAuthMethod.Value("password");
         objConn.Source().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
-        objConn.Target().HostName.Value(HOST_NAME_WILMA_SOS);
+        objConn.Target().hostName.Value(HOST_NAME_WILMA_SOS);
         objConn.Target().port.value(SOSOptionPortNumber.getStandardSFTPPort());
         objConn.Target().protocol.Value(SOSOptionTransferType.enuTransferTypes.sftp);
         objConn.Target().user.Value("sos");
         objConn.Target().password.Value("sos");
-        objConn.Target().ssh_auth_method.Value("password");
+        objConn.Target().sshAuthMethod.Value("password");
         objConn.Target().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.SourceDir.Value("/home/kb");
-        objOptions.TargetDir.Value("/home/sos");
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.sourceDir.Value("/home/kb");
+        objOptions.targetDir.Value("/home/sos");
         objOptions.operation.Value("copy");
-        objOptions.CheckMandatory();
+        objOptions.checkMandatory();
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
-        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
+        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.targetDir.Value() + strTestFileName).FileExists();
         assertTrue("File must exist", flgResult);
         objJadeEngine.Logout();
     }
@@ -343,24 +343,24 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         createTestFile();
         logMethodName(conMethodName);
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
-        objConn.Source().HostName.Value(HOST_NAME_WILMA_SOS);
+        objConn.Source().hostName.Value(HOST_NAME_WILMA_SOS);
         objConn.Source().port.value(21);
         objConn.Source().protocol.Value(SOSOptionTransferType.enuTransferTypes.ftp);
         objConn.Source().user.Value("kb");
         objConn.Source().password.Value("kb");
-        objConn.Target().HostName.Value(HOST_NAME_8OF9_SOS);
+        objConn.Target().hostName.Value(HOST_NAME_8OF9_SOS);
         objConn.Target().port.value(21);
         objConn.Target().protocol.Value(SOSOptionTransferType.enuTransferTypes.ftp);
         objConn.Target().user.Value("kb");
         objConn.Target().password.Value("kb");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.SourceDir.Value("/home/kb");
-        objOptions.TargetDir.Value("/kb");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.sourceDir.Value("/home/kb");
+        objOptions.targetDir.Value("/kb");
         objOptions.operation.Value("copy");
-        objOptions.CheckMandatory();
+        objOptions.checkMandatory();
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
-        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.TargetDir.Value() + strTestFileName).FileExists();
+        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.targetDir.Value() + strTestFileName).FileExists();
         assertTrue("File must exist", flgResult);
         objJadeEngine.Logout();
     }
@@ -371,24 +371,24 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         createTestFile();
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
         SOSConnection2OptionsAlternate objS = objConn.Source();
-        objS.HostName.Value(HOST_NAME_8OF9_SOS);
+        objS.hostName.Value(HOST_NAME_8OF9_SOS);
         objS.port.value(SOSOptionPortNumber.getStandardFTPPort());
         objS.protocol.Value("ftp");
         objS.user.Value("sos");
         objS.password.Value("sos");
-        objOptions.local_dir.Value("/");
+        objOptions.localDir.Value("/");
         SOSConnection2OptionsAlternate objT = objConn.Target();
-        objT.HostName.Value(HOST_NAME_WILMA_SOS);
+        objT.hostName.Value(HOST_NAME_WILMA_SOS);
         objT.port.value(SOSOptionPortNumber.getStandardSFTPPort());
-        objT.ssh_auth_method.isPassword(true);
+        objT.sshAuthMethod.isPassword(true);
         objT.protocol.Value("sftp");
         objT.user.Value("test");
         objT.password.Value("12345");
         String strTestDir = "/home/test/";
-        objOptions.remote_dir.Value(strTestDir);
-        objOptions.TargetDir.Value(strTestDir);
+        objOptions.remoteDir.Value(strTestDir);
+        objOptions.targetDir.Value(strTestDir);
         strTestFileName = "wilma.sh";
-        objOptions.file_path.Value(strTestFileName);
+        objOptions.filePath.Value(strTestFileName);
         objOptions.operation.Value("copy");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -409,9 +409,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.port.value(SOSOptionPortNumber.conPort4SSH);
         objOptions.user.Value("test");
         objOptions.password.Value("12345");
-        objOptions.auth_method.Value(enuAuthenticationMethods.password);
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.authMethod.Value(enuAuthenticationMethods.password);
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         objOptions.log_filename.Value("c:/temp/test.log");
         objOptions.profile.Value(conMethodName);
@@ -435,15 +435,15 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.port.value(SOSOptionPortNumber.conPort4SSH);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.auth_method.Value(enuAuthenticationMethods.password);
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.authMethod.Value(enuAuthenticationMethods.password);
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         objOptions.log_filename.Value("c:/temp/test.log");
         objOptions.profile.Value(conMethodName);
-        objOptions.PreFtpCommands.Value("rm -f t.1");
-        objOptions.Target().Post_Command.Value("echo 'File: $TargetFileName' >> t.1;cat $TargetFileName >> t.1;rm -f $TargetFileName");
-        objOptions.Target().Pre_Command.Value("touch $TargetFileName");
+        objOptions.preFtpCommands.Value("rm -f t.1");
+        objOptions.Target().postCommand.Value("echo 'File: $TargetFileName' >> t.1;cat $TargetFileName >> t.1;rm -f $TargetFileName");
+        objOptions.Target().preCommand.Value("touch $TargetFileName");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/home/kb/" + strTestFileName).FileExists();
@@ -459,14 +459,14 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions = new JADEOptions();
         objOptions.host.Value("local");
         objOptions.protocol.Value(enuTransferTypes.local);
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("c:/temp/a");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("c:/temp/a");
         objOptions.operation.Value("send");
         objOptions.log_filename.Value("c:/temp/test.log");
         objOptions.profile.Value(conMethodName);
-        objOptions.PreFtpCommands.Value("del %{remote_dir}/t.1");
-        objOptions.Target().Post_Command.Value("echo 'File: $TargetFileName' >> c:\\temp\\a\\t.1 & type $TargetFileName >>"
+        objOptions.preFtpCommands.Value("del %{remote_dir}/t.1");
+        objOptions.Target().postCommand.Value("echo 'File: $TargetFileName' >> c:\\temp\\a\\t.1 & type $TargetFileName >>"
                 + " c:\\temp\\a\\t.1 & del $TargetFileName");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -485,8 +485,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
         strTestFileName = "test.txt";
-        objOptions.file_spec.Value(strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.fileSpec.Value(strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         objOptions.verbose.value(9);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -525,9 +525,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         setFTPPrefixParams(".*", "renamed_[filename:]");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
-        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.remote_dir.Value() + "/" + strRenamedTestfileName).FileExists();
-        boolean flgResult2 = objJadeEngine.getSourceClient().getFileHandle(objOptions.local_dir.Value() + "/" + strTestFileName).FileExists();
-        boolean flgResult3 = objJadeEngine.getSourceClient().getFileHandle(objOptions.local_dir.Value() + "/" + strRenamedTestfileName).FileExists();
+        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.remoteDir.Value() + "/" + strRenamedTestfileName).FileExists();
+        boolean flgResult2 = objJadeEngine.getSourceClient().getFileHandle(objOptions.localDir.Value() + "/" + strTestFileName).FileExists();
+        boolean flgResult3 = objJadeEngine.getSourceClient().getFileHandle(objOptions.localDir.Value() + "/" + strRenamedTestfileName).FileExists();
         assertTrue("Files must exist", flgResult && flgResult2 && !flgResult3);
         objJadeEngine.Logout();
         strTestFileName = strSaveTestfileName;
@@ -629,9 +629,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value(KB_HOME);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.file_path.Value(strTestFileName);
+        objOptions.remoteDir.Value(KB_HOME);
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value(strTestFileName);
         objOptions.operation.Value("send");
         objOptions.replacement.Value(replacement);
         objOptions.replacing.Value(replacing);
@@ -678,9 +678,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value("./relative");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("./relative");
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -697,9 +697,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value("./relative");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("./relative");
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         LOGGER.info(objOptions.dirtyString());
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -717,9 +717,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value("./relative");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME + "Test/");
+        objOptions.remoteDir.Value("./relative");
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME + "Test/");
         objOptions.operation.Value("send");
         LOGGER.info(objOptions.dirtyString());
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -737,9 +737,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value("./relative");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("./relative");
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         runFilePathTest();
     }
 
@@ -751,8 +751,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value("./relative");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.remoteDir.Value("./relative");
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
         runFilePathTest();
     }
 
@@ -764,9 +764,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.remote_dir.Value("./relative");
-        objOptions.file_path.Value("SOSDataExchange/" + strTestFileName);
-        objOptions.local_dir.Value("R:/backup/sos/java/junittests/testdata/");
+        objOptions.remoteDir.Value("./relative");
+        objOptions.filePath.Value("SOSDataExchange/" + strTestFileName);
+        objOptions.localDir.Value("R:/backup/sos/java/junittests/testdata/");
         runFilePathTest();
     }
 
@@ -788,9 +788,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value(KB_HOME);
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value(KB_HOME);
         objOptions.operation.Value("send");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -806,24 +806,24 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value(KB_HOME);
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value(KB_HOME);
         objOptions.operation.Value("send");
         setOptions4BackgroundService();
-        objOptions.SendTransferHistory.value(false);
-        objOptions.Target().Post_Command.Value("SITE CHMOD 777 $TargetFileName");
-        objOptions.Source().Pre_Command.Value("dir $SourceFileName");
+        objOptions.sendTransferHistory.value(false);
+        objOptions.Target().postCommand.Value("SITE CHMOD 777 $TargetFileName");
+        objOptions.Source().preCommand.Value("dir $SourceFileName");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
     }
 
     private void setOptions4BackgroundService() {
-        objOptions.scheduler_host.Value(HOST_NAME_8OF9_SOS);
-        objOptions.scheduler_port.Value("4210");
-        objOptions.Scheduler_Transfer_Method.Value(enuJSTransferModes.tcp.description);
-        objOptions.SendTransferHistory.value(true);
+        objOptions.schedulerHost.Value(HOST_NAME_8OF9_SOS);
+        objOptions.schedulerPort.Value("4210");
+        objOptions.schedulerTransferMethod.Value(enuJSTransferModes.tcp.description);
+        objOptions.sendTransferHistory.value(true);
     }
 
     public void testFerberSFtp() throws Exception {
@@ -832,12 +832,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value("85.214.92.170");
         objOptions.port.Value("22");
         objOptions.protocol.Value(enuTransferTypes.sftp);
-        objOptions.alternative_host.Value("85.214.92.170");
-        objOptions.alternative_port.Value("22");
+        objOptions.alternativeHost.Value("85.214.92.170");
+        objOptions.alternativePort.Value("22");
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -849,12 +849,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         createTestFile();
         objOptions = new JADEOptions();
         objOptions.host.Value("xwilma.sos");
-        objOptions.alternative_host.Value(HOST_NAME_WILMA_SOS);
-        objOptions.alternative_port.Value("21");
+        objOptions.alternativeHost.Value(HOST_NAME_WILMA_SOS);
+        objOptions.alternativePort.Value("21");
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -869,16 +869,16 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         createTestFile();
         objOptions = new JADEOptions();
         objOptions.host.Value("wilma.sos");
-        objOptions.alternative_user.Value("test");
+        objOptions.alternativeUser.Value("test");
         objOptions.getConnectionOptions().Target().Alternatives().user.Value("test");
         objOptions.getConnectionOptions().Target().Alternatives().password.Value("12345");
-        objOptions.alternative_port.Value("21");
+        objOptions.alternativePort.Value("21");
         objOptions.getConnectionOptions().Alternatives().user.Value();
         objOptions.getConnectionOptions().Source().Alternatives().user.Value();
         objOptions.user.Value("kb");
         objOptions.password.Value("kbkbkb");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -894,11 +894,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_8OF9_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(TEST_PATH_NAME + strTestFileName);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("/kb/");
+        objOptions.filePath.Value(TEST_PATH_NAME + strTestFileName);
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("/kb/");
         objOptions.operation.Value("send");
-        objOptions.passive_mode.value(true);
+        objOptions.passiveMode.value(true);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         boolean flgResult = objJadeEngine.getTargetClient().getFileHandle("/kb/" + strTestFileName).FileExists();
@@ -916,15 +916,15 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
         objOptions.protocol.Value(enuTransferTypes.sftp);
-        objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);
-        objOptions.file_spec.Value("^[0-9]{10}\\.pdf$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("/home/kb/");
+        objOptions.sshAuthMethod.Value(enuAuthenticationMethods.password);
+        objOptions.fileSpec.Value("^[0-9]{10}\\.pdf$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("/home/kb/");
         objOptions.transactional.setTrue();
-        objOptions.atomic_suffix.Value(".tmp");
-        objOptions.Post_Command.Value("chmod 777 $TargetTransferFileName");
+        objOptions.atomicSuffix.Value(".tmp");
+        objOptions.postCommand.Value("chmod 777 $TargetTransferFileName");
         objOptions.operation.Value("send");
-        objOptions.passive_mode.value(true);
+        objOptions.passiveMode.value(true);
         objOptions.log_filename.Value("c:/temp/test.log");
         setMailOptions();
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -943,17 +943,17 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.user.Value("test");
         objOptions.password.Value("12345");
         objOptions.protocol.Value(enuTransferTypes.sftp);
-        objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);
-        objOptions.file_spec.Value("^" + strTestFileName + "$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("/home/test/temp/test/");
+        objOptions.sshAuthMethod.Value(enuAuthenticationMethods.password);
+        objOptions.fileSpec.Value("^" + strTestFileName + "$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("/home/test/temp/test/");
         objOptions.replacement.Value(".*");
         objOptions.replacing.Value("renamed_[filename:]");
         objOptions.operation.Value("send");
         objOptions.log_filename.Value("c:/temp/test.log");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
-        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.remote_dir.Value() + "/renamed_" + strTestFileName).FileExists();
+        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.remoteDir.Value() + "/renamed_" + strTestFileName).FileExists();
         assertTrue("File must exist", flgResult);
         objJadeEngine.Logout();
     }
@@ -969,11 +969,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.remote_dir.Value("/home/kb/");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.remoteDir.Value("/home/kb/");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("receive");
-        objOptions.transfer_mode.Value("ascii");
+        objOptions.transferMode.Value("ascii");
         setOptions4BackgroundService();
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -990,13 +990,13 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("test");
         objOptions.password.Value("12345");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.remote_dir.Value("/tmp/test/symlink2home.test.temp/test");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.remoteDir.Value("/tmp/test/symlink2home.test.temp/test");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("receive");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
-        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.local_dir.Value() + "/" + strTestFileName).FileExists();
+        boolean flgResult = objJadeEngine.getTargetClient().getFileHandle(objOptions.localDir.Value() + "/" + strTestFileName).FileExists();
         assertTrue("File must exist", flgResult);
         objJadeEngine.Logout();
     }
@@ -1009,11 +1009,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.protocol.Value(enuTransferTypes.sftp.Text());
         objOptions.port.Value("22");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("sosdex.txt");
-        objOptions.remote_dir.Value("/home/sos/tmp");
-        objOptions.ssh_auth_method.Value(enuAuthenticationMethods.password);
-        objOptions.BufferSize.value(1024);
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value("sosdex.txt");
+        objOptions.remoteDir.Value("/home/sos/tmp");
+        objOptions.sshAuthMethod.Value(enuAuthenticationMethods.password);
+        objOptions.bufferSize.value(1024);
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("receive");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -1026,11 +1026,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("Büttner.dat");
-        objOptions.remote_dir.Value("/home/kb/");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value("Büttner.dat");
+        objOptions.remoteDir.Value("/home/kb/");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("receive");
-        objOptions.ControlEncoding.Value("UTF-8");
+        objOptions.controlEncoding.Value("UTF-8");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1042,11 +1042,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value("localhost");
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_spec.Value(".*ttner\\..*");
-        objOptions.remote_dir.Value("/");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.fileSpec.Value(".*ttner\\..*");
+        objOptions.remoteDir.Value("/");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("receive");
-        objOptions.PreFtpCommands.Value("OPTS UTF8 ON");
+        objOptions.preFtpCommands.Value("OPTS UTF8 ON");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1058,19 +1058,19 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         new File(TEST_PATH_NAME + strTestFileName).delete();
         LOGGER.setLevel(Level.DEBUG);
         SOSConnection2OptionsAlternate objS = objOptions.getConnectionOptions().Source();
-        objS.ProtocolCommandListener.setTrue();
+        objS.protocolCommandListener.setTrue();
         objOptions.verbose.value(9);
         objS.host.Value(HOST_NAME_WILMA_SOS);
         objS.protocol.Value("ftp");
         objS.user.Value("kb");
         objS.password.Value("kb");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.SourceDir.Value("/home/kb/");
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.sourceDir.Value("/home/kb/");
         SOSConnection2OptionsAlternate objT = objOptions.getConnectionOptions().Target();
         objT.protocol.Value("local");
-        objOptions.TargetDir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value(TEST_PATH_NAME);
-        objOptions.force_files.setFalse();
+        objOptions.targetDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value(TEST_PATH_NAME);
+        objOptions.forceFiles.setFalse();
         objOptions.operation.Value(SOSOptionJadeOperation.enuJadeOperations.copy);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         LOGGER.info(objOptions.DirtyString());
@@ -1085,9 +1085,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_8OF9_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value(strTestFileName);
-        objOptions.remote_dir.Value("/kb/");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value(strTestFileName);
+        objOptions.remoteDir.Value("/kb/");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("receive");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -1100,9 +1100,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
         objOptions.verbose.value(9);
         setOptions4BackgroundService();
@@ -1117,17 +1117,17 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("/home/kb/");
-        objOptions.append_files.value(false);
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("/home/kb/");
+        objOptions.appendFiles.value(false);
         objOptions.operation.Value("receive");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         long intNoOfFilesTransferred = objJadeEngine.getFileList().SuccessfulTransfers();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().List()) {
-            String strF = MakeFullPathName(objOptions.TargetDir.Value(), objListItem.TargetFileName());
+            String strF = makeFullPathName(objOptions.targetDir.Value(), objListItem.TargetFileName());
             boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).FileExists();
             assertTrue("File " + strF + " exist, but should not", flgResult);
         }
@@ -1140,15 +1140,15 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("/home/kb/");
-        objOptions.append_files.value(false);
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("/home/kb/");
+        objOptions.appendFiles.value(false);
         objOptions.operation.Value("receive");
-        objOptions.CreateResultSet.value(true);
+        objOptions.createResultSet.value(true);
         String strResultSetFileName = objOptions.TempDir() + "/ResultSetFile.dat";
-        objOptions.ResultSetFileName.Value(strResultSetFileName);
+        objOptions.resultSetFileName.Value(strResultSetFileName);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1160,11 +1160,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
-        objOptions.DeleteFilesAfterTransfer.value(true);
+        objOptions.deleteFilesAfterTransfer.value(true);
         objOptions.log_filename.Value("c:/temp/test.log");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -1182,16 +1182,16 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value("/home/kb/");
-        objOptions.append_files.value(false);
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value("/home/kb/");
+        objOptions.appendFiles.value(false);
         objOptions.operation.Value("receive");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().List()) {
-            String strF = MakeFullPathName(objOptions.TargetDir.Value(), objListItem.TargetFileName());
+            String strF = makeFullPathName(objOptions.targetDir.Value(), objListItem.TargetFileName());
             boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).FileExists();
             assertTrue("File " + strF + " exist, but should not", flgResult);
         }
@@ -1202,23 +1202,23 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
         SOSConnection2OptionsAlternate objS = objConn.Source();
         SOSConnection2OptionsAlternate objT = objConn.Target();
-        objS.HostName.Value(HOST_NAME_WILMA_SOS);
+        objS.hostName.Value(HOST_NAME_WILMA_SOS);
         objS.port.value(SOSOptionPortNumber.getStandardSFTPPort());
         objS.protocol.Value("sftp");
         objS.user.Value("test");
-        objS.ssh_auth_method.isPassword(true);
+        objS.sshAuthMethod.isPassword(true);
         objS.password.Value("12345");
-        objT.HostName.Value(HOST_NAME_WILMA_SOS);
+        objT.hostName.Value(HOST_NAME_WILMA_SOS);
         objT.port.value(SOSOptionPortNumber.getStandardSFTPPort());
         objT.protocol.Value("sftp");
         objT.user.Value("test");
-        objT.ssh_auth_method.isPassword(true);
+        objT.sshAuthMethod.isPassword(true);
         objT.password.Value("12345");
-        objOptions.SourceDir.Value(source_dir);
-        objOptions.TargetDir.Value(source_dir);
-        objOptions.file_path.Value("");
+        objOptions.sourceDir.Value(source_dir);
+        objOptions.targetDir.Value(source_dir);
+        objOptions.filePath.Value("");
         objOptions.operation.Value("rename");
-        objOptions.file_spec.Value(file_spec);
+        objOptions.fileSpec.Value(file_spec);
         objOptions.replacing.Value(".*");
         objOptions.replacement.Value("moved/[filename:]");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -1230,23 +1230,23 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
         SOSConnection2OptionsAlternate objS = objConn.Source();
         SOSConnection2OptionsAlternate objT = objConn.Target();
-        objS.HostName.Value(HOST_NAME_WILMA_SOS);
+        objS.hostName.Value(HOST_NAME_WILMA_SOS);
         objS.port.value(SOSOptionPortNumber.getStandardSFTPPort());
         objS.protocol.Value("sftp");
         objS.user.Value("test");
-        objS.ssh_auth_method.isPassword(true);
+        objS.sshAuthMethod.isPassword(true);
         objS.password.Value("12345");
-        objT.HostName.Value(HOST_NAME_WILMA_SOS);
+        objT.hostName.Value(HOST_NAME_WILMA_SOS);
         objT.port.value(SOSOptionPortNumber.getStandardSFTPPort());
         objT.protocol.Value("sftp");
         objT.user.Value("test");
-        objT.ssh_auth_method.isPassword(true);
+        objT.sshAuthMethod.isPassword(true);
         objT.password.Value("12345");
-        objOptions.SourceDir.Value(source_dir);
-        objOptions.TargetDir.Value(source_dir);
-        objOptions.file_path.Value("");
+        objOptions.sourceDir.Value(source_dir);
+        objOptions.targetDir.Value(source_dir);
+        objOptions.filePath.Value("");
         objOptions.operation.Value("rename");
-        objOptions.file_spec.Value(file_spec);
+        objOptions.fileSpec.Value(file_spec);
         objOptions.replacing.Value(".*");
         objOptions.replacement.Value("moved/[filename:]");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
@@ -1282,13 +1282,13 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         CreateTestFiles(10);
         objOptions.Source().protocol.Value(enuTransferTypes.local);
         objOptions.Target().protocol.Value(enuTransferTypes.local);
-        objOptions.SourceDir.Value(TEST_PATH_NAME);
-        objOptions.TargetDir.Value(TEST_PATH_NAME + "/SOSMDX/");
-        objOptions.file_path.Value("");
-        objOptions.FileNamePatternRegExp.Value("^.*\\.txt$");
+        objOptions.sourceDir.Value(TEST_PATH_NAME);
+        objOptions.targetDir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.filePath.Value("");
+        objOptions.fileNamePatternRegExp.Value("^.*\\.txt$");
         objOptions.operation.Value("copy");
-        objOptions.Target().Post_Command.Value("echo $TargetFileName");
-        objOptions.remove_files.value(true);
+        objOptions.Target().postCommand.Value("echo $TargetFileName");
+        objOptions.removeFiles.value(true);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1297,16 +1297,16 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendMultipleFilesThreaded() throws Exception {
-        objOptions.MaxConcurrentTransfers.value(10);
-        objOptions.ConcurrentTransfer.value(true);
+        objOptions.maxConcurrentTransfers.value(10);
+        objOptions.concurrentTransfer.value(true);
         testSendMultipleFilesLocal2Local();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopyThreaded() throws Exception {
-        objOptions.MaxConcurrentTransfers.value(30);
-        objOptions.ConcurrentTransfer.value(true);
+        objOptions.maxConcurrentTransfers.value(30);
+        objOptions.concurrentTransfer.value(true);
         testBigCopy();
     }
 
@@ -1316,10 +1316,10 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.Source().protocol.Value(enuTransferTypes.local);
         objOptions.Target().protocol.Value(enuTransferTypes.local);
         objOptions.recursive.setTrue();
-        objOptions.file_spec.Value("^.*$");
-        objOptions.MaxFiles.value(15);
-        objOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs");
-        objOptions.TargetDir.Value("R:/backup/www.sos-berlin.com/doc/doxygen-docs");
+        objOptions.fileSpec.Value("^.*$");
+        objOptions.maxFiles.value(15);
+        objOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs");
+        objOptions.targetDir.Value("R:/backup/www.sos-berlin.com/doc/doxygen-docs");
         objOptions.operation.Value(enuJadeOperations.copy);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -1331,8 +1331,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         final String conMethodName = CLASS_NAME + "::testDeleteZipFile";
         LOGGER.info("*********************************************** " + conMethodName + "******************");
         String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files" };
-        objOptions.CommandLineArgs(strCmdLineParameters);
-        File fleFile = new File(objOptions.remote_dir.Value());
+        objOptions.commandLineArgs(strCmdLineParameters);
+        File fleFile = new File(objOptions.remoteDir.Value());
         fleFile.delete();
     }
 
@@ -1342,11 +1342,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         final String conMethodName = CLASS_NAME + "::testParameterPriority";
         LOGGER.info("*********************************************** " + conMethodName + "******************");
         String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files_2", "-operation=receive" };
-        objOptions.CommandLineArgs(strCmdLineParameters);
+        objOptions.commandLineArgs(strCmdLineParameters);
         String strOperation = objOptions.operation.Value();
         assertEquals("Operation not overwritten", "receive", strOperation);
         assertEquals("source protocol", "local", objOptions.getConnectionOptions().Source().protocol.Value());
-        assertEquals("source dir", "J:\\E\\java\\junittests\\testdata\\SOSDataExchange/", objOptions.SourceDir.Value());
+        assertEquals("source dir", "J:\\E\\java\\junittests\\testdata\\SOSDataExchange/", objOptions.sourceDir.Value());
         assertEquals("Operation not overwritten", "receive", strOperation);
     }
 
@@ -1356,7 +1356,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         final String conMethodName = CLASS_NAME + "::testParameterPriority";
         LOGGER.info("*********************************************** " + conMethodName + "******************");
         String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files", "-operation=getFileList" };
-        objOptions.CommandLineArgs(strCmdLineParameters);
+        objOptions.commandLineArgs(strCmdLineParameters);
         String strOperation = objOptions.operation.Value();
         assertEquals("Precedence test failed", "getFileList", strOperation);
     }
@@ -1367,8 +1367,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         final String conMethodName = CLASS_NAME + "::testZipOperation";
         LOGGER.info("*********************************************** " + conMethodName + "******************");
         String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_local_files" };
-        objOptions.CommandLineArgs(strCmdLineParameters);
-        objOptions.SendTransferHistory.value(false);
+        objOptions.commandLineArgs(strCmdLineParameters);
+        objOptions.sendTransferHistory.value(false);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
     }
@@ -1379,8 +1379,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         final String conMethodName = CLASS_NAME + "::testZipExtraction";
         LOGGER.info("*********************************************** " + conMethodName + "******************");
         String[] strCmdLineParameters = new String[] { "-settings=" + strSettingsFile, "-profile=zip_extract_2_local_files" };
-        objOptions.CommandLineArgs(strCmdLineParameters);
-        objOptions.SendTransferHistory.value(false);
+        objOptions.commandLineArgs(strCmdLineParameters);
+        objOptions.sendTransferHistory.value(false);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
     }
@@ -1389,15 +1389,15 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Ignore("Test set to Ignore for later examination")
     public void testSendMultipleZIPedFilesLocal2Local() throws Exception {
         objOptions.protocol.Value("local");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value(TEST_PATH_NAME + "/SOSMDX/");
         objOptions.operation.Value("send");
-        objOptions.compress_files.value(true);
-        objOptions.compressed_file_extension.Value(".zip");
-        objOptions.ConcurrentTransfer.value(true);
-        objOptions.MaxConcurrentTransfers.value(5);
+        objOptions.compressFiles.value(true);
+        objOptions.compressedFileExtension.Value(".zip");
+        objOptions.concurrentTransfer.value(true);
+        objOptions.maxConcurrentTransfers.value(5);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1407,12 +1407,12 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Ignore("Test set to Ignore for later examination")
     public void testSendMultipleFilesLocal2LocalAtomic() throws Exception {
         objOptions.protocol.Value("local");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value(TEST_PATH_NAME + "/SOSMDX/");
         objOptions.operation.Value("send");
-        objOptions.atomic_suffix.Value("~");
+        objOptions.atomicSuffix.Value("~");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1422,11 +1422,11 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Ignore("Test set to Ignore for later examination")
     public void testSendMultipleFilesAtomicAndTransactional() throws Exception {
         objOptions.protocol.Value("local");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
-        objOptions.remote_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
+        objOptions.remoteDir.Value(TEST_PATH_NAME + "/SOSMDX/");
         objOptions.operation.Value("send");
-        objOptions.atomic_suffix.Value(".xfer");
+        objOptions.atomicSuffix.Value(".xfer");
         objOptions.transactional.value(true);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -1439,9 +1439,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.protocol.Value("local");
         objOptions.getConnectionOptions().Source().protocol.Value("local");
         objOptions.getConnectionOptions().Target().protocol.Value("local");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
-        objOptions.remote_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.remoteDir.Value(TEST_PATH_NAME + "/SOSMDX/");
         objOptions.operation.Value("rename");
         objOptions.replacing.Value("(.*)(.txt)");
         objOptions.replacement.Value("\\1_[date:yyyyMMddHHmm];\\2");
@@ -1456,10 +1456,10 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.protocol.Value("local");
         objOptions.getConnectionOptions().Source().protocol.Value("local");
         objOptions.getConnectionOptions().Target().protocol.Value("local");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
-        objOptions.remote_dir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME + "/SOSMDX/");
+        objOptions.remoteDir.Value(TEST_PATH_NAME + "/SOSMDX/");
         objOptions.operation.Value("delete");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
@@ -1473,13 +1473,13 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.host.Value(HOST_NAME_WILMA_SOS);
         objOptions.user.Value("kb");
         objOptions.password.Value("kb");
-        objOptions.file_path.Value("");
-        objOptions.file_spec.Value("^.*\\.txt$");
-        objOptions.local_dir.Value(TEST_PATH_NAME);
+        objOptions.filePath.Value("");
+        objOptions.fileSpec.Value("^.*\\.txt$");
+        objOptions.localDir.Value(TEST_PATH_NAME);
         objOptions.operation.Value("send");
-        objOptions.passive_mode.setTrue();
-        objOptions.ConcurrentTransfer.value(true);
-        objOptions.MaxConcurrentTransfers.value(4);
+        objOptions.passiveMode.setTrue();
+        objOptions.concurrentTransfer.value(true);
+        objOptions.maxConcurrentTransfers.value(4);
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
         objJadeEngine.Logout();
@@ -1543,7 +1543,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.settings.Value(constrSettingsTestFile);
         objOptions.profile.Value("include-Test");
         objOptions.ReadSettingsFile();
-        objOptions.local_dir.Value(".");
+        objOptions.localDir.Value(".");
         assertEquals("User ID", "kb", objOptions.user.Value());
         assertEquals("password", "kb", objOptions.password.Value());
         assertEquals("Hostname", "localhost", objOptions.host.Value());
@@ -1577,7 +1577,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         String strComputerName = System.getenv("computername");
         assertEquals("User ID", System.getenv("username"), objOptions.user.Value());
         assertEquals("Hostname", strComputerName, objOptions.host.Value());
-        assertEquals("Hostnameon Target ", strComputerName + "-abc", objOptions.getConnectionOptions().Target().HostName.Value());
+        assertEquals("Hostnameon Target ", strComputerName + "-abc", objOptions.getConnectionOptions().Target().hostName.Value());
     }
 
     @Test
@@ -1592,8 +1592,8 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         SOSConnection2Options objConn = objOptions.getConnectionOptions();
         assertEquals("Source.Host", HOST_NAME_WILMA_SOS, objConn.Source().host.Value());
         assertEquals("Target.Host", HOST_NAME_8OF9_SOS, objConn.Target().host.Value());
-        assertEquals("file_path", "test.txt", objOptions.file_path.Value());
-        objOptions.CheckMandatory();
+        assertEquals("file_path", "test.txt", objOptions.filePath.Value());
+        objOptions.checkMandatory();
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.Execute();
     }
@@ -1622,7 +1622,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
             objOptions.settings.Value(constrSettingsTestFile);
             objOptions.profile.Value("testAlias");
             objOptions.ReadSettingsFile();
-            assertEquals("Alias: auth_method", "password", objOptions.auth_method.Value());
+            assertEquals("Alias: auth_method", "password", objOptions.authMethod.Value());
         } catch (IOException e) {
             LOGGER.error("", e);
         }
@@ -1824,20 +1824,20 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
         assertEquals("Default: ssh_auth_method", SOSOptionAuthenticationMethod.enuAuthenticationMethods.publicKey.Text().toLowerCase(),
-                objOptions.auth_method.DefaultValue());
-        assertEquals("Alias: ssh_auth_method", strPassword, objOptions.auth_method.Value());
+                objOptions.authMethod.DefaultValue());
+        assertEquals("Alias: ssh_auth_method", strPassword, objOptions.authMethod.Value());
         objHsh.put("source_ssh_auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Alias: source_ssh_auth_method", strPassword, objOptions.Source().auth_method.Value());
+        assertEquals("Alias: source_ssh_auth_method", strPassword, objOptions.Source().authMethod.Value());
         objHsh.put("target_ssh_auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Alias: target_ssh_auth_method", strPassword, objOptions.Target().auth_method.Value());
+        assertEquals("Alias: target_ssh_auth_method", strPassword, objOptions.Target().authMethod.Value());
         objHsh.put("source_auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Alias: source_auth_method", strPassword, objOptions.Source().auth_method.Value());
+        assertEquals("Alias: source_auth_method", strPassword, objOptions.Source().authMethod.Value());
     }
 
     @Test
@@ -1847,15 +1847,15 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objHsh.put("auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Alias: auth_method", strPassword, objOptions.auth_method.Value());
+        assertEquals("Alias: auth_method", strPassword, objOptions.authMethod.Value());
         objHsh.put("source_auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Alias: source_auth_method", strPassword, objOptions.Source().auth_method.Value());
+        assertEquals("Alias: source_auth_method", strPassword, objOptions.Source().authMethod.Value());
         objHsh.put("target_auth_method", strPassword);
         objOptions = new JADEOptions();
         objOptions.setAllOptions((HashMap<String, String>) objHsh);
-        assertEquals("Alias: target_auth_method", strPassword, objOptions.Target().auth_method.Value());
+        assertEquals("Alias: target_auth_method", strPassword, objOptions.Target().authMethod.Value());
     }
 
     @Test
@@ -1891,7 +1891,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.setAllOptions(objOptions.DeletePrefix((HashMap<String, String>) objHsh, "ftp_"));
         assertEquals("", HOST_NAME_WILMA_SOS, objOptions.getConnectionOptions().Source().host.Value());
         assertEquals("", "tux.sos", objOptions.getConnectionOptions().Target().host.Value());
-        assertEquals("", "/srv/www/htdocs/test/", objOptions.TargetDir.Value());
+        assertEquals("", "/srv/www/htdocs/test/", objOptions.targetDir.Value());
         assertEquals("log filename not set", "c:/temp/test.log", objOptions.log_filename.Value());
         assertEquals("log filename not set", "c:/temp/test.log", objOptions.OptionByName("log_filename"));
         String strReplTest = "Hallo, welt %{log_filename} und \nverbose = %{verbose} ersetzt. Date %{date} wird nicht ersetzt";
@@ -1925,7 +1925,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions = new JADEOptions();
         objOptions.setAllOptions(objOptions.DeletePrefix((HashMap<String, String>) objHsh, "ftp_"));
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
-        objOptions.CheckMandatory();
+        objOptions.checkMandatory();
         assertEquals("", "localhost", objOptions.getConnectionOptions().Source().host.Value());
         assertEquals("", "tux.sos", objOptions.getConnectionOptions().Target().host.Value());
         assertEquals("", "sftp", objOptions.getConnectionOptions().Target().protocol.Value());
@@ -1954,7 +1954,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.protocol.Value(enuTransferTypes.ftp);
         objOptions.setAllOptions(objOptions.DeletePrefix((HashMap<String, String>) objHsh, "ftp_"));
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
-        objOptions.CheckMandatory();
+        objOptions.checkMandatory();
         assertEquals("", "localhost", objOptions.getConnectionOptions().Source().host.Value());
         assertEquals("", "tux.sos", objOptions.getConnectionOptions().Target().host.Value());
         assertEquals("", "ftp", objOptions.getConnectionOptions().Target().protocol.Value());
@@ -1992,9 +1992,9 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.setAllOptions(objOptions.DeletePrefix((HashMap<String, String>) objHsh, "ftp_"));
         assertEquals("", HOST_NAME_WILMA_SOS, objOptions.getConnectionOptions().Source().host.Value());
         assertEquals("", "tux.sos", objOptions.getConnectionOptions().Target().host.Value());
-        assertEquals("", "/srv/www/htdocs/test/", objOptions.TargetDir.Value());
-        assertEquals("source", strCmd, objOptions.Source().Pre_Command.Value());
-        assertEquals("target", strCmd, objOptions.Target().Pre_Command.Value());
+        assertEquals("", "/srv/www/htdocs/test/", objOptions.targetDir.Value());
+        assertEquals("source", strCmd, objOptions.Source().preCommand.Value());
+        assertEquals("target", strCmd, objOptions.Target().preCommand.Value());
         String strT2 = strCmd.replace("$SourceFileName", "testfile");
         assertEquals("target", "SITE chmod 777 testfile", strT2);
     }

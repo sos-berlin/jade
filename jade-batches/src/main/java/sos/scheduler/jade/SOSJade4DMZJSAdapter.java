@@ -75,8 +75,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         if (intLogLevel > jadeOptions.verbose.value()) {
             jadeOptions.verbose.value(intLogLevel);
         }
-        if (jadeOptions.scheduler_host.isNotDirty()) {
-            jadeOptions.scheduler_host.Value("");
+        if (jadeOptions.schedulerHost.isNotDirty()) {
+            jadeOptions.schedulerHost.Value("");
         }
         logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.Value()));
         jade4DMZEngine.setJSJobUtilites(this);
@@ -87,8 +87,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             resultSetSize = transfFiles.List().size();
         }
         if (resultSetSize <= 0 && isOrderJob()) {
-            String pollErrorState = jadeOptions.PollErrorState.Value();
-            if (jadeOptions.PollErrorState.isDirty()) {
+            String pollErrorState = jadeOptions.pollErrorState.Value();
+            if (jadeOptions.pollErrorState.isDirty()) {
                 logger.debug("set order-state to " + pollErrorState);
                 setNextNodeState(pollErrorState);
                 spooler_task.order().params().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
@@ -96,25 +96,25 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             }
         }
         if (isJobchain()) {
-            String onEmptyResultSetState = jadeOptions.on_empty_result_set.Value();
+            String onEmptyResultSetState = jadeOptions.onEmptyResultSet.Value();
             if (isNotEmpty(onEmptyResultSetState) && resultSetSize <= 0) {
                 JSJ_I_0090.toLog(onEmptyResultSetState);
                 spooler_task.order().set_state(onEmptyResultSetState);
             }
         }
-        String raiseErrorIfResultSetIs = jadeOptions.raise_error_if_result_set_is.Value();
+        String raiseErrorIfResultSetIs = jadeOptions.raiseErrorIfResultSetIs.Value();
         if (isNotEmpty(raiseErrorIfResultSetIs)) {
-            boolean flgR = jadeOptions.expected_size_of_result_set.compare(raiseErrorIfResultSetIs, resultSetSize);
+            boolean flgR = jadeOptions.expectedSizeOfResultSet.compare(raiseErrorIfResultSetIs, resultSetSize);
             if (flgR == true) {
-                String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expected_size_of_result_set.value());
+                String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expectedSizeOfResultSet.value());
                 logger.info(strM);
                 throw new JobSchedulerException(strM);
             }
         }
         createOrderParameter(jade4DMZEngine);
-        if (resultSetSize > 0 && jadeOptions.create_order.isTrue()) {
-            String jobChainName = jadeOptions.order_jobchain_name.Value();
-            if (jadeOptions.create_orders_for_all_files.isTrue()) {
+        if (resultSetSize > 0 && jadeOptions.createOrder.isTrue()) {
+            String jobChainName = jadeOptions.orderJobchainName.Value();
+            if (jadeOptions.createOrdersForAllFiles.isTrue()) {
                 for (SOSFileListEntry listItem : transfFiles.List()) {
                     createOrder(listItem, jobChainName);
                 }
@@ -127,7 +127,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
         String feedback;
-        if (jadeOptions.order_jobscheduler_host.isNotEmpty()) {
+        if (jadeOptions.orderJobschedulerHost.isNotEmpty()) {
             feedback = createOrderOnRemoteJobScheduler(listItem, jobChainName);
         } else {
             feedback = createOrderOnLocalJobScheduler(listItem, jobChainName);
@@ -138,11 +138,11 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         if (jobSchedulerFactory == null) {
             jobSchedulerFactory =
-                    new SchedulerObjectFactory(jadeOptions.order_jobscheduler_host.Value(), jadeOptions.order_jobscheduler_port.value());
+                    new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.Value(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
-            jobSchedulerFactory.Options().TransferMethod.Set(jadeOptions.Scheduler_Transfer_Method);
-            jobSchedulerFactory.Options().PortNumber.Set(jadeOptions.order_jobscheduler_port);
-            jobSchedulerFactory.Options().ServerName.Set(jadeOptions.order_jobscheduler_host);
+            jobSchedulerFactory.Options().TransferMethod.Set(jadeOptions.schedulerTransferMethod);
+            jobSchedulerFactory.Options().PortNumber.Set(jadeOptions.orderJobschedulerPort);
+            jobSchedulerFactory.Options().ServerName.Set(jadeOptions.orderJobschedulerHost);
         }
         JSCmdAddOrder order = jobSchedulerFactory.createAddOrder();
         String targetFilename = listItem.TargetFileName().replace('\\', '/');
@@ -151,7 +151,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         order.setParams(jobSchedulerFactory.setParams(buildOrderParams(listItem)));
         String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
         if (changeOrderState()) {
-            String strNextState = jadeOptions.next_state.Value();
+            String strNextState = jadeOptions.nextState.Value();
             order.setState(strNextState);
             feedback += " " + JSJ_I_0019.get(strNextState);
         }
@@ -165,7 +165,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         order.set_id(targetFilename);
         String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
         if (changeOrderState()) {
-            String nextState = jadeOptions.next_state.Value();
+            String nextState = jadeOptions.nextState.Value();
             order.set_state(nextState);
             feedback += " " + JSJ_I_0019.get(nextState);
         }
@@ -177,16 +177,16 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private Variable_set buildOrderParams(SOSFileListEntry listItem) {
         Variable_set orderParams = spooler.create_variable_set();
-        if (jadeOptions.MergeOrderParameter.isTrue()) {
+        if (jadeOptions.mergeOrderParameter.isTrue()) {
             orderParams.merge(spooler_task.order().params());
         }
-        String[] targetFile = getFilenameParts(jadeOptions.TargetDir.Value(), listItem.TargetFileName());
+        String[] targetFile = getFilenameParts(jadeOptions.targetDir.Value(), listItem.TargetFileName());
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PATH, targetFile[0]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PARENT, targetFile[1]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_NAME, targetFile[2]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_TARGET_FILE_PARENT, targetFile[1]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_TARGET_FILE_NAME, targetFile[2]);
-        String[] sourceFile = getFilenameParts(jadeOptions.SourceDir.Value(), listItem.SourceFileName());
+        String[] sourceFile = getFilenameParts(jadeOptions.sourceDir.Value(), listItem.SourceFileName());
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT, sourceFile[1]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME, sourceFile[2]);
         return orderParams;
@@ -213,7 +213,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     }
 
     private boolean changeOrderState() {
-        return isNotEmpty(jadeOptions.next_state.Value());
+        return isNotEmpty(jadeOptions.nextState.Value());
     }
 
     private void createOrderParameter(final Jade4DMZ objR) throws Exception {
@@ -244,7 +244,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     objP = spooler_task.order().params();
                 }
                 if (isNotNull(objP)) {
-                    String strResultList2File = objR.getOptions().result_list_file.Value();
+                    String strResultList2File = objR.getOptions().resultListFile.Value();
                     if (isNotEmpty(strResultList2File) && isNotEmpty(fileNames)) {
                         JSTextFile objResultListFile = new JSTextFile(strResultList2File);
                         try {
@@ -252,10 +252,10 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                                 objResultListFile.Write(fileNames);
                                 objResultListFile.close();
                             } else {
-                                JSJ_F_0090.toLog(objR.getOptions().result_list_file.getShortKey(), strResultList2File);
+                                JSJ_F_0090.toLog(objR.getOptions().resultListFile.getShortKey(), strResultList2File);
                             }
                         } catch (Exception e) {
-                            String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().result_list_file.getShortKey());
+                            String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().resultListFile.getShortKey());
                             logger.fatal(strM);
                             throw new JobSchedulerException(strM, e);
                         }

@@ -63,8 +63,7 @@ public class JADEOptions extends SOSFTPOptions {
             } catch (IOException ex) {
                 LOGGER.error(ex.getLocalizedMessage());
             }
-        } else {  // TODO any file extension is allowed for the ini-configuration
-                 // file
+        } else {
             map = super.ReadSettingsFile();
         }
         return map;
@@ -148,7 +147,7 @@ public class JADEOptions extends SOSFTPOptions {
 
     public JADEOptions getClone() {
         JADEOptions options = new JADEOptions();
-        options.CommandLineArgs(this.getOptionsAsCommandLine());
+        options.commandLineArgs(this.getOptionsAsCommandLine());
         return options;
     }
 
