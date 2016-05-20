@@ -29,9 +29,9 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
     public JadeFileListenerImpl(MainView ui) {
         this.ui = ui;
         if (hibernateConfigFile != null && hibernateConfigFile.length() != 0) {
-            JADE_BS_OPTIONS.hibernateConfigurationFileName.Value(hibernateConfigFile);
+            JADE_BS_OPTIONS.hibernateConfigurationFileName.setValue(hibernateConfigFile);
         }
-        JADE_BS_OPTIONS.hibernateConfigurationFileName.CheckMandatory();
+        JADE_BS_OPTIONS.hibernateConfigurationFileName.checkMandatory();
         this.jadeFilesDBLayer = new JadeFilesDBLayer(hibernateConfigFile);
         this.jadeFilesHistoryDBLayer = new JadeFilesHistoryDBLayer(hibernateConfigFile);
     }

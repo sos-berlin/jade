@@ -54,6 +54,7 @@ public class JadeDeleteHistoryOptionsSuperClass extends JSOptionsClass {
     @Override
     public void setAllOptions(final HashMap<String, String> pobjJSSettings) {
         objSettings = pobjJSSettings;
+        super.setSettings(objSettings);
         super.setAllOptions(pobjJSSettings);
     }
 

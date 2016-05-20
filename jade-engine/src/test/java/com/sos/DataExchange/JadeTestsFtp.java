@@ -16,21 +16,21 @@ public class JadeTestsFtp extends JadeTestBase {
         super.setUp();
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.sftp;
-        objTestOptions.sourceDir.Value(strTestPathName);
-        objTestOptions.targetDir.Value("/home/test/jadetest" + "/SOSDEX/");
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.Target().host.Value(HOST_NAME_WILMA_SOS);
-        objTestOptions.Target().port.value(SOSOptionPortNumber.conPort4SFTP);
-        objTestOptions.Target().user.Value("test");
-        objTestOptions.Target().password.Value("12345");
-        objTestOptions.Source().user.Value("test");
-        objTestOptions.Source().password.Value("12345");
-        objTestOptions.user.Value("test");
-        objTestOptions.password.Value("12345");
-        objTestOptions.Target().authMethod.Value(enuAuthenticationMethods.password);
-        objTestOptions.Source().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtp");
-        objTestOptions.Target().loadClassName.Value("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtp");
+        objTestOptions.sourceDir.setValue(strTestPathName);
+        objTestOptions.targetDir.setValue("/home/test/jadetest" + "/SOSDEX/");
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
+        objTestOptions.getTarget().host.setValue(HOST_NAME_WILMA_SOS);
+        objTestOptions.getTarget().port.value(SOSOptionPortNumber.conPort4SFTP);
+        objTestOptions.getTarget().user.setValue("test");
+        objTestOptions.getTarget().password.setValue("12345");
+        objTestOptions.getSource().user.setValue("test");
+        objTestOptions.getSource().password.setValue("12345");
+        objTestOptions.user.setValue("test");
+        objTestOptions.password.setValue("12345");
+        objTestOptions.getTarget().authMethod.setValue(enuAuthenticationMethods.password);
+        objTestOptions.getSource().loadClassName.setValue("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtp");
+        objTestOptions.getTarget().loadClassName.setValue("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtp");
     }
 
     @Override
@@ -79,13 +79,13 @@ public class JadeTestsFtp extends JadeTestBase {
 
     @Override
     public void testBigCopy() throws Exception {
-        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/");
+        objTestOptions.sourceDir.setValue("R:/backup/sos/java/doxygen-docs/");
         super.testBigCopy();
     }
 
     @Test
     public void testBigCopy2() throws Exception {
-        objTestOptions.sourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.sourceDir.setValue("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -115,7 +115,7 @@ public class JadeTestsFtp extends JadeTestBase {
 
     @Test
     public void testSendWithJCraft() throws Exception {
-        objTestOptions.Target().setLoadClassName("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
+        objTestOptions.getTarget().setLoadClassName("com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft");
         super.testSend();
     }
 
@@ -133,8 +133,8 @@ public class JadeTestsFtp extends JadeTestBase {
 
     @Test
     public void testCopyLocal2SFTPrecursive() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("Copy_Local2SFTP_recursive");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("Copy_Local2SFTP_recursive");
         super.testUseProfileWOCreatingTestFiles();
     }
 
@@ -146,7 +146,7 @@ public class JadeTestsFtp extends JadeTestBase {
 
     @Test
     public void testSosFtp186WithAtomicSuffix() throws Exception {
-        objOptions.atomicSuffix.Value("~");
+        objOptions.atomicSuffix.setValue("~");
         super.testSendCommandAfterReplacing();
     }
 
@@ -157,25 +157,25 @@ public class JadeTestsFtp extends JadeTestBase {
 
     @Test
     public void sftpSendWithCommands() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("sftpSendWithCommands");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("sftpSendWithCommands");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testSendWithMail() throws Exception {
         objOptions.mailOnSuccess.value(true);
-        objOptions.getMailOptions().FileNotificationTo.Value("oh@sos-berlin.com");
-        objOptions.getMailOptions().SMTPHost.Value("smtp.sos");
-        objOptions.resultSetFileName.Value(objOptions.TempDir() + "resultList.txt");
+        objOptions.getMailOptions().FileNotificationTo.setValue("oh@sos-berlin.com");
+        objOptions.getMailOptions().SMTPHost.setValue("smtp.sos");
+        objOptions.resultSetFileName.setValue(objOptions.getTempDir() + "resultList.txt");
         objOptions.createResultSet.value(true);
         super.testSend();
     }
 
     @Test
     public void testLocal2sftpWithNotEnoughSpaceOnTarget() throws Exception {
-        objTestOptions.targetDir.Value("/media/ramdisk");
-        objTestOptions.sourceDir.Value("R:/nobackup/junittests/testdata/JADE/testLocal2sftpWithNotEnoughSpaceOnTarget");
+        objTestOptions.targetDir.setValue("/media/ramdisk");
+        objTestOptions.sourceDir.setValue("R:/nobackup/junittests/testdata/JADE/testLocal2sftpWithNotEnoughSpaceOnTarget");
         objOptions.forceFiles.value(false);
         super.testCopyMultipleFiles();
     }

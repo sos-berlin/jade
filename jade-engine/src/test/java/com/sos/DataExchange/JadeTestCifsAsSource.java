@@ -25,15 +25,15 @@ public class JadeTestCifsAsSource extends JadeTestBase {
     public void setUp() throws Exception {
         super.setUp();
 
-        objTestOptions.targetDir.Value(strTestPathName);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
+        objTestOptions.targetDir.setValue(strTestPathName);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
 
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
 
-        objTestOptions.sourceDir.Value("test/jadetest/SOSDEX/");
-        objTestOptions.Source().host.Value("wilma.sos");
-        objTestOptions.Source().user.Value("test");
-        objTestOptions.Source().password.Value("12345");
+        objTestOptions.sourceDir.setValue("test/jadetest/SOSDEX/");
+        objTestOptions.getSource().host.setValue("wilma.sos");
+        objTestOptions.getSource().user.setValue("test");
+        objTestOptions.getSource().password.setValue("12345");
     }
 
     @Override
@@ -91,7 +91,7 @@ public class JadeTestCifsAsSource extends JadeTestBase {
         @SuppressWarnings("unused")
         final String conMethodName = CLASS_NAME + "::testSendRecursive";
         objTestOptions.recursive.value(true);
-        objTestOptions.fileSpec.Value("1\\.txt$");
+        objTestOptions.fileSpec.setValue("1\\.txt$");
         super.testSendFileSpec2();
     }
 

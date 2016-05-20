@@ -56,7 +56,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             options.commandLineArgs(args);
             try {
                 if (options.log4jPropertyFileName.isDirty()) {
-                    File log4j = new File(options.log4jPropertyFileName.Value());
+                    File log4j = new File(options.log4jPropertyFileName.getValue());
                     if (log4j.isFile() && log4j.canRead()) {
                         PropertyConfigurator.configure(log4j.getAbsolutePath());
                     }

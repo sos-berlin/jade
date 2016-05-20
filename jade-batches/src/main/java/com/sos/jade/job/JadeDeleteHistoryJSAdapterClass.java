@@ -82,7 +82,7 @@ public class JadeDeleteHistoryJSAdapterClass extends JobSchedulerJobAdapter impl
 
         JadeDeleteHistory objR = new JadeDeleteHistory();
         JadeDeleteHistoryOptions objO = objR.getOptions();
-        objO.CurrentNodeName(getCurrentNodeName());
+        objO.setCurrentNodeName(getCurrentNodeName());
         objO.setAllOptions(getSchedulerParameterAsProperties(getParameters()));
         objO.checkMandatory();
         objR.setJSJobUtilites(this);
@@ -94,7 +94,7 @@ public class JadeDeleteHistoryJSAdapterClass extends JobSchedulerJobAdapter impl
 
         if (objO.getItem("configuration_file") != null) {
             logger1.debug("configuration_file from param");
-            configuration_file = objO.configuration_file.Value();
+            configuration_file = objO.configuration_file.getValue();
         } else {
             logger1.debug("configuration_file from scheduler");
             File f = new File(objSpooler.configuration_directory(), "hibernate.cfg.xml");
@@ -102,9 +102,9 @@ public class JadeDeleteHistoryJSAdapterClass extends JobSchedulerJobAdapter impl
 
         }
 
-        objO.configuration_file.Value(configuration_file);
+        objO.configuration_file.setValue(configuration_file);
 
-        objO.configuration_file.Value(configuration_file);
+        objO.configuration_file.setValue(configuration_file);
         objR.Execute();
     } // doProcessing
 

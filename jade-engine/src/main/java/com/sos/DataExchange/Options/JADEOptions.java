@@ -45,26 +45,26 @@ public class JADEOptions extends SOSFTPOptions {
     }
 
     @Override
-    public HashMap<String, String> ReadSettingsFile() {
+    public HashMap<String, String> readSettingsFile() {
         Properties properties = new Properties();
         HashMap<String, String> map = new HashMap<>();
 
-        String file = settings.Value();
+        String file = settings.getValue();
         if (file.endsWith(CONFIG_FILE_EXTENSION)) {
             try {
                 JAXBContext jc = JAXBContext.newInstance(ConfigurationElement.class);
                 Unmarshaller u = jc.createUnmarshaller();
-                ConfigurationElement config = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.Value()));
+                ConfigurationElement config = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.getValue()));
                 Vector<Object> profileOrProfiles = (Vector<Object>) config.getIncludeOrProfileOrProfiles();
                 searchXMLProfile(properties, profileOrProfiles, "globals");
-                searchXMLProfile(properties, profileOrProfiles, profile.Value());
+                searchXMLProfile(properties, profileOrProfiles, profile.getValue());
             } catch (JAXBException ex) {
                 LOGGER.error(ex.getLocalizedMessage());
             } catch (IOException ex) {
                 LOGGER.error(ex.getLocalizedMessage());
             }
         } else {
-            map = super.ReadSettingsFile();
+            map = super.readSettingsFile();
         }
         return map;
     }
@@ -85,7 +85,7 @@ public class JADEOptions extends SOSFTPOptions {
     }
 
     private void searchXMLProfile(final Properties properties, final Vector<Object> profileOrProfiles, final String profileName) {
-        LOGGER.debug("Profile = " + profile.Value());
+        LOGGER.debug("Profile = " + profile.getValue());
         for (Object object : profileOrProfiles) {
             if (object instanceof JADEProfile) {
                 JADEProfile profile = (JADEProfile) object;

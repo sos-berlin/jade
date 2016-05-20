@@ -24,17 +24,17 @@ public class JadeBackgroundServiceOptionsJUnitTest extends JSToolBox {
 
     @Test
     public void testHibernateConfigurationFileName2() {
-        assertEquals("", objOptions.hibernateConfigurationFileName.Value(), CONFIG_FILENAME);
+        assertEquals("", objOptions.hibernateConfigurationFileName.getValue(), CONFIG_FILENAME);
     }
 
     @Test
     public void testHibernateConfigurationFileNameAlias() {
-        assertEquals("", objOptions.hibernateConf.Value(), CONFIG_FILENAME);
+        assertEquals("", objOptions.hibernateConf.getValue(), CONFIG_FILENAME);
     }
 
     @Test
     public void testHibernateConfigurationFileName() {
-        objOptions.hibernateConfigurationFileName.Value("++hibernate.cfg.xml++");
-        assertEquals("", objOptions.hibernateConfigurationFileName.Value(), "++hibernate.cfg.xml++");
+        objOptions.hibernateConfigurationFileName.setValue("++hibernate.cfg.xml++");
+        assertEquals("", objOptions.hibernateConfigurationFileName.getValue(), "++hibernate.cfg.xml++");
     }
 }

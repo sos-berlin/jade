@@ -18,9 +18,9 @@ public class Jade4DMZTest {
     public final void testExecute() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost_re.ini");
-        objO.profile.Value("jump_test_send");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost_re.ini");
+        objO.profile.setValue("jump_test_send");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -29,9 +29,9 @@ public class Jade4DMZTest {
     public final void testcopyfrominternet() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_copy_from_internet");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_copy_from_internet");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -40,9 +40,9 @@ public class Jade4DMZTest {
     public final void testcopytointernet() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_copy_to_internet");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_copy_to_internet");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -51,9 +51,9 @@ public class Jade4DMZTest {
     public final void testJumpTestCopyToInternetHttpProxy() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_copy_to_internet_http_proxy");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_copy_to_internet_http_proxy");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -62,9 +62,9 @@ public class Jade4DMZTest {
     public final void testJumpTestCopyToInternetSocks5Proxy() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_copy_to_internet_socks5_proxy");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_copy_to_internet_socks5_proxy");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -73,9 +73,9 @@ public class Jade4DMZTest {
     public final void testsendusingdmz() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_sendusingdmz");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_sendusingdmz");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -84,9 +84,9 @@ public class Jade4DMZTest {
     public final void testsendusingdmzOH() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jumphost_test_receive");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jumphost_test_receive");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -95,9 +95,9 @@ public class Jade4DMZTest {
     public final void testreceiveusingdmz() {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_receiveusingdmz");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_receiveusingdmz");
+        objO.readSettingsFile();
         objJ.Execute();
     }
 
@@ -106,12 +106,12 @@ public class Jade4DMZTest {
     public final void testExecute3() throws Exception {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_send");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_send");
+        objO.readSettingsFile();
         String strB = objO.getOptionsAsCommandLine();
-        objO.settings.Value(null);
-        objO.profile.Value(null);
+        objO.settings.setValue(null);
+        objO.profile.setValue(null);
         String strC = objO.getOptionsAsCommandLine();
         LOGGER.info(strB);
         LOGGER.info(strC);
@@ -125,12 +125,12 @@ public class Jade4DMZTest {
     public final void testExecuteDeepCopy() throws Exception {
         Jade4DMZ objJ = new Jade4DMZ();
         objO = objJ.getOptions();
-        objO.settings.Value(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
-        objO.profile.Value("jump_test_send");
-        objO.ReadSettingsFile();
+        objO.settings.setValue(PATH_OF_TEST_INIS + "jade_jumpHost.ini");
+        objO.profile.setValue("jump_test_send");
+        objO.readSettingsFile();
         JADEOptions objNewO = (JADEOptions) objO.deepCopy(objO);
-        objO.settings.Value("");
-        objO.profile.Value("");
+        objO.settings.setValue("");
+        objO.profile.setValue("");
         String strC = objNewO.getOptionsAsCommandLine();
         LOGGER.info(strC);
     }

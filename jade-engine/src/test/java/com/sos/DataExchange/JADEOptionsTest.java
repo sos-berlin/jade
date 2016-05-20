@@ -28,7 +28,7 @@ public class JADEOptionsTest {
     @Before
     public void setUp() throws Exception {
         objO = new JADEOptions();
-        objO.fileSpec.Value(".*");
+        objO.fileSpec.setValue(".*");
     }
 
     @Test
@@ -36,75 +36,75 @@ public class JADEOptionsTest {
     public void testLoadSettingsFile() {
         CreateSettingsFile();
         readProfile("globals");
-        assertEquals("user id must be kb", "kb", objO.user.Value());
+        assertEquals("user id must be kb", "kb", objO.user.getValue());
         LOGGER.info(objO.user.getToolTip());
         readProfile("include-Test");
-        assertEquals("user id must be kb", "kb", objO.user.Value());
-        assertEquals("host must be hostFromInclude1", "hostFromInclude1", objO.host.Value());
+        assertEquals("user id must be kb", "kb", objO.user.getValue());
+        assertEquals("host must be hostFromInclude1", "hostFromInclude1", objO.host.getValue());
         assertTrue("host must be protected", objO.host.isProtected());
         assertTrue("user id must be protected", objO.user.isProtected());
         LOGGER.info(objO.host.getToolTip());
-        objO.host.Value("localhost");
-        assertEquals("host must be localhost", "localhost", objO.host.Value());
+        objO.host.setValue("localhost");
+        assertEquals("host must be localhost", "localhost", objO.host.getValue());
         readProfile("include-Test2");
-        assertEquals("user id must be testtest", "testtest", objO.user.Value());
-        assertEquals("host must be willi", "willi", objO.host.Value());
+        assertEquals("user id must be testtest", "testtest", objO.user.getValue());
+        assertEquals("host must be willi", "willi", objO.host.getValue());
         assertFalse("host must be protected", objO.host.isProtected());
         assertFalse("user id must be protected", objO.user.isProtected());
         LOGGER.info(objO.host.getToolTip() + "\n\n");
         readProfile("substitute-Test");
-        assertEquals("title must be this_is_temp", "this_is_temp", objO.title.Value());
+        assertEquals("title must be this_is_temp", "this_is_temp", objO.title.getValue());
         readProfile("include4");
         assertTrue("host must be protected", objO.host.isProtected());
         assertTrue("port id must be protected", objO.port.isProtected());
-        assertEquals("port ", "88", objO.port.Value());
-        assertEquals("host ", "hostFromInclude5", objO.host.Value());
+        assertEquals("port ", "88", objO.port.getValue());
+        assertEquals("host ", "hostFromInclude5", objO.host.getValue());
         readProfile("external_includes");
-        assertEquals("host ", "externalFileHost", objO.host.Value());
+        assertEquals("host ", "externalFileHost", objO.host.getValue());
         LOGGER.info(objO.host.getToolTip() + "\n\n");
-        assertEquals("user id must be testtest", "test", objO.user.Value());
+        assertEquals("user id must be testtest", "test", objO.user.getValue());
         LOGGER.info(objO.user.getToolTip() + "\n\n");
         readProfile("include_as_source");
-        assertEquals("host ", "hostFromInclude5", objO.Source().host.Value());
+        assertEquals("host ", "hostFromInclude5", objO.getSource().host.getValue());
         LOGGER.info(objO.host.getToolTip() + "\n\n");
-        assertEquals("user id must be testtest", "test", objO.Source().user.Value());
+        assertEquals("user id must be testtest", "test", objO.getSource().user.getValue());
         LOGGER.info(objO.user.getToolTip() + "\n\n");
         readProfile("include_as_target");
-        assertEquals("host ", "hostFromInclude5", objO.Target().host.Value());
+        assertEquals("host ", "hostFromInclude5", objO.getTarget().host.getValue());
         LOGGER.info(objO.host.getToolTip() + "\n\n");
-        assertEquals("user id must be testtest", "test", objO.Target().user.Value());
+        assertEquals("user id must be testtest", "test", objO.getTarget().user.getValue());
         LOGGER.info(objO.user.getToolTip() + "\n\n");
     }
 
     private void readProfile(final String pstrProfileName) {
         objO = new JADEOptions();
-        objO.settings.Value(constrSettingsTestFile);
-        objO.profile.Value(pstrProfileName);
-        objO.ReadSettingsFile();
+        objO.settings.setValue(constrSettingsTestFile);
+        objO.profile.setValue(pstrProfileName);
+        objO.readSettingsFile();
     }
 
     private void CreateSettingsFile() {
-        constrSettingsTestFile = objO.TempDir() + "JADEOptionsTest.ini";
+        constrSettingsTestFile = objO.getTempDir() + "JADEOptionsTest.ini";
         JSFile objIni = new JSFile(constrSettingsTestFile);
         objIni.deleteOnExit();
-        String constrSettingsTestFile2 = objO.TempDir() + "JADEOptionsTest2.ini";
+        String constrSettingsTestFile2 = objO.getTempDir() + "JADEOptionsTest2.ini";
         JSFile objIni2 = new JSFile(constrSettingsTestFile2);
         objIni2.deleteOnExit();
         try {
-            objIni.WriteLine("[globals]").WriteLine("user=kb").WriteLine("password=kb").WriteLine("temp=this_is_temp").WriteLine("[include1]")
-                .WriteLine("host=hostFromInclude1").WriteLine("[include2]").WriteLine("port=88").WriteLine("[include3]").WriteLine("protocol=scp")
-                .WriteLine("[include5]").WriteLine("protocol=scp").WriteLine("host=hostFromInclude5").WriteLine("user=test").WriteLine("[include4]")
-                .WriteLine("protocol=sftp").WriteLine("include=include1,include2,include5").WriteLine("[include_as_source]")
-                .WriteLine("source_include=include4").WriteLine("[include_as_target]").WriteLine("target_include=include4").WriteLine("[include-Test]")
-                .WriteLine("include=include1,include2,include3").WriteLine("[include-TestWithNonexistenceInclude]")
-                .WriteLine("include=include1,includeabcd2,include3").WriteLine("[include-Test2]").WriteLine("include=include1,include2,include3")
-                .WriteLine("host=willi").WriteLine("user=testtest").WriteLine("[substitute-Test]").WriteLine("user=${USERNAME}")
-                .WriteLine("host=${COMPUTERNAME}").WriteLine("title=${temp}").WriteLine("cannotsubstitutet=${waltraut}")
-                .WriteLine("target_host=${host}-abc").WriteLine("target_host=${host}").WriteLine("alternate_target_host=${host}-abc")
-                .WriteLine("[external_includes]").WriteLine("include=file:" + constrSettingsTestFile2 + "\\globals,file:" + "./JADEOptionsTest2.ini"
+            objIni.writeLine("[globals]").writeLine("user=kb").writeLine("password=kb").writeLine("temp=this_is_temp").writeLine("[include1]")
+                .writeLine("host=hostFromInclude1").writeLine("[include2]").writeLine("port=88").writeLine("[include3]").writeLine("protocol=scp")
+                .writeLine("[include5]").writeLine("protocol=scp").writeLine("host=hostFromInclude5").writeLine("user=test").writeLine("[include4]")
+                .writeLine("protocol=sftp").writeLine("include=include1,include2,include5").writeLine("[include_as_source]")
+                .writeLine("source_include=include4").writeLine("[include_as_target]").writeLine("target_include=include4").writeLine("[include-Test]")
+                .writeLine("include=include1,include2,include3").writeLine("[include-TestWithNonexistenceInclude]")
+                .writeLine("include=include1,includeabcd2,include3").writeLine("[include-Test2]").writeLine("include=include1,include2,include3")
+                .writeLine("host=willi").writeLine("user=testtest").writeLine("[substitute-Test]").writeLine("user=${USERNAME}")
+                .writeLine("host=${COMPUTERNAME}").writeLine("title=${temp}").writeLine("cannotsubstitutet=${waltraut}")
+                .writeLine("target_host=${host}-abc").writeLine("target_host=${host}").writeLine("alternate_target_host=${host}-abc")
+                .writeLine("[external_includes]").writeLine("include=file:" + constrSettingsTestFile2 + "\\globals,file:" + "./JADEOptionsTest2.ini"
                 + "/include1").close();
-            objIni2.WriteLine("[globals]").WriteLine("user=test").WriteLine("password=testtest").WriteLine("temp=this_is_temp")
-                .WriteLine("[include1]").WriteLine("host=externalFileHost").close();
+            objIni2.writeLine("[globals]").writeLine("user=test").writeLine("password=testtest").writeLine("temp=this_is_temp")
+                .writeLine("[include1]").writeLine("host=externalFileHost").close();
         } catch (IOException e) {
             LOGGER.error("", e);
         }
@@ -112,7 +112,7 @@ public class JADEOptionsTest {
 
     @Test
     public void testReplaceWhatNull() {
-        objO.Target().protocol.Value(enuTransferTypes.ftp);
+        objO.getTarget().protocol.setValue(enuTransferTypes.ftp);
         objO.ReplaceWhat.setNull();
         objO.ReplaceWith.setNull();
         objO.checkMandatory();
@@ -120,51 +120,51 @@ public class JADEOptionsTest {
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testReplaceWhatNull2() {
-        objO.Target().protocol.Value(enuTransferTypes.ftp);
+        objO.getTarget().protocol.setValue(enuTransferTypes.ftp);
         objO.ReplaceWhat.setNull();
-        objO.ReplaceWith.Value("Hello JADE");
+        objO.ReplaceWith.setValue("Hello JADE");
         objO.checkMandatory();
     }
 
     @Test
     public void testReplaceWithNull() {
-        objO.Target().protocol.Value(enuTransferTypes.ftp);
-        objO.ReplaceWhat.Value("Hello World");
+        objO.getTarget().protocol.setValue(enuTransferTypes.ftp);
+        objO.ReplaceWhat.setValue("Hello World");
         objO.ReplaceWith.setNull();
         objO.checkMandatory();
     }
 
     @Test
     public void testReplacement() {
-        objO.Target().protocol.Value(enuTransferTypes.ftp);
-        objO.ReplaceWhat.Value("Hello World");
-        objO.ReplaceWith.Value("");
+        objO.getTarget().protocol.setValue(enuTransferTypes.ftp);
+        objO.ReplaceWhat.setValue("Hello World");
+        objO.ReplaceWith.setValue("");
         objO.checkMandatory();
     }
 
     @Test
     public void testReplacement2() {
-        objO.Target().protocol.Value(enuTransferTypes.ftp);
-        objO.ReplaceWhat.Value("Hello World");
-        objO.ReplaceWith.Value("Hello JADE");
+        objO.getTarget().protocol.setValue(enuTransferTypes.ftp);
+        objO.ReplaceWhat.setValue("Hello World");
+        objO.ReplaceWith.setValue("Hello JADE");
         objO.checkMandatory();
     }
 
     @Test
     public void testOperation() {
-        objO.operation.Value("remove");
-        assertEquals("testOperation", "delete", objO.operation.Value());
+        objO.operation.setValue("remove");
+        assertEquals("testOperation", "delete", objO.operation.getValue());
     }
 
     @Test
     public void testSourceDir() {
-        objO.sourceDir.Value("test-[date:yyyy-MM-dd]");
-        LOGGER.info(objO.sourceDir.Value());
+        objO.sourceDir.setValue("test-[date:yyyy-MM-dd]");
+        LOGGER.info(objO.sourceDir.getValue());
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testOperationIsIllegal() {
-        objO.operation.Value("xyzddd");
+        objO.operation.setValue("xyzddd");
         LOGGER.info(objO.operation.value());
     }
 

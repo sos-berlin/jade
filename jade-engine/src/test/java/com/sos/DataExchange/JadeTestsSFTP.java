@@ -15,42 +15,42 @@ public class JadeTestsSFTP extends JadeTestBase {
     @Before
     public void setUp() throws Exception {
         options = new JADEOptions();
-        options.settings.Value("R:/backup/sos/java/development/SOSDataExchange/examples/jade_sftp_settings.ini");
+        options.settings.setValue("R:/backup/sos/java/development/SOSDataExchange/examples/jade_sftp_settings.ini");
     }
 
     @Test
     public void testLocal2sftp() throws Exception {
-        options.profile.Value("local_2_sftp");
+        options.profile.setValue("local_2_sftp");
         this.execute(options);
     }
 
     @Test
     public void testLocal2sftpCheckSteady() throws Exception {
-        options.profile.Value("local_2_sftp_check_steady");
+        options.profile.setValue("local_2_sftp_check_steady");
         this.execute(options);
     }
 
     @Test
     public void testHttpProxyLocal2sftp() throws Exception {
-        options.profile.Value("http_proxy_local_2_sftp");
+        options.profile.setValue("http_proxy_local_2_sftp");
         this.execute(options);
     }
 
     @Test
     public void testSocks5ProxyLocal2sftp() throws Exception {
-        options.profile.Value("socks5_proxy_local_2_sftp");
+        options.profile.setValue("socks5_proxy_local_2_sftp");
         this.execute(options);
     }
 
     private void execute(JADEOptions options) throws Exception {
         try {
             objJadeEngine = new JadeEngine(options);
-            objJadeEngine.Execute();
+            objJadeEngine.execute();
         } catch (Exception ex) {
             throw ex;
         } finally {
             if (objJadeEngine != null) {
-                objJadeEngine.Logout();
+                objJadeEngine.logout();
             }
         }
     }

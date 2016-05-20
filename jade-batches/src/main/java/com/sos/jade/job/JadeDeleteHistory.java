@@ -28,13 +28,13 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
         try {
             getOptions().checkMandatory();
             LOGGER.debug(getOptions().toString());
-            JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(objOptions.configuration_file.Value());
+            JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(objOptions.configuration_file.getValue());
             jadeTransferDBLayer.setAge(objOptions.age_exceeding_days.value());
             jadeTransferDBLayer.getConnection().connect();
             jadeTransferDBLayer.getConnection().beginTransaction();
             jadeTransferDBLayer.deleteFromTo();
             jadeTransferDBLayer.getConnection().commit();
-            JadeTransferDetailDBLayer jadeTransferDetailDBLayer = new JadeTransferDetailDBLayer(objOptions.configuration_file.Value());
+            JadeTransferDetailDBLayer jadeTransferDetailDBLayer = new JadeTransferDetailDBLayer(objOptions.configuration_file.getValue());
             jadeTransferDetailDBLayer.setAge(objOptions.age_exceeding_days.value());
             jadeTransferDetailDBLayer.getConnection().connect();
             jadeTransferDetailDBLayer.getConnection().beginTransaction();

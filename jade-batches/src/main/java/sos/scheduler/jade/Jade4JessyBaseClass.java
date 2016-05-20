@@ -62,7 +62,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
             doProcessing();
         } catch (Exception e) {
             logger.error(String.format("%1$s ended abnormal.", conClassName));
-            logger.error(StackTrace2String(e));
+            logger.error(stackTrace2String(e));
             return signalFailure();
         } finally {
         } // finally
@@ -81,9 +81,9 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
         showVersionInfo();
         objR = new JadeEngine();
         objO = objR.getOptions();
-        objO.CurrentNodeName(getCurrentNodeName());
+        objO.setCurrentNodeName(getCurrentNodeName());
         hsmParameters = getSchedulerParameterAsProperties(getParameters());
-        objO.setAllOptions2(objO.DeletePrefix(hsmParameters, "ftp_"));
+        objO.setAllOptions2(objO.deletePrefix(hsmParameters, "ftp_"));
         objO.checkMandatory();
         setSpecialOptions();
         int intLogLevel = spooler_log.level();
@@ -91,11 +91,11 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
             objO.verbose.value(-1 * intLogLevel);
             logger.debug(objO.toString());
         }
-        logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.Value()));
+        logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.getValue()));
         objR.setJSJobUtilites(this);
-        objR.Execute();
-        objR.Logout();
-        logger.info(String.format("%1$s with operation %2$s ended.", conMethodName, objO.operation.Value()));
+        objR.execute();
+        objR.logout();
+        logger.info(String.format("%1$s with operation %2$s ended.", conMethodName, objO.operation.getValue()));
     } // doProcessing
 
     abstract protected void setSpecialOptions();
