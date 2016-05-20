@@ -58,19 +58,19 @@ public class JADEOptions extends SOSFTPOptions {
     private static final String conFileNameExtensionJADEConfigFile = ".jadeconf";
 
     @Override
-    public HashMap<String, String> ReadSettingsFile() {
+    public HashMap<String, String> readSettingsFile() {
         Properties objP = new Properties();
         HashMap<String, String> map = new HashMap<>();
 
-        String strSettingsFile = settings.Value();
+        String strSettingsFile = settings.getValue();
         if (strSettingsFile.endsWith(conFileNameExtensionJADEConfigFile)) {
             try {
                 JAXBContext jc = JAXBContext.newInstance(ConfigurationElement.class);
                 Unmarshaller u = jc.createUnmarshaller();
-                ConfigurationElement objJADEConfig = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.Value()));
+                ConfigurationElement objJADEConfig = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.getValue()));
                 Vector<Object> objProfileOrProfiles = (Vector<Object>) objJADEConfig.getIncludeOrProfileOrProfiles();
                 searchXMLProfile(objP, objProfileOrProfiles, "globals");
-                searchXMLProfile(objP, objProfileOrProfiles, profile.Value());
+                searchXMLProfile(objP, objProfileOrProfiles, profile.getValue());
             } catch (JAXBException je) {
                 logger.error(je.getLocalizedMessage());
             } catch (IOException ioe) {
@@ -78,7 +78,7 @@ public class JADEOptions extends SOSFTPOptions {
             }
         } else {  // TODO any file extension is allowed for the ini-configuration
                  // file
-            map = super.ReadSettingsFile();
+            map = super.readSettingsFile();
         }
         return map;
     }
@@ -99,7 +99,7 @@ public class JADEOptions extends SOSFTPOptions {
     }
 
     private void searchXMLProfile(final Properties objP, final Vector<Object> objProfileOrProfiles, final String pstrProfileName) {
-        logger.debug("Profile = " + profile.Value());
+        logger.debug("Profile = " + profile.getValue());
         for (Object object : objProfileOrProfiles) {
             if (object instanceof JADEProfile) {
                 JADEProfile objProfile = (JADEProfile) object;

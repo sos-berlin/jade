@@ -19,7 +19,7 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
     @JSOptionDefinition(name = "hibernateConfigurationFileName", description = "", key = "hibernateConfigurationFileName", type = "SOSOptionString", mandatory = true)
     public SOSOptionInFileName hibernateConfigurationFileName = new SOSOptionInFileName(this, conClassName + ".hibernateConfigurationFileName", "", "env:hibernateConfigFile", "/WEB-INF/classes/hibernate.cfg.xml", true);
 
-    public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.SetAlias("hibernateConf", "H");
+    public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.setAlias("hibernateConf", "H");
 
     public SOSOptionInFileName getHibernateConfigurationFileName() {
         return hibernateConfigurationFileName;
@@ -82,7 +82,7 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
     public void setAllOptions(final HashMap<String, String> pobjJSSettings) {
         flgSetAllOptions = true;
         objSettings = pobjJSSettings;
-        super.Settings(objSettings);
+        super.setSettings(objSettings);
         super.setAllOptions(pobjJSSettings);
         flgSetAllOptions = false;
     }

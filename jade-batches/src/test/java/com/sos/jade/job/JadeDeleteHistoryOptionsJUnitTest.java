@@ -78,11 +78,11 @@ public class JadeDeleteHistoryOptionsJUnitTest extends JSToolBox {
      * will be deleted. */
     @Test
     public void testage_exceeding_days() {  // SOSOptionInteger
-        objOptions.age_exceeding_days.Value("12345");
-        assertEquals("", objOptions.age_exceeding_days.Value(), "12345");
+        objOptions.age_exceeding_days.setValue("12345");
+        assertEquals("", objOptions.age_exceeding_days.getValue(), "12345");
         assertEquals("", objOptions.age_exceeding_days.value(), 12345);
         objOptions.age_exceeding_days.value(12345);
-        assertEquals("", objOptions.age_exceeding_days.Value(), "12345");
+        assertEquals("", objOptions.age_exceeding_days.getValue(), "12345");
         assertEquals("", objOptions.age_exceeding_days.value(), 12345);
 
     }
@@ -114,8 +114,8 @@ public class JadeDeleteHistoryOptionsJUnitTest extends JSToolBox {
      * </session-factory> </hibernate-configuration> */
     @Test
     public void testconfiguration_file() {  // SOSOptionString
-        objOptions.configuration_file.Value("++----++");
-        assertEquals("", objOptions.configuration_file.Value(), "++----++");
+        objOptions.configuration_file.setValue("++----++");
+        assertEquals("", objOptions.configuration_file.getValue(), "++----++");
 
     }
 

@@ -16,62 +16,62 @@ public class SOSOptionUrlTest {
 
     @Test
     public void testValueString() {
-        objU.Value("ftp://kb:kb@homer.sos/home/test/test.txt");
+        objU.setValue("ftp://kb:kb@homer.sos/home/test/test.txt");
         ISOSDataProviderOptions objSF = new SOSConnection2Options();
         objU.getOptions(objSF);
-        assertEquals("Protocol = ", "ftp", objSF.getProtocol().Value());
-        assertEquals("userid = ", "kb", objSF.getUser().Value());
-        assertEquals("password = ", "kb", objSF.getPassword().Value());
-        assertEquals("host = ", "homer.sos", objSF.getHost().Value());
+        assertEquals("Protocol = ", "ftp", objSF.getProtocol().getValue());
+        assertEquals("userid = ", "kb", objSF.getUser().getValue());
+        assertEquals("password = ", "kb", objSF.getPassword().getValue());
+        assertEquals("host = ", "homer.sos", objSF.getHost().getValue());
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination, fails in Jenkins build")
     public void testValue4File() {
-        objU.Value("file:///./JCLs");
+        objU.setValue("file:///./JCLs");
         ISOSDataProviderOptions objSF = new SOSConnection2Options();
         objU.getOptions(objSF);
-        assertEquals("Protocol = ", "file", objSF.getProtocol().Value());
-        assertEquals("userid = ", "", objSF.getUser().Value());
-        assertEquals("password = ", "", objSF.getPassword().Value());
-        assertEquals("host = ", "localhost", objSF.getHost().Value());
+        assertEquals("Protocol = ", "file", objSF.getProtocol().getValue());
+        assertEquals("userid = ", "", objSF.getUser().getValue());
+        assertEquals("password = ", "", objSF.getPassword().getValue());
+        assertEquals("host = ", "localhost", objSF.getHost().getValue());
         assertEquals("filePath = ", "./JCLs", objU.getFolderName());
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination, fails in Jenkins build")
     public void testValue4File3() {
-        objU.Value("file:///./JCLs");
+        objU.setValue("file:///./JCLs");
         ISOSDataProviderOptions objSF = new SOSConnection2Options();
         objU.getOptions(objSF);
-        assertEquals("Protocol = ", "file", objSF.getProtocol().Value());
-        assertEquals("userid = ", "", objSF.getUser().Value());
-        assertEquals("password = ", "", objSF.getPassword().Value());
-        assertEquals("host = ", "localhost", objSF.getHost().Value());
+        assertEquals("Protocol = ", "file", objSF.getProtocol().getValue());
+        assertEquals("userid = ", "", objSF.getUser().getValue());
+        assertEquals("password = ", "", objSF.getPassword().getValue());
+        assertEquals("host = ", "localhost", objSF.getHost().getValue());
         assertEquals("filePath = ", "./JCLs", objU.getFolderName());
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination, fails in Jenkins build")
     public void testValue4File2() {
-        objU.Value("file:///kb:kb@localhost:4711/./JCLs");
+        objU.setValue("file:///kb:kb@localhost:4711/./JCLs");
         ISOSDataProviderOptions objSF = new SOSConnection2Options();
         objU.getOptions(objSF);
-        assertEquals("Protocol = ", "file", objSF.getProtocol().Value());
-        assertEquals("userid = ", "", objSF.getUser().Value());
-        assertEquals("password = ", "", objSF.getPassword().Value());
-        assertEquals("host = ", "localhost", objSF.getHost().Value());
+        assertEquals("Protocol = ", "file", objSF.getProtocol().getValue());
+        assertEquals("userid = ", "", objSF.getUser().getValue());
+        assertEquals("password = ", "", objSF.getPassword().getValue());
+        assertEquals("host = ", "localhost", objSF.getHost().getValue());
     }
 
     @Test
     public void testValue4BigUrl() {
-        objU.Value("    http://nobody:password@example.org:8080/cgi-bin/script.php?action=submit&pageid=86392001#section_2");
+        objU.setValue("    http://nobody:password@example.org:8080/cgi-bin/script.php?action=submit&pageid=86392001#section_2");
         ISOSDataProviderOptions objSF = new SOSConnection2Options();
         objU.getOptions(objSF);
-        assertEquals("Protocol = ", "http", objSF.getProtocol().Value());
-        assertEquals("userid = ", "nobody", objSF.getUser().Value());
-        assertEquals("password = ", "password", objSF.getPassword().Value());
-        assertEquals("host = ", "example.org", objSF.getHost().Value());
+        assertEquals("Protocol = ", "http", objSF.getProtocol().getValue());
+        assertEquals("userid = ", "nobody", objSF.getUser().getValue());
+        assertEquals("password = ", "password", objSF.getPassword().getValue());
+        assertEquals("host = ", "example.org", objSF.getHost().getValue());
     }
 
     @Test

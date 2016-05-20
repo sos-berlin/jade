@@ -21,7 +21,7 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
     public void setUp() throws Exception {
         super.setUp();
 
-        objTestOptions.Source().loadClassName.Value("com.sos.VirtualFileSystem.FTP.SOSVfsFtp2");
+        objTestOptions.getSource().loadClassName.setValue("com.sos.VirtualFileSystem.FTP.SOSVfsFtp2");
     }
 
     @Override
@@ -37,7 +37,7 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
         objTestOptions.pollingServer.value(true);
         objTestOptions.verbosityLevel.value(2);
         objTestOptions.pollMinfiles.value(1);
-        objTestOptions.pollingServerDuration.Value("04:30");
+        objTestOptions.pollingServerDuration.setValue("04:30");
         objTestOptions.forceFiles.setFalse();
         super.testSendWithPolling0Files();
     }
@@ -52,8 +52,8 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
     @Test
     public void testUseProfileWithAsciiMode() throws Exception {
         final String conMethodName = CLASS_NAME + "::testUseProfileWithAsciiMode";
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copyWithAsciiMode");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copyWithAsciiMode");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 
@@ -61,8 +61,8 @@ public class JadeTestFtp2AsSource extends JadeTestFtpAsSource {
     @Ignore("Test set to Ignore for later examination")
     public void testUseProfileWithOperationReceive() throws Exception {
         final String conMethodName = CLASS_NAME + "::testUseProfileWithOperationReceive";
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("receive");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("receive");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 }

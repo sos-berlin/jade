@@ -84,21 +84,21 @@ public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter impleme
         Spooler objSpooler = (Spooler) objSp;
         SOSJadeHistory objR = new SOSJadeHistory();
         SOSJadeHistoryOptions objO = objR.getOptions();
-        objO.CurrentNodeName(getCurrentNodeName());
+        objO.setCurrentNodeName(getCurrentNodeName());
 
         objO.setAllOptions(getSchedulerParameterAsProperties(getParameters()));
 
         String configuration_file = "";
         if (objO.getItem("configuration_file") != null) {
             logger.debug("configuration_file from param");
-            configuration_file = objO.configuration_file.Value();
+            configuration_file = objO.configuration_file.getValue();
         } else {
             logger.debug("configuration_file from scheduler");
             File f = new File(new File(objSpooler.configuration_directory()).getParent(), "hibernate.cfg.xml");
             configuration_file = f.getAbsolutePath();
         }
 
-        objO.configuration_file.Value(configuration_file);
+        objO.configuration_file.setValue(configuration_file);
 
         objO.checkMandatory();
         objR.setJSJobUtilites(this);

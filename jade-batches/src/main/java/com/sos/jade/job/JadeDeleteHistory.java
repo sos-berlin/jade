@@ -30,7 +30,7 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
         try {
             getOptions().checkMandatory();
             LOGGER.debug(getOptions().toString());
-            File configurationFile = new File(objOptions.configuration_file.Value());
+            File configurationFile = new File(objOptions.configuration_file.getValue());
             JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile);
             jadeTransferDBLayer.setAge(objOptions.age_exceeding_days.value());
             jadeTransferDBLayer.beginTransaction();

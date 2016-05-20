@@ -30,10 +30,10 @@ public class FTPReceiveJob extends Jade4JessyBaseClass {
 
     @Override
     protected void setSpecialOptions() {
-        objO.protocol.Value(enuTransferTypes.ftp);
+        objO.protocol.setValue(enuTransferTypes.ftp);
         objO.port.value(SOSOptionPortNumber.getStandardFTPPort());
-        objO.operation.Value(SOSOptionJadeOperation.enuJadeOperations.receive);
-        objO.sshAuthMethod.Value(enuAuthenticationMethods.password);
+        objO.operation.setValue(SOSOptionJadeOperation.enuJadeOperations.receive);
+        objO.sshAuthMethod.setValue(enuAuthenticationMethods.password);
     }
 
     @Override
