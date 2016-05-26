@@ -1102,7 +1102,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             target = target.getAlternatives();
             executeTransferCommands("alternative_target_pre_transfer_commands", targetClient, target.getAlternatives().preTransferCommands);
         } else {
-            executeTransferCommands("pre_transfer_commands", targetClient, objOptions.PreTransferCommands);
+            executeTransferCommands("pre_transfer_commands", targetClient, objOptions.preTransferCommands);
             executeTransferCommands("target_pre_transfer_commands", targetClient, target.preTransferCommands);
         }
         SOSConnection2OptionsAlternate source = objOptions.getSource();
