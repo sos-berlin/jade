@@ -2046,22 +2046,22 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Test
     public void testPreProcessing() throws Exception{
         JADEOptions initTestOptions = new JADEOptions();
-        initTestOptions.Source().protocol.Value("sourcePROTOCOLtoOverwrite");
-        initTestOptions.Source().host.Value("sourceHOSTtoOverwrite");
-        initTestOptions.Source().user.Value("sourceUSERtoOverwirte");
-        initTestOptions.Source().password.Value("sourcePASSWDtoOverwrite");
-        initTestOptions.Source().auth_file.Value("sourceAUTH_FILEtoOverwrite");
-        initTestOptions.Source().auth_method.Value("sourceAUTH_METHODtoOverwrite");
-        initTestOptions.Source().Directory.Value("sourceDIRECTORYtoOverwrite");
-        initTestOptions.Target().protocol.Value("targetPROTOCOLtoOverwrite");
-        initTestOptions.Target().host.Value("targetHOSTtoOverwrite");
-        initTestOptions.Target().user.Value("targetUSERtoOverwirte");
-        initTestOptions.Target().password.Value("targetPASSWDtoOverwrite");
-        initTestOptions.Target().auth_file.Value("targetAUTH_FILEtoOverwrite");
-        initTestOptions.Target().auth_method.Value("targetAUTH_METHODtoOverwrite");
-        initTestOptions.Target().Directory.Value("targetDIRECTORYtoOverwrite");
-        initTestOptions.file_path.Value("FILE_PATHtoOverwrite");
-        initTestOptions.file_spec.Value("FILE_SPECtoOverwrite");
+        initTestOptions.getSource().protocol.setValue("sourcePROTOCOLtoOverwrite");
+        initTestOptions.getSource().host.setValue("sourceHOSTtoOverwrite");
+        initTestOptions.getSource().user.setValue("sourceUSERtoOverwirte");
+        initTestOptions.getSource().password.setValue("sourcePASSWDtoOverwrite");
+        initTestOptions.getSource().authFile.setValue("sourceAUTH_FILEtoOverwrite");
+        initTestOptions.getSource().authMethod.setValue("sourceAUTH_METHODtoOverwrite");
+        initTestOptions.getSource().directory.setValue("sourceDIRECTORYtoOverwrite");
+        initTestOptions.getTarget().protocol.setValue("targetPROTOCOLtoOverwrite");
+        initTestOptions.getTarget().host.setValue("targetHOSTtoOverwrite");
+        initTestOptions.getTarget().user.setValue("targetUSERtoOverwirte");
+        initTestOptions.getTarget().password.setValue("targetPASSWDtoOverwrite");
+        initTestOptions.getTarget().authFile.setValue("targetAUTH_FILEtoOverwrite");
+        initTestOptions.getTarget().authMethod.setValue("targetAUTH_METHODtoOverwrite");
+        initTestOptions.getTarget().directory.setValue("targetDIRECTORYtoOverwrite");
+        initTestOptions.filePath.setValue("FILE_PATHtoOverwrite");
+        initTestOptions.fileSpec.setValue("FILE_SPECtoOverwrite");
         
         String xmlSelectionSnippet = "<Selection><FilePathSelection><FilePath><![CDATA[hallo.txt]]></FilePath><Directory><![CDATA[/tmp]]>"
                 + "</Directory></FilePathSelection></Selection>";
@@ -2152,31 +2152,31 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
                 + "</Selection></SourceFileOptions></GetListSource></GetList></Operation></Profile></Profiles></Configurations>";
         UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(initTestOptions);
         LOGGER.debug("***********************************************SELECTION VALUES*******************************************************************");
-        updateHelper.getOptions().xmlUpdate.Value(xmlSelectionSnippet);
+        updateHelper.getOptions().xmlUpdate.setValue(xmlSelectionSnippet);
         updateHelper.executeBefore();
         LOGGER.debug("***********************************************BIG CONFIG VALUES******************************************************************");
         updateHelper.setOptions(initTestOptions);
-        updateHelper.getOptions().xmlUpdate.Value(xmlAllProtocolsSomeProfiles);
+        updateHelper.getOptions().xmlUpdate.setValue(xmlAllProtocolsSomeProfiles);
         updateHelper.executeBefore();
         LOGGER.debug("**************************************************COPY VALUES*********************************************************************");
         updateHelper.setOptions(initTestOptions);
-        updateHelper.getOptions().xmlUpdate.Value(copyXml);
+        updateHelper.getOptions().xmlUpdate.setValue(copyXml);
         updateHelper.executeBefore();
         LOGGER.debug("*********************************************COPY WITH JUMP VALUES****************************************************************");
         updateHelper.setOptions(initTestOptions);
-        updateHelper.getOptions().xmlUpdate.Value(copyWithJumpXml);
+        updateHelper.getOptions().xmlUpdate.setValue(copyWithJumpXml);
         updateHelper.executeBefore();
         LOGGER.debug("**************************************************MOVE VALUES*********************************************************************");
         updateHelper.setOptions(initTestOptions);
-        updateHelper.getOptions().xmlUpdate.Value(moveXml);
+        updateHelper.getOptions().xmlUpdate.setValue(moveXml);
         updateHelper.executeBefore();
         LOGGER.debug("*************************************************REMOVE VALUES********************************************************************");
         updateHelper.setOptions(initTestOptions);
-        updateHelper.getOptions().xmlUpdate.Value(removeXml);
+        updateHelper.getOptions().xmlUpdate.setValue(removeXml);
         updateHelper.executeBefore();
         LOGGER.debug("************************************************GETLIST VALUES********************************************************************");
         updateHelper.setOptions(initTestOptions);
-        updateHelper.getOptions().xmlUpdate.Value(getListXml);
+        updateHelper.getOptions().xmlUpdate.setValue(getListXml);
         updateHelper.executeBefore();
     }
 
