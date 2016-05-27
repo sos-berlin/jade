@@ -36,6 +36,7 @@ import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
 import sos.util.SOSString;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.JSOptionsClass;
@@ -316,6 +317,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 throw new JobSchedulerException(e.getMessage());
             } finally {
                 showBanner();
+            }
+            UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(objOptions);
+            if (updateHelper.checkBefore()) {
+                updateHelper.executeBefore();
+                objOptions = updateHelper.getOptions();
             }
             ok = transfer();
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
@@ -785,8 +791,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void sendFiles(final SOSFileList fileList) {
         int maxParallelTransfers = 0;
         if (objOptions.concurrentTransfer.isTrue()) {
-            // TODO resolve problem with apache ftp client in multithreading
-            // mode
+            // TODO resolve problem with apache ftp client in multithreading mode
         }
         if (maxParallelTransfers <= 0 || objOptions.cumulateFiles.isTrue()) {
             for (SOSFileListEntry entry : fileList.getList()) {
@@ -1321,4 +1326,5 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         addOrder.run();
         return true;
     }
+
 }

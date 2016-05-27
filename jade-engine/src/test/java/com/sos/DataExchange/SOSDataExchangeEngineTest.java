@@ -2,6 +2,7 @@ package com.sos.DataExchange;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -17,7 +18,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import sos.xml.SOSXMLXPath;
+
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
@@ -2017,6 +2021,163 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
             LOGGER.info("nicht enthalten.");
         }
         LOGGER.info(strT);
+    }
+    
+    @Test
+    public void testXPath() throws Exception {
+        String xml = "<Selection>"
+                   + "    <FilePathSelection>"
+                   + "        <FilePath><![CDATA[hallo.txt]]></FilePath>"
+                   + "        <Directory><![CDATA[/tmp]]></Directory>"
+                   + "    </FilePathSelection>"
+                   + "</Selection>";
+        SOSXMLXPath xPath = new SOSXMLXPath(new StringBuffer(xml));
+        LOGGER.info("Document: " + xPath.getDocument());
+        LOGGER.info("Element: " + xPath.getElement());
+        LOGGER.info("Node //FilePath: " + xPath.selectSingleNodeValue("//FilePath"));
+        LOGGER.info("Node //Directory: " + xPath.selectSingleNodeValue("//Directory"));
+        LOGGER.info("Node /Selection/FilePathSelection/FilePath: " + xPath.selectSingleNodeValue("/Selection/FilePathSelection/FilePath"));
+        LOGGER.info("Node /Selection/FilePathSelection/Directory: " + xPath.selectSingleNodeValue("/Selection/FilePathSelection/Directory"));
+        String irgendwat = xPath.selectSingleNodeValue("/Selection/FilePathSelection/Irgendwat");
+        LOGGER.info("Node /Selection/FilePathSelection/Irgendwat sollte null sein: " + irgendwat);
+        assertNull(irgendwat);
+    }
+    
+    @Test
+    public void testPreProcessing() throws Exception{
+        JADEOptions initTestOptions = new JADEOptions();
+        initTestOptions.Source().protocol.Value("sourcePROTOCOLtoOverwrite");
+        initTestOptions.Source().host.Value("sourceHOSTtoOverwrite");
+        initTestOptions.Source().user.Value("sourceUSERtoOverwirte");
+        initTestOptions.Source().password.Value("sourcePASSWDtoOverwrite");
+        initTestOptions.Source().auth_file.Value("sourceAUTH_FILEtoOverwrite");
+        initTestOptions.Source().auth_method.Value("sourceAUTH_METHODtoOverwrite");
+        initTestOptions.Source().Directory.Value("sourceDIRECTORYtoOverwrite");
+        initTestOptions.Target().protocol.Value("targetPROTOCOLtoOverwrite");
+        initTestOptions.Target().host.Value("targetHOSTtoOverwrite");
+        initTestOptions.Target().user.Value("targetUSERtoOverwirte");
+        initTestOptions.Target().password.Value("targetPASSWDtoOverwrite");
+        initTestOptions.Target().auth_file.Value("targetAUTH_FILEtoOverwrite");
+        initTestOptions.Target().auth_method.Value("targetAUTH_METHODtoOverwrite");
+        initTestOptions.Target().Directory.Value("targetDIRECTORYtoOverwrite");
+        initTestOptions.file_path.Value("FILE_PATHtoOverwrite");
+        initTestOptions.file_spec.Value("FILE_SPECtoOverwrite");
+        
+        String xmlSelectionSnippet = "<Selection><FilePathSelection><FilePath><![CDATA[hallo.txt]]></FilePath><Directory><![CDATA[/tmp]]>"
+                + "</Directory></FilePathSelection></Selection>";
+        String xmlAllProtocolsSomeProfiles = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments>"
+                + "<FTPFragment name='ftp'><BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><BasicAuthentication>"
+                + "<Account><![CDATA[test]]></Account><Password><![CDATA[test]]></Password></BasicAuthentication><JumpFragmentRef ref='jump'/>"
+                + "</FTPFragment><FTPSFragment name='ftps'><BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection>"
+                + "<BasicAuthentication><Account><![CDATA[test]]></Account><Password><![CDATA[test]]></Password></BasicAuthentication>"
+                + "</FTPSFragment><HTTPFragment name='http'><URLConnection><URL>http://sp.sos:4111</URL></URLConnection></HTTPFragment>"
+                + "<HTTPSFragment name='https'><URLConnection><URL>https://sp.sos:4111</URL></URLConnection></HTTPSFragment>"
+                + "<JumpFragment name='jump'><BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><SSHAuthentication>"
+                + "<Account><![CDATA[test]]></Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password>"
+                + "</AuthenticationMethodPassword></SSHAuthentication><JumpCommand><![CDATA[YADE.cmd]]></JumpCommand></JumpFragment>"
+                + "<SFTPFragment name='sftp'><BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><SSHAuthentication>"
+                + "<Account><![CDATA[test]]></Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password>"
+                + "</AuthenticationMethodPassword></SSHAuthentication></SFTPFragment><SMBFragment name='smb'><Hostname><![CDATA[homer.sos]]>"
+                + "</Hostname><SMBAuthentication><Account><![CDATA[test]]></Account><Password><![CDATA[test]]></Password></SMBAuthentication>"
+                + "</SMBFragment><WebDAVFragment name='webDAV'><URLConnection><URL>webDAV://sp.sos:4111</URL></URLConnection><BasicAuthentication>"
+                + "<Account><![CDATA[test]]></Account><Password><![CDATA[test]]></Password></BasicAuthentication></WebDAVFragment>"
+                + "</ProtocolFragments></Fragments><Profiles><Profile profile_id='example_filePath'><Operation><Copy><CopySource>"
+                + "<CopySourceFragmentRef><LocalSource /></CopySourceFragmentRef><SourceFileOptions><Selection><FilePathSelection><FilePath>"
+                + "<![CDATA[hallo.txt]]></FilePath><Directory><![CDATA[/tmp]]></Directory></FilePathSelection></Selection></SourceFileOptions>"
+                + "</CopySource><CopyTarget><CopyTargetFragmentRef><FTPFragmentRef ref='ftp' /></CopyTargetFragmentRef><Directory>"
+                + "<![CDATA[path_to_target_Directory]]></Directory></CopyTarget></Copy></Operation></Profile><Profile profile_id='example_fileList'>"
+                + "<Operation><Copy><CopySource><CopySourceFragmentRef><LocalSource /></CopySourceFragmentRef><SourceFileOptions><Selection>"
+                + "<FileListSelection><FileList><![CDATA[FileWithList.txt]]></FileList><Directory><![CDATA[path_to_file]]></Directory>"
+                + "</FileListSelection></Selection></SourceFileOptions></CopySource><CopyTarget><CopyTargetFragmentRef><FTPFragmentRef ref='ftp'/>"
+                + "</CopyTargetFragmentRef><Directory><![CDATA[path_to_target_Directory]]></Directory></CopyTarget></Copy></Operation></Profile>"
+                + "<Profile profile_id='example_fileSpec'><Operation><Copy><CopySource><CopySourceFragmentRef><LocalSource/></CopySourceFragmentRef>"
+                + "<SourceFileOptions><Selection><FileSpecSelection><FileSpec><![CDATA[.*]]></FileSpec><Directory><![CDATA[path_to_directory]]>"
+                + "</Directory><Recursive>false</Recursive></FileSpecSelection></Selection></SourceFileOptions></CopySource><CopyTarget>"
+                + "<CopyTargetFragmentRef><FTPFragmentRef ref='ftp' /></CopyTargetFragmentRef><Directory><![CDATA[path_to_target_Directory]]>"
+                + "</Directory></CopyTarget></Copy></Operation></Profile></Profiles></Configurations>";
+        String copyXml = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments><FTPFragment name='ftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><BasicAuthentication><Account><![CDATA[test]]>"
+                + "</Account><Password><![CDATA[test]]></Password></BasicAuthentication></FTPFragment><SFTPFragment name='sftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><SSHAuthentication><Account><![CDATA[test]]>"
+                + "</Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password></AuthenticationMethodPassword>"
+                + "</SSHAuthentication></SFTPFragment></ProtocolFragments></Fragments><Profiles><Profile profile_id='example_filePath'>"
+                + "<Operation><Copy><CopySource><CopySourceFragmentRef><SFTPFragmentRef ref='sftp' /></CopySourceFragmentRef><SourceFileOptions>"
+                + "<Selection><FilePathSelection><FilePath><![CDATA[hallo.txt]]></FilePath><Directory><![CDATA[/tmp]]></Directory>"
+                + "</FilePathSelection></Selection></SourceFileOptions></CopySource><CopyTarget><CopyTargetFragmentRef>"
+                + "<FTPFragmentRef ref='ftp' /></CopyTargetFragmentRef><Directory><![CDATA[path_to_target_Directory]]></Directory>"
+                + "</CopyTarget></Copy></Operation></Profile></Profiles></Configurations>";
+        String copyWithJumpXml = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments><FTPFragment name='ftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><BasicAuthentication><Account><![CDATA[test]]>"
+                + "</Account><Password><![CDATA[test]]></Password></BasicAuthentication></FTPFragment><JumpFragment name='THEjumpFragment'>"
+                + "<BasicConnection><Hostname><![CDATA[JumpHost.sos]]></Hostname></BasicConnection><SSHAuthentication><Account>"
+                + "<![CDATA[JumpUserAccount]]></Account><AuthenticationMethodPassword><Password><![CDATA[JumpUserPasswd]]></Password>"
+                + "</AuthenticationMethodPassword></SSHAuthentication><JumpCommand><![CDATA[/THIS/IS/THE/JUMP/COMMAND.cmd]]></JumpCommand>"
+                + "</JumpFragment><SFTPFragment name='sftp'><BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection>"
+                + "<SSHAuthentication><Account><![CDATA[test]]></Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password>"
+                + "</AuthenticationMethodPassword></SSHAuthentication><JumpFragmentRef ref='THEjumpFragment' /></SFTPFragment></ProtocolFragments>"
+                + "</Fragments><Profiles><Profile profile_id='example_filePath'><Operation><Copy><CopySource><CopySourceFragmentRef>"
+                + "<SFTPFragmentRef ref='sftp' /></CopySourceFragmentRef><SourceFileOptions><Selection><FilePathSelection><FilePath>"
+                + "<![CDATA[hallo.txt]]></FilePath><Directory><![CDATA[/tmp]]></Directory></FilePathSelection></Selection></SourceFileOptions>"
+                + "</CopySource><CopyTarget><CopyTargetFragmentRef><FTPFragmentRef ref='ftp' /></CopyTargetFragmentRef><Directory>"
+                + "<![CDATA[path_to_target_Directory]]></Directory></CopyTarget></Copy></Operation></Profile></Profiles></Configurations>";
+        String moveXml = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments><FTPFragment name='ftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><BasicAuthentication><Account><![CDATA[test]]>"
+                + "</Account><Password><![CDATA[test]]></Password></BasicAuthentication></FTPFragment><SFTPFragment name='sftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><SSHAuthentication><Account><![CDATA[test]]>"
+                + "</Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password></AuthenticationMethodPassword>"
+                + "</SSHAuthentication></SFTPFragment></ProtocolFragments></Fragments><Profiles><Profile profile_id='example_filePath'>"
+                + "<Operation><Move><MoveSource><MoveSourceFragmentRef><SFTPFragmentRef ref='sftp' /></MoveSourceFragmentRef><SourceFileOptions>"
+                + "<Selection><FilePathSelection><FilePath><![CDATA[/tmp/fileToMove.txt]]></FilePath><Directory><![CDATA[/homt/test/data]]>"
+                + "</Directory></FilePathSelection></Selection></SourceFileOptions></MoveSource><MoveTarget><MoveTargetFragmentRef>"
+                + "<FTPFragmentRef ref='ftp' /></MoveTargetFragmentRef><Directory><![CDATA[/notHome/notTest/notData]]></Directory></MoveTarget>"
+                + "</Move></Operation></Profile></Profiles></Configurations>";
+        String removeXml = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments><FTPFragment name='ftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><BasicAuthentication><Account><![CDATA[test]]>"
+                + "</Account><Password><![CDATA[test]]></Password></BasicAuthentication></FTPFragment><SFTPFragment name='sftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><SSHAuthentication><Account><![CDATA[test]]>"
+                + "</Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password></AuthenticationMethodPassword>"
+                + "</SSHAuthentication></SFTPFragment></ProtocolFragments></Fragments><Profiles><Profile profile_id='example_filePath'>"
+                + "<Operation><Remove><RemoveSource><RemoveSourceFragmentRef><SFTPFragmentRef ref='sftp' /></RemoveSourceFragmentRef>"
+                + "<SourceFileOptions><Selection><FilePathSelection><FilePath><![CDATA[/tmp/FileToRemove.txt]]></FilePath><Directory>"
+                + "<![CDATA[/home/test/data]]></Directory></FilePathSelection></Selection></SourceFileOptions></RemoveSource></Remove>"
+                + "</Operation></Profile></Profiles></Configurations>";
+        String getListXml = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments><FTPFragment name='ftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><BasicAuthentication><Account><![CDATA[test]]>"
+                + "</Account><Password><![CDATA[test]]></Password></BasicAuthentication></FTPFragment><SFTPFragment name='sftp'>"
+                + "<BasicConnection><Hostname><![CDATA[homer.sos]]></Hostname></BasicConnection><SSHAuthentication><Account><![CDATA[test]]>"
+                + "</Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password></AuthenticationMethodPassword>"
+                + "</SSHAuthentication></SFTPFragment></ProtocolFragments></Fragments><Profiles><Profile profile_id='example_filePath'>"
+                + "<Operation><GetList><GetListSource><GetListSourceFragmentRef><SFTPFragmentRef ref='sftp' /></GetListSourceFragmentRef>"
+                + "<SourceFileOptions><Selection><FilePathSelection><FilePath><![CDATA[/tmp/GetListFile.txt]]></FilePath></FilePathSelection>"
+                + "</Selection></SourceFileOptions></GetListSource></GetList></Operation></Profile></Profiles></Configurations>";
+        UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(initTestOptions);
+        LOGGER.debug("***********************************************SELECTION VALUES*******************************************************************");
+        updateHelper.getOptions().xmlUpdate.Value(xmlSelectionSnippet);
+        updateHelper.executeBefore();
+        LOGGER.debug("***********************************************BIG CONFIG VALUES******************************************************************");
+        updateHelper.setOptions(initTestOptions);
+        updateHelper.getOptions().xmlUpdate.Value(xmlAllProtocolsSomeProfiles);
+        updateHelper.executeBefore();
+        LOGGER.debug("**************************************************COPY VALUES*********************************************************************");
+        updateHelper.setOptions(initTestOptions);
+        updateHelper.getOptions().xmlUpdate.Value(copyXml);
+        updateHelper.executeBefore();
+        LOGGER.debug("*********************************************COPY WITH JUMP VALUES****************************************************************");
+        updateHelper.setOptions(initTestOptions);
+        updateHelper.getOptions().xmlUpdate.Value(copyWithJumpXml);
+        updateHelper.executeBefore();
+        LOGGER.debug("**************************************************MOVE VALUES*********************************************************************");
+        updateHelper.setOptions(initTestOptions);
+        updateHelper.getOptions().xmlUpdate.Value(moveXml);
+        updateHelper.executeBefore();
+        LOGGER.debug("*************************************************REMOVE VALUES********************************************************************");
+        updateHelper.setOptions(initTestOptions);
+        updateHelper.getOptions().xmlUpdate.Value(removeXml);
+        updateHelper.executeBefore();
+        LOGGER.debug("************************************************GETLIST VALUES********************************************************************");
+        updateHelper.setOptions(initTestOptions);
+        updateHelper.getOptions().xmlUpdate.Value(getListXml);
+        updateHelper.executeBefore();
     }
 
 }

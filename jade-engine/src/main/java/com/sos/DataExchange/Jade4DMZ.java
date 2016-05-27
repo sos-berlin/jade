@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import sos.util.SOSString;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
@@ -40,6 +41,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 operation = Operation.copyFromInternet;
             } else {
                 throw new JobSchedulerException(Messages.getMsg("Jade4DMZ-E-001"));
+            }
+            UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(getOptions());
+            if (updateHelper.checkBefore()) {
+                updateHelper.executeBefore();
+                objOptions = updateHelper.getOptions();
             }
 
             transfer(operation, subDir);
