@@ -593,7 +593,7 @@ public class JADEUserInterfaceMain extends ApplicationWindow {
 							objTVE.ValueHasChanged();
 						}
 						catch (Exception e) {
-							objE.addMessage(e.getLocalizedMessage());
+							objE.addMessage(e.getMessage());
 							new ErrorLog("problem", e);
 						}
 						finally {

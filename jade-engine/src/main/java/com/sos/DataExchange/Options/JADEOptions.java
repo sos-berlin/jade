@@ -59,9 +59,9 @@ public class JADEOptions extends SOSFTPOptions {
                 searchXMLProfile(properties, profileOrProfiles, "globals");
                 searchXMLProfile(properties, profileOrProfiles, profile.getValue());
             } catch (JAXBException ex) {
-                LOGGER.error(ex.getLocalizedMessage());
+                LOGGER.error(ex.getMessage());
             } catch (IOException ex) {
-                LOGGER.error(ex.getLocalizedMessage());
+                LOGGER.error(ex.getMessage());
             }
         } else {
             map = super.readSettingsFile();

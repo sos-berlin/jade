@@ -242,7 +242,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             currentFilesCount = sourceFileList.count();
                         }
                     } catch (Exception e) {
-                        LOGGER.error(e.getLocalizedMessage());
+                        LOGGER.error(e.getMessage());
                     }
                     if ((objOptions.pollMinfiles.isNotDirty() && currentFilesCount > 0)
                             || (objOptions.pollMinfiles.isDirty() && currentFilesCount >= objOptions.pollMinfiles.value())) {
@@ -313,7 +313,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             } catch (JobSchedulerException e) {
                 throw e;
             } catch (Exception e) {
-                throw new JobSchedulerException(e.getLocalizedMessage());
+                throw new JobSchedulerException(e.getMessage());
             } finally {
                 showBanner();
             }
@@ -324,7 +324,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         } catch (JobSchedulerException e) {
             throw e;
         } catch (Exception e) {
-            throw new JobSchedulerException(e.getLocalizedMessage());
+            throw new JobSchedulerException(e.getMessage());
         } finally {
             showResult();
             sendNotifications();
@@ -768,7 +768,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 LOGGER.debug(mailOptions.dirtyString());
                 mail.sendMail(mailOptions);
             } catch (Exception e) {
-                LOGGER.error(e.getLocalizedMessage());
+                LOGGER.error(e.getMessage());
             }
         }
     }
@@ -809,7 +809,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 executor.shutDown();
                 executor.objThreadPool.awaitTermination(1, TimeUnit.DAYS);
             } catch (InterruptedException e) {
-                LOGGER.error(e.getLocalizedMessage());
+                LOGGER.error(e.getMessage());
             }
         }
     }
@@ -1080,7 +1080,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         } catch (Exception e) {
             setTextProperties();
             objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0013.get());
-            JADE_REPORT_LOGGER.info(SOSJADE_E_0101.params(e.getLocalizedMessage()), e);
+            JADE_REPORT_LOGGER.info(SOSJADE_E_0101.params(e.getMessage()), e);
             try {
                 executePostTransferCommandsOnError();
             } catch (Exception ex) {
