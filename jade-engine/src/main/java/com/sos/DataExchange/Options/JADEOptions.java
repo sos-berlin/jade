@@ -72,12 +72,11 @@ public class JADEOptions extends SOSFTPOptions {
                 searchXMLProfile(objP, objProfileOrProfiles, "globals");
                 searchXMLProfile(objP, objProfileOrProfiles, profile.getValue());
             } catch (JAXBException je) {
-                logger.error(je.getLocalizedMessage());
+                logger.error(je.getMessage());
             } catch (IOException ioe) {
-                logger.error(ioe.getLocalizedMessage());
+                logger.error(ioe.getMessage());
             }
-        } else {  // TODO any file extension is allowed for the ini-configuration
-                 // file
+        } else {
             map = super.readSettingsFile();
         }
         return map;

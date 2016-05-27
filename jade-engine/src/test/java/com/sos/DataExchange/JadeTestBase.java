@@ -295,7 +295,7 @@ public abstract class JadeTestBase extends JSToolBox {
                 }
             } catch (IOException e) {
                 LOGGER.error("", e);
-                throw new JobSchedulerException(e.getLocalizedMessage(), e);
+                throw new JobSchedulerException(e.getMessage(), e);
             }
         }
         if (isNotNull(objFileList)) {
@@ -303,7 +303,7 @@ public abstract class JadeTestBase extends JSToolBox {
                 objFileList.close();
             } catch (IOException e) {
                 LOGGER.error("", e);
-                throw new JobSchedulerException(e.getLocalizedMessage(), e);
+                throw new JobSchedulerException(e.getMessage(), e);
             }
         }
         createRemoteTestFiles(strFilePath);
