@@ -172,7 +172,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             entry.setSourceFileProperties(sourceClient.getFileHandle(entry.getSourceFileName()));
             if (entry.getLastCheckedFileSize().equals(entry.getFileSize())) {
                 entry.setSteady(true);
-                LOGGER.debug(String.format("%s Not changed. file size: %s bytes. '%s'", msg, entry.getLastCheckedFileSize(), entry.getSourceFileName()));
+                LOGGER.debug(String.format("%s Not changed. file size: %s bytes. '%s'", msg, entry.getLastCheckedFileSize(),
+                        entry.getSourceFileName()));
             } else {
                 fileIsSteady = false;
                 LOGGER.info(String.format("%s Changed. file size: new = %s bytes, old = %s bytes. '%s'", msg, entry.getFileSize(),
@@ -253,8 +254,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 setInfo(String.format("file-polling: going to sleep for %1$d seconds. regexp '%2$s'", pollInterval, objOptions.fileSpec.getValue()));
                 doSleep(pollInterval);
                 currentPollingTime += pollInterval;
-                setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", currentFilesCount, objOptions.fileSpec.getValue(),
-                        sourceDir));
+                setInfo(String.format("file-polling: %1$d files found for regexp '%2$s' on directory '%3$s'.", currentFilesCount,
+                        objOptions.fileSpec.getValue(), sourceDir));
                 if (filesCount >= currentFilesCount && filesCount != 0) {
                     if (objOptions.waitingForLateComers.isTrue()) {
                         objOptions.waitingForLateComers.setFalse();
@@ -566,7 +567,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 } catch (JobSchedulerException e1) {
                     throw e1;
                 } catch (Exception e1) {
-                    throw new JobSchedulerException(String.format("error while reading '%1$s': %2$s", objOptions.fileListName.getValue(), e1.toString()));
+                    throw new JobSchedulerException(String.format("error while reading '%1$s': %2$s", objOptions.fileListName.getValue(),
+                            e1.toString()));
                 } finally {
                     try {
                         file.close();
@@ -667,8 +669,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (objOptions.pollMinfiles.value() > 0 && founded >= objOptions.pollMinfiles.value()) {
                     break;
                 }
-                String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", pollInterval,
-                        founded, currentFounded);
+                String msg =
+                        String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files", pollInterval,
+                                founded, currentFounded);
                 setInfo(msg);
                 doSleep(pollInterval);
                 currentPollingTime += pollInterval;
@@ -791,7 +794,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void sendFiles(final SOSFileList fileList) {
         int maxParallelTransfers = 0;
         if (objOptions.concurrentTransfer.isTrue()) {
-            // TODO resolve problem with apache ftp client in multithreading mode
+            // TODO resolve problem with apache ftp client in multithreading
+            // mode
         }
         if (maxParallelTransfers <= 0 || objOptions.cumulateFiles.isTrue()) {
             for (SOSFileListEntry entry : fileList.getList()) {
@@ -820,12 +824,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     }
 
     private void sendNotifications() {
-        // TODO Status über MQ senden
         SOSSmtpMailOptions mailOptions = objOptions.getMailOptions();
         if (objOptions.mailOnSuccess.isTrue() && sourceFileList.getFailedTransfers() <= 0 || mailOptions.FileNotificationTo.isDirty()) {
             doProcessMail(enuMailClasses.MailOnSuccess);
         }
-        if (objOptions.mailOnError.isTrue() && (sourceFileList.getFailedTransfers() > 0 || JobSchedulerException.LastErrorMessage.length() > 0)) {
+        if (objOptions.mailOnError.isTrue() && (sourceFileList.getFailedTransfers() > 0 || !JobSchedulerException.LastErrorMessage.isEmpty())) {
             doProcessMail(enuMailClasses.MailOnError);
         }
         if (objOptions.mailOnEmptyFiles.isTrue() && sourceFileList.getZeroByteCount() > 0) {
@@ -1275,7 +1278,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 ft.clearFileListEntries();
                 sourceFileList = ft.getFileListEntries(sourceFileList, sourceDir.getValue(), regExp.getValue(), recursive.value());
             } else {
-                String[] fileList = sourceClient.getFilelist(sourceDir.getValue(), regExp.getValue(), 0, recursive.value(), integrityHashFileExtention);
+                String[] fileList =
+                        sourceClient.getFilelist(sourceDir.getValue(), regExp.getValue(), 0, recursive.value(), integrityHashFileExtention);
                 fillFileList(fileList, sourceDir.getValue());
             }
             setInfo(String.format("%1$d files found for regexp '%2$s'.", sourceFileList.size(), regExp.getValue()));
@@ -1301,9 +1305,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     countSentHistoryRecords++;
                 }
             }
-            LOGGER.info(String.format("%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s",
-                    countSentHistoryRecords, objOptions.schedulerHost.getValue(), objOptions.schedulerPort.getValue(), objOptions.schedulerJobChain.getValue(),
-                    objOptions.schedulerTransferMethod.getValue()));
+            LOGGER.info(String.format(
+                    "%s transfer history records sent to background service, scheduler = %s:%s ,job chain = %s, transfer method = %s",
+                    countSentHistoryRecords, objOptions.schedulerHost.getValue(), objOptions.schedulerPort.getValue(),
+                    objOptions.schedulerJobChain.getValue(), objOptions.schedulerTransferMethod.getValue()));
         } else {
             LOGGER.info(String.format("No data sent to the background service due to parameter '%1$s' = false",
                     objOptions.sendTransferHistory.getShortKey()));

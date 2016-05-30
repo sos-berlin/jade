@@ -2046,6 +2046,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Test
     public void testPreProcessing() throws Exception{
         JADEOptions initTestOptions = new JADEOptions();
+        initTestOptions.settings.setValue(strSettingsFile);
         initTestOptions.getSource().protocol.setValue("sourcePROTOCOLtoOverwrite");
         initTestOptions.getSource().host.setValue("sourceHOSTtoOverwrite");
         initTestOptions.getSource().user.setValue("sourceUSERtoOverwirte");
@@ -2062,7 +2063,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         initTestOptions.getTarget().directory.setValue("targetDIRECTORYtoOverwrite");
         initTestOptions.filePath.setValue("FILE_PATHtoOverwrite");
         initTestOptions.fileSpec.setValue("FILE_SPECtoOverwrite");
-        
         String xmlSelectionSnippet = "<Selection><FilePathSelection><FilePath><![CDATA[hallo.txt]]></FilePath><Directory><![CDATA[/tmp]]>"
                 + "</Directory></FilePathSelection></Selection>";
         String xmlAllProtocolsSomeProfiles = "<?xml version='1.0' encoding='utf-8'?><Configurations><Fragments><ProtocolFragments>"
@@ -2127,7 +2127,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
                 + "</Account><AuthenticationMethodPassword><Password><![CDATA[test]]></Password></AuthenticationMethodPassword>"
                 + "</SSHAuthentication></SFTPFragment></ProtocolFragments></Fragments><Profiles><Profile profile_id='example_filePath'>"
                 + "<Operation><Move><MoveSource><MoveSourceFragmentRef><SFTPFragmentRef ref='sftp' /></MoveSourceFragmentRef><SourceFileOptions>"
-                + "<Selection><FilePathSelection><FilePath><![CDATA[/tmp/fileToMove.txt]]></FilePath><Directory><![CDATA[/homt/test/data]]>"
+                + "<Selection><FilePathSelection><FilePath><![CDATA[/tmp/fileToMove.txt]]></FilePath><Directory><![CDATA[/home/test/data]]>"
                 + "</Directory></FilePathSelection></Selection></SourceFileOptions></MoveSource><MoveTarget><MoveTargetFragmentRef>"
                 + "<FTPFragmentRef ref='ftp' /></MoveTargetFragmentRef><Directory><![CDATA[/notHome/notTest/notData]]></Directory></MoveTarget>"
                 + "</Move></Operation></Profile></Profiles></Configurations>";
@@ -2151,30 +2151,30 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
                 + "<SourceFileOptions><Selection><FilePathSelection><FilePath><![CDATA[/tmp/GetListFile.txt]]></FilePath></FilePathSelection>"
                 + "</Selection></SourceFileOptions></GetListSource></GetList></Operation></Profile></Profiles></Configurations>";
         UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(initTestOptions);
-        LOGGER.debug("***********************************************SELECTION VALUES*******************************************************************");
+        LOGGER.info("***********************************************SELECTION VALUES*******************************************************************");
         updateHelper.getOptions().xmlUpdate.setValue(xmlSelectionSnippet);
         updateHelper.executeBefore();
-        LOGGER.debug("***********************************************BIG CONFIG VALUES******************************************************************");
+        LOGGER.info("***********************************************BIG CONFIG VALUES******************************************************************");
         updateHelper.setOptions(initTestOptions);
         updateHelper.getOptions().xmlUpdate.setValue(xmlAllProtocolsSomeProfiles);
         updateHelper.executeBefore();
-        LOGGER.debug("**************************************************COPY VALUES*********************************************************************");
+        LOGGER.info("**************************************************COPY VALUES*********************************************************************");
         updateHelper.setOptions(initTestOptions);
         updateHelper.getOptions().xmlUpdate.setValue(copyXml);
         updateHelper.executeBefore();
-        LOGGER.debug("*********************************************COPY WITH JUMP VALUES****************************************************************");
+        LOGGER.info("*********************************************COPY WITH JUMP VALUES****************************************************************");
         updateHelper.setOptions(initTestOptions);
         updateHelper.getOptions().xmlUpdate.setValue(copyWithJumpXml);
         updateHelper.executeBefore();
-        LOGGER.debug("**************************************************MOVE VALUES*********************************************************************");
+        LOGGER.info("**************************************************MOVE VALUES*********************************************************************");
         updateHelper.setOptions(initTestOptions);
         updateHelper.getOptions().xmlUpdate.setValue(moveXml);
         updateHelper.executeBefore();
-        LOGGER.debug("*************************************************REMOVE VALUES********************************************************************");
+        LOGGER.info("*************************************************REMOVE VALUES********************************************************************");
         updateHelper.setOptions(initTestOptions);
         updateHelper.getOptions().xmlUpdate.setValue(removeXml);
         updateHelper.executeBefore();
-        LOGGER.debug("************************************************GETLIST VALUES********************************************************************");
+        LOGGER.info("************************************************GETLIST VALUES********************************************************************");
         updateHelper.setOptions(initTestOptions);
         updateHelper.getOptions().xmlUpdate.setValue(getListXml);
         updateHelper.executeBefore();
