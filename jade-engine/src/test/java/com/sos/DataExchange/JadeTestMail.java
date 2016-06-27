@@ -31,19 +31,19 @@ public class JadeTestMail extends JadeTestBase {
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.local;
 
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value(strTestPathName + "/SOSMDX/");
+        objTestOptions.sourceDir.setValue(strTestPathName);
+        objTestOptions.targetDir.setValue(strTestPathName + "/SOSMDX/");
 
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
     }
 
     @Test
     public void testMailWithNotification() throws Exception {
         // use file_notification_* params
         final String conMethodName = CLASS_NAME + "::testMailWithNotification";
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_files_with_notification");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_files_with_notification");
         super.testUseProfile();
     }
 
@@ -51,8 +51,8 @@ public class JadeTestMail extends JadeTestBase {
     public void testMailOnSuccess() throws Exception {
         // use mail_on_success_* params
         final String conMethodName = CLASS_NAME + "::testMailOnSuccess";
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_files_on_success");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_files_on_success");
         super.testUseProfile();
     }
 
@@ -61,8 +61,8 @@ public class JadeTestMail extends JadeTestBase {
     public void testMailOnError() throws Exception {
         // use mail_on_error_* params
         final String conMethodName = CLASS_NAME + "::testMailOnError";
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_files_on_error");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_files_on_error");
         super.testUseProfile();
     }
 
@@ -70,8 +70,8 @@ public class JadeTestMail extends JadeTestBase {
     public void testMailOnErrorButNoErrorOccurs() throws Exception {
         // use mail_on_error_* params
         final String conMethodName = CLASS_NAME + "::testMailOnErrorButNoErrorOccurs";
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_files_without_error_and_mail_on_error");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_files_without_error_and_mail_on_error");
         super.testUseProfile();
     }
 }

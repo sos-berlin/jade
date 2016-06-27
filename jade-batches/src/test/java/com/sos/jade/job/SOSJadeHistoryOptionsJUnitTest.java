@@ -99,8 +99,8 @@ public class SOSJadeHistoryOptionsJUnitTest extends JSToolBox {
      * </session-factory> </hibernate-configuration> */
     @Test
     public void testconfiguration_file() {  // SOSOptionString
-        objOptions.configuration_file.Value("++----++");
-        assertEquals("", objOptions.configuration_file.Value(), "++----++");
+        objOptions.configuration_file.setValue("++----++");
+        assertEquals("", objOptions.configuration_file.getValue(), "++----++");
 
     }
 

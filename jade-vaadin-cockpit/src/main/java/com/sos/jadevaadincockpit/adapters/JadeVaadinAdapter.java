@@ -68,7 +68,7 @@ public class JadeVaadinAdapter implements Serializable {
 					try {
 						engine = new JadeEngine(options);
 					} catch (Exception e) {
-						logger.log(Level.SEVERE, e.getLocalizedMessage());
+						logger.log(Level.SEVERE, e.getMessage());
 					}
 					try {
 						options.CheckMandatory();
@@ -86,7 +86,7 @@ public class JadeVaadinAdapter implements Serializable {
 						Notification.show("Execution ended with errors! See log for details.",
 								Notification.Type.ERROR_MESSAGE);
 					} catch (Exception e) {
-						logger.log(Level.SEVERE, e.getLocalizedMessage());
+						logger.log(Level.SEVERE, e.getMessage());
 						logTabSheet.getTab(logPanel).setIcon(logErrorIconResource);
 						logPanel.setIconResource(logErrorIconResource);
 						Notification.show("Execution ended with errors! See log for details.",

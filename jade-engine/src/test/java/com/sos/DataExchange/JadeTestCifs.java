@@ -16,14 +16,14 @@ public class JadeTestCifs extends JadeTestBase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.Target().host.Value("wilma.sos");
-        objTestOptions.Target().user.Value("test");
-        objTestOptions.Target().password.Value("12345");
-        objTestOptions.Target().domain.Value("sos");
-        objTestOptions.TargetDir.Value("test/jadetest" + "/SOSDEX/");
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
+        objTestOptions.sourceDir.setValue(strTestPathName);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
+        objTestOptions.getTarget().host.setValue("wilma.sos");
+        objTestOptions.getTarget().user.setValue("test");
+        objTestOptions.getTarget().password.setValue("12345");
+        objTestOptions.getTarget().domain.setValue("sos");
+        objTestOptions.targetDir.setValue("test/jadetest" + "/SOSDEX/");
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JadeTestCifs extends JadeTestBase {
     @Override
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testSend2() throws Exception {
-        objTestOptions.TargetDir.Value("test/tmp/403");
+        objTestOptions.targetDir.setValue("test/tmp/403");
         super.testSend();
     }
 
@@ -91,16 +91,16 @@ public class JadeTestCifs extends JadeTestBase {
     @Test
     public void testSendFileSpec() throws Exception {
         objTestOptions.recursive.value(false);
-        objTestOptions.file_spec.Value("\\.txt$");
-        objTestOptions.SourceDir.Value(strTestPathName + "recursive");
+        objTestOptions.fileSpec.setValue("\\.txt$");
+        objTestOptions.sourceDir.setValue(strTestPathName + "recursive");
         super.testSendFileSpec2();
     }
 
     @Test
     public void testSendRecursive() throws Exception {
-        objTestOptions.file_spec.Value("\\.txt$");
+        objTestOptions.fileSpec.setValue("\\.txt$");
         objTestOptions.recursive.value(true);
-        objTestOptions.SourceDir.Value(strTestPathName + "recursive");
+        objTestOptions.sourceDir.setValue(strTestPathName + "recursive");
         super.testSendFileSpec2();
     }
 

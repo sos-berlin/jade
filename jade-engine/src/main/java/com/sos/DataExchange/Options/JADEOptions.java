@@ -45,27 +45,26 @@ public class JADEOptions extends SOSFTPOptions {
     }
 
     @Override
-    public HashMap<String, String> ReadSettingsFile() {
+    public HashMap<String, String> readSettingsFile() {
         Properties properties = new Properties();
         HashMap<String, String> map = new HashMap<>();
 
-        String file = settings.Value();
+        String file = settings.getValue();
         if (file.endsWith(CONFIG_FILE_EXTENSION)) {
             try {
                 JAXBContext jc = JAXBContext.newInstance(ConfigurationElement.class);
                 Unmarshaller u = jc.createUnmarshaller();
-                ConfigurationElement config = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.Value()));
+                ConfigurationElement config = (ConfigurationElement) u.unmarshal(new FileInputStream(settings.getValue()));
                 Vector<Object> profileOrProfiles = (Vector<Object>) config.getIncludeOrProfileOrProfiles();
                 searchXMLProfile(properties, profileOrProfiles, "globals");
-                searchXMLProfile(properties, profileOrProfiles, profile.Value());
+                searchXMLProfile(properties, profileOrProfiles, profile.getValue());
             } catch (JAXBException ex) {
-                LOGGER.error(ex.getLocalizedMessage());
+                LOGGER.error(ex.getMessage());
             } catch (IOException ex) {
-                LOGGER.error(ex.getLocalizedMessage());
+                LOGGER.error(ex.getMessage());
             }
-        } else {  // TODO any file extension is allowed for the ini-configuration
-                 // file
-            map = super.ReadSettingsFile();
+        } else {
+            map = super.readSettingsFile();
         }
         return map;
     }
@@ -86,7 +85,7 @@ public class JADEOptions extends SOSFTPOptions {
     }
 
     private void searchXMLProfile(final Properties properties, final Vector<Object> profileOrProfiles, final String profileName) {
-        LOGGER.debug("Profile = " + profile.Value());
+        LOGGER.debug("Profile = " + profile.getValue());
         for (Object object : profileOrProfiles) {
             if (object instanceof JADEProfile) {
                 JADEProfile profile = (JADEProfile) object;
@@ -148,7 +147,7 @@ public class JADEOptions extends SOSFTPOptions {
 
     public JADEOptions getClone() {
         JADEOptions options = new JADEOptions();
-        options.CommandLineArgs(this.getOptionsAsCommandLine());
+        options.commandLineArgs(this.getOptionsAsCommandLine());
         return options;
     }
 

@@ -25,21 +25,21 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         enuSourceTransferType = enuTransferTypes.ftp;
         enuTargetTransferType = enuTransferTypes.local;
         super.setUp();
-        objTestOptions.passive_mode.setTrue();
-        objTestOptions.TargetDir.Value(strTestPathName);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.Target().user.Value(USER_ID_TEST);
-        objTestOptions.Target().password.Value(PASSWORD_TEST);
-        objTestOptions.Target().host.Value("local");
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.Target().port.value(SOSOptionPortNumber.conPort4FTP);
-        objOptions.Target().port.value(SOSOptionPortNumber.conPort4FTP);
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX/");
-        objTestOptions.Source().host.Value(HOST_NAME_WILMA_SOS);
-        objTestOptions.Source().port.value(SOSOptionPortNumber.conPort4FTP);
-        objTestOptions.Source().user.Value(USER_ID_TEST);
-        objTestOptions.Source().password.Value(PASSWORD_TEST);
+        objTestOptions.passiveMode.setTrue();
+        objTestOptions.targetDir.setValue(strTestPathName);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
+        objTestOptions.getTarget().user.setValue(USER_ID_TEST);
+        objTestOptions.getTarget().password.setValue(PASSWORD_TEST);
+        objTestOptions.getTarget().host.setValue("local");
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
+        objTestOptions.getTarget().port.value(SOSOptionPortNumber.conPort4FTP);
+        objOptions.getTarget().port.value(SOSOptionPortNumber.conPort4FTP);
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
+        objTestOptions.sourceDir.setValue("/home/test/jadetest/SOSDEX/");
+        objTestOptions.getSource().host.setValue(HOST_NAME_WILMA_SOS);
+        objTestOptions.getSource().port.value(SOSOptionPortNumber.conPort4FTP);
+        objTestOptions.getSource().user.setValue(USER_ID_TEST);
+        objTestOptions.getSource().password.setValue(PASSWORD_TEST);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
     public void testCopyRecursiveWithFolderInSourceDir() throws Exception {
         objTestOptions.recursive.setTrue();
         objTestOptions.makeDirs.setTrue();
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
+        objTestOptions.sourceDir.setValue("/home/test/jadetest/SOSDEX");
         super.testCopyWithFolderInSourceDir();
         objTestOptions.recursive.setFalse();
     }
@@ -108,36 +108,36 @@ public class JadeTestFtpAsSource extends JadeTestBase {
     @Override
     @Test
     public void testCopyWithFolderInSourceDir() throws Exception {
-        objTestOptions.SourceDir.Value("/home/test/jadetest/SOSDEX");
+        objTestOptions.sourceDir.setValue("/home/test/jadetest/SOSDEX");
         super.testCopyWithFolderInSourceDir();
     }
 
     @Override
     @Test
     public void testDeleteFiles() throws Exception {
-        objTestOptions.FileNameRegExp.push();
-        objTestOptions.FileNameRegExp.Value("^Masstest.*\\.txt$");
+        objTestOptions.fileNameRegExp.push();
+        objTestOptions.fileNameRegExp.setValue("^Masstest.*\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.FileNameRegExp.pop();
+        objTestOptions.fileNameRegExp.pop();
     }
 
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     @Ignore("Test set to Ignore for later examination")
     public void testDeleteFilesWithError() throws Exception {
-        objTestOptions.ErrorOnNoDataFound.push();
-        objTestOptions.ErrorOnNoDataFound.setTrue();
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.errorOnNoDataFound.push();
+        objTestOptions.errorOnNoDataFound.setTrue();
+        objTestOptions.fileNameRegExp.setValue("^Masstest.\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.ErrorOnNoDataFound.pop();
+        objTestOptions.errorOnNoDataFound.pop();
     }
 
     @Test
     public void testDeleteFilesWithForce() throws Exception {
-        objTestOptions.ErrorOnNoDataFound.push();
-        objTestOptions.ErrorOnNoDataFound.setFalse();
-        objTestOptions.FileNameRegExp.Value("^Masstest.\\.txt$");
+        objTestOptions.errorOnNoDataFound.push();
+        objTestOptions.errorOnNoDataFound.setFalse();
+        objTestOptions.fileNameRegExp.setValue("^Masstest.\\.txt$");
         super.testDeleteFiles();
-        objTestOptions.ErrorOnNoDataFound.pop();
+        objTestOptions.errorOnNoDataFound.pop();
     }
 
     @Override
@@ -202,7 +202,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.setValue("");
         super.testTransferUsingFilePath();
     }
 
@@ -211,7 +211,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "/home/test/tmp/myfile_20120801.csv;/home/test/tmp/test.kb";
-        objTestOptions.SourceDir.Value("");
+        objTestOptions.sourceDir.setValue("");
         super.testTransferUsingFilePath();
     }
 
@@ -221,7 +221,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "myfile_20120801.csv";
-        objTestOptions.SourceDir.Value("/home/test/tmp/");
+        objTestOptions.sourceDir.setValue("/home/test/tmp/");
         super.testTransferUsingFilePath();
     }
 
@@ -230,7 +230,7 @@ public class JadeTestFtpAsSource extends JadeTestBase {
         /** Error and endles loop: main DEBUG 01:47:51,405 DEBUG
          * (SOSVfsFtpBaseClass.java:636) ::LogReply 550 Failed to open file. */
         gstrFilePath = "myfile_20120801.csv;test.kb";
-        objTestOptions.SourceDir.Value("/home/test/tmp/");
+        objTestOptions.sourceDir.setValue("/home/test/tmp/");
         super.testTransferUsingFilePath();
     }
 
@@ -248,37 +248,37 @@ public class JadeTestFtpAsSource extends JadeTestBase {
 
     @Test
     public void testUseProfileFilespec2() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("filespec2");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("filespec2");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendLocal2ftpFileSpec5() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("send_local2ftp_file_spec_5");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("send_local2ftp_file_spec_5");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 
     @Test
     public void testUseProfileWithAsciiMode() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copyWithAsciiMode");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copyWithAsciiMode");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 
     @Test
     public void testUseProfileWithoutOperationGetList() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("getList_example_ftp");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("getList_example_ftp");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 
     @Test
     public void jadeHomer2Local() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("jadeHomer2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("jadeHomer2Local");
         objOptions.verbose.value(2);
         super.testUseProfileWithoutCreatingTestFiles();
     }
@@ -286,8 +286,8 @@ public class JadeTestFtpAsSource extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void jadeAlternativeHomer2Local() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("jadeAlternativeHomer2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("jadeAlternativeHomer2Local");
         super.testUseProfileWithoutCreatingTestFiles();
     }
 

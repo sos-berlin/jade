@@ -39,71 +39,71 @@ public class JadeTestsFTPS extends JadeTestBase {
     @Before
     public void setUp() throws Exception {
         options = new JADEOptions();
-        options.settings.Value(BASE_PATH + "jade_ftps_settings.ini");
+        options.settings.setValue(BASE_PATH + "jade_ftps_settings.ini");
     }
 
     @Test
     public void testLocal2ExplicitFtps() throws Exception {
-        options.profile.Value("local_2_explicit_ftps");
+        options.profile.setValue("local_2_explicit_ftps");
         this.execute(options);
     }
 
     @Test
     public void testLocal2ImplicitFtps() throws Exception {
-        options.profile.Value("local_2_implicit_ftps");
+        options.profile.setValue("local_2_implicit_ftps");
         this.execute(options);
     }
 
     @Test
     public void testLocal2ExplicitFtpsKeystore() throws Exception {
-        options.profile.Value("local_2_explicit_ftps_keystore");
+        options.profile.setValue("local_2_explicit_ftps_keystore");
         this.execute(options);
     }
 
     @Test
     public void testLocal2LocalExplicitFtps() throws Exception {
-        options.profile.Value("local_2_local_explicit_ftps");
+        options.profile.setValue("local_2_local_explicit_ftps");
         this.execute(options);
     }
 
     @Test
     public void testLocal2HomerExplicitFtpsSocksProxy() throws Exception {
-        options.profile.Value("local_2_homer_explicit_ftps_socks_proxy");
+        options.profile.setValue("local_2_homer_explicit_ftps_socks_proxy");
         this.execute(options);
     }
 
     @Test
     public void testLocal2HomerImplicitFtpsSocksProxy() throws Exception {
-        options.profile.Value("local_2_homer_implicit_ftps_socks_proxy");
+        options.profile.setValue("local_2_homer_implicit_ftps_socks_proxy");
         this.execute(options);
     }
 
     @Test
     public void testLocal2HomerExplicitFtpsHttpProxy() throws Exception {
-        options.profile.Value("local_2_homer_explicit_ftps_http_proxy");
+        options.profile.setValue("local_2_homer_explicit_ftps_http_proxy");
         this.execute(options);
     }
 
     @Test
     public void testLocal2LocalFtpExplicitFtpsHttpProxy() throws Exception {
-        options.profile.Value("local_2_local_ftp_explicit_ftps_http_proxy");
+        options.profile.setValue("local_2_local_ftp_explicit_ftps_http_proxy");
         this.execute(options);
     }
 
     @Test
     public void testLocal2LocalImplicitFtps() throws Exception {
-        options.profile.Value("local_2_local_implicit_ftps");
+        options.profile.setValue("local_2_local_implicit_ftps");
         this.execute(options);
     }
 
     private void execute(JADEOptions options) throws Exception {
         try {
             objJadeEngine = new JadeEngine(options);
-            objJadeEngine.Execute();
+            objJadeEngine.execute();
         } catch (Exception ex) {
             throw ex;
         } finally {
-            objJadeEngine.Logout();
+            objJadeEngine.logout();
         }
     }
 

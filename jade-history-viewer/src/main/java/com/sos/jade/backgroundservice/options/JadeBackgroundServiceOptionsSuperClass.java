@@ -19,7 +19,7 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
     @JSOptionDefinition(name = "hibernateConfigurationFileName", description = "", key = "hibernateConfigurationFileName", type = "SOSOptionString", mandatory = true)
     public SOSOptionInFileName hibernateConfigurationFileName = new SOSOptionInFileName(this, conClassName + ".hibernateConfigurationFileName", "", "env:hibernateConfigFile", "/WEB-INF/classes/hibernate.cfg.xml", true);
 
-    public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.SetAlias("hibernateConf", "H");
+    public SOSOptionInFileName hibernateConf = (SOSOptionInFileName) hibernateConfigurationFileName.setAlias("hibernateConf", "H");
 
     public SOSOptionInFileName getHibernateConfigurationFileName() {
         return hibernateConfigurationFileName;
@@ -85,17 +85,17 @@ public class JadeBackgroundServiceOptionsSuperClass extends JSOptionsClass {
     }
 
     @Override
-    public void CheckMandatory() throws JSExceptionMandatoryOptionMissing, Exception {
+    public void checkMandatory() throws JSExceptionMandatoryOptionMissing, Exception {
         try {
-            super.CheckMandatory();
+            super.checkMandatory();
         } catch (Exception e) {
             throw new JSExceptionMandatoryOptionMissing(e.toString());
         }
     }
 
     @Override
-    public void CommandLineArgs(final String[] pstrArgs) {
-        super.CommandLineArgs(pstrArgs);
+    public void commandLineArgs(final String[] pstrArgs) {
+        super.commandLineArgs(pstrArgs);
         this.setAllOptions(super.objSettings);
     }
 }

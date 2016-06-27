@@ -56,11 +56,11 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             engine = new SOSDataExchangeEngine();
             JADEOptions options = engine.getOptions();
             engine.setJSJobUtilites(this);
-            options.SendTransferHistory.value(true);
-            options.CommandLineArgs(args);
+            options.sendTransferHistory.value(true);
+            options.commandLineArgs(args);
             try {
                 if (options.log4jPropertyFileName.isDirty()) {
-                    File log4jPropFile = new File(options.log4jPropertyFileName.Value());
+                    File log4jPropFile = new File(options.log4jPropertyFileName.getValue());
                     if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
                         PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
                     }
@@ -74,7 +74,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
                 BasicConfigurator.configure();
             }
             LOGGER.info(getMsg(SOSDX_Intro));
-            engine.Execute();
+            engine.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
         } catch (Exception e) {
             exitCode = 99;
@@ -82,7 +82,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
         } finally {
             try {
                 if (engine != null) {
-                    engine.Logout();
+                    engine.logout();
                 }
             } catch (Exception ex) {
                 LOGGER.warn(String.format("exception on logout: %s", ex.toString()));

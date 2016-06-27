@@ -20,17 +20,17 @@ public class JadeTestFtp extends JadeTestBase {
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.ftp;
         super.setUp();
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value("/home/test/jadetest" + "/SOSDEX/");
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
-        objTestOptions.Target().host.Value(HOST_NAME_WILMA_SOS);
-        objTestOptions.Target().port.value(SOSOptionPortNumber.conPort4FTP);
-        objTestOptions.Target().user.Value("test");
-        objTestOptions.Target().password.Value("12345");
-        objTestOptions.Source().user.Value("test");
-        objTestOptions.Source().password.Value("12345");
-        objTestOptions.Target().auth_method.Value(enuAuthenticationMethods.password);
+        objTestOptions.sourceDir.setValue(strTestPathName);
+        objTestOptions.targetDir.setValue("/home/test/jadetest" + "/SOSDEX/");
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
+        objTestOptions.getTarget().host.setValue(HOST_NAME_WILMA_SOS);
+        objTestOptions.getTarget().port.value(SOSOptionPortNumber.conPort4FTP);
+        objTestOptions.getTarget().user.setValue("test");
+        objTestOptions.getTarget().password.setValue("12345");
+        objTestOptions.getSource().user.setValue("test");
+        objTestOptions.getSource().password.setValue("12345");
+        objTestOptions.getTarget().authMethod.setValue(enuAuthenticationMethods.password);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class JadeTestFtp extends JadeTestBase {
     @Override
     @Test
     public void testCopyMultipleFiles() throws Exception {
-        objTestOptions.Target().host.Value("homer.sos");
+        objTestOptions.getTarget().host.setValue("homer.sos");
         objTestOptions.transactional.value(true);
         super.testCopyMultipleFiles();
     }
@@ -74,8 +74,8 @@ public class JadeTestFtp extends JadeTestBase {
 
     @Test
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
-        objTestOptions.TargetDir.Value("/home/test/doc/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.sourceDir.setValue("R:/backup/sos/java/doxygen-docs/com.sos.VirtualFileSystem/");
+        objTestOptions.targetDir.setValue("/home/test/doc/doxygen-docs/com.sos.VirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -141,70 +141,70 @@ public class JadeTestFtp extends JadeTestBase {
 
     @Test
     public void testSendWithPollingAndSteadyStateError() throws Exception {
-        objOptions.Steady_state_error_state.Value("nextState");
+        objOptions.steadyStateErrorState.setValue("nextState");
         super.sendWithPollingAndSteadyStateError();
     }
 
     @Test
     public void testCopyLocal2AlternativeFTPwithHistory() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("Copy_Local2AlternativeFTP_withHistorie");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("Copy_Local2AlternativeFTP_withHistorie");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testCopyLocal2FTPrecursive() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("Copy_Local2FTP_recursive");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("Copy_Local2FTP_recursive");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void copyLocal2ftpReplacingWithCreateDirectory() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_local2ftp_replacingWithCreateDirectory");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_local2ftp_replacingWithCreateDirectory");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testPclFtpRec() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("PCL_FTP_REC");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("PCL_FTP_REC");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testSosftp158() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("sosftp_158");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("sosftp_158");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testUrlExample1() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("url_example_1");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("url_example_1");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testSendLocal2ftpTargetReplacing() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("send_local2ftp_target_replacing");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("send_local2ftp_target_replacing");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testcopyLocal2ftpAscii() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_local2ftp_ascii");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_local2ftp_ascii");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void testcopyLocal2ftp() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("copy_passive2ftp");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("copy_passive2ftp");
         super.testUseProfileWOCreatingTestFiles();
     }
 

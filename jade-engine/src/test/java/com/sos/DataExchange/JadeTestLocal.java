@@ -47,32 +47,32 @@ public class JadeTestLocal extends JadeTestBase {
         super.setUp();
         enuSourceTransferType = enuTransferTypes.local;
         enuTargetTransferType = enuTransferTypes.local;
-        objTestOptions.SourceDir.Value(strTestPathName);
-        objTestOptions.TargetDir.Value(strTestPathName + "/SOSMDX/");
-        objTestOptions.Source().protocol.Value(enuSourceTransferType);
-        objTestOptions.Target().protocol.Value(enuTargetTransferType);
+        objTestOptions.sourceDir.setValue(strTestPathName);
+        objTestOptions.targetDir.setValue(strTestPathName + "/SOSMDX/");
+        objTestOptions.getSource().protocol.setValue(enuSourceTransferType);
+        objTestOptions.getTarget().protocol.setValue(enuTargetTransferType);
     }
 
     @Test
     public void testUseSubstitution() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("substitute_example");
-        objOptions.ReadSettingsFile();
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("substitute_example");
+        objOptions.readSettingsFile();
         LOGGER.info(objOptions.dirtyString());
     }
 
     @Override
     @Test
     public void testUseProfile() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("getList_example");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("getList_example");
         super.testUseProfile();
     }
 
     @Test
     public void testgetList_variable_filespec_example() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("getList_variable_filespec_example");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("getList_variable_filespec_example");
         CreateTestFile(String.format("TestFile_%1$s.123", JSDataElementDate.getCurrentTimeAsString("yyyyMMdd")));
         super.testUseProfile2();
     }
@@ -80,40 +80,40 @@ public class JadeTestLocal extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testFtpReceive2Wilma() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("ftp_receive_2_wilma");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("ftp_receive_2_wilma");
         super.testUseProfile();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyAndRenameSourceAndTarget() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("CopyAndRenameSourceAndTarget_Local2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("CopyAndRenameSourceAndTarget_Local2Local");
         super.testUseProfile();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyAndCreateVariableFolder() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("CopyAndCreateVariableFolder_Local2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("CopyAndCreateVariableFolder_Local2Local");
         super.testUseProfile();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyAndMoveSource() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("CopyAndMoveSource_Local2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("CopyAndMoveSource_Local2Local");
         super.testUseProfile();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyAndMoveSource2NewFolder() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("CopyAndMoveSource2NewFolder_Local2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("CopyAndMoveSource2NewFolder_Local2Local");
         super.testUseProfile();
         JSFile objFile = new JSFile(strTestPathName, "UNKNOWNFOLDER/Masstest00000.txt");
         assertTrue("File " + objFile.getAbsolutePath() + " must exist", objFile.exists());
@@ -122,31 +122,31 @@ public class JadeTestLocal extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyAndRenameSource() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("CopyAndRenameSource_Local2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("CopyAndRenameSource_Local2Local");
         super.testUseProfile();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyUsingUNCNames() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("Copy_Local2Local_UNC");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("Copy_Local2Local_UNC");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyUsingUNCNamesWithNetUse() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("Copy_Local2Local_UNC_withNetUse");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("Copy_Local2Local_UNC_withNetUse");
         super.testUseProfileWOCreatingTestFiles();
     }
 
     @Test
     public void Copy_Local2Local_recursive() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("Copy_Local2Local_recursive");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("Copy_Local2Local_recursive");
         super.testUseProfileWOCreatingTestFiles();
     }
 
@@ -197,14 +197,14 @@ public class JadeTestLocal extends JadeTestBase {
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     @Ignore("Test set to Ignore for later examination")
     public void testSendWithPollingWithoutWait4SourceDir() throws Exception {
-        objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+        objTestOptions.sourceDir.setValue(strTestPathName + "/badname/");
         super.testSendWithPolling();
     }
 
     @Override
     @Test
     public void testSendWithPolling() throws Exception {
-        objTestOptions.SourceDir.Value(strTestPathName + "/badname/");
+        objTestOptions.sourceDir.setValue(strTestPathName + "/badname/");
         objTestOptions.pollingWait4SourceFolder.setTrue();
         super.testSendWithPolling();
     }
@@ -220,16 +220,16 @@ public class JadeTestLocal extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy() throws Exception {
-        objTestOptions.SourceDir.Value(SOURCE_OF_DOXYGEN_DOCS);
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS);
+        objTestOptions.sourceDir.setValue(SOURCE_OF_DOXYGEN_DOCS);
+        objTestOptions.targetDir.setValue(TARGET_OF_DOXYGEN_DOCS);
         super.testBigCopy();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testBigCopy2() throws Exception {
-        objTestOptions.SourceDir.Value(SOURCE_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
-        objTestOptions.TargetDir.Value(TARGET_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
+        objTestOptions.sourceDir.setValue(SOURCE_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
+        objTestOptions.targetDir.setValue(TARGET_OF_DOXYGEN_DOCS + "SOSVirtualFileSystem/");
         super.testBigCopy();
     }
 
@@ -259,21 +259,21 @@ public class JadeTestLocal extends JadeTestBase {
 
     @Test
     public void testSendAndCreateMd5Hash() throws Exception {
-        objTestOptions.CreateSecurityHashFile.setTrue();
+        objTestOptions.createSecurityHashFile.setTrue();
         super.testSend();
     }
 
     @Test
     public void testSendAndCreatesha256Hash() throws Exception {
-        objTestOptions.CreateSecurityHashFile.setTrue();
-        objTestOptions.SecurityHashType.Value("SHA-256");
+        objTestOptions.createSecurityHashFile.setTrue();
+        objTestOptions.securityHashType.setValue("SHA-256");
         super.testSend();
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testSendWithMd5Check() throws Exception {
-        objTestOptions.CheckSecurityHash.setTrue();
+        objTestOptions.checkSecurityHash.setTrue();
         super.testSend();
     }
 
@@ -293,8 +293,8 @@ public class JadeTestLocal extends JadeTestBase {
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void CopyAndCheckSteadyState_Local2Local() throws Exception {
-        objOptions.settings.Value(strSettingsFile);
-        objOptions.profile.Value("CopyAndCheckSteadyState_Local2Local");
+        objOptions.settings.setValue(strSettingsFile);
+        objOptions.profile.setValue("CopyAndCheckSteadyState_Local2Local");
         super.testUseProfile();
     }
 

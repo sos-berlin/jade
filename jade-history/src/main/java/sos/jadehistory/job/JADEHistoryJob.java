@@ -259,7 +259,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
                     throw new JobSchedulerException("missing parameter \"" + PARAM_FILE_NAME + "\" for importFile");
                 }
                 hwFile = new JSCsvFile(fileName);
-                hwFile.CheckColumnCount(false);
+                hwFile.setCheckColumnCount(false);
                 if (!hwFile.exists()) {
                     throw new JobSchedulerException("file does not exist: " + hwFile.getAbsolutePath());
                 }
@@ -326,7 +326,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
             }
             String[] strValues = null;
             hwFile.loadHeaders();
-            String[] strHeader = hwFile.Headers();
+            String[] strHeader = hwFile.getHeaders();
             for (String header : strHeader) {
                 getLogger().debug1("Header-Field:" + header);
             }

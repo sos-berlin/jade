@@ -15,7 +15,7 @@ public class SOSJadeHistoryMain extends JSToolBox {
         try {
             SOSJadeHistory objM = new SOSJadeHistory();
             SOSJadeHistoryOptions objO = objM.getOptions();
-            objO.CommandLineArgs(pstrArgs);
+            objO.commandLineArgs(pstrArgs);
             objM.Execute();
         } catch (Exception e) {
             LOGGER.error(methodName + ": " + "Error occured ..." + e.getMessage());
