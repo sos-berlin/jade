@@ -763,7 +763,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     mailOptions.subject.setValue("JADE: ");
                 }
                 StringBuilder subject = new StringBuilder(mailOptions.subject.getValue());
-                mailOptions.subject.setValue(objOptions.replaceSchedulerVars(subject.toString()));
+                mailOptions.subject.setValue(objOptions.replaceVars(subject.toString()));
                 StringBuilder body = new StringBuilder(objOptions.replaceVars(mailOptions.body.getValue()));
                 body.append("\n").append("List of transferred Files:").append("\n");
                 for (SOSFileListEntry entry : sourceFileList.getList()) {
