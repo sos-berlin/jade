@@ -104,7 +104,7 @@ public class LoginView extends CustomComponent implements View, Button.ClickList
                 sosWebserviceAuthenticationRecord.setUser(getUser());
                 sosWebserviceAuthenticationRecord.setPassword(getPasswd());
                 sosWebserviceAuthenticationRecord.setResource(JadeBSConstants.JS_AUTH_SERVER + COMMAND_PERMISSIONS);
-                sosWebserviceAuthenticationRecord.setSessionId("");
+                sosWebserviceAuthenticationRecord.setAccessToken("");
                 SOSPermissionShiro sosPermissionShiro = sosRestShiroClient.getPermissions(sosWebserviceAuthenticationRecord);
                 currentUser = new SOSJaxbSubject(sosPermissionShiro);
                 if (currentUser == null) {
