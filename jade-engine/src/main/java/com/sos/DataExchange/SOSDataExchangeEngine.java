@@ -754,7 +754,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     mailOptions.subject.Value("JADE: ");
                 }
                 StringBuilder subject = new StringBuilder(mailOptions.subject.Value());
-                mailOptions.subject.Value(objOptions.replaceVars(subject.toString()));
+                mailOptions.subject.Value(objJSJobUtilities.replaceSchedulerVars(subject.toString()));
                 StringBuilder body = new StringBuilder(objOptions.replaceVars(mailOptions.body.Value()));
                 body.append("\n").append("List of transferred Files:").append("\n");
                 for (SOSFileListEntry entry : sourceFileList.List()) {
@@ -1254,7 +1254,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         if (commands.IsNotEmpty()) {
             LOGGER.info(commandCallerMethod);
             for (String command : commands.split()) {
-                fileTransfer.getHandler().ExecuteCommand(objOptions.replaceVars(command));
+                fileTransfer.getHandler().ExecuteCommand(objJSJobUtilities.replaceSchedulerVars(command));
             }
         }
     }
