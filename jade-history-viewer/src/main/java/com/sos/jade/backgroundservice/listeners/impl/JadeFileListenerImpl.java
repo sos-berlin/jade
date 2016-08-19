@@ -38,7 +38,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
 
     @Override
     public void logException(Exception e) {
-        LOGGER.error("", e);
+        LOGGER.error(e.getMessage(), e);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
         try {
             List<JadeFilesHistoryDBItem> received = this.jadeFilesDBLayer.getFilesHistoryById(id);
             ui.setHistoryItems(received);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             logException(e);
         }
     }
@@ -73,7 +73,7 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
         try {
             List<JadeFilesHistoryDBItem> received = jadeFilesHistoryDBLayer.getHistoryFilesOrderedByTransferEnd();
             ui.setHistoryItems(received);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             logException(e);
         }
     }

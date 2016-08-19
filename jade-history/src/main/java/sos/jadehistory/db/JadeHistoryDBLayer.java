@@ -43,7 +43,7 @@ public class JadeHistoryDBLayer {
         try {
             return (JadeFilesDBItem) ((Session) connection.getCurrentSession()).get(JadeFilesDBItem.class, id);
         } catch (Exception e) {
-            LOGGER.error("", e);
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }

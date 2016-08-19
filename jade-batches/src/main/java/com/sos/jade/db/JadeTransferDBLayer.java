@@ -64,18 +64,14 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
         this.age = age;
     }
 
-    public List<JadeTransferDBItem> getTransfersFromTo() throws ParseException {
+    public List<JadeTransferDBItem> getTransfersFromTo() throws Exception {
         List<JadeTransferDBItem> resultset = null;
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("  from JadeTransferDBItem where " + getWhereFromTo());
-            query.setTimestamp("createdFrom", createdFrom);
-            query.setTimestamp("createdTo", createdTo);
-            resultset = query.list();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        connection.connect();
+        connection.beginTransaction();
+        Query query = connection.createQuery("  from JadeTransferDBItem where " + getWhereFromTo());
+        query.setTimestamp("createdFrom", createdFrom);
+        query.setTimestamp("createdTo", createdTo);
+        resultset = query.list();
         return resultset;
     }
 
@@ -105,49 +101,40 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 
     }
 
-    public List<JadeTransferDBItem> getTransferList(int limit) {
+    public List<JadeTransferDBItem> getTransferList(int limit) throws Exception {
         List<JadeTransferDBItem> transferList = null;
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("from JadeTransferDBItem " + getWhere());
-            if (whereStartTime != null && !"".equals(whereStartTime)) {
-                query.setDate("startTime", whereStartTime);
-            }
-            if (whereEndTime != null && !"".equals(whereEndTime)) {
-                query.setDate("endTime", whereEndTime);
-            }
-            query.setMaxResults(limit);
-            transferList = query.list();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        connection.connect();
+        connection.beginTransaction();
+        Query query = connection.createQuery("from JadeTransferDBItem " + getWhere());
+        if (whereStartTime != null && !"".equals(whereStartTime)) {
+            query.setDate("startTime", whereStartTime);
         }
+        if (whereEndTime != null && !"".equals(whereEndTime)) {
+            query.setDate("endTime", whereEndTime);
+        }
+        query.setMaxResults(limit);
+        transferList = query.list();
         return transferList;
     }
 
-    public int deleteFromTo(String tableName) {
+    public int deleteFromTo(String tableName) throws Exception {
         initConnection();
         String hql = "delete from " + tableName + " where " + getWhereFromTo();
         int row = 0;
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery(hql);
-            if (createdFrom != null && !"".equals(createdFrom)) {
-                query.setTimestamp("createdFrom", createdFrom);
-            }
-            if (createdTo != null && !"".equals(createdTo)) {
-                query.setTimestamp("createdTo", createdTo);
-            }
-            row = query.executeUpdate();
-            connection.commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        connection.beginTransaction();
+        Query query = connection.createQuery(hql);
+        if (createdFrom != null && !"".equals(createdFrom)) {
+            query.setTimestamp("createdFrom", createdFrom);
         }
+        if (createdTo != null && !"".equals(createdTo)) {
+            query.setTimestamp("createdTo", createdTo);
+        }
+        row = query.executeUpdate();
+        connection.commit();
         return row;
     }
 
-    public int deleteFromTo() {
+    public int deleteFromTo() throws Exception {
         int row = deleteFromTo("JadeTransferDBItem");
         return row;
     }
@@ -214,17 +201,12 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
         this.createdTo = formatter.parse(createdTo);
     }
 
-    public void save(JadeTransferDBItem transferItem) {
+    public void save(JadeTransferDBItem transferItem) throws Exception {
         if (connection == null) {
             initConnection(getConfigurationFileName());
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            connection.save(transferItem);
-            connection.commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        connection.beginTransaction();
+        connection.save(transferItem);
+        connection.commit();
     }
 }

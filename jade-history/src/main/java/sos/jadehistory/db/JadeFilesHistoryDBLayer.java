@@ -31,17 +31,15 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         this.resetFilter();
     }
 
-    public JadeFilesHistoryDBItem get(String guid) {
+    public JadeFilesHistoryDBItem get(String guid) throws Exception {
         if (guid == null || "".equals(guid)) {
             return null;
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            return (JadeFilesHistoryDBItem) ((Session) this.connection.getCurrentSession()).get(JadeFilesHistoryDBItem.class, guid);
-        } catch (Exception e) {
-            return null;
+        if (connection == null) {
+            initConnection(getConfigurationFileName());
         }
+        connection.beginTransaction();
+        return (JadeFilesHistoryDBItem) ((Session) this.connection.getCurrentSession()).get(JadeFilesHistoryDBItem.class, guid);
     }
 
     public void resetFilter() {
@@ -322,96 +320,71 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         }
     }
 
-    public List<DbItem> getFilesHistoryFromTo(Date from, Date to) {
+    public List<DbItem> getFilesHistoryFromTo(Date from, Date to) throws Exception {
         filter.setCreatedFrom(from);
         filter.setCreatedTo(to);
         List<DbItem> resultset = null;
         if (connection == null) {
             initConnection(getConfigurationFileName());
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("  from JadeFilesHistoryDBItem " + getWhere());
-            if (filter.getCreatedFrom() != null) {
-                query.setTimestamp("createdFrom", filter.getCreatedFrom());
-            }
-            if (filter.getCreatedTo() != null) {
-                query.setTimestamp("createdTo", filter.getCreatedTo());
-            }
-            resultset = query.list();
-        } catch (Exception e) {
-            LOGGER.error("Error occured receiving data for the given interval: ", e);
+        connection.beginTransaction();
+        Query query = connection.createQuery("  from JadeFilesHistoryDBItem " + getWhere());
+        if (filter.getCreatedFrom() != null) {
+            query.setTimestamp("createdFrom", filter.getCreatedFrom());
         }
+        if (filter.getCreatedTo() != null) {
+            query.setTimestamp("createdTo", filter.getCreatedTo());
+        }
+        resultset = query.list();
         return resultset;
     }
 
-    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws ParseException {
+    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
         if (connection == null) {
             initConnection(getConfigurationFileName());
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
-            query.setLong(JADE_ID, jadeId);
-            resultset = query.list();
-        } catch (Exception e) {
-            LOGGER.error("Error occurred receiving DBItem: ", e);
-        }
+        connection.beginTransaction();
+        Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
+        query.setLong(JADE_ID, jadeId);
+        resultset = query.list();
         return resultset;
     }
 
-    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws ParseException {
+    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws Exception {
         List<JadeFilesDBItem> resultset = null;
         if (connection == null) {
             initConnection(getConfigurationFileName());
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("  from JadeFilesDBItem where id=:jadeId");
-            query.setLong(JADE_ID, jadeId);
-            resultset = query.list();
-        } catch (Exception e) {
-            LOGGER.error("Error occurred receiving DBItems: ", e);
-        }
+        connection.beginTransaction();
+        Query query = connection.createQuery("  from JadeFilesDBItem where id=:jadeId");
+        query.setLong(JADE_ID, jadeId);
+        resultset = query.list();
         // id is unique, therefore only one item has to be returned
         return resultset != null ? resultset.get(0) : null;
     }
 
-    public List<JadeFilesHistoryDBItem> getHistoryFiles() throws ParseException {
+    public List<JadeFilesHistoryDBItem> getHistoryFiles() throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
         if (connection == null) {
             initConnection(getConfigurationFileName());
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getWhere());
-            setWhere(query);
-            resultset = query.list();
-        } catch (Exception e) {
-            LOGGER.error("Error occurred receiving HistoryDBItems", e);
-        }
+        connection.beginTransaction();
+        Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getWhere());
+        setWhere(query);
+        resultset = query.list();
         return resultset;
     }
 
-    public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws ParseException {
+    public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
         if (connection == null) {
             initConnection(getConfigurationFileName());
         }
-        try {
-            connection.connect();
-            connection.beginTransaction();
-            Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferEnd desc");
-            setWhere(query);
-            resultset = query.list();
-        } catch (Exception e) {
-            LOGGER.error("Error occurred receiving ordered HistoryDBItems", e);
-        }
+        connection.beginTransaction();
+        Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferEnd desc");
+        setWhere(query);
+        resultset = query.list();
         return resultset;
     }
 
@@ -452,10 +425,9 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     }
 
     @Override
-    public List<DbItem> getListOfItemsToDelete() {
+    public List<DbItem> getListOfItemsToDelete() throws Exception {
         TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
         return getFilesHistoryFromTo(filter.getCreatedFrom(), filter.getCreatedTo());
-
     }
 
     @Override
