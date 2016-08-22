@@ -27,7 +27,7 @@ public class JadeHistoryDataProvider implements ISOSHibernateDataProvider {
         jadeTransferDBLayer.setFilter(new JadeHistoryFilter());
     }
 
-    public void getData(int limit) {
+    public void getData(int limit) throws Exception {
         this.listOfTransferItems = jadeTransferDBLayer.getTransferList(limit);
     }
 

@@ -110,8 +110,8 @@ public class JadeTransferDBLayerTest {
                     LOGGER.info("History: " + transfer.getTransferId());
                 }
             }
-        } catch (ParseException e) {
-            LOGGER.error(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
