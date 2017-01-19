@@ -15,7 +15,7 @@ public class JadeTestsSFTP extends JadeTestBase {
     @Before
     public void setUp() throws Exception {
         options = new JADEOptions();
-        options.settings.setValue("R:/backup/sos/java/development/SOSDataExchange/examples/jade_sftp_settings.ini");
+        options.settings.setValue("R:/backup/sos/java/development/SOSDataExchange/examples/jade_sftp_settings.xml");
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.sos.jade.converter;
+package com.sos.DataExchange.converter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,6 +59,7 @@ public class JadeXml2IniConverter {
     private Node _rootSchema;
     private Node _rootXml;
     private String _profileJumpInclude = null;
+    private boolean _mainMethodCalled = false;
 
     private enum Fragment {
         protocolFragment, alternativeFragment, notificationFragment, credentialStoreFragment, mailServerFragment, backgroundServiceFragment
@@ -95,7 +96,8 @@ public class JadeXml2IniConverter {
                 LOGGER.info(String.format("  %s", args[i]));
             }
             JadeXml2IniConverter converter = new JadeXml2IniConverter();
-            converter.proccess(schemaFile, xmlFile, iniFile);
+            converter.setMainMethodCalled(true);
+            converter.process(schemaFile, xmlFile, iniFile);
             LOGGER.info("");
             LOGGER.info("Summary:");
             LOGGER.info(String.format("    %s General", converter.hasGlobalSection() ? "1" : "0"));
@@ -122,8 +124,11 @@ public class JadeXml2IniConverter {
         System.exit(exitCode);
     }
 
-    public void proccess(String schemaFilePath, String xmlFilePath, String iniFilePath) throws Exception {
-        InputSource schemaSource = new InputSource(schemaFilePath);
+    public void process(String schemaFilePath, String xmlFilePath, String iniFilePath) throws Exception {
+        this.process(new InputSource(schemaFilePath), xmlFilePath, iniFilePath);
+    }
+    
+    public void process(InputSource schemaSource, String xmlFilePath, String iniFilePath) throws Exception {
         InputSource xmlSource = new InputSource(xmlFilePath);
         _xpathSchema = XPathFactory.newInstance().newXPath();
         _xpathSchema.setNamespaceContext(getSchemaNamespaceContext());
@@ -134,7 +139,7 @@ public class JadeXml2IniConverter {
         Document xmlDoc = getXmlFileDocument(xmlSource, xmlFilePath);
         _rootXml = (Node) xmlExpression.evaluate(xmlDoc, XPathConstants.NODE);
         if (_rootSchema == null) {
-            throw new Exception(String.format("\"xs:schema\" element not found in the schema file %s", schemaFilePath));
+            throw new Exception(String.format("\"xs:schema\" element not found in the schema file"));
         }
         if (_rootXml == null) {
             throw new Exception(String.format("\"Configurations\" element not found in the xml file %s", xmlFilePath));
@@ -164,7 +169,7 @@ public class JadeXml2IniConverter {
 
     private Document getXmlFileDocument(InputSource xmlSource, String xmlFile) throws Exception {
         String normalized = xmlFile.toLowerCase();
-        if (!normalized.startsWith("http://") && !normalized.startsWith("https://")) {
+        if (this._mainMethodCalled && !normalized.startsWith("http://") && !normalized.startsWith("https://")) {
             System.setProperty("user.dir", new File(xmlFile).getParent());
         }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -220,7 +225,10 @@ public class JadeXml2IniConverter {
         NodeList childs = general.getChildNodes();
         String section = "[globals]";
         writeLine(section);
-        LOGGER.info(String.format("write %s", section));
+        
+        String msg = String.format("write %s", section);
+        if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+                
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -319,7 +327,10 @@ public class JadeXml2IniConverter {
                 String sectionName = getFragmentName(Fragment.protocolFragment, child);
                 String section = "[" + sectionName + "]";
                 writeLine(section);
-                LOGGER.info(String.format("write %s", section));
+                
+                String msg = String.format("write %s", section);
+                if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+                
                 _countProtocolFragments++;
                 XPathExpression ex =
                         _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
@@ -370,7 +381,10 @@ public class JadeXml2IniConverter {
                 String sectionName = getFragmentName(Fragment.credentialStoreFragment, child);
                 String section = "[" + sectionName + "]";
                 writeLine(section);
-                LOGGER.info(String.format("write %s", section));
+                
+                String msg = String.format("write %s", section);
+                if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+                
                 _countCredentialStoreFragments++;
                 XPathExpression ex =
                         _xpathSchema.compile(String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", child.getNodeName()));
@@ -415,7 +429,10 @@ public class JadeXml2IniConverter {
                 String sectionName = getFragmentName(Fragment.backgroundServiceFragment, child);
                 String section = "[" + sectionName + "]";
                 writeLine(section);
-                LOGGER.info(String.format("write %s", section));
+                
+                String msg = String.format("write %s", section);
+                if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+                
                 _countNotificationBackgroundServiceFragments++;
                 writeMainFlatParameters(child);
                 handleChildNodes(child.getNodeName(), child, 0);
@@ -461,7 +478,10 @@ public class JadeXml2IniConverter {
                     throw new Exception(String.format("attribute \"name\" not found. node = %s", child.getNodeName()));
                 }
                 String mailFragment = child.getAttributes().getNamedItem("name").getNodeValue();
-                LOGGER.info(String.format("found Notification MailFragment \"%s\"", mailFragment));
+                
+                String msg = String.format("found Notification MailFragment \"%s\"", mailFragment);
+                if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+                
                 _countNotificationMailFragments++;
                 LinkedHashMap<String, String> mailFragmentParams = new LinkedHashMap<String, String>();
                 XPathExpression ex =
@@ -501,7 +521,10 @@ public class JadeXml2IniConverter {
                     throw new Exception(String.format("attribute \"name\" not found. node = %s", child.getNodeName()));
                 }
                 String mailFragment = child.getAttributes().getNamedItem("name").getNodeValue();
-                LOGGER.info(String.format("found MailServer Fragment \"%s\"", mailFragment));
+                
+                String msg = String.format("found MailServer Fragment \"%s\"", mailFragment);
+                if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+                
                 _countMailServerFragments++;
                 LinkedHashMap<String, String> mailFragmentParams = new LinkedHashMap<String, String>();
                 XPathExpression ex =
@@ -542,7 +565,10 @@ public class JadeXml2IniConverter {
             String sectionName = getProfileName(profile, attrProfileId);
             String section = "[" + sectionName + "]";
             writeLine(section);
-            LOGGER.info(String.format("write %s", section));
+            
+            String msg = String.format("write %s", section);
+            if(_mainMethodCalled){ LOGGER.info(msg);} else { LOGGER.debug(msg);}
+            
             _countProfiles++;
             _profileJumpInclude = null;
             NodeList childs = profile.getChildNodes();
@@ -1148,8 +1174,16 @@ public class JadeXml2IniConverter {
             BasicConfigurator.configure();
         }
     }
+    
+    public boolean isMainMethodCalled() {
+		return _mainMethodCalled;
+	}
 
-    private NamespaceContext getSchemaNamespaceContext() {
+	protected void setMainMethodCalled(boolean val) {
+		this._mainMethodCalled = val;
+	}
+
+	private NamespaceContext getSchemaNamespaceContext() {
         return new NamespaceContext() {
 
             @Override
