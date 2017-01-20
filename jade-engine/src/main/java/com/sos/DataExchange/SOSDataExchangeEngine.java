@@ -1334,4 +1334,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         return true;
     }
 
+    public void setOriginalSettingsFile(String val){
+    	this.originalSettingsFile = val;
+    }
 }
