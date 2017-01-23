@@ -76,6 +76,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
         if(schedulerParams != null && schedulerParams.containsKey("settings")){
         	String settings = schedulerParams.get("settings");
+        	jadeOptions.setOriginalSettingsFile(settings);
         	LOGGER.debug(String.format("%s: schedulerParams settings=%s",method,settings));
         	if (settings.endsWith(".xml")) {
         		JADEOptions jo = new JADEOptions();
