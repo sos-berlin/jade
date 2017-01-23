@@ -1,6 +1,7 @@
 package sos.scheduler.job;
 
 import com.sos.DataExchange.JadeEngine;
+import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
@@ -15,12 +16,18 @@ import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.sos.scheduler.messages.JSMessages.*;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
+    
     private static final String CLASSNAME = "SOSDExJSAdapterClass";
     private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
     private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
@@ -52,19 +59,32 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            logger.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()));
-            logger.debug("", e);
+            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()),e);
+            LOGGER.debug("", e);
             throw e;
         }
         return signalSuccess();
     }
 
     private void doProcessing() throws Exception {
-        jadeOptions = null;
+        String method = "doProcessing";
+    	jadeOptions = null;
         jadeEngine = new JadeEngine();
         jadeOptions = jadeEngine.getOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
-        jadeOptions.setAllOptions2(jadeOptions.deletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
+        
+        HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
+        if(schedulerParams != null && schedulerParams.containsKey("settings")){
+        	String settings = schedulerParams.get("settings");
+        	jadeOptions.setOriginalSettingsFile(settings);
+        	LOGGER.debug(String.format("%s: schedulerParams settings=%s",method,settings));
+        	if (settings.endsWith(".xml")) {
+        		JADEOptions jo = new JADEOptions();
+        		Path iniFile = jo.convertXml2Ini(settings);
+        		schedulerParams.put("settings",iniFile.toString());
+        	} 
+        }
+        jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
         int intLogLevel = -1 * spooler_log.level();
         if (intLogLevel > jadeOptions.verbose.value()) {
             jadeOptions.verbose.value(intLogLevel);
@@ -81,7 +101,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         int resultSetSize = transfFiles.getList().size();
         if (resultSetSize <= 0 && isOrderJob() && jadeOptions.pollErrorState.isDirty()) {
             String pollErrorState = jadeOptions.pollErrorState.getValue();
-            logger.info("set order-state to " + pollErrorState);
+            LOGGER.info("set order-state to " + pollErrorState);
             setNextNodeState(pollErrorState);
             spooler_task.order().params().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
             spooler_task.order().set_state_text("ended with no files found");
@@ -98,7 +118,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             boolean flgR = jadeOptions.expectedSizeOfResultSet.compare(raiseErrorIfResultSetIs, resultSetSize);
             if (flgR) {
                 String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expectedSizeOfResultSet.value());
-                logger.error(strM);
+                LOGGER.error(strM);
                 throw new JobSchedulerException(strM);
             }
         }
@@ -122,7 +142,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         } else {
             feedback = createOrderOnLocalJobScheduler(listItem, jobChainName);
         }
-        logger.info(feedback);
+        LOGGER.info(feedback);
     }
 
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
@@ -259,7 +279,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }
         } catch (JobSchedulerException e) {
-            logger.error("error occurred creating order Parameter: " + e.getMessage());
+        	LOGGER.error("error occurred creating order Parameter: " + e.getMessage(),e);
             throw e;
         } catch (Exception e) {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);
