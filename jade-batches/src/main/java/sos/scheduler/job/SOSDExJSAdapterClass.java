@@ -81,7 +81,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         		JADEOptions jo = new JADEOptions();
         		Path iniFile = jo.convertXml2Ini(settings);
         		schedulerParams.put("settings",iniFile.toString());
-        		jadeEngine.setOriginalSettingsFile(settings);
         	} 
         }
         jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));

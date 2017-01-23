@@ -89,8 +89,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private long countSentHistoryRecords = 0;
     private ISOSVfsFileTransfer targetClient = null;
     private ISOSVfsFileTransfer sourceClient = null;
-    private String originalSettingsFile = null;
-
+    
     public SOSDataExchangeEngine() throws Exception {
         this.getOptions();
     }
@@ -107,7 +106,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     public SOSDataExchangeEngine(final JADEOptions jadeOptions) throws Exception {
         super(jadeOptions);
         objOptions = jadeOptions;
-        originalSettingsFile = objOptions.settings.getValue();
         if (objOptions.settings.isDirty()) {
             objOptions.readSettingsFile();
         }
@@ -466,7 +464,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             sb.append(String.format(pattern4String, "Version", VersionInfo.VERSION_STRING));
             sb.append(String.format(pattern4String, "Date", timestamp));
             if (getOptions().settings.isNotEmpty()) {
-           		sb.append(String.format(pattern4String, "SettingsFile", originalSettingsFile));
+           		sb.append(String.format(pattern4String, "SettingsFile", getOptions().getOriginalSettingsFile()));
             }
             if (getOptions().profile.isNotEmpty()) {
                 sb.append(String.format(pattern4String, "Profile", getOptions().profile.getValue()));
@@ -1332,9 +1330,5 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         addOrder.setParams(params);
         addOrder.run();
         return true;
-    }
-
-    public void setOriginalSettingsFile(String val){
-    	this.originalSettingsFile = val;
     }
 }

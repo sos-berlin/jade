@@ -39,6 +39,7 @@ public class JADEOptions extends SOSFTPOptions {
     @Override
     public HashMap<String, String> readSettingsFile() {
         String config = settings.getValue();
+        this.setOriginalSettingsFile(config);
         if (config.endsWith(".xml")) {
         	Path iniFile = convertXml2Ini(config);
         	this.settings.setValue(iniFile.toString());
