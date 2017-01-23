@@ -25,44 +25,46 @@ public class JadeFilesHistoryContainer extends IndexedContainer {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void addItems(List<JadeFilesHistoryDBItem> historyItemList) {
-        for (JadeFilesHistoryDBItem historyItem : historyItemList) {
-            try {
-                historyItem.getJadeFilesDBItem().getMandator();
-                addItem(historyItem);
-                Item item = getItem(historyItem);
-                Property status = item.getItemProperty(JadeHistoryFileColumns.STATUS.getName());
-                if ("transferred".equals(historyItem.getStatus()) || "success".equals(historyItem.getStatus())
-                        || "compressed".equals(historyItem.getStatus()) || "renamed".equals(historyItem.getStatus())) {
-                    status.setValue(new StatusSuccessLabel());
-                } else if ("transfer_aborted".equals(historyItem.getStatus()) || "transfer_has_errors".equals(historyItem.getStatus())) {
-                    status.setValue(new StatusErrorLabel());
-                } else if ("transferring".equals(historyItem.getStatus()) || "notOverwritten".equals(historyItem.getStatus())
-                        || "transfer_skipped".equals(historyItem.getStatus()) || "transferInProgress".equals(historyItem.getStatus())
-                        || "waiting4transfer".equals(historyItem.getStatus()) || "transferUndefined".equals(historyItem.getStatus())
-                        || "IgnoredDueToZerobyteConstraint".equals(historyItem.getStatus()) || "setBack".equals(historyItem.getStatus())
-                        || "polling".equals(historyItem.getStatus()) || "deleted".equals(historyItem.getStatus())) {
-                    status.setValue(new StatusTransferLabel());
+        if (historyItemList != null) {
+            for (JadeFilesHistoryDBItem historyItem : historyItemList) {
+                try {
+                    historyItem.getJadeFilesDBItem().getMandator();
+                    addItem(historyItem);
+                    Item item = getItem(historyItem);
+                    Property status = item.getItemProperty(JadeHistoryFileColumns.STATUS.getName());
+                    if ("transferred".equals(historyItem.getStatus()) || "success".equals(historyItem.getStatus())
+                            || "compressed".equals(historyItem.getStatus()) || "renamed".equals(historyItem.getStatus())) {
+                        status.setValue(new StatusSuccessLabel());
+                    } else if ("transfer_aborted".equals(historyItem.getStatus()) || "transfer_has_errors".equals(historyItem.getStatus())) {
+                        status.setValue(new StatusErrorLabel());
+                    } else if ("transferring".equals(historyItem.getStatus()) || "notOverwritten".equals(historyItem.getStatus())
+                            || "transfer_skipped".equals(historyItem.getStatus()) || "transferInProgress".equals(historyItem.getStatus())
+                            || "waiting4transfer".equals(historyItem.getStatus()) || "transferUndefined".equals(historyItem.getStatus())
+                            || "IgnoredDueToZerobyteConstraint".equals(historyItem.getStatus()) || "setBack".equals(historyItem.getStatus())
+                            || "polling".equals(historyItem.getStatus()) || "deleted".equals(historyItem.getStatus())) {
+                        status.setValue(new StatusTransferLabel());
+                    }
+                    Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
+                    mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
+                    Property transferStart = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_START.getName());
+                    transferStart.setValue(historyItem.getTransferStart());
+                    Property transferEnd = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_END.getName());
+                    transferEnd.setValue(historyItem.getTransferEnd());
+                    Property operation = item.getItemProperty(JadeHistoryFileColumns.OPERATION.getName());
+                    operation.setValue(historyItem.getOperation());
+                    Property protocol = item.getItemProperty(JadeHistoryFileColumns.PROTOCOL.getName());
+                    protocol.setValue(historyItem.getProtocol());
+                    Property targetFilename = item.getItemProperty(JadeHistoryFileColumns.TARGET_FILENAME.getName());
+                    targetFilename.setValue(historyItem.getTargetFilename());
+                    Property fileSize = item.getItemProperty(JadeFileColumns.FILE_SIZE.getName());
+                    fileSize.setValue(historyItem.getJadeFilesDBItem().getFileSize());
+                    Property sourceHost = item.getItemProperty(JadeFileColumns.SOURCE_HOST.getName());
+                    sourceHost.setValue(historyItem.getJadeFilesDBItem().getSourceHost());
+                    Property targetHost = item.getItemProperty(JadeHistoryFileColumns.TARGET_HOST.getName());
+                    targetHost.setValue(historyItem.getTargetHost());
+                } catch (Exception e) {
+                    continue;
                 }
-                Property mandator = item.getItemProperty(JadeFileColumns.MANDATOR.getName());
-                mandator.setValue(historyItem.getJadeFilesDBItem().getMandator());
-                Property transferStart = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_START.getName());
-                transferStart.setValue(historyItem.getTransferStart());
-                Property transferEnd = item.getItemProperty(JadeHistoryFileColumns.TRANSFER_END.getName());
-                transferEnd.setValue(historyItem.getTransferEnd());
-                Property operation = item.getItemProperty(JadeHistoryFileColumns.OPERATION.getName());
-                operation.setValue(historyItem.getOperation());
-                Property protocol = item.getItemProperty(JadeHistoryFileColumns.PROTOCOL.getName());
-                protocol.setValue(historyItem.getProtocol());
-                Property targetFilename = item.getItemProperty(JadeHistoryFileColumns.TARGET_FILENAME.getName());
-                targetFilename.setValue(historyItem.getTargetFilename());
-                Property fileSize = item.getItemProperty(JadeFileColumns.FILE_SIZE.getName());
-                fileSize.setValue(historyItem.getJadeFilesDBItem().getFileSize());
-                Property sourceHost = item.getItemProperty(JadeFileColumns.SOURCE_HOST.getName());
-                sourceHost.setValue(historyItem.getJadeFilesDBItem().getSourceHost());
-                Property targetHost = item.getItemProperty(JadeHistoryFileColumns.TARGET_HOST.getName());
-                targetHost.setValue(historyItem.getTargetHost());
-            } catch (Exception e) {
-                continue;
             }
         }
     }
