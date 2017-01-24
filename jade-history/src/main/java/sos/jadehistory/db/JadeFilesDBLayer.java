@@ -27,7 +27,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public JadeFilesDBLayer(String configurationFileName) {
         super();
         this.setConfigurationFileName(configurationFileName);
-        this.initConnection(this.getConfigurationFileName());
         this.resetFilter();
     }
 
@@ -36,7 +35,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             return null;
         }
         if (connection == null) {
-            initConnection(getConfigurationFileName());
         }
         connection.beginTransaction();
         return (JadeFilesDBItem) ((Session) this.connection.getCurrentSession()).get(JadeFilesDBItem.class, id);
@@ -187,18 +185,12 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public int delete() throws Exception {
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getWhere() + ")";
         int row = 0;
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         Query query = connection.createQuery(q);
         setWhere(query);
         row = query.executeUpdate();
         connection.commit();
         String hql = "delete from JadeFilesDBItem " + getWhere();
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         query = connection.createQuery(hql);
         setWhere(query);
@@ -211,9 +203,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         filter.setCreatedFrom(from);
         filter.setCreatedTo(to);
         List<DbItem> resultset = null;
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         Query query = connection.createQuery("  from JadeFilesDBItem " + getWhere());
         if (filter.getCreatedFrom() != null) {
@@ -228,9 +217,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
     public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
         query.setLong("jadeId", jadeId);
@@ -240,9 +226,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
     public List<JadeFilesDBItem> getFiles() throws Exception {
         List<JadeFilesDBItem> resultset = null;
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         Query query = connection.createQuery("  from JadeFilesDBItem " + getWhere());
         setWhere(query);
@@ -296,9 +279,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public long deleteInterval() throws Exception {
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getWhereFromTo() + ")";
         int row = 0;
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         Query query = connection.createQuery(q);
         if (filter.getCreatedFrom() != null) {
@@ -310,9 +290,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         row = query.executeUpdate();
         connection.commit();
         String hql = "delete from JadeFilesDBItem " + getWhereFromTo();
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
         connection.beginTransaction();
         query = connection.createQuery(hql);
         if (filter.getCreatedFrom() != null) {

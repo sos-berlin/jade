@@ -79,16 +79,16 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
     }
 
     private void initJadeFilesDbSession() {
-        jadeFilesDBLayer.initConnection(hibernateConfigFile);
+//        jadeFilesDBLayer.initConnection(hibernateConfigFile);
     }
 
     private void initJadeFilesHistoryDbSession() {
         try {
-            jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
+//            jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
         } catch (Exception e) {
             try {
                 LOGGER.error("Exception occurred while initializing Session for the first time", e);
-                jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
+//                jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
             } catch (Exception e1) {
                 LOGGER.error("Exception occurred while initializing Session for the second time", e1);
             }

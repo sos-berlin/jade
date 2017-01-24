@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
-import com.sos.DataExchange.converter.JadeXml2IniConverter;
+//import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
@@ -59,8 +59,8 @@ public class JADEOptions extends SOSFTPOptions {
     		}
     		
     		tmpIniFile = Files.createTempFile("sos.yade_settings_",".ini");
-    		JadeXml2IniConverter converter = new JadeXml2IniConverter();
-            converter.process(new InputSource(schemaStream), xmlFile, tmpIniFile.toString());
+//    		JadeXml2IniConverter converter = new JadeXml2IniConverter();
+//            converter.process(new InputSource(schemaStream), xmlFile, tmpIniFile.toString());
     		
             LOGGER.debug(String.format("%s: converted to %s and will be deleted on exit", method,tmpIniFile.toString()));
             return tmpIniFile;
