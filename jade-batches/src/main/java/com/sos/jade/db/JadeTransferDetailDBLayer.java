@@ -11,7 +11,6 @@ public class JadeTransferDetailDBLayer extends JadeTransferDBLayer {
     public JadeTransferDetailDBLayer(final String configurationFile) {
         super(configurationFile);
         this.setConfigurationFileName(configurationFile);
-        this.initConnection(this.getConfigurationFileName());
     }
 
     public List<JadeTransferDetailDBItem> getTransferDetailsFromTo() throws Exception {

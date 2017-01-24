@@ -33,7 +33,6 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     public JadeTransferDBLayer(String configurationFile) {
         super();
         this.setConfigurationFileName(configurationFile);
-        this.initConnection(this.getConfigurationFileName());
         this.dateFormat = "dd.MM.yyyy hh:mm";
     }
 
@@ -118,7 +117,6 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     }
 
     public int deleteFromTo(String tableName) throws Exception {
-        initConnection();
         String hql = "delete from " + tableName + " where " + getWhereFromTo();
         int row = 0;
         connection.beginTransaction();
@@ -202,9 +200,7 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     }
 
     public void save(JadeTransferDBItem transferItem) throws Exception {
-        if (connection == null) {
-            initConnection(getConfigurationFileName());
-        }
+ 
         connection.beginTransaction();
         connection.save(transferItem);
         connection.commit();
