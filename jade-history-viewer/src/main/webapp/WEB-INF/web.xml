@@ -17,6 +17,9 @@
 			<param-value>com.sos.jade.backgroundservice.JADEHistoryViewerUI</param-value>
 		</init-param>
 		<async-supported>true</async-supported>
+		<session-config>
+            <tracking-mode>COOKIE</tracking-mode>
+        </session-config>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>vaadinservlet</servlet-name>
