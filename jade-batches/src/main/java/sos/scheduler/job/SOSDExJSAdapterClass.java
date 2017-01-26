@@ -73,13 +73,15 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         jadeOptions = jadeEngine.getOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
         
+        boolean deleteSettingsFile = false;
         HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
         if(schedulerParams != null && schedulerParams.containsKey("settings")){
         	String settings = schedulerParams.get("settings");
         	jadeOptions.setOriginalSettingsFile(settings);
         	LOGGER.debug(String.format("%s: schedulerParams settings=%s",method,settings));
-        	if (settings.endsWith(".xml")) {
-        		JADEOptions jo = new JADEOptions();
+        	if (settings.toLowerCase().endsWith(".xml")) {
+        		deleteSettingsFile = true;
+            	JADEOptions jo = new JADEOptions();
         		Path iniFile = jo.convertXml2Ini(settings);
         		schedulerParams.put("settings",iniFile.toString());
         	} 
@@ -90,12 +92,13 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeOptions.verbose.value(intLogLevel);
         }
         jadeEngine.setJSJobUtilites(this);
+     	jadeEngine.getOptions().setDeleteSettingsFileOnExit(deleteSettingsFile);
         try {
             jadeEngine.execute();
         } catch (Exception e) {
             throw e;
         } finally {
-            jadeEngine.logout();
+        	jadeEngine.logout();
         }
         transfFiles = jadeEngine.getFileList();
         int resultSetSize = transfFiles.getList().size();

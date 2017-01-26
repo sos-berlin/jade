@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -605,11 +607,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
     @Override
     public void logout() {
-        try {
+    	try {
             doLogout(targetClient);
             doLogout(sourceClient);
         } catch (Exception e) {
             // nothing to do
+        }
+        if(getOptions().getDeleteSettingsFileOnExit()){
+        	try {
+				String msg = "deleted";
+				if(!Files.deleteIfExists(Paths.get(objOptions.settings.getValue()))){
+					msg = "cant'be deleted";
+				}
+				LOGGER.debug(String.format("settings file %s[%s]", msg, objOptions.settings.getValue()));
+	    	} catch (IOException e) {
+	    		LOGGER.debug(String.format("settings file can't be deleted[%s]exception %s", objOptions.settings.getValue(),e.toString()),e);
+			}
         }
     }
 

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
-//import com.sos.DataExchange.converter.JadeXml2IniConverter;
+import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
@@ -40,8 +40,10 @@ public class JADEOptions extends SOSFTPOptions {
     public HashMap<String, String> readSettingsFile() {
         String config = settings.getValue();
         this.setOriginalSettingsFile(config);
-        if (config.endsWith(".xml")) {
-        	Path iniFile = convertXml2Ini(config);
+        this.setDeleteSettingsFileOnExit(false);
+        if (config.toLowerCase().endsWith(".xml")) {
+        	this.setDeleteSettingsFileOnExit(true);
+            Path iniFile = convertXml2Ini(config);
         	this.settings.setValue(iniFile.toString());
         }        
         return super.readSettingsFile();
@@ -50,6 +52,7 @@ public class JADEOptions extends SOSFTPOptions {
     public Path convertXml2Ini(String xmlFile){
     	String method="convertXml2Ini";
     	LOGGER.debug(String.format("%s: xmlFile=%s", method,xmlFile));
+      	
     	InputStream schemaStream = null;
     	Path tmpIniFile = null;
     	try{
@@ -59,10 +62,10 @@ public class JADEOptions extends SOSFTPOptions {
     		}
     		
     		tmpIniFile = Files.createTempFile("sos.yade_settings_",".ini");
-//    		JadeXml2IniConverter converter = new JadeXml2IniConverter();
-//            converter.process(new InputSource(schemaStream), xmlFile, tmpIniFile.toString());
+    		JadeXml2IniConverter converter = new JadeXml2IniConverter();
+            converter.process(new InputSource(schemaStream), xmlFile, tmpIniFile.toString());
     		
-            LOGGER.debug(String.format("%s: converted to %s and will be deleted on exit", method,tmpIniFile.toString()));
+            LOGGER.debug(String.format("%s: converted to %s", method,tmpIniFile.toString()));
             return tmpIniFile;
     	}
     	catch(Exception e){
@@ -72,9 +75,6 @@ public class JADEOptions extends SOSFTPOptions {
     	finally{
     		if(schemaStream != null){
     			try {schemaStream.close();} catch (IOException e) {}
-    		}
-    		if(tmpIniFile!=null){
-    			tmpIniFile.toFile().deleteOnExit();
     		}
     	}
     }
