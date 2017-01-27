@@ -41,7 +41,7 @@ public class JadeHistoryDBLayer {
             return null;
         }
         try {
-            return (JadeFilesDBItem) ((Session) connection.getCurrentSession()).get(JadeFilesDBItem.class, id);
+            return (JadeFilesDBItem) connection.get(JadeFilesDBItem.class, id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
@@ -310,7 +310,7 @@ public class JadeHistoryDBLayer {
             return null;
         }
         try {
-            return (JadeFilesHistoryDBItem) ((Session) connection.getCurrentSession()).get(JadeFilesHistoryDBItem.class, guid);
+            return (JadeFilesHistoryDBItem) connection.get(JadeFilesHistoryDBItem.class, guid);
         } catch (ObjectNotFoundException e) {
             return null;
         }

@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -252,25 +253,5 @@ public class JadeTransferDetailDBItemTest {
         Date actModified = jadeTransferDetailDBItem.getModified();
         assertEquals("testSetCreated faild: ", 0, myModified.compareTo(actModified));
     }
-
-    @Test
-    @Ignore("Test set to Ignore for later examination")
-    public void testSave() {
-        JadeTransferDBItem transferItem = getNewTransferItem();
-        JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFilename);
-        try {
-            jadeTransferDBLayer.getConnection().beginTransaction();
-            Session session = (Session) jadeTransferDBLayer.getConnection().getCurrentSession();
-            transferItem.setSession(session);
-            transferItem.save();
-            jadeTransferDetailDBItem = getNewTransferDetailDBItem();
-            jadeTransferDetailDBItem.setSession(session);
-            jadeTransferDetailDBItem.setJadeTransferDBItem(transferItem);
-            jadeTransferDetailDBItem.save();
-            jadeTransferDBLayer.getConnection().commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
+ 
 }

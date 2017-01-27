@@ -15,7 +15,7 @@ public class JadeHistoryDataProvider implements ISOSHibernateDataProvider {
     private List<JadeTransferDBItem> listOfTransferItems;
     private JadeTransferDBLayer jadeTransferDBLayer;
 
-    public JadeHistoryDataProvider(File configurationFile) {
+    public JadeHistoryDataProvider(File configurationFile)  {
         this.jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
     }
 

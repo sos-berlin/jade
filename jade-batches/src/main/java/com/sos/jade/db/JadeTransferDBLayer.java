@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
+import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.hibernate.layer.SOSHibernateDBLayer;
 import com.sos.jade.JadeHistoryFilter;
 
@@ -32,6 +33,11 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 
     public JadeTransferDBLayer(String configurationFile) {
         super();
+        try {
+            this.createStatelessConnection(configurationFile);
+        } catch (Exception e) {
+            throw new JobSchedulerException(e);
+        }
         this.setConfigurationFileName(configurationFile);
         this.dateFormat = "dd.MM.yyyy hh:mm";
     }
@@ -200,7 +206,7 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     }
 
     public void save(JadeTransferDBItem transferItem) throws Exception {
- 
+
         connection.beginTransaction();
         connection.save(transferItem);
         connection.commit();

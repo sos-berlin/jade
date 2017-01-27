@@ -20,7 +20,7 @@ public class JadeTransferDBLayerTest {
     private String configurationFilename = "c:/temp/hibernate.cfg.xml";
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         jadeTransferDBLayer = new JadeTransferDBLayer(configurationFilename);
     }
 
@@ -92,7 +92,7 @@ public class JadeTransferDBLayerTest {
 
     @Test
     @Ignore("Test set to Ignore for later examination")
-    public void testFilesSelectFromTo() throws ParseException {
+    public void testFilesSelectFromTo() throws Exception {
         JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFilename);
         jadeTransferDBLayer.setDateFormat("dd.MM.yyyy hh:mm");
         jadeTransferDBLayer.setCreatedFrom("07.09.2001 00:00");

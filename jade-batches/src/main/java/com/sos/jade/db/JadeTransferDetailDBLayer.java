@@ -8,7 +8,7 @@ import org.hibernate.Query;
 /** @author Uwe Risse */
 public class JadeTransferDetailDBLayer extends JadeTransferDBLayer {
 
-    public JadeTransferDetailDBLayer(final String configurationFile) {
+    public JadeTransferDetailDBLayer(final String configurationFile)   {
         super(configurationFile);
         this.setConfigurationFileName(configurationFile);
     }

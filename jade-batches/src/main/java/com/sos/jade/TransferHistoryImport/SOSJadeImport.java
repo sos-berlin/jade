@@ -100,13 +100,17 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
 
     @Override
     public void doTransferSummary() {
-        jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
-        transferItem = new JadeTransferDBItem();
-        copyFields(jadeTransferExportData, transferItem);
         try {
-            jadeTransferDBLayer.save(transferItem);
+            jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
+            transferItem = new JadeTransferDBItem();
+            copyFields(jadeTransferExportData, transferItem);
+            try {
+                jadeTransferDBLayer.save(transferItem);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            throw new JobSchedulerException(e);
         }
     }
 

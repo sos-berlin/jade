@@ -37,7 +37,7 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         if (connection == null) {
         }
         connection.beginTransaction();
-        return (JadeFilesDBItem) ((Session) this.connection.getCurrentSession()).get(JadeFilesDBItem.class, id);
+        return (JadeFilesDBItem) this.connection.get(JadeFilesDBItem.class, id);
     }
 
     public void resetFilter() {

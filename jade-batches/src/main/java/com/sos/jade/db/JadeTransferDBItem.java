@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.*;
 
 import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 
 import com.sos.hibernate.classes.DbItem;
 
@@ -44,8 +45,7 @@ public class JadeTransferDBItem extends DbItem {
     private Date modified;
     private String modifiedBy;
     private List<JadeTransferDetailDBItem> jadeTransferDetailDBItems = new ArrayList<JadeTransferDetailDBItem>();
-    private Session session;
-
+ 
     @OneToMany(mappedBy = "transferId")
     public List<JadeTransferDetailDBItem> getJadeTransferDetailDBItems() {
         return jadeTransferDetailDBItems;
@@ -58,11 +58,7 @@ public class JadeTransferDBItem extends DbItem {
     public JadeTransferDBItem() {
         //
     }
-
-    public JadeTransferDBItem(Session session_) {
-        this.session = session_;
-    }
-
+ 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "TRANSFER_ID", nullable = false)
@@ -381,23 +377,5 @@ public class JadeTransferDBItem extends DbItem {
         this.getJadeTransferDetailDBItems().add(transferDetail);
         transferDetail.setJadeTransferDBItem(this);
     }
-
-    @Transient
-    public Session getSession() {
-        return session;
-    }
-
-    @Transient
-    public void setSession(Session session_) {
-        this.session = session_;
-    }
-
-    public void save() {
-        session.save(this);
-        for (int i = 0; i < jadeTransferDetailDBItems.size(); i++) {
-            JadeTransferDetailDBItem h = (JadeTransferDetailDBItem) jadeTransferDetailDBItems.get(i);
-            session.save(h);
-        }
-    }
-
+  
 }

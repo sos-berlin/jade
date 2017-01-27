@@ -35,7 +35,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
             return null;
         }
         connection.beginTransaction();
-        return (JadeFilesHistoryDBItem) ((Session) this.connection.getCurrentSession()).get(JadeFilesHistoryDBItem.class, guid);
+        return (JadeFilesHistoryDBItem)  this.connection.get(JadeFilesHistoryDBItem.class, guid);
     }
 
     public void resetFilter() {
