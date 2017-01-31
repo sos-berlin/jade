@@ -130,6 +130,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         targetOptions.postTransferCommands.setPrefix(prefix);
         targetOptions.postTransferCommandsOnError.setPrefix(prefix);
         targetOptions.postTransferCommandsFinal.setPrefix(prefix);
+        options.getConnectionOptions().setTarget(targetOptions);
+        SOSConnection2OptionsAlternate sourceOptions = objOptions.getSource();
+        options.getConnectionOptions().setSource(sourceOptions);
         // Remove source files at Internet as PostTransferCommands
         options.removeFiles.value(false);
         if (objOptions.removeFiles.value() || objOptions.resultSetFileName.isDirty()) {
