@@ -260,7 +260,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void doProcessMail(final enuMailClasses mailClasses) {
         SOSSmtpMailOptions mailOptions = objOptions.getMailOptions();
         SOSSmtpMailOptions mailOptionsWithMailClasses = mailOptions.getOptions(mailClasses);
-        if (mailOptionsWithMailClasses == null || mailOptionsWithMailClasses.FileNotificationTo.isDirty()) {
+        if (mailOptionsWithMailClasses == null || !mailOptionsWithMailClasses.FileNotificationTo.isDirty()) {
             mailOptionsWithMailClasses = mailOptions;
         }
         processSendMail(mailOptionsWithMailClasses);
