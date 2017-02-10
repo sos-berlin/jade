@@ -1,5 +1,7 @@
 package sos.jadehistory.job;
 
+import java.io.File;
+
 import sos.connection.SOSConnection;
 import sos.connection.SOSMySQLConnection;
 import sos.connection.SOSPgSQLConnection;
@@ -39,8 +41,15 @@ public class JADEHistory {
                 log.debug3("connected to database using order params");
             } else {
                 if (conn == null) {
-                    log.debug3("connecting to database using Job Scheduler connection ...");
-                    conn = JobSchedulerJob.getSchedulerConnection(new SOSProfileSettings(spooler.ini_path()), log);
+                    File jobSchedulerWorkingDir = new File(spooler.directory());
+                    File reportingSettingsfile = new File(jobSchedulerWorkingDir, "config/sos_reporting_settings.ini");
+                    if (reportingSettingsfile.exists()) {
+                        log.debug3("connecting to database using Reporting connection in " + reportingSettingsfile.getAbsolutePath());
+                        conn = JobSchedulerJob.getReportingConnection(new SOSProfileSettings(reportingSettingsfile.getAbsolutePath()), log);
+                    } else {
+                        log.debug3("connecting to database using Job Scheduler connection ...");
+                        conn = JobSchedulerJob.getSchedulerConnection(new SOSProfileSettings(spooler.ini_path()), log);
+                    }
                     conn.connect();
                     log.debug3("connected to database using Job Scheduler connection");
                 } else {
