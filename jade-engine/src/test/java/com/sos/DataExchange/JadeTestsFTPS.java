@@ -117,11 +117,11 @@ public class JadeTestsFTPS extends JadeTestBase {
 
         public void execute() throws Exception {
             SOSLogger l = new SOSStandardLogger(0);
-            SOSConfiguration confFtps = new SOSConfiguration(BASE_PATH + "ftps/not_jade_ftps_setting.ini", "homer_ftps", l);
+            SOSConfiguration confFtps = new SOSConfiguration(BASE_PATH + "ftps/not_jade_ftps_setting.ini", "homer_ftps");
             Properties propertiesFtps = confFtps.getParameterAsProperties();
-            SOSConfiguration confProxySocks5 = new SOSConfiguration(BASE_PATH + "ftps/not_jade_ftps_setting.ini", "homer_proxy_socks5", l);
+            SOSConfiguration confProxySocks5 = new SOSConfiguration(BASE_PATH + "ftps/not_jade_ftps_setting.ini", "homer_proxy_socks5");
             Properties propertiesProxySocks5 = confProxySocks5.getParameterAsProperties();
-            SOSConfiguration confProxyHttp = new SOSConfiguration(BASE_PATH + "ftps/not_jade_ftps_setting.ini", "homer_proxy_http", l);
+            SOSConfiguration confProxyHttp = new SOSConfiguration(BASE_PATH + "ftps/not_jade_ftps_setting.ini", "homer_proxy_http");
             Properties propertiesProxyHttp = confProxyHttp.getParameterAsProperties();
             FTPSClient cl = null;
             String host = propertiesFtps.getProperty("host");
