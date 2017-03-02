@@ -94,7 +94,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
             if (spooler_job.order_queue() != null) {
                 parameters.merge(spooler_task.order().params());
             }
-            setConnection(JADEHistory.getConnection(spooler, getConnection(), parameters, getLogger()));
+            setConnection(JADEHistory.getConnection(spooler, getConnection(), getHibernateConfigurationReporting(), parameters, getLogger()));
             recordCount = this.doImport(parameters);
             getLogger().info(
                     "records: imported = " + recordCount + " ( found = " + recordFoundCount + " skipped = " + recordSkippedCount

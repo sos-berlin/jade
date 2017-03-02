@@ -1,10 +1,16 @@
 package sos.jadehistory.job;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import sos.connection.SOSConnection;
+import sos.scheduler.job.JobSchedulerJob;
 import sos.spooler.Monitor_impl;
 import sos.spooler.Variable_set;
 import sos.util.SOSClassUtil;
 import sos.util.SOSSchedulerLogger;
+import sos.util.SOSString;
 
 public class JADEHistoryReceiveMonitor extends Monitor_impl {
 
@@ -52,7 +58,7 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
                         try {
                             String[] files = parameters.value("ftp_result_filepaths").split(";");
                             log = new SOSSchedulerLogger(spooler_log);
-                            conn = JADEHistory.getConnection(spooler, conn, parameters, log);
+                            conn = JADEHistory.getConnection(spooler, conn, getHibernateConfigurationReporting(), parameters, log);
                             for (String file : files) {
                                 fillPosition(conn, host, remoteDir, file);
                             }
@@ -122,4 +128,29 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
         }
     }
 
+    private Path getHibernateConfigurationScheduler(){
+        Variable_set vs = spooler.variables();
+        if(vs != null){
+            String var = vs.value(JobSchedulerJob.SCHEDULER_PARAM_HIBERNATE_SCHEDULER);
+            if(!SOSString.isEmpty(var)){
+                return Paths.get(var);
+            }
+        }
+        return Paths.get(spooler.configuration_directory()).getParent().resolve(JobSchedulerJob.HIBERNATE_DEFAULT_FILE_NAME_SCHEDULER);
+    }
+    
+    private Path getHibernateConfigurationReporting(){
+        Variable_set vs = spooler.variables();
+        if(vs != null){
+            String var = vs.value(JobSchedulerJob.SCHEDULER_PARAM_HIBERNATE_REPORTING);
+            if(!SOSString.isEmpty(var)){
+                return Paths.get(var);
+            }
+        }
+        Path configFile = Paths.get(spooler.configuration_directory()).getParent().resolve(JobSchedulerJob.HIBERNATE_DEFAULT_FILE_NAME_REPORTING);
+        if(Files.exists(configFile)){
+            return configFile;
+        }
+        return getHibernateConfigurationScheduler();
+    }
 }

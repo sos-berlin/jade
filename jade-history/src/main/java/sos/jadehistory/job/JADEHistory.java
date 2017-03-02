@@ -1,12 +1,10 @@
 package sos.jadehistory.job;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import sos.connection.SOSConnection;
 import sos.connection.SOSMySQLConnection;
 import sos.connection.SOSPgSQLConnection;
-import sos.scheduler.job.JobSchedulerJob;
-import sos.settings.SOSProfileSettings;
 import sos.spooler.Log;
 import sos.spooler.Spooler;
 import sos.spooler.Variable_set;
@@ -21,7 +19,7 @@ public class JADEHistory {
     private static final String DB_CLASS = "db_class";
     private static boolean _doDebug = false;
 
-    public static SOSConnection getConnection(final Spooler spooler, SOSConnection conn, final Variable_set parameters, final SOSLogger log)
+    public static SOSConnection getConnection(final Spooler spooler, SOSConnection conn, final Path hibernateFile, final Variable_set parameters, final SOSLogger log)
             throws Exception {
         try {
             if (parameters.value(DB_CLASS) != null && parameters.value(DB_CLASS).length() > 0) {
@@ -41,17 +39,10 @@ public class JADEHistory {
                 log.debug3("connected to database using order params");
             } else {
                 if (conn == null) {
-                    File jobSchedulerWorkingDir = new File(spooler.directory());
-                    File reportingSettingsfile = new File(jobSchedulerWorkingDir, "config/sos_reporting_settings.ini");
-                    if (reportingSettingsfile.exists()) {
-                        log.debug3("connecting to database using Reporting connection in " + reportingSettingsfile.getAbsolutePath());
-                        conn = JobSchedulerJob.getReportingConnection(new SOSProfileSettings(reportingSettingsfile.getAbsolutePath()));
-                    } else {
-                        log.debug3("connecting to database using Job Scheduler connection ...");
-                        conn = JobSchedulerJob.getSchedulerConnection(new SOSProfileSettings(spooler.ini_path()));
-                    }
+                    log.debug3(String.format("connecting to database using configuration file %s",hibernateFile));
+                    conn = SOSConnection.createInstance(hibernateFile.toFile().getAbsolutePath(), log);
                     conn.connect();
-                    log.debug3("connected to database using Job Scheduler connection");
+                    log.debug3(String.format("connected to database using configuration file %s",hibernateFile));
                 } else {
                     log.debug3("using existing connection");
                 }
