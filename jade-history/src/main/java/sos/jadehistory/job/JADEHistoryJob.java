@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
+import sos.connection.SOSConnection;
 import sos.connection.SOSDB2Connection;
 import sos.connection.SOSPgSQLConnection;
 import sos.jadehistory.sql.Insert_cmd;
@@ -85,6 +86,7 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
         boolean rc = true;
         long recordCount = 0;
         Variable_set parameters = null;
+        SOSConnection conn = null;
         try {
             init();
             parameters = spooler.create_variable_set();
@@ -94,7 +96,8 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
             if (spooler_job.order_queue() != null) {
                 parameters.merge(spooler_task.order().params());
             }
-            setConnection(JADEHistory.getConnection(spooler, getConnection(), getHibernateConfigurationReporting(), parameters, getLogger()));
+            conn = JADEHistory.getConnection(getHibernateConfigurationReporting(), parameters, getLogger());
+            conn.connect();
             recordCount = this.doImport(parameters);
             getLogger().info(
                     "records: imported = " + recordCount + " ( found = " + recordFoundCount + " skipped = " + recordSkippedCount
@@ -103,6 +106,15 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
         } catch (Exception e) {
             spooler_log.error("error occurred " + e.getMessage());
             return false;
+        }
+        finally {
+            try {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            } catch (Exception e) {
+                // nothing to do
+            }
         }
     }
 

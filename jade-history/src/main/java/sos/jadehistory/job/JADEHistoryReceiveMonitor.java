@@ -58,7 +58,8 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
                         try {
                             String[] files = parameters.value("ftp_result_filepaths").split(";");
                             log = new SOSSchedulerLogger(spooler_log);
-                            conn = JADEHistory.getConnection(spooler, conn, getHibernateConfigurationReporting(), parameters, log);
+                            conn = JADEHistory.getConnection(getHibernateConfigurationReporting(), parameters, log);
+                            conn.connect();
                             for (String file : files) {
                                 fillPosition(conn, host, remoteDir, file);
                             }
