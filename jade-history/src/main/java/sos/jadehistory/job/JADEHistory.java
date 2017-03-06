@@ -30,7 +30,7 @@ public class JADEHistory {
                 conn.connect();
             } else {
                 log.debug3(String.format("create database connection using configuration file %s",hibernateFile));
-                conn = SOSConnection.createInstance(hibernateFile.toFile().getAbsolutePath(), log);
+                conn = SOSConnection.createInstance(hibernateFile.toFile().getCanonicalPath(), log);
             }
         } catch (Exception e) {
             throw new Exception("connect to database failed: " + e.getMessage());
