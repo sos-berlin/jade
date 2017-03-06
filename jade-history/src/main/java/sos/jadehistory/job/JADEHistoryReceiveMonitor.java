@@ -46,8 +46,8 @@ public class JADEHistoryReceiveMonitor extends Monitor_impl {
                 if ("0".equals(parameters.value("ftp_result_files"))) {
                     spooler_log.debug9("no files were received");
                 } else {
-                    host = parameters.value("ftp_host");
-                    remoteDir = parameters.value("ftp_remote_dir");
+                    host = parameters.value("source_host");
+                    remoteDir = parameters.value("source_dir");
                     if (host != null && host.length() > 0 && remoteDir != null && remoteDir.length() > 0) {
                         try {
                             String[] files = parameters.value("ftp_result_filepaths").split(";");
