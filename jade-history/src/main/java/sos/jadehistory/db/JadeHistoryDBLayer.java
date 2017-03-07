@@ -15,7 +15,7 @@ import sos.jadehistory.JadeFilesFilter;
 import sos.jadehistory.JadeFilesHistoryFilter;
 
 import com.sos.hibernate.classes.DbItem;
-import com.sos.hibernate.classes.SOSHibernateConnection;
+import com.sos.hibernate.classes.SOSHibernateSession;
 
 public class JadeHistoryDBLayer {
 
@@ -27,11 +27,11 @@ public class JadeHistoryDBLayer {
     private static final String CREATED_ME_FROM = " created >= :createdFrom";
     private static final String JADE_ID = "jadeId";
     private static final String WHERE = "where ";
-    private SOSHibernateConnection connection;
+    private SOSHibernateSession connection;
     protected JadeFilesFilter filesFilter;
     protected JadeFilesHistoryFilter historyFilesFilter;
 
-    public JadeHistoryDBLayer(SOSHibernateConnection connection) {
+    public JadeHistoryDBLayer(SOSHibernateSession connection) {
         this.connection = connection;
         this.resetFilter();
     }
