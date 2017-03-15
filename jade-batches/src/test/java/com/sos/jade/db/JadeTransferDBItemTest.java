@@ -381,10 +381,10 @@ public class JadeTransferDBItemTest {
         JadeTransferDetailDBItem jadeTransferDetailDBItem = getNewTransferDetailDBItem();
         JadeTransferDBItem transferItem = getNewTransferItem();
         JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(configurationFile.getAbsolutePath());
-        jadeTransferDBLayer.getConnection().connect();
-        jadeTransferDBLayer.getConnection().beginTransaction();
+        jadeTransferDBLayer.getSession().connect();
+        jadeTransferDBLayer.getSession().beginTransaction();
         transferItem.addTransferDetail(jadeTransferDetailDBItem);
-        jadeTransferDBLayer.getConnection().save(transferItem);
-        jadeTransferDBLayer.getConnection().commit();
+        jadeTransferDBLayer.getSession().save(transferItem);
+        jadeTransferDBLayer.getSession().commit();
     }
 }

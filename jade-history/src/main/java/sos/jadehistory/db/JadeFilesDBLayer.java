@@ -34,10 +34,10 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         if (id == null) {
             return null;
         }
-        if (connection == null) {
+        if (sosHibernateSession == null) {
         }
-        connection.beginTransaction();
-        return (JadeFilesDBItem) this.connection.get(JadeFilesDBItem.class, id);
+        sosHibernateSession.beginTransaction();
+        return (JadeFilesDBItem) this.sosHibernateSession.get(JadeFilesDBItem.class, id);
     }
 
     public void resetFilter() {
@@ -185,17 +185,17 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public int delete() throws Exception {
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getWhere() + ")";
         int row = 0;
-        connection.beginTransaction();
-        Query query = connection.createQuery(q);
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery(q);
         setWhere(query);
         row = query.executeUpdate();
-        connection.commit();
+        sosHibernateSession.commit();
         String hql = "delete from JadeFilesDBItem " + getWhere();
-        connection.beginTransaction();
-        query = connection.createQuery(hql);
+        sosHibernateSession.beginTransaction();
+        query = sosHibernateSession.createQuery(hql);
         setWhere(query);
         row = query.executeUpdate();
-        connection.commit();
+        sosHibernateSession.commit();
         return row;
     }
 
@@ -203,8 +203,8 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         filter.setCreatedFrom(from);
         filter.setCreatedTo(to);
         List<DbItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesDBItem " + getWhere());
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesDBItem " + getWhere());
         if (filter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
         }
@@ -217,8 +217,8 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
     public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
         query.setLong("jadeId", jadeId);
         resultset = query.list();
         return resultset;
@@ -226,8 +226,8 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
 
     public List<JadeFilesDBItem> getFiles() throws Exception {
         List<JadeFilesDBItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesDBItem " + getWhere());
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesDBItem " + getWhere());
         setWhere(query);
         resultset = query.list();
         return resultset;
@@ -279,8 +279,8 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public long deleteInterval() throws Exception {
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getWhereFromTo() + ")";
         int row = 0;
-        connection.beginTransaction();
-        Query query = connection.createQuery(q);
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery(q);
         if (filter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
         }
@@ -288,10 +288,10 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             query.setTimestamp(CREATED_TO, filter.getCreatedTo());
         }
         row = query.executeUpdate();
-        connection.commit();
+        sosHibernateSession.commit();
         String hql = "delete from JadeFilesDBItem " + getWhereFromTo();
-        connection.beginTransaction();
-        query = connection.createQuery(hql);
+        sosHibernateSession.beginTransaction();
+        query = sosHibernateSession.createQuery(hql);
         if (filter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
         }
@@ -299,7 +299,7 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             query.setTimestamp(CREATED_TO, filter.getCreatedTo());
         }
         row = query.executeUpdate();
-        connection.commit();
+        sosHibernateSession.commit();
         return row;
     }
 

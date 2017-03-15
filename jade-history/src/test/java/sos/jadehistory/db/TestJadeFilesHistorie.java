@@ -32,9 +32,9 @@ public class TestJadeFilesHistorie {
     public void testPartialSearchword() {
         JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFilename);
         try {
-            layer.getConnection().connect();
-            layer.getConnection().beginTransaction();
-            Query query = layer.getConnection().createQuery(" from JadeFilesDBItem where sourceFilename like '%Mass%'");
+            layer.getSession().connect();
+            layer.getSession().beginTransaction();
+            Query query = layer.getSession().createQuery(" from JadeFilesDBItem where sourceFilename like '%Mass%'");
             List<DbItem> resultset = query.list();
             assertNotNull(resultset);
             for (DbItem item : resultset) {
@@ -49,9 +49,9 @@ public class TestJadeFilesHistorie {
     public void testCompleteSearchword() {
         JadeFilesDBLayer layer = new JadeFilesDBLayer(configurationFilename);
         try {
-            layer.getConnection().connect();
-            layer.getConnection().beginTransaction();
-            Query query = layer.getConnection().createQuery(" from JadeFilesDBItem where sourceFilename = 'Masstest00001.txt'");
+            layer.getSession().connect();
+            layer.getSession().beginTransaction();
+            Query query = layer.getSession().createQuery(" from JadeFilesDBItem where sourceFilename = 'Masstest00001.txt'");
             List<DbItem> resultset = query.list();
             assertNotNull(resultset);
             for (DbItem item : resultset) {

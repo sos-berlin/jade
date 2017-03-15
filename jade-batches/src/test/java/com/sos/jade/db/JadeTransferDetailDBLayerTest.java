@@ -82,32 +82,32 @@ public class JadeTransferDetailDBLayerTest {
     @Ignore("Test set to Ignore for later examination")
     public void testDeleteFromTo() throws ParseException {
         try {
-            jadeTransferDetailDBLayer.getConnection().connect();
-            jadeTransferDetailDBLayer.getConnection().beginTransaction();
+            jadeTransferDetailDBLayer.getSession().connect();
+            jadeTransferDetailDBLayer.getSession().beginTransaction();
             jadeTransferDetailDBLayer.setDateFormat("yyyy-MM-dd hh:mm");
             jadeTransferDetailDBLayer.setCreatedFrom("2011-01-01 00:00");
             jadeTransferDetailDBLayer.setCreatedTo("2011-10-01 00:00");
             jadeTransferDetailDBLayer.deleteFromTo();
-            jadeTransferDetailDBLayer.getConnection().connect();
-            jadeTransferDetailDBLayer.getConnection().beginTransaction();
+            jadeTransferDetailDBLayer.getSession().connect();
+            jadeTransferDetailDBLayer.getSession().beginTransaction();
             List transferList = jadeTransferDetailDBLayer.getTransferList(0);
             assertEquals(0, transferList.size());
             JadeTransferDBLayer d = new JadeTransferDBLayer(configurationFilename);
-            d.getConnection().connect();
-            d.getConnection().beginTransaction();
+            d.getSession().connect();
+            d.getSession().beginTransaction();
             JadeTransferDetailDBItem jadeTransferDetailDBItem = this.getNewTransferDetailDBItem();
             jadeTransferDetailDBItem.setStatus(47);
             JadeTransferDBItem jadeTransferDBItem = this.getNewTransferDBItem();
-            d.getConnection().save(jadeTransferDBItem);
+            d.getSession().save(jadeTransferDBItem);
             jadeTransferDetailDBItem.setJadeTransferDBItem(jadeTransferDBItem);
-            d.getConnection().save(jadeTransferDetailDBItem);
-            d.getConnection().delete(jadeTransferDetailDBItem);
-            d.getConnection().save(jadeTransferDetailDBItem);
-            d.getConnection().delete(jadeTransferDetailDBItem);
-            d.getConnection().commit();
-            d.getConnection().connect();
-            d.getConnection().beginTransaction();
-            Query query = d.getConnection().createQuery("  from JadeTransferDetailDBItem where status = :status");
+            d.getSession().save(jadeTransferDetailDBItem);
+            d.getSession().delete(jadeTransferDetailDBItem);
+            d.getSession().save(jadeTransferDetailDBItem);
+            d.getSession().delete(jadeTransferDetailDBItem);
+            d.getSession().commit();
+            d.getSession().connect();
+            d.getSession().beginTransaction();
+            Query query = d.getSession().createQuery("  from JadeTransferDetailDBItem where status = :status");
             query.setParameter("status", 47);
             transferList = query.list();
             assertEquals(0, transferList.size());

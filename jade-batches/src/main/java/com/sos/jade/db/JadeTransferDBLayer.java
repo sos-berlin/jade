@@ -71,9 +71,9 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 
     public List<JadeTransferDBItem> getTransfersFromTo() throws Exception {
         List<JadeTransferDBItem> resultset = null;
-        connection.connect();
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeTransferDBItem where " + getWhereFromTo());
+        sosHibernateSession.connect();
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeTransferDBItem where " + getWhereFromTo());
         query.setTimestamp("createdFrom", createdFrom);
         query.setTimestamp("createdTo", createdTo);
         resultset = query.list();
@@ -108,9 +108,9 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 
     public List<JadeTransferDBItem> getTransferList(int limit) throws Exception {
         List<JadeTransferDBItem> transferList = null;
-        connection.connect();
-        connection.beginTransaction();
-        Query query = connection.createQuery("from JadeTransferDBItem " + getWhere());
+        sosHibernateSession.connect();
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("from JadeTransferDBItem " + getWhere());
         if (whereStartTime != null && !"".equals(whereStartTime)) {
             query.setDate("startTime", whereStartTime);
         }
@@ -125,8 +125,8 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     public int deleteFromTo(String tableName) throws Exception {
         String hql = "delete from " + tableName + " where " + getWhereFromTo();
         int row = 0;
-        connection.beginTransaction();
-        Query query = connection.createQuery(hql);
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery(hql);
         if (createdFrom != null && !"".equals(createdFrom)) {
             query.setTimestamp("createdFrom", createdFrom);
         }
@@ -134,7 +134,7 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
             query.setTimestamp("createdTo", createdTo);
         }
         row = query.executeUpdate();
-        connection.commit();
+        sosHibernateSession.commit();
         return row;
     }
 
@@ -207,8 +207,8 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
 
     public void save(JadeTransferDBItem transferItem) throws Exception {
 
-        connection.beginTransaction();
-        connection.save(transferItem);
-        connection.commit();
+        sosHibernateSession.beginTransaction();
+        sosHibernateSession.save(transferItem);
+        sosHibernateSession.commit();
     }
 }

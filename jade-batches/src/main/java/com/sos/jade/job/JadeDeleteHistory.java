@@ -30,16 +30,16 @@ public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOpti
             LOGGER.debug(getOptions().toString());
             JadeTransferDBLayer jadeTransferDBLayer = new JadeTransferDBLayer(objOptions.configuration_file.getValue());
             jadeTransferDBLayer.setAge(objOptions.age_exceeding_days.value());
-            jadeTransferDBLayer.getConnection().connect();
-            jadeTransferDBLayer.getConnection().beginTransaction();
+            jadeTransferDBLayer.getSession().connect();
+            jadeTransferDBLayer.getSession().beginTransaction();
             jadeTransferDBLayer.deleteFromTo();
-            jadeTransferDBLayer.getConnection().commit();
+            jadeTransferDBLayer.getSession().commit();
             JadeTransferDetailDBLayer jadeTransferDetailDBLayer = new JadeTransferDetailDBLayer(objOptions.configuration_file.getValue());
             jadeTransferDetailDBLayer.setAge(objOptions.age_exceeding_days.value());
-            jadeTransferDetailDBLayer.getConnection().connect();
-            jadeTransferDetailDBLayer.getConnection().beginTransaction();
+            jadeTransferDetailDBLayer.getSession().connect();
+            jadeTransferDetailDBLayer.getSession().beginTransaction();
             jadeTransferDetailDBLayer.deleteFromTo();
-            jadeTransferDetailDBLayer.getConnection().commit();
+            jadeTransferDetailDBLayer.getSession().commit();
             LOGGER.debug(String.format(Messages.getMsg("JSJ-I-111"), methodName));
         } catch (Exception e) {
             LOGGER.debug(String.format(Messages.getMsg("JSJ-I-111"), methodName));

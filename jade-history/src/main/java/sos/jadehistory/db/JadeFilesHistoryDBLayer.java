@@ -34,8 +34,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         if (guid == null || "".equals(guid)) {
             return null;
         }
-        connection.beginTransaction();
-        return (JadeFilesHistoryDBItem)  this.connection.get(JadeFilesHistoryDBItem.class, guid);
+        sosHibernateSession.beginTransaction();
+        return (JadeFilesHistoryDBItem)  this.sosHibernateSession.get(JadeFilesHistoryDBItem.class, guid);
     }
 
     public void resetFilter() {
@@ -320,8 +320,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         filter.setCreatedFrom(from);
         filter.setCreatedTo(to);
         List<DbItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem " + getWhere());
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem " + getWhere());
         if (filter.getCreatedFrom() != null) {
             query.setTimestamp("createdFrom", filter.getCreatedFrom());
         }
@@ -334,8 +334,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
 
     public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
         query.setLong(JADE_ID, jadeId);
         resultset = query.list();
         return resultset;
@@ -343,8 +343,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
 
     public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws Exception {
         List<JadeFilesDBItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesDBItem where id=:jadeId");
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesDBItem where id=:jadeId");
         query.setLong(JADE_ID, jadeId);
         resultset = query.list();
         // id is unique, therefore only one item has to be returned
@@ -353,8 +353,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
 
     public List<JadeFilesHistoryDBItem> getHistoryFiles() throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getWhere());
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem history " + getWhere());
         setWhere(query);
         resultset = query.list();
         return resultset;
@@ -362,8 +362,8 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
 
     public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws Exception {
         List<JadeFilesHistoryDBItem> resultset = null;
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferEnd desc");
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferEnd desc");
         setWhere(query);
         resultset = query.list();
         return resultset;

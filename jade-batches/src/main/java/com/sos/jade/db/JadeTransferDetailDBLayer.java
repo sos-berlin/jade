@@ -15,9 +15,9 @@ public class JadeTransferDetailDBLayer extends JadeTransferDBLayer {
 
     public List<JadeTransferDetailDBItem> getTransferDetailsFromTo() throws Exception {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-        connection.connect();
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeTransferDetailDBItem where  created >= :createdFrom and created <= :createdTo");
+        sosHibernateSession.connect();
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeTransferDetailDBItem where  created >= :createdFrom and created <= :createdTo");
         query.setTimestamp("createdFrom", createdFrom);
         query.setTimestamp("createdTo", createdTo);
         List<JadeTransferDetailDBItem> resultset = query.list();
@@ -25,9 +25,9 @@ public class JadeTransferDetailDBLayer extends JadeTransferDBLayer {
     }
 
     public List<JadeTransferDetailDBItem> getTransferListDetail(final int limit) throws Exception {
-        connection.connect();
-        connection.beginTransaction();
-        Query query = connection.createQuery("from JadeTransferDetailDBItem " + getWhere());
+        sosHibernateSession.connect();
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("from JadeTransferDetailDBItem " + getWhere());
         if (whereStartTime != null && !whereStartTime.equals("")) {
             query.setDate("startTime", whereStartTime);
         }
