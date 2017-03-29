@@ -5,7 +5,7 @@
  <session-factory>
   <property name="hibernate.connection.driver_class">org.mariadb.jdbc.Driver</property>
   <property name="hibernate.connection.password">scheduler</property>
-  <property name="hibernate.connection.url">jdbc:mysql://wilma:3305/scheduler</property>
+  <property name="hibernate.connection.url">jdbc:mysql://galadriel:3306/scheduler</property>
   <property name="hibernate.connection.username">scheduler</property>
   <property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
   <property name="hibernate.show_sql">false</property>

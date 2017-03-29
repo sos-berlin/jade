@@ -144,17 +144,6 @@ public class JadeMenuBar extends MenuBar {
                 // nothing to do
             }
         });
-        mFile.addSeparator();
-        this.smFileLogout = mFile.addItem("Logout", new Command() {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void menuSelected(MenuItem selectedItem) {
-                getSession().setAttribute("user", null);
-                ((JADEHistoryViewerUI) getUI()).getNavigator().navigateTo(LoginView.NAME);
-            }
-        });
     }
 
     private void createFilterMenuItems() {

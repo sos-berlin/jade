@@ -7,6 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sos.jadehistory.db.JadeFilesDBItem;
+import sos.jadehistory.db.JadeFilesHistoryDBItem;
+
+import com.sos.hibernate.classes.ClassList;
+import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.jade.backgroundservice.data.SessionAttributes;
 import com.sos.jade.backgroundservice.options.JadeBackgroundServiceOptions;
 import com.sos.jade.backgroundservice.view.MainView;
@@ -39,6 +44,7 @@ public class JADEHistoryViewerUI extends UI {
     public String log4jPropertiesFile;
     public String log4jFileOutputPath;
     private static final Logger LOGGER = LoggerFactory.getLogger(JADEHistoryViewerUI.class);
+    public static SOSHibernateFactory factory;
 
     @WebServlet(value = "/*", asyncSupported = true)
     /*
@@ -65,6 +71,14 @@ public class JADEHistoryViewerUI extends UI {
         }
         String absolutePath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
         hibernateConfigFile = absolutePath + "/WEB-INF/classes/hibernate.cfg.xml";
+        try {
+            factory = new SOSHibernateFactory(hibernateConfigFile);
+            factory.getClassMapping().add(JadeFilesDBItem.class);
+            factory.getClassMapping().add(JadeFilesHistoryDBItem.class);
+            factory.build();
+        } catch (Exception e) {
+            LOGGER.error("could not created DB connection! ", e);
+        }
         mainView = new MainView();
         aboutWindow = new AboutWindow();
         modalWindow = new FilterLayoutWindow();

@@ -8,11 +8,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.Session;
 
 import sos.jadehistory.JadeFilesFilter;
 
 import com.sos.hibernate.classes.DbItem;
+import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.layer.SOSHibernateIntervalDBLayer;
 
 public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Serializable {
@@ -23,6 +24,7 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     private static final String AND = " and ";
     private static final String CREATED_FROM = "createdFrom";
     private static final String CREATED_TO = "createdTo";
+    private SOSHibernateFactory factory;
 
     public JadeFilesDBLayer(String configurationFileName) {
         super();
@@ -301,6 +303,19 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         row = query.executeUpdate();
         sosHibernateSession.commit();
         return row;
+    }
+
+    public SOSHibernateSession initStatefullConnection() throws Exception {
+        sosHibernateSession = factory.openSession();
+        return sosHibernateSession;
+    }
+
+    public SOSHibernateFactory getFactory() {
+        return factory;
+    }
+    
+    public void setFactory(SOSHibernateFactory factory) {
+        this.factory = factory;
     }
 
 }
