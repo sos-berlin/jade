@@ -9,11 +9,12 @@ import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.Session;
 
 import sos.jadehistory.JadeFilesHistoryFilter;
 
 import com.sos.hibernate.classes.DbItem;
+import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.layer.SOSHibernateIntervalDBLayer;
 
 public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer implements Serializable {
@@ -23,6 +24,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     private static final Logger LOGGER = Logger.getLogger(JadeFilesHistoryDBLayer.class);
     private static final String AND = " and ";
     private static final String JADE_ID = "jadeId";
+    private SOSHibernateFactory factory;
 
     public JadeFilesHistoryDBLayer(String configurationFileName) {
         super();
@@ -414,6 +416,19 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     @Override
     public long deleteInterval() {
         return 0;
+    }
+
+    public SOSHibernateSession initStatefullConnection() throws Exception {
+        sosHibernateSession = factory.openSession();
+        return sosHibernateSession;
+    }
+    
+    public SOSHibernateFactory getFactory() {
+        return factory;
+    }
+    
+    public void setFactory(SOSHibernateFactory factory) {
+        this.factory = factory;
     }
 
 }

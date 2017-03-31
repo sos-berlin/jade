@@ -2,6 +2,7 @@ package com.sos.jade.backgroundservice.listeners.impl;
 
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.JADE_BS_OPTIONS;
 import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.hibernateConfigFile;
+import static com.sos.jade.backgroundservice.JADEHistoryViewerUI.factory;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -11,10 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sos.jadehistory.JadeFilesHistoryFilter;
+import sos.jadehistory.db.JadeFilesDBItem;
 import sos.jadehistory.db.JadeFilesDBLayer;
 import sos.jadehistory.db.JadeFilesHistoryDBItem;
 import sos.jadehistory.db.JadeFilesHistoryDBLayer;
 
+import com.sos.hibernate.classes.ClassList;
+import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.jade.backgroundservice.listeners.IJadeFileListener;
 import com.sos.jade.backgroundservice.view.MainView;
 
@@ -79,16 +83,33 @@ public class JadeFileListenerImpl implements IJadeFileListener, Serializable {
     }
 
     private void initJadeFilesDbSession() {
-//        jadeFilesDBLayer.initConnection(hibernateConfigFile);
+        try {
+            if (factory == null) {
+                factory = new SOSHibernateFactory(hibernateConfigFile);
+                factory.getClassMapping().add(JadeFilesDBItem.class);
+                factory.getClassMapping().add(JadeFilesHistoryDBItem.class);
+                factory.build();
+            }
+            jadeFilesDBLayer.setFactory(factory);
+            jadeFilesDBLayer.initStatefullConnection();
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred while creating statefull Session", e);
+        }
     }
 
     private void initJadeFilesHistoryDbSession() {
         try {
-//            jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
+            if (factory == null) {
+                factory = new SOSHibernateFactory(hibernateConfigFile);
+                factory.getClassMapping().add(JadeFilesDBItem.class);
+                factory.getClassMapping().add(JadeFilesHistoryDBItem.class);
+                factory.build();
+            }
+            jadeFilesHistoryDBLayer.setFactory(factory);
+            jadeFilesHistoryDBLayer.initStatefullConnection();
         } catch (Exception e) {
             try {
                 LOGGER.error("Exception occurred while initializing Session for the first time", e);
-//                jadeFilesHistoryDBLayer.initConnection(hibernateConfigFile);
             } catch (Exception e1) {
                 LOGGER.error("Exception occurred while initializing Session for the second time", e1);
             }
