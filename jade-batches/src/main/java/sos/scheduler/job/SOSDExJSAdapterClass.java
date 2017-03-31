@@ -42,7 +42,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
 
-    public SOSDExJSAdapterClass() {
+    public SOSDExJSAdapterClass() { 
         super();
     }
 
@@ -103,6 +103,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             }
         }
         createOrderParameter(jadeEngine);
+        
+        if (jadeOptions.createOrder.isNotDirty() && jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles.isTrue()){
+            jadeOptions.createOrder.setTrue();
+        }
+        
         if (resultSetSize > 0 && jadeOptions.createOrder.isTrue()) {
             String jobChainName = jadeOptions.orderJobchainName.getValue();
             if (jadeOptions.createOrdersForAllFiles.isTrue()) {
@@ -110,9 +115,18 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     createOrder(listItem, jobChainName);
                 }
             } else {
-                createOrder(transfFiles.getList().get(0), jobChainName);
+                if (jadeOptions.createOrdersForNewFiles.isTrue()) {
+                    for (SOSFileListEntry listItem : transfFiles.getList()) {
+                        if (!listItem.isTargetFileAlreadyExists()) {
+                            createOrder(listItem, jobChainName);
+                        }
+                    }
+                } else {
+                    createOrder(transfFiles.getList().get(0), jobChainName);
+                }
             }
         }
+
     }
 
     protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
@@ -127,8 +141,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         if (jobSchedulerFactory == null) {
-            jobSchedulerFactory =
-                    new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
+            jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
             jobSchedulerFactory.Options().TransferMethod.set(jadeOptions.schedulerTransferMethod);
             jobSchedulerFactory.Options().PortNumber.set(jadeOptions.orderJobschedulerPort);
@@ -161,7 +174,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         order.set_params(buildOrderParams(listItem));
         order.set_title(JSJ_I_0017.get(spooler_task.job().name()));
-        spooler.job_chain(jobChainName).add_order(order);
+        spooler.job_chain(jobChainName).add_or_replace_order(order);
         return feedback;
     }
 
