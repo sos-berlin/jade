@@ -104,7 +104,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         createOrderParameter(jadeEngine);
         
-        if (jadeOptions.createOrder.isNotDirty() && jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles.isTrue()){
+        if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles.isTrue())){
             jadeOptions.createOrder.setTrue();
         }
         
