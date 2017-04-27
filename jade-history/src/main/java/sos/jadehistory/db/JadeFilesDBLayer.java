@@ -32,6 +32,14 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
         this.resetFilter();
     }
 
+    public JadeFilesDBLayer(SOSHibernateSession session) {
+        super();
+        this.setConfigurationFileName(session.getFactory().getConfigFile().get().toFile().getAbsolutePath());
+        this.sosHibernateSession = session;
+        this.resetFilter();
+        
+    }
+    
     public JadeFilesDBItem get(Long id) throws Exception {
         if (id == null) {
             return null;
@@ -187,7 +195,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public int delete() throws Exception {
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getWhere() + ")";
         int row = 0;
-        sosHibernateSession.beginTransaction();
         Query query = sosHibernateSession.createQuery(q);
         setWhere(query);
         row = query.executeUpdate();
@@ -281,7 +288,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
     public long deleteInterval() throws Exception {
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getWhereFromTo() + ")";
         int row = 0;
-        sosHibernateSession.beginTransaction();
         Query query = sosHibernateSession.createQuery(q);
         if (filter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
@@ -290,9 +296,7 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             query.setTimestamp(CREATED_TO, filter.getCreatedTo());
         }
         row = query.executeUpdate();
-        sosHibernateSession.commit();
         String hql = "delete from JadeFilesDBItem " + getWhereFromTo();
-        sosHibernateSession.beginTransaction();
         query = sosHibernateSession.createQuery(hql);
         if (filter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filter.getCreatedFrom());
@@ -301,7 +305,6 @@ public class JadeFilesDBLayer extends SOSHibernateIntervalDBLayer implements Ser
             query.setTimestamp(CREATED_TO, filter.getCreatedTo());
         }
         row = query.executeUpdate();
-        sosHibernateSession.commit();
         return row;
     }
 
