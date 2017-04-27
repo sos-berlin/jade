@@ -32,6 +32,13 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         this.resetFilter();
     }
 
+    public JadeFilesHistoryDBLayer(SOSHibernateSession session) {
+        super();
+        this.setConfigurationFileName(session.getFactory().getConfigFile().get().toFile().getAbsolutePath());
+        this.sosHibernateSession = session;
+        this.resetFilter();
+    }
+
     public JadeFilesHistoryDBItem get(String guid) throws Exception {
         if (guid == null || "".equals(guid)) {
             return null;
