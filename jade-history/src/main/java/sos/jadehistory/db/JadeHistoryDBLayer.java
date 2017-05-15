@@ -8,14 +8,14 @@ import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import sos.jadehistory.JadeFilesFilter;
 import sos.jadehistory.JadeFilesHistoryFilter;
 
 import com.sos.hibernate.classes.DbItem;
 import com.sos.hibernate.classes.SOSHibernateSession;
+import com.sos.hibernate.exceptions.SOSHibernateException;
 
 public class JadeHistoryDBLayer {
 
@@ -27,12 +27,12 @@ public class JadeHistoryDBLayer {
     private static final String CREATED_ME_FROM = " created >= :createdFrom";
     private static final String JADE_ID = "jadeId";
     private static final String WHERE = "where ";
-    private SOSHibernateSession connection;
+    private SOSHibernateSession sosHibernateSession;
     protected JadeFilesFilter filesFilter;
     protected JadeFilesHistoryFilter historyFilesFilter;
 
-    public JadeHistoryDBLayer(SOSHibernateSession connection) {
-        this.connection = connection;
+    public JadeHistoryDBLayer(SOSHibernateSession session) {
+        this.sosHibernateSession = session;
         this.resetFilter();
     }
 
@@ -41,7 +41,7 @@ public class JadeHistoryDBLayer {
             return null;
         }
         try {
-            return (JadeFilesDBItem) connection.get(JadeFilesDBItem.class, id);
+            return (JadeFilesDBItem) sosHibernateSession.get(JadeFilesDBItem.class, id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
@@ -194,48 +194,48 @@ public class JadeHistoryDBLayer {
         }
     }
 
-    public int delete() throws Exception {
-        connection.beginTransaction();
+    public int delete() throws SOSHibernateException  {
+        sosHibernateSession.beginTransaction();
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getFilesWhere() + ")";
-        Query query = connection.createQuery(q);
+        Query query = sosHibernateSession.createQuery(q);
         setFilesWhere(query);
         int row = query.executeUpdate();
         String hql = "delete from JadeFilesDBItem " + getFilesWhere();
-        query = connection.createQuery(hql);
+        query = sosHibernateSession.createQuery(hql);
         setFilesWhere(query);
-        row = query.executeUpdate();
+        row = sosHibernateSession.executeUpdate(query);
         return row;
     }
 
-    public List<DbItem> getFilesFromTo(Date from, Date to) throws Exception {
+    public List<DbItem> getFilesFromTo(Date from, Date to) throws SOSHibernateException {
         filesFilter.setCreatedFrom(from);
         filesFilter.setCreatedTo(to);
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesDBItem " + getFilesWhere());
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesDBItem " + getFilesWhere());
         if (filesFilter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filesFilter.getCreatedFrom());
         }
         if (filesFilter.getCreatedTo() != null) {
             query.setTimestamp(CREATED_TO, filesFilter.getCreatedTo());
         }
-        return query.list();
+        return sosHibernateSession.getResultList(query);
     }
 
-    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws Exception {
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
+    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws SOSHibernateException {
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
         query.setLong(JADE_ID, jadeId);
-        List<JadeFilesHistoryDBItem> resultset = query.list();
-        connection.commit();
+        List<JadeFilesHistoryDBItem> resultset = sosHibernateSession.getResultList(query);
+        sosHibernateSession.commit();
         return resultset;
     }
 
-    public List<JadeFilesDBItem> getFiles() throws Exception {
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesDBItem " + getFilesWhere());
+    public List<JadeFilesDBItem> getFiles() throws SOSHibernateException  {
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesDBItem " + getFilesWhere());
         setFilesWhere(query);
-        List<JadeFilesDBItem> resultset = query.list();
-        connection.commit();
+        List<JadeFilesDBItem> resultset = sosHibernateSession.getResultList(query);
+        sosHibernateSession.commit();
         return resultset;
     }
 
@@ -277,15 +277,15 @@ public class JadeHistoryDBLayer {
         this.historyFilesFilter = filter;
     }
 
-    public List<DbItem> getListOfItemsToDelete() throws Exception {
+    public List<DbItem> getListOfItemsToDelete() throws SOSHibernateException {
         return getFilesFromTo(filesFilter.getCreatedFrom(), filesFilter.getCreatedTo());
     }
 
-    public long deleteInterval() throws Exception {
-        connection.beginTransaction();
+    public long deleteInterval() throws SOSHibernateException  {
+        sosHibernateSession.beginTransaction();
         String q = "delete from JadeFilesHistoryDBItem e where e.jadeFilesDBItem.id IN (select id from JadeFilesDBItem " + getFilesWhereFromTo()
                 + ")";
-        Query query = connection.createQuery(q);
+        Query query = sosHibernateSession.createQuery(q);
         if (filesFilter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filesFilter.getCreatedFrom());
         }
@@ -294,23 +294,23 @@ public class JadeHistoryDBLayer {
         }
         int row = query.executeUpdate();
         String hql = "delete from JadeFilesDBItem " + getFilesWhereFromTo();
-        query = connection.createQuery(hql);
+        query = sosHibernateSession.createQuery(hql);
         if (filesFilter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, filesFilter.getCreatedFrom());
         }
         if (filesFilter.getCreatedTo() != null) {
             query.setTimestamp(CREATED_TO, filesFilter.getCreatedTo());
         }
-        row = query.executeUpdate();
+        row = sosHibernateSession.executeUpdate(query);
         return row;
     }
 
-    public JadeFilesHistoryDBItem get(String guid) throws Exception {
+    public JadeFilesHistoryDBItem get(String guid) throws SOSHibernateException {
         if (guid == null || "".equals(guid)) {
             return null;
         }
         try {
-            return (JadeFilesHistoryDBItem) connection.get(JadeFilesHistoryDBItem.class, guid);
+            return (JadeFilesHistoryDBItem) sosHibernateSession.get(JadeFilesHistoryDBItem.class, guid);
         } catch (ObjectNotFoundException e) {
             return null;
         }
@@ -586,45 +586,43 @@ public class JadeHistoryDBLayer {
         }
     }
 
-    public List<DbItem> getFilesHistoryFromTo(Date from, Date to) throws Exception {
+    public List<DbItem> getFilesHistoryFromTo(Date from, Date to) throws SOSHibernateException  {
         historyFilesFilter.setCreatedFrom(from);
         historyFilesFilter.setCreatedTo(to);
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem " + getHistoryWhere());
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem " + getHistoryWhere());
         if (historyFilesFilter.getCreatedFrom() != null) {
             query.setTimestamp(CREATED_FROM, historyFilesFilter.getCreatedFrom());
         }
         if (historyFilesFilter.getCreatedTo() != null) {
             query.setTimestamp(CREATED_TO, historyFilesFilter.getCreatedTo());
         }
-        return query.list();
+        return sosHibernateSession.getResultList(query);
     }
 
-    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws Exception {
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesDBItem where id=:jadeId");
+    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws SOSHibernateException  {
+        sosHibernateSession.beginTransaction();
+        Query<JadeFilesDBItem> query = sosHibernateSession.createQuery("  from JadeFilesDBItem where id=:jadeId");
         query.setLong(JADE_ID, jadeId);
-        List<JadeFilesDBItem> resultset = query.list();
-        connection.commit();
-        // id is unique, therefore only one item has to be returned
-        return resultset.get(0);
+        sosHibernateSession.commit();
+        return sosHibernateSession.getSingleResult(query);
     }
 
-    public List<JadeFilesHistoryDBItem> getHistoryFiles() throws Exception {
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getHistoryWhere());
+    public List<JadeFilesHistoryDBItem> getHistoryFiles() throws SOSHibernateException{
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem history " + getHistoryWhere());
         setHistoryWhere(query);
-        List<JadeFilesHistoryDBItem> resultset = query.list();
-        connection.commit();
+        List<JadeFilesHistoryDBItem> resultset = sosHibernateSession.getResultList(query);
+        sosHibernateSession.commit();
         return resultset;
     }
 
-    public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws Exception {
-        connection.beginTransaction();
-        Query query = connection.createQuery("  from JadeFilesHistoryDBItem history " + getHistoryWhere() + " order by transferEnd desc");
+    public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws SOSHibernateException  {
+        sosHibernateSession.beginTransaction();
+        Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem history " + getHistoryWhere() + " order by transferEnd desc");
         setHistoryWhere(query);
-        List<JadeFilesHistoryDBItem> resultset = query.list();
-        connection.commit();
+        List<JadeFilesHistoryDBItem> resultset = sosHibernateSession.getResultList(query);
+        sosHibernateSession.commit();
         return resultset;
     }
 
@@ -658,7 +656,7 @@ public class JadeHistoryDBLayer {
         this.historyFilesFilter = historyFilesFilter;
     }
 
-    public List<DbItem> getListOfHistoryItemsToDelete() throws Exception {
+    public List<DbItem> getListOfHistoryItemsToDelete() throws SOSHibernateException {
         TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
         return getFilesHistoryFromTo(historyFilesFilter.getCreatedFrom(), historyFilesFilter.getCreatedTo());
     }

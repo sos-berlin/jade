@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import sos.jadehistory.JadeFilesHistoryFilter;
 
 import com.sos.hibernate.classes.DbItem;
 import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.hibernate.classes.SOSHibernateSession;
+import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.hibernate.layer.SOSHibernateIntervalDBLayer;
 
 public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer implements Serializable {
@@ -39,7 +40,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         this.resetFilter();
     }
 
-    public JadeFilesHistoryDBItem get(String guid) throws Exception {
+    public JadeFilesHistoryDBItem get(String guid) throws SOSHibernateException  {
         if (guid == null || "".equals(guid)) {
             return null;
         }
@@ -325,7 +326,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         }
     }
 
-    public List<DbItem> getFilesHistoryFromTo(Date from, Date to) throws Exception {
+    public List<DbItem> getFilesHistoryFromTo(Date from, Date to) throws SOSHibernateException{
         filter.setCreatedFrom(from);
         filter.setCreatedTo(to);
         List<DbItem> resultset = null;
@@ -337,44 +338,42 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         if (filter.getCreatedTo() != null) {
             query.setTimestamp("createdTo", filter.getCreatedTo());
         }
-        resultset = query.list();
+        resultset = sosHibernateSession.getResultList(query);
         return resultset;
     }
 
-    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws Exception {
+    public List<JadeFilesHistoryDBItem> getFilesHistoryById(Long jadeId) throws SOSHibernateException  {
         List<JadeFilesHistoryDBItem> resultset = null;
         sosHibernateSession.beginTransaction();
         Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem where jadeId=:jadeId");
         query.setLong(JADE_ID, jadeId);
-        resultset = query.list();
+        resultset = sosHibernateSession.getResultList(query);
         return resultset;
     }
 
-    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws Exception {
+    public JadeFilesDBItem getJadeFileItemById(Long jadeId) throws SOSHibernateException {
         List<JadeFilesDBItem> resultset = null;
         sosHibernateSession.beginTransaction();
-        Query query = sosHibernateSession.createQuery("  from JadeFilesDBItem where id=:jadeId");
+        Query<JadeFilesDBItem> query = sosHibernateSession.createQuery("  from JadeFilesDBItem where id=:jadeId");
         query.setLong(JADE_ID, jadeId);
-        resultset = query.list();
-        // id is unique, therefore only one item has to be returned
-        return resultset != null ? resultset.get(0) : null;
+        return sosHibernateSession.getSingleResult(query);
     }
 
-    public List<JadeFilesHistoryDBItem> getHistoryFiles() throws Exception {
+    public List<JadeFilesHistoryDBItem> getHistoryFiles() throws SOSHibernateException {
         List<JadeFilesHistoryDBItem> resultset = null;
         sosHibernateSession.beginTransaction();
         Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem history " + getWhere());
         setWhere(query);
-        resultset = query.list();
+        resultset = sosHibernateSession.getResultList(query);
         return resultset;
     }
 
-    public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws Exception {
+    public List<JadeFilesHistoryDBItem> getHistoryFilesOrderedByTransferEnd() throws SOSHibernateException{
         List<JadeFilesHistoryDBItem> resultset = null;
         sosHibernateSession.beginTransaction();
         Query query = sosHibernateSession.createQuery("  from JadeFilesHistoryDBItem history " + getWhere() + " order by transferEnd desc");
         setWhere(query);
-        resultset = query.list();
+        resultset = sosHibernateSession.getResultList(query);
         return resultset;
     }
 
@@ -415,7 +414,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
     }
 
     @Override
-    public List<DbItem> getListOfItemsToDelete() throws Exception {
+    public List<DbItem> getListOfItemsToDelete() throws SOSHibernateException  {
         TimeZone.setDefault(TimeZone.getTimeZone("Etc/UTC"));
         return getFilesHistoryFromTo(filter.getCreatedFrom(), filter.getCreatedTo());
     }
@@ -425,7 +424,7 @@ public class JadeFilesHistoryDBLayer extends SOSHibernateIntervalDBLayer impleme
         return 0;
     }
 
-    public SOSHibernateSession initStatefullConnection() throws Exception {
+    public SOSHibernateSession initStatefullConnection() throws SOSHibernateException {
         sosHibernateSession = factory.openSession();
         return sosHibernateSession;
     }
