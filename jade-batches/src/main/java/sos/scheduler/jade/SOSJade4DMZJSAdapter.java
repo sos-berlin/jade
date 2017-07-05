@@ -140,9 +140,9 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jobSchedulerFactory =
                     new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
-            jobSchedulerFactory.Options().TransferMethod.set(jadeOptions.schedulerTransferMethod);
-            jobSchedulerFactory.Options().PortNumber.set(jadeOptions.orderJobschedulerPort);
-            jobSchedulerFactory.Options().ServerName.set(jadeOptions.orderJobschedulerHost);
+            jobSchedulerFactory.getOptions().TransferMethod.set(jadeOptions.schedulerTransferMethod);
+            jobSchedulerFactory.getOptions().PortNumber.set(jadeOptions.orderJobschedulerPort);
+            jobSchedulerFactory.getOptions().ServerName.set(jadeOptions.orderJobschedulerHost);
         }
         JSCmdAddOrder order = jobSchedulerFactory.createAddOrder();
         String targetFilename = listItem.getTargetFileName().replace('\\', '/');

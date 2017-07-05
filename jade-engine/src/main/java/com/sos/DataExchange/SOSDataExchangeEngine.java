@@ -1331,9 +1331,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         if (schedulerFactory == null) {
             schedulerFactory = new SchedulerObjectFactory(objOptions.schedulerHost.getValue(), objOptions.schedulerPort.value());
             schedulerFactory.initMarshaller(Spooler.class);
-            schedulerFactory.Options().TransferMethod.setValue(objOptions.schedulerTransferMethod.getValue());
-            schedulerFactory.Options().PortNumber.setValue(objOptions.schedulerPort.getValue());
-            schedulerFactory.Options().ServerName.setValue(objOptions.schedulerHost.getValue());
+            schedulerFactory.getOptions().TransferMethod.setValue(objOptions.schedulerTransferMethod.getValue());
+            schedulerFactory.getOptions().PortNumber.setValue(objOptions.schedulerPort.getValue());
+            schedulerFactory.getOptions().ServerName.setValue(objOptions.schedulerHost.getValue());
         }
         JSCmdAddOrder addOrder = schedulerFactory.createAddOrder();
         addOrder.setJobChain(objOptions.schedulerJobChain.getValue());
