@@ -22,13 +22,9 @@
 		<module>jade-batches</module>
 		<module>jade-engine</module>
 		<module>jade-history</module>
-		<module>jade-history-viewer</module>
-		<!-- z.Zt. nicht in der Auslieferung -->
-		<module>jade-file-watcher</module>
-		<!-- z.Zt. aus dem Build entfernt wegen build error -->
-		<!--module>jade-cockpit</module -->
-		<!-- z.Zt. aus dem Build entfernt wegen build error -->
-		<!--module>jade-vaadin-cockpit</module -->
-	</modules>
+        <module>jade-file-watcher</module>
+        <!-- nicht mehr in der Auslieferung -->
+		<!--module>jade-history-viewer</module-->
+	</modules> 
 
 </project>
