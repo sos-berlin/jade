@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
 
 import com.sos.hibernate.classes.DbItem;
@@ -298,4 +300,24 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.modified = modified;
     }
     
+    @Override
+    public int hashCode() {
+        // always build on unique constraint
+        return new HashCodeBuilder().append(sourceProtocolId).append(operation).append(start).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        // always compare on unique constraint
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof DBItemYadeTransfers)) {
+            return false;
+        }
+        DBItemYadeTransfers rhs = ((DBItemYadeTransfers) other);
+        return new EqualsBuilder().append(sourceProtocolId, rhs.sourceProtocolId).append(operation, rhs.operation).
+                append(start, rhs.start).isEquals();
+    }
+
 }

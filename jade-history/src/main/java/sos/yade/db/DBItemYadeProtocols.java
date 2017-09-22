@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.sos.hibernate.classes.DbItem;
 
 @Entity
@@ -84,6 +87,26 @@ public class DBItemYadeProtocols extends DbItem implements Serializable {
     @Column(name = "`ACCOUNT`", nullable = true)
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    @Override
+    public int hashCode() {
+        // always build on unique constraint
+        return new HashCodeBuilder().append(hostname).append(port).append(protocol).append(account).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        // always compare on unique constraint
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof DBItemYadeProtocols)) {
+            return false;
+        }
+        DBItemYadeProtocols rhs = ((DBItemYadeProtocols) other);
+        return new EqualsBuilder().append(hostname, rhs.hostname).append(port, rhs.port).append(protocol, rhs.protocol).
+                append(account, rhs.account).isEquals();
     }
 
 }
