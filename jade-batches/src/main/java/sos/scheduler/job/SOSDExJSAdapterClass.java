@@ -1,5 +1,24 @@
 package sos.scheduler.job;
 
+import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0017;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0018;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sos.spooler.Order;
+import sos.spooler.Variable_set;
+
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -7,22 +26,14 @@ import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.exceptions.SOSHibernateConfigurationException;
+import com.sos.hibernate.exceptions.SOSHibernateFactoryBuildException;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jitl.reporting.db.DBLayer;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
-
-import sos.spooler.Order;
-import sos.spooler.Variable_set;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.HashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.sos.scheduler.messages.JSMessages.*;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
@@ -48,6 +59,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
+    private SOSHibernateFactory dbFactory;
 
     public SOSDExJSAdapterClass() { 
         super();
@@ -62,6 +74,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()),e);
             LOGGER.debug("", e);
             throw e;
+        } finally {
+//            dbFactory.getCurrentSession("YADE").close();
+            dbFactory.close();
         }
         return signalSuccess();
     }
@@ -72,7 +87,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         jadeEngine = new JadeEngine();
         jadeOptions = jadeEngine.getOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
-        
         boolean deleteSettingsFile = false;
         HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
         if(schedulerParams != null && schedulerParams.containsKey("settings")){
@@ -93,6 +107,22 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         jadeEngine.setJSJobUtilites(this);
      	jadeEngine.getOptions().setDeleteSettingsFileOnExit(deleteSettingsFile);
+     	jadeEngine.setDBFactory(initDBFactory());
+     	if (schedulerParams.get("SCHEDULER_ID") != null && !schedulerParams.get("SCHEDULER_ID").isEmpty()) {
+     	    jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get("SCHEDULER_ID"));
+     	}
+     	if (schedulerParams.get("SCHEDULER_JOB_NAME") != null && !schedulerParams.get("SCHEDULER_JOB_NAME").isEmpty()) {
+     	    jadeEngine.getOptions().setJob(schedulerParams.get("SCHEDULER_JOB_NAME"));
+     	}
+     	if (schedulerParams.get("SCHEDULER_JOB_CHAIN_NAME") != null && !schedulerParams.get("SCHEDULER_JOB_CHAIN_NAME").isEmpty()) {
+     	    jadeEngine.getOptions().setJobChain(schedulerParams.get("SCHEDULER_JOB_CHAIN_NAME"));
+     	}
+     	if (schedulerParams.get("SCHEDULER_NODE_NAME") != null && !schedulerParams.get("SCHEDULER_NODE_NAME").isEmpty()) {
+     	    jadeEngine.getOptions().setJobChainNodeName(schedulerParams.get("SCHEDULER_NODE_NAME"));
+     	}
+     	if (schedulerParams.get("SCHEDULER_ORDER_ID") != null && !schedulerParams.get("SCHEDULER_ORDER_ID").isEmpty()) {
+     	    jadeEngine.getOptions().setOrderId(schedulerParams.get("SCHEDULER_ORDER_ID"));
+     	}
         try {
             jadeEngine.execute();
         } catch (Exception e) {
@@ -305,5 +335,15 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);
         }
     }
-
+    
+    private SOSHibernateFactory initDBFactory() throws SOSHibernateConfigurationException, SOSHibernateFactoryBuildException {
+        dbFactory = new SOSHibernateFactory(getHibernateConfigurationReporting());
+        dbFactory.setIdentifier("YADE");
+        dbFactory.setAutoCommit(false);
+        dbFactory.addClassMapping(DBLayer.getYadeClassMapping());
+        dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        dbFactory.build();
+        return dbFactory;
+    }
+    
 }

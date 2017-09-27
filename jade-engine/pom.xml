@@ -58,6 +58,18 @@
 			<version>${project.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>com.sos-berlin.jade</groupId>
+            <artifactId>jade-db-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sos-berlin.commons</groupId>
+            <artifactId>sos-exceptions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -86,6 +98,12 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 	</dependencies>
 

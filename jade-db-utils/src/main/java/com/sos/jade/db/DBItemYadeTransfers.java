@@ -1,4 +1,4 @@
-package sos.yade.db;
+package com.sos.jade.db;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -44,6 +44,7 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
     private String jobschedulerId;
     private String job;
     private String jobChain;
+    private String jobChainNode;
     private String orderId;
     private Long auditLogId;
     private Boolean hasIntervention;
@@ -51,6 +52,7 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
     private Long numOfFiles;
     private String profileName;
     private Date modified;
+    private String uuid;
     
     
     public DBItemYadeTransfers() {
@@ -135,13 +137,13 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
     }
     
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "`END`", nullable = false)
+    @Column(name = "`END`", nullable = true)
     public Date getEnd() {
         return end;
     }
     
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "`END`", nullable = false)
+    @Column(name = "`END`", nullable = true)
     public void setEnd(Date end) {
         this.end = end;
     }
@@ -226,6 +228,16 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.jobChain = jobChain;
     }
     
+    @Column(name = "`JOB_CHAIN_NODE`", nullable = true)
+    public String getJobChainNode() {
+        return jobChainNode;
+    }
+    
+    @Column(name = "`JOB_CHAIN_NODE`", nullable = true)
+    public void setJobChainNode(String jobChainNode) {
+        this.jobChainNode = jobChainNode;
+    }
+
     @Column(name = "`ORDER_ID`", nullable = true)
     public String getOrderId() {
         return orderId;
@@ -300,10 +312,20 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.modified = modified;
     }
     
+    @Column(name = "`UUID`", nullable = false)
+    public String getUuid() {
+        return uuid;
+    }
+
+    @Column(name = "`UUID`", nullable = false)
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public int hashCode() {
         // always build on unique constraint
-        return new HashCodeBuilder().append(sourceProtocolId).append(operation).append(start).toHashCode();
+        return new HashCodeBuilder().append(uuid).toHashCode();
     }
 
     @Override
@@ -316,8 +338,7 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
             return false;
         }
         DBItemYadeTransfers rhs = ((DBItemYadeTransfers) other);
-        return new EqualsBuilder().append(sourceProtocolId, rhs.sourceProtocolId).append(operation, rhs.operation).
-                append(start, rhs.start).isEquals();
+        return new EqualsBuilder().append(uuid, rhs.uuid).isEquals();
     }
 
 }

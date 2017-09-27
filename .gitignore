@@ -28,3 +28,5 @@ jade-history/target
 jade-cli/target
 jade-history-viewer/src/main/webapp/VAADIN/themes/bs/addons.scss
 jade-history-viewer/src/main/webapp/VAADIN/themes/bs/styles.css
+
+jade-db-utils/target

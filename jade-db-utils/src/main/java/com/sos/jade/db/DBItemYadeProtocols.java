@@ -1,4 +1,4 @@
-package sos.yade.db;
+package com.sos.jade.db;
 
 import java.io.Serializable;
 
