@@ -41,6 +41,7 @@ public class YadeDBOperationHelper {
     private DBItemYadeTransfers transferDBItem;
     private SOSDataExchangeEngine yadeEngine;
     private Long parentTransferId = null;
+    private Boolean hasErrors = null; 
     
     public YadeDBOperationHelper(SOSDataExchangeEngine yadeEngine) {
         this.yadeEngine = yadeEngine;
@@ -189,22 +190,15 @@ public class YadeDBOperationHelper {
             if(transferFromDb != null) {
                 transferId = transferFromDb.getId();
                 transferFromDb.setEnd(now);
-                if (SOSJADE_T_0012.get().equals(yadeEngine.getState()) ||
-                        SOSJADE_I_0100.get().equals(yadeEngine.getState()) ||
-                        SOSJADE_I_0101.get().equals(yadeEngine.getState())) {
-//                    SOSJADE_T_0012=Ohne Fehler.
-//                    SOSJADE_I_0100 = Es wurde eine Datei übertragen
-//                    SOSJADE_I_0101 = Es wurden %1$d Dateien übertragen
+                if (hasErrors == null) {
+                    transferFromDb.setState(2);
+                    transferFromDb.setErrorCode(null);
+                    transferFromDb.setErrorMessage(null);
+                } else if (!hasErrors) {
                     transferFromDb.setState(1);
                     transferFromDb.setErrorCode(null);
                     transferFromDb.setErrorMessage(null);
-                } else if (SOSJADE_T_0013.get().equals(yadeEngine.getState()) ||
-                        SOSJADE_I_0102.get().equals(yadeEngine.getState()) ||
-                        SOSJADE_I_0103.get().equals(yadeEngine.getState())) {
-//                    SOSJADE_T_0013=Fehlerhaft.
-//                    SOSJADE_I_0104 = Es wurden leere Dateien mit der Größe 0 bytes gefunden 
-//                    SOSJADE_I_0102 = %1$d Dateien wurden nicht übertragen, weil sie leer sind (Größe <= 0 bytes)
-//                    SOSJADE_I_0103 = %1$d Dateien wurden wegen skip_transfer oder overwrite_files Parameter nicht übertragen
+                } else {
                     transferFromDb.setState(3);
                     transferFromDb.setErrorCode(null);
                     transferFromDb.setErrorMessage(JobSchedulerException.LastErrorMessage);
@@ -281,8 +275,7 @@ public class YadeDBOperationHelper {
         return transferId;
     }
     
-    public void storeFilesInformationToDB(Long transferId, SOSHibernateSession dbSession) {
-        SOSFileList files = yadeEngine.getFileList();
+    private void storeInitialFilesInformationToDB(Long transferId, SOSHibernateSession dbSession, SOSFileList files) {
         if (files != null) {
             // TODO: implementation
             for (SOSFileListEntry fileEntry : files.getList()) {
@@ -319,16 +312,92 @@ public class YadeDBOperationHelper {
             LOGGER.info("store transfer files information finished!");
         }
     }
+    public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) {
+        updateFileInformationToDB(dbSession, fileEntry, false);
+    }
     
+    public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry, boolean finalUpdate) {
+        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+        if (fileEntry != null) {
+            DBItemYadeFiles fileFromDb = null;
+            try {
+                fileFromDb = dbLayer.getTransferFileFromDbByConstraint(transferDBItem.getId(), fileEntry.getSourceFilename());
+            } catch (SOSHibernateException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            if (fileFromDb != null) {
+                if (finalUpdate && fileEntry.getStatus() == 4) {
+                    fileFromDb.setState(5);
+                    hasErrors = false;
+                } else {
+                    hasErrors = getHasErrorsFromFileState(fileEntry.getStatus());
+                    fileFromDb.setState(fileEntry.getStatus());
+                }
+                fileFromDb.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                String lastErrorMessage = fileEntry.getLastErrorMessage();
+                if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
+                    fileFromDb.setErrorCode("ERRORCODE");
+                    fileFromDb.setErrorMessage(lastErrorMessage);
+                } else {
+                    fileFromDb.setErrorCode(null);
+                    fileFromDb.setErrorMessage(null);
+                }
+                fileFromDb.setIntegrityHash(fileEntry.getMd5());
+                fileFromDb.setModificationDate(fileEntry.getModificationDate());
+                fileFromDb.setModified(Date.from(Instant.now()));
+                try {
+                    dbSession.beginTransaction();
+                    dbSession.update(fileFromDb);
+                    dbSession.commit();
+                    LOGGER.info("file saved: " + fileFromDb.getSourcePath());
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {
+                    }
+                }
+            } else {
+                DBItemYadeFiles file = new DBItemYadeFiles();
+                file.setTransferId(transferDBItem.getId());
+                file.setSourcePath(fileEntry.getSourceFilename());
+                file.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                file.setSize(fileEntry.getFileSize());
+                file.setState(fileEntry.getStatus());
+                file.setModificationDate(fileEntry.getModified());
+                String lastErrorMessage = fileEntry.getLastErrorMessage();
+                if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
+                    file.setErrorCode("ERRORCODE");
+                    file.setErrorMessage(lastErrorMessage);
+                } else {
+                    file.setErrorCode(null);
+                    file.setErrorMessage(null);
+                }
+                file.setIntegrityHash(fileEntry.getMd5());
+                file.setModificationDate(fileEntry.getModified());
+                file.setModified(Date.from(Instant.now()));
+                try {
+                    dbSession.beginTransaction();
+                    dbSession.save(file);
+                    dbSession.commit();
+                    LOGGER.info("file saved: " + file.getSourcePath());
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {
+                    }
+                }
+            }
+            LOGGER.info("store transfer files information finished!");
+        }
+    }
+
     public void storeInitialTransferInformations(SOSHibernateSession dbSession) {
         if (dbSession != null) {
             Long transferId = storeTransferInformationToDB(dbSession);
-            sourceProtocolDBItem = getSourceProtocolDBItem();
-            targetProtocolDBItem = getTargetProtocolDBItem();
-            jumpProtocolDBItem = getJumpProtocolDBItem();
-            transferDBItem = getTransferDBItem();
             LOGGER.info("initial transfer information stored to DB!");
-            storeFilesInformationToDB(transferId, dbSession);
+            storeInitialFilesInformationToDB(transferDBItem.getId(), dbSession, yadeEngine.getFileList());
             LOGGER.info("initial file informations stored to DB!");
         }
     }
@@ -445,28 +514,27 @@ public class YadeDBOperationHelper {
         }
     }
 
-    public DBItemYadeProtocols getSourceProtocolDBItem() {
-        return sourceProtocolDBItem;
-    }
-
-    public void setSourceProtocolDBItem(DBItemYadeProtocols sourceProtocolDBItem) {
-        this.sourceProtocolDBItem = sourceProtocolDBItem;
-    }
-
-    public DBItemYadeProtocols getTargetProtocolDBItem() {
-        return targetProtocolDBItem;
-    }
-
-    public void setTargetProtocolDBItem(DBItemYadeProtocols targetProtocolDBItem) {
-        this.targetProtocolDBItem = targetProtocolDBItem;
-    }
-
-    public DBItemYadeProtocols getJumpProtocolDBItem() {
-        return jumpProtocolDBItem;
-    }
-
-    public void setJumpProtocolDBItem(DBItemYadeProtocols jumpProtocolDBItem) {
-        this.jumpProtocolDBItem = jumpProtocolDBItem;
+    private Boolean getHasErrorsFromFileState(Integer fileEntryState) {
+        switch(fileEntryState) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 8:
+        case 9:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+        case 15:
+            return false;
+        case 6:
+        case 7:
+        case 10:
+            return true;
+        }
+        return null;
     }
 
     public DBItemYadeTransfers getTransferDBItem() {

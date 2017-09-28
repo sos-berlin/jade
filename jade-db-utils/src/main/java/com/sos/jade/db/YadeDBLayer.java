@@ -38,6 +38,26 @@ public class YadeDBLayer {
         return getSession().getSingleResult(query);
     }
     
+    public DBItemYadeFiles getTransferFileFromDB(Long id) throws SOSHibernateException {
+        StringBuilder sql = new StringBuilder();
+        sql.append("from ").append(DBItemYadeFiles.class.getSimpleName());
+        sql.append(" where id = :id");
+        Query<DBItemYadeFiles> query = getSession().createQuery(sql.toString());
+        query.setParameter("id", id);
+        return getSession().getSingleResult(query);
+    }
+    
+    public DBItemYadeFiles getTransferFileFromDbByConstraint(Long transferId, String sourcePath) throws SOSHibernateException {
+        StringBuilder sql = new StringBuilder();
+        sql.append("from ").append(DBItemYadeFiles.class.getSimpleName());
+        sql.append(" where transferId = :transferId");
+        sql.append(" and sourcePath = :sourcePath");
+        Query<DBItemYadeFiles> query = getSession().createQuery(sql.toString());
+        query.setParameter("transferId", transferId);
+        query.setParameter("sourcePath", sourcePath);
+        return getSession().getSingleResult(query);
+    }
+    
     public SOSHibernateSession getSession() {
         return this.session;
     }

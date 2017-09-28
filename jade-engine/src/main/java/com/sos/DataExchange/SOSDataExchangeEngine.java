@@ -104,10 +104,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private ISOSVfsFileTransfer targetClient = null;
     private ISOSVfsFileTransfer sourceClient = null;
     private SOSHibernateFactory dbFactory = null;
-    private DBItemYadeTransfers transferDBItem = null;
-    private DBItemYadeProtocols sourceProtocolDBItem = null;
-    private DBItemYadeProtocols targetProtocolDBItem = null;
-    private DBItemYadeProtocols jumpProtocolDBItem = null;
     private SOSHibernateSession dbSession = null;
     private YadeDBOperationHelper dbHelper = null;
 
@@ -354,12 +350,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             }
             ok = transfer();
             // update to write to new reporting DB tables, since 1.12
-            if (dbSession != null) {
-                Long transferId = dbHelper.storeTransferInformationToDB(dbSession);
-                LOGGER.info("final transfer information stored to DB!");
-                dbHelper.storeFilesInformationToDB(transferId, dbSession);
-                LOGGER.info("final file informations stored to DB!");
-            }
+//            if (dbSession != null) {
+//                Long transferId = dbHelper.storeTransferInformationToDB(dbSession);
+//                LOGGER.info("final transfer information stored to DB!");
+//                dbHelper.storeFilesInformationToDB(transferId, dbSession);
+//                LOGGER.info("final file informations stored to DB!");
+//            }
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }
@@ -854,17 +850,21 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
         if (maxParallelTransfers <= 0 || objOptions.cumulateFiles.isTrue()) {
             for (SOSFileListEntry entry : fileList.getList()) {
+                if(dbSession != null) {
+                    dbHelper.updateFileInformationToDB(dbSession, entry);
+                }
                 entry.setOptions(objOptions);
                 entry.setDataSourceClient(sourceClient);
                 entry.setDataTargetClient(targetClient);
                 entry.setConnectionPool4Source(factory.getSourcePool());
                 entry.setConnectionPool4Target(factory.getTargetPool());
                 entry.run();
-                if (entry.isTransferred()) {
-                    // update db item (transfer successful)
-                } else {
-                    // update db item (transfer failed)
+                if(dbSession != null) {
+                    dbHelper.updateFileInformationToDB(dbSession, entry, true);
                 }
+            }
+            if(dbSession != null) {
+                dbHelper.storeTransferInformationToDB(dbSession);
             }
         } else {
             SOSThreadPoolExecutor executor = new SOSThreadPoolExecutor(maxParallelTransfers);
