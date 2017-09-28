@@ -109,7 +109,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private DBItemYadeProtocols targetProtocolDBItem = null;
     private DBItemYadeProtocols jumpProtocolDBItem = null;
     private SOSHibernateSession dbSession = null;
-    private UUID uuid = null;
+    private YadeDBOperationHelper dbHelper = null;
 
     
     public SOSDataExchangeEngine() throws Exception {
@@ -347,17 +347,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 objOptions = updateHelper.getOptions();
             }
             // /changes here
-            YadeDBOperationHelper dbHelper = new YadeDBOperationHelper(this);
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
-                uuid = UUID.randomUUID();
-                addAdditionalJobInfosToOptions(dbHelper);
-                storeInitialTransferInformations(dbHelper);
+                dbHelper = new YadeDBOperationHelper(this);
+                dbHelper.storeInitialTransferInformations(dbSession);
             }
             ok = transfer();
             // update to write to new reporting DB tables, since 1.12
             if (dbSession != null) {
-                Long transferId = dbHelper.storeTransferInformationToDB(uuid, dbSession);
+                Long transferId = dbHelper.storeTransferInformationToDB(dbSession);
                 LOGGER.info("final transfer information stored to DB!");
                 dbHelper.storeFilesInformationToDB(transferId, dbSession);
                 LOGGER.info("final file informations stored to DB!");
@@ -366,7 +364,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }
         } catch (SOSYadeSourceConnectionException | SOSYadeTargetConnectionException e) {
-            storeFailedTransfer(String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+            if (dbSession != null) {
+                dbHelper.storeFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+            }
             throw new JobSchedulerException(e.getCause());
         } catch (JobSchedulerException e) {
             throw e;
@@ -1071,9 +1071,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             ISOSVirtualFile fileHandle = sourceClient.getFileHandle(sourceDir);
                             String msg = "";
                             if (objOptions.isNeedTargetClient()) {
-                                msg =
-                                        "source directory/file: " + sourceDir + ", target directory: " + targetDir + ", file regexp: "
-                                                + objOptions.fileSpec.getValue();
+                                msg = "source directory/file: " + sourceDir + ", target directory: " + targetDir + ", file regexp: "
+                                    + objOptions.fileSpec.getValue();
                             } else {
                                 msg = SOSJADE_D_0200.params(sourceDir, objOptions.fileSpec.getValue());
                             }
@@ -1104,6 +1103,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                     targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();
                                     sourceFileList.objDataTargetClient = targetClient;
                                     makeDirs();
+                                }
+                                if(dbSession != null) {
+                                    dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.size());
                                 }
                                 sendFiles(sourceFileList);
                                 sourceFileList.renameTargetAndSourceFiles();
@@ -1404,7 +1406,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     }
     
     private SOSHibernateSession initStatelessSession() {
-        // update to write to new reporting DB tables, since 1.12
         SOSHibernateSession dbSession = null;
         try {
             dbSession = dbFactory.openStatelessSession("YadeJob");
@@ -1414,46 +1415,4 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         return dbSession;
     }
     
-    private void storeFailedTransfer(String errorMessage) throws SOSHibernateException {
-        if (dbSession != null && transferDBItem != null) {
-            transferDBItem.setState(3);
-            transferDBItem.setErrorMessage(errorMessage);
-            transferDBItem.setEnd(Date.from(Instant.now()));
-            dbSession.beginTransaction();
-            dbSession.update(transferDBItem);
-            dbSession.commit();
-        }
-        
-    }
-    
-    private void addAdditionalJobInfosToOptions(YadeDBOperationHelper dbHelper) {
-        if (getOptions().getJobSchedulerId() != null) {
-            dbHelper.setCurrentJobschedulerId(getOptions().getJobSchedulerId());
-        }
-        if (getOptions().getJobChain() != null) {
-            dbHelper.setCurrentJobChain(getOptions().getJobChain());
-        }
-        if (getOptions().getJob() != null) {
-            dbHelper.setCurrentJob(getOptions().getJob());
-        }
-        if (getOptions().getJobChainNodeName() != null) {
-            dbHelper.setCurrentNodeName(getOptions().getJobChainNodeName());
-        }
-        if (getOptions().getOrderId() != null) {
-            dbHelper.setCurrentOrderId(getOptions().getOrderId());
-        }
-    }
-    
-    private void storeInitialTransferInformations(YadeDBOperationHelper dbHelper) {
-        if (dbSession != null) {
-            Long transferId = dbHelper.storeTransferInformationToDB(uuid, dbSession);
-            sourceProtocolDBItem = dbHelper.getSourceProtocolDBItem();
-            targetProtocolDBItem = dbHelper.getTargetProtocolDBItem();
-            jumpProtocolDBItem = dbHelper.getJumpProtocolDBItem();
-            transferDBItem = dbHelper.getTransferDBItem();
-            LOGGER.info("initial transfer information stored to DB!");
-            dbHelper.storeFilesInformationToDB(transferId, dbSession);
-            LOGGER.info("initial file informations stored to DB!");
-        }
-    }
 }

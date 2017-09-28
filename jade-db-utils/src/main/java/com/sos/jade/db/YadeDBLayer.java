@@ -29,12 +29,12 @@ public class YadeDBLayer {
         return getSession().getSingleResult(query);
     }
     
-    public DBItemYadeTransfers getTransferFromDb(String uuid) throws SOSHibernateException {
+    public DBItemYadeTransfers getTransferFromDb(Long id) throws SOSHibernateException {
         StringBuilder sql = new StringBuilder();
         sql.append("from ").append(DBItemYadeTransfers.class.getSimpleName());
-        sql.append(" where uuid = :uuid");
+        sql.append(" where id = :id");
         Query<DBItemYadeTransfers> query = getSession().createQuery(sql.toString());
-        query.setParameter("uuid", uuid);
+        query.setParameter("id", id);
         return getSession().getSingleResult(query);
     }
     

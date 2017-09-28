@@ -10,7 +10,6 @@ import static com.sos.DataExchange.SOSJadeMessageCodes.SOSJADE_T_0013;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +39,15 @@ public class YadeDBOperationHelper {
     private DBItemYadeProtocols targetProtocolDBItem;
     private DBItemYadeProtocols jumpProtocolDBItem;
     private DBItemYadeTransfers transferDBItem;
-//    private JadeEngine yadeEngine;
     private SOSDataExchangeEngine yadeEngine;
+    private Long parentTransferId = null;
     
     public YadeDBOperationHelper(SOSDataExchangeEngine yadeEngine) {
         this.yadeEngine = yadeEngine;
+        addAdditionalJobInfosFromOptions();
     }
 
-    public Long storeTransferInformationToDB(UUID uuid, SOSHibernateSession dbSession) {
+    public Long storeTransferInformationToDB(SOSHibernateSession dbSession) {
         Long transferId = null;
         YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
         try {
@@ -176,7 +176,9 @@ public class YadeDBOperationHelper {
             dbSession.beginTransaction();
             DBItemYadeTransfers transferFromDb = null;
             try {
-                transferFromDb = dbLayer.getTransferFromDb(uuid.toString());
+                if (transferDBItem != null && transferDBItem.getId() != null) {
+                    transferFromDb = dbLayer.getTransferFromDb(transferDBItem.getId());
+                }
                 if (transferFromDb != null) {
                     LOGGER.info(String.format("transfer item with id = %1$s found in DB!", transferDBItem.getId()));
                 }
@@ -262,8 +264,6 @@ public class YadeDBOperationHelper {
                     LOGGER.info("profile = " + yadeEngine.getOptions().getProfile().getValue());
                 }
                 newTransfer.setModified(now);
-                newTransfer.setUuid(uuid.toString());
-                LOGGER.info("UUID = " + uuid.toString());
                 dbLayer.getSession().save(newTransfer);
                 transferId = newTransfer.getId();
                 transferDBItem = newTransfer;
@@ -289,7 +289,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeFiles file = new DBItemYadeFiles();
                 file.setTransferId(transferId);
                 file.setSourcePath(fileEntry.getSourceFilename());
-                file.setTargetPath(fileEntry.getTargetFilename());
+                file.setTargetPath(fileEntry.getTargetFileNameAndPath());
                 file.setSize(fileEntry.getFileSize());
                 file.setState(fileEntry.getStatus());
                 String lastErrorMessage = fileEntry.getLastErrorMessage();
@@ -317,6 +317,62 @@ public class YadeDBOperationHelper {
                 }
             }
             LOGGER.info("store transfer files information finished!");
+        }
+    }
+    
+    public void storeInitialTransferInformations(SOSHibernateSession dbSession) {
+        if (dbSession != null) {
+            Long transferId = storeTransferInformationToDB(dbSession);
+            sourceProtocolDBItem = getSourceProtocolDBItem();
+            targetProtocolDBItem = getTargetProtocolDBItem();
+            jumpProtocolDBItem = getJumpProtocolDBItem();
+            transferDBItem = getTransferDBItem();
+            LOGGER.info("initial transfer information stored to DB!");
+            storeFilesInformationToDB(transferId, dbSession);
+            LOGGER.info("initial file informations stored to DB!");
+        }
+    }
+
+    public void addAdditionalJobInfosFromOptions() {
+        if (yadeEngine.getOptions().getJobSchedulerId() != null) {
+            currentJobschedulerId = yadeEngine.getOptions().getJobSchedulerId();
+        }
+        if (yadeEngine.getOptions().getJobChain() != null) {
+            currentJobChain = yadeEngine.getOptions().getJobChain();
+        }
+        if (yadeEngine.getOptions().getJob() != null) {
+            currentJob = yadeEngine.getOptions().getJob();
+        }
+        if (yadeEngine.getOptions().getJobChainNodeName() != null) {
+            currentNodeName = yadeEngine.getOptions().getJobChainNodeName();
+        }
+        if (yadeEngine.getOptions().getOrderId() != null) {
+            currentOrderId = yadeEngine.getOptions().getOrderId();
+        }
+        if (yadeEngine.getOptions().getParentTransferId() != null) {
+            parentTransferId = yadeEngine.getOptions().getParentTransferId();
+        }
+    }
+    
+    public void storeFailedTransfer(SOSHibernateSession dbSession, String errorMessage) throws SOSHibernateException {
+        if (transferDBItem != null) {
+            transferDBItem.setState(3);
+            transferDBItem.setErrorMessage(errorMessage);
+            transferDBItem.setEnd(Date.from(Instant.now()));
+            transferDBItem.setModified(Date.from(Instant.now()));
+            dbSession.beginTransaction();
+            dbSession.update(transferDBItem);
+            dbSession.commit();
+        }        
+    }
+    
+    public void updateTransfersNumOfFiles(SOSHibernateSession dbSession, Long numOfFiles) throws SOSHibernateException {
+        if (transferDBItem != null) {
+            transferDBItem.setNumOfFiles(numOfFiles);
+            transferDBItem.setModified(Date.from(Instant.now()));
+            dbSession.beginTransaction();
+            dbSession.update(transferDBItem);
+            dbSession.commit();
         }
     }
     
@@ -387,46 +443,6 @@ public class YadeDBOperationHelper {
         default:
             return null;
         }
-    }
-
-    public String getCurrentNodeName() {
-        return currentNodeName;
-    }
-
-    public void setCurrentNodeName(String currentNodeName) {
-        this.currentNodeName = currentNodeName;
-    }
-
-    public String getCurrentJobChain() {
-        return currentJobChain;
-    }
-
-    public void setCurrentJobChain(String currentJobChain) {
-        this.currentJobChain = currentJobChain;
-    }
-
-    public String getCurrentJob() {
-        return currentJob;
-    }
-    
-    public void setCurrentJob(String currentJob) {
-        this.currentJob = currentJob;
-    }
-
-    public String getCurrentOrderId() {
-        return currentOrderId;
-    }
-
-    public void setCurrentOrderId(String currentOrderId) {
-        this.currentOrderId = currentOrderId;
-    }
-
-    public String getCurrentJobschedulerId() {
-        return currentJobschedulerId;
-    }
-    
-    public void setCurrentJobschedulerId(String currentJobschedulerId) {
-        this.currentJobschedulerId = currentJobschedulerId;
     }
 
     public DBItemYadeProtocols getSourceProtocolDBItem() {

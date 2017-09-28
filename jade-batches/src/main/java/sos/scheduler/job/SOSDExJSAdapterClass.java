@@ -75,7 +75,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             LOGGER.debug("", e);
             throw e;
         } finally {
-//            dbFactory.getCurrentSession("YADE").close();
             dbFactory.close();
         }
         return signalSuccess();

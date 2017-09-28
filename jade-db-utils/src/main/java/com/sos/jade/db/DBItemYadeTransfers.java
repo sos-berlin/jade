@@ -40,7 +40,6 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
     private String errorCode;
     private String errorMessage;
     private String log;
-    private String configuration;
     private String jobschedulerId;
     private String job;
     private String jobChain;
@@ -52,8 +51,6 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
     private Long numOfFiles;
     private String profileName;
     private Date modified;
-    private String uuid;
-    
     
     public DBItemYadeTransfers() {
     }
@@ -188,16 +185,6 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.log = log;
     }
     
-    @Column(name = "`CONFIGURATION`", nullable = true)
-    public String getConfiguration() {
-        return configuration;
-    }
-    
-    @Column(name = "`CONFIGURATION`", nullable = true)
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
-    
     @Column(name = "`JOBSCHEDULER_ID`", nullable = true)
     public String getJobschedulerId() {
         return jobschedulerId;
@@ -312,20 +299,10 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.modified = modified;
     }
     
-    @Column(name = "`UUID`", nullable = false)
-    public String getUuid() {
-        return uuid;
-    }
-
-    @Column(name = "`UUID`", nullable = false)
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
     @Override
     public int hashCode() {
-        // always build on unique constraint
-        return new HashCodeBuilder().append(uuid).toHashCode();
+        // always build on unique constraint or, if not exists, primary key (unique)
+        return new HashCodeBuilder().append(id).toHashCode();
     }
 
     @Override
@@ -338,7 +315,7 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
             return false;
         }
         DBItemYadeTransfers rhs = ((DBItemYadeTransfers) other);
-        return new EqualsBuilder().append(uuid, rhs.uuid).isEquals();
+        return new EqualsBuilder().append(id, rhs.id).isEquals();
     }
 
 }
