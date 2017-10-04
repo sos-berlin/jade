@@ -39,12 +39,12 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
     private Integer state;
     private String errorCode;
     private String errorMessage;
-    private String log;
     private String jobschedulerId;
     private String job;
     private String jobChain;
     private String jobChainNode;
     private String orderId;
+    private Long taskId;
     private Long auditLogId;
     private Boolean hasIntervention;
     private Long parentTransferId;
@@ -175,16 +175,6 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.errorMessage = errorMessage;
     }
     
-    @Column(name = "`LOG`", nullable = true)
-    public String getLog() {
-        return log;
-    }
-    
-    @Column(name = "`LOG`", nullable = true)
-    public void setLog(String log) {
-        this.log = log;
-    }
-    
     @Column(name = "`JOBSCHEDULER_ID`", nullable = true)
     public String getJobschedulerId() {
         return jobschedulerId;
@@ -235,6 +225,16 @@ public class DBItemYadeTransfers extends DbItem implements Serializable {
         this.orderId = orderId;
     }
     
+    @Column(name = "`TASK_ID`", nullable = false)
+    public Long getTaskId() {
+        return taskId;
+    }
+    
+    @Column(name = "`TASK_ID`", nullable = false)
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+
     @Column(name = "`AUDIT_LOG_ID`", nullable = true)
     public Long getAuditLogId() {
         return auditLogId;

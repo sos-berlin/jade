@@ -22,13 +22,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -72,16 +70,11 @@ import com.sos.exception.SOSYadeSourceConnectionException;
 import com.sos.exception.SOSYadeTargetConnectionException;
 import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.hibernate.classes.SOSHibernateSession;
-import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
-import com.sos.jade.db.DBItemYadeProtocols;
-import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
 import com.sos.scheduler.model.objects.Spooler;
-
-import java.util.Map;
 
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
 
@@ -349,13 +342,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 dbHelper.storeInitialTransferInformations(dbSession);
             }
             ok = transfer();
-            // update to write to new reporting DB tables, since 1.12
-//            if (dbSession != null) {
-//                Long transferId = dbHelper.storeTransferInformationToDB(dbSession);
-//                LOGGER.info("final transfer information stored to DB!");
-//                dbHelper.storeFilesInformationToDB(transferId, dbSession);
-//                LOGGER.info("final file informations stored to DB!");
-//            }
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }

@@ -39,8 +39,7 @@ public class YadeDBOperationHelperTest {
         dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
         dbFactory.build();
         JADEOptions jadeOptions = new JADEOptions();
-        Path iniFile = jadeOptions.convertXml2Ini(Paths.get("C:/sp/testing/yade/local2local.xml").toString());
-        jadeOptions.settings.setValue(iniFile.toString());
+        jadeOptions.settings.setValue("C:/sp/testing/yade/local2local.xml");
         jadeOptions.profile.setValue("local2local");
         JadeEngine engine = new JadeEngine(jadeOptions);
         jadeOptions.setJobSchedulerId("sp_4012");
@@ -48,6 +47,7 @@ public class YadeDBOperationHelperTest {
         jadeOptions.setJob("YADEJob");
         jadeOptions.setJobChainNodeName("execute yade job");
         jadeOptions.setOrderId("dummyOrderIdForTesting");
+        jadeOptions.setTaskId("32881");
         engine.setDBFactory(dbFactory);
         try {
             engine.execute();
