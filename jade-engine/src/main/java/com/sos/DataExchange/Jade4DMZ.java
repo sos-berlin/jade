@@ -60,7 +60,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             jade = new JadeEngine(getTransferOptions(operation, dir));
             jade.execute();
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
-                jade.executeCommandOnSource(getJadeOnDMZCommand4RemoveSource());
+                jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
             }
             fileList = jade.getFileList();
         } catch (Exception e) {
@@ -375,11 +375,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 return;
             }
             String command = getRemoveDirCommand(dir);
-            LOGGER.info(command);
             if (operation.equals(Operation.copyToInternet)) {
-                jade.executeCommandOnTarget(command);
+                jade.executeTransferCommands("target remove dir", jade.getTargetClient(), command, null);
             } else {
-                jade.executeCommandOnSource(command);
+                jade.executeTransferCommands("source remove dir", jade.getSourceClient(), command, null);
             }
         } catch (Exception ex) {
             LOGGER.warn(String.format("%s", ex.toString()));
