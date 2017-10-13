@@ -1291,16 +1291,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
     }
 
-    protected void executeTransferCommands(String commandCallerMethod, final ISOSVfsFileTransfer fileTransfer, final String commands,
+    protected void executeTransferCommands(String commandOptionName, final ISOSVfsFileTransfer fileTransfer, final String commands,
             final String delimiter) throws Exception {
         if (!SOSString.isEmpty(commands)) {
-            LOGGER.info(commandCallerMethod);
+            LOGGER.info(String.format("[%s]",commandOptionName));
             if (SOSString.isEmpty(delimiter)) {
-                fileTransfer.getHandler().executeCommand(objJSJobUtilities.replaceSchedulerVars(commands));
+                fileTransfer.getHandler().executeCommand(commands);
             } else {
                 String[] values = commands.split(delimiter);
                 for (String command : values) {
-                    fileTransfer.getHandler().executeCommand(objJSJobUtilities.replaceSchedulerVars(command));
+                    fileTransfer.getHandler().executeCommand(command);
                 }
             }
         }
