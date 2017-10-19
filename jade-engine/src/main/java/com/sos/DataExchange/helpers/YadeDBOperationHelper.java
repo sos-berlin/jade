@@ -269,7 +269,8 @@ public class YadeDBOperationHelper {
         return transferId;
     }
     
-    private void storeInitialFilesInformationToDB(Long transferId, SOSHibernateSession dbSession, SOSFileList files) {
+    public void storeInitialFilesInformationToDB(Long transferId, SOSHibernateSession dbSession, SOSFileList files) {
+        Long fileSizeSum = 0L;
         if (files != null) {
             // TODO: implementation
             for (SOSFileListEntry fileEntry : files.getList()) {
@@ -278,6 +279,7 @@ public class YadeDBOperationHelper {
                 file.setSourcePath(fileEntry.getSourceFilename());
                 file.setTargetPath(fileEntry.getTargetFileNameAndPath());
                 file.setSize(fileEntry.getFileSize());
+                fileSizeSum += fileEntry.getFileSize();
                 file.setState(fileEntry.getStatus());
                 String lastErrorMessage = fileEntry.getLastErrorMessage();
                 if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
@@ -305,6 +307,7 @@ public class YadeDBOperationHelper {
             }
             LOGGER.debug("store transfer files information finished!");
         }
+        files.setSumOfFileSizes(fileSizeSum);
     }
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) {
         updateFileInformationToDB(dbSession, fileEntry, false);
@@ -387,13 +390,15 @@ public class YadeDBOperationHelper {
         }
     }
 
-    public void storeInitialTransferInformations(SOSHibernateSession dbSession) {
+    public Long storeInitialTransferInformations(SOSHibernateSession dbSession) {
+        Long transferId = null;
         if (dbSession != null) {
-            Long transferId = storeTransferInformationToDB(dbSession);
+            transferId = storeTransferInformationToDB(dbSession);
             LOGGER.debug("initial transfer information stored to DB!");
-            storeInitialFilesInformationToDB(transferDBItem.getId(), dbSession, yadeEngine.getFileList());
-            LOGGER.debug("initial file informations stored to DB!");
+//            storeInitialFilesInformationToDB(transferDBItem.getId(), dbSession, yadeEngine.getFileList());
+//            LOGGER.debug("initial file informations stored to DB!");
         }
+        return transferId;
     }
 
     public void addAdditionalJobInfosFromOptions() {

@@ -32,4 +32,5 @@ public class JadeEngine extends SOSDataExchangeEngine {
     public JadeEngine(final HashMap<String, String> pobjJSSettings) throws Exception {
         super(pobjJSSettings);
     }
+
 }

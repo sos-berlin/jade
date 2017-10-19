@@ -52,6 +52,7 @@ import com.sos.JSHelper.Options.SOSOptionTime;
 import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
+import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.JSHelper.io.Files.JSFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -99,6 +100,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private SOSHibernateFactory dbFactory = null;
     private SOSHibernateSession dbSession = null;
     private YadeDBOperationHelper dbHelper = null;
+    private Long transferId;
+    private IJobSchedulerEventHandler eventHandler = null;
 
     
     public SOSDataExchangeEngine() throws Exception {
@@ -339,7 +342,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
                 dbHelper = new YadeDBOperationHelper(this);
-                dbHelper.storeInitialTransferInformations(dbSession);
+                transferId = dbHelper.storeInitialTransferInformations(dbSession);
             }
             ok = transfer();
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
@@ -836,14 +839,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
         if (maxParallelTransfers <= 0 || objOptions.cumulateFiles.isTrue()) {
             for (SOSFileListEntry entry : fileList.getList()) {
-                if(dbSession != null) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry);
-                }
+//                if(dbSession != null) {
+//                    dbHelper.updateFileInformationToDB(dbSession, entry);
+//                }
                 entry.setOptions(objOptions);
                 entry.setDataSourceClient(sourceClient);
                 entry.setDataTargetClient(targetClient);
                 entry.setConnectionPool4Source(factory.getSourcePool());
                 entry.setConnectionPool4Target(factory.getTargetPool());
+                entry.setEventHandler(eventHandler);
                 entry.run();
                 if(dbSession != null) {
                     dbHelper.updateFileInformationToDB(dbSession, entry, true);
@@ -1034,12 +1038,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 countPollingServerFiles = 0;
                 executePreTransferCommands();
                 // options are fully processed
-                // put the saving of the options to DB somewhere for restarting the job with same options and adjusted filepath
                 // Save file informations to DB
                 // Save protocol informations to DB
                 // Save transfer informations to DB
                 if (dbSession != null) {
-                    
+                    // set parameters for restart of transfer here
+                    // put the saving of the options to DB somewhere for restarting the job with same options and adjusted filepath
                 }
                 PollingServerLoop: while (true) {
                     if (objOptions.isFilePollingEnabled()) {
@@ -1092,6 +1096,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                 }
                                 if(dbSession != null) {
                                     dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.size());
+                                    if (transferId != null) {
+                                        dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, sourceFileList);
+                                    }
                                 }
                                 sendFiles(sourceFileList);
                                 sourceFileList.renameTargetAndSourceFiles();
@@ -1399,6 +1406,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             LOGGER.error(e.getMessage(), e);
         }
         return dbSession;
+    }
+    
+    public void setJobSchedulerEventHandler(IJobSchedulerEventHandler eventHandler) {
+        this.eventHandler  = eventHandler;
     }
     
 }

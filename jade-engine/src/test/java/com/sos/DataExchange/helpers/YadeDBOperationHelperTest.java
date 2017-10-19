@@ -1,12 +1,13 @@
 package com.sos.DataExchange.helpers;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import sos.scheduler.job.JobSchedulerJobAdapter;
 
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
@@ -42,12 +43,13 @@ public class YadeDBOperationHelperTest {
         jadeOptions.settings.setValue("C:/sp/testing/yade/local2local.xml");
         jadeOptions.profile.setValue("local2local");
         JadeEngine engine = new JadeEngine(jadeOptions);
+        engine.setJobSchedulerEventHandler(new JobSchedulerJobAdapter());
         jadeOptions.setJobSchedulerId("sp_4012");
         jadeOptions.setJobChain("yade_job_chain");
         jadeOptions.setJob("YADEJob");
         jadeOptions.setJobChainNodeName("execute yade job");
         jadeOptions.setOrderId("dummyOrderIdForTesting");
-        jadeOptions.setTaskId("32881");
+        jadeOptions.setTaskId("32885");
         engine.setDBFactory(dbFactory);
         try {
             engine.execute();

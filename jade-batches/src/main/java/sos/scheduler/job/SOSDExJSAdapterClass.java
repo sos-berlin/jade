@@ -11,7 +11,9 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +28,14 @@ import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateConfigurationException;
+import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.hibernate.exceptions.SOSHibernateFactoryBuildException;
+import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jade.db.DBItemYadeFiles;
+import com.sos.jade.db.YadeDBLayer;
 import com.sos.jitl.reporting.db.DBLayer;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
@@ -109,7 +116,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeOptions.verbose.value(intLogLevel);
         }
         jadeEngine.setJSJobUtilites(this);
-     	jadeEngine.getOptions().setDeleteSettingsFileOnExit(deleteSettingsFile);
+        jadeEngine.setJobSchedulerEventHandler(this);
+        jadeEngine.getOptions().setDeleteSettingsFileOnExit(deleteSettingsFile);
      	jadeEngine.setDBFactory(initDBFactory());
      	if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
      	    jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
@@ -350,6 +358,87 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
         dbFactory.build();
         return dbFactory;
+    }
+    
+    @Override
+    public void updateDb(Long id, String type, Map<String, String> values) {
+        // TODO Auto-generated method stub
+//        super.updateDb(id, type, values);
+        SOSHibernateSession session = initStatelessSession();
+        YadeDBLayer dbLayer = new YadeDBLayer(session);
+        if (type.equals("YADE_FILE")) {
+            // a helper class (like a DBLayer class) should be called to get
+            // the DBItem to update instead of creating a new one 
+            DBItemYadeFiles file = null;
+            try {
+                file = dbLayer.getTransferFileFromDB(id);
+            } catch (SOSHibernateException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            if (file != null) {
+                for (String key : values.keySet()) {
+                    // key = propertyName
+                    // values.get(key) = propertyValue
+                    switch (key) {
+                    case "transferId":
+                        file.setTransferId(Long.parseLong(values.get(key)));
+                        break;
+                    case "interventionTransferId":
+                        file.setInterventionTransferId(Long.parseLong(values.get(key)));
+                        break;
+                    case "sourcePath":
+                        file.setSourcePath(values.get(key));
+                        break;
+                    case "targetPath":
+                        file.setTargetPath(values.get(key));
+                        break;
+                    case "size":
+                        file.setSize(Long.parseLong(values.get(key)));
+                        break;
+                    case "modificationDate":
+                        file.setModificationDate(new Date(Long.parseLong(values.get(key))));
+                        break;
+                    case "state":
+                        file.setState(Integer.parseInt(values.get(key)));
+                        break;
+                    case "errorCode":
+                        file.setErrorCode(values.get(key));
+                        break;
+                    case "errorMessage":
+                        file.setErrorMessage(values.get(key));
+                        break;
+                    case "integrityHash":
+                        file.setIntegrityHash(values.get(key));
+                        break;
+                    case "modified":
+                        file.setModified(new Date(Long.parseLong(values.get(key))));
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                try {
+                    session.beginTransaction();
+                    session.update(file);
+                    session.commit();
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    try {
+                        session.rollback();
+                    } catch (SOSHibernateException e1) {}
+                }
+            }
+        }
+    }
+    
+    private SOSHibernateSession initStatelessSession() {
+        SOSHibernateSession dbSession = null;
+        try {
+            dbSession = dbFactory.openStatelessSession("YadeJob");
+        } catch (SOSHibernateOpenSessionException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return dbSession;
     }
     
 }

@@ -1,6 +1,7 @@
 package com.sos.DataExchange;
 
 import java.io.File;
+import java.util.Map;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
@@ -52,6 +53,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             jade4dmz = new Jade4DMZ();
             JADEOptions options = jade4dmz.getOptions();
             jade4dmz.setJSJobUtilites(this);
+            //TODOjade4dmz.setJ
             options.sendTransferHistory.value(true);
             options.commandLineArgs(args);
             try {
