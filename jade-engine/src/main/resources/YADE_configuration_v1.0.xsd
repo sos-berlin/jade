@@ -595,6 +595,43 @@ SSH, etc.) server to which a connection has to be made.</p>
             <xs:element ref="CommandBeforeRename" minOccurs="0"/>
 		    </xs:sequence>
 	  </xs:complexType>
+	  <xs:element name="ProcessingCommandDelimiter" default=";">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="command_delimiter"/>
+                <Release starting="1.11" issue="YADE-415"/>
+			      </xs:appinfo>
+         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ProcessingCommandDelimiter">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <p>
+                  <ul>
+                     <li>Schema: <a target="_blank"
+                           href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ProcessingCommandDelimiter.html">ProcessingCommandDelimiter</a>
+                     </li>
+                     <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ProcessingCommandDelimiter">ProcessingCommandDelimiter</a>
+                     </li>
+                     <li>Mapping:
+            <ul>
+                           <li>
+                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+command_delimiter">command_delimiter</a>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-415">YADE-415</a>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+               </p>
+               <strong>Notes</strong>
+               <p>A command delimiter option for executing the pre- and postcommands</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+	  </xs:element>
 	  <xs:element name="CumulateFiles">
 		    <xs:annotation>
          <xs:appinfo>
@@ -984,7 +1021,21 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:complexType>
 			      <xs:complexContent>
 				        <xs:extension base="BackgroundServiceType">
-					          <xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+					          <xs:attribute name="name" type="xs:NMTOKEN" use="required">
+                  <xs:annotation>
+                     <xs:documentation>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                           <p>
+			This attribute identifies the current fragment. 
+			Any number of fragments can be used and are distinguished by YADE based on their name.
+		</p>
+                           <p>
+			A fragment is referenced via this attribute value by a transfer profile.
+		</p>
+                        </div>
+                     </xs:documentation>
+                  </xs:annotation>
+               </xs:attribute>
 				        </xs:extension>
 			      </xs:complexContent>
 		    </xs:complexType>
@@ -1705,6 +1756,13 @@ SSH, etc.) server to which a connection has to be made.</p>
       </xs:annotation>
 	  </xs:element>
 	  <xs:element name="ProxyForFTP">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>ProxyForFTP - will use the HTTP, SOCKS4 or SOCKS5 proxy</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:choice>
 				        <xs:element ref="HTTPProxy"/>
@@ -1714,6 +1772,13 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="ProxyForWebDAV">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>ProxyForWebDAV - will use the HTTP proxy</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:choice>
 				        <xs:element ref="HTTPProxy"/>
@@ -1721,6 +1786,15 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="ProxyForHTTP">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>Proxies can make use of different protocols, 
+        a HTTPProxy - as the name suggests - will use the HTTP protocol</p>
+               <p>HTTP proxies optionally support authentication.</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:choice>
 				        <xs:element ref="HTTPProxy"/>
@@ -1728,6 +1802,13 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="ProxyForSFTP">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>ProxyForSFTP - will use the HTTP, SOCKS4 or SOCKS5 proxy</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:choice>
 				        <xs:element ref="HTTPProxy"/>
@@ -1737,6 +1818,13 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="ProxyForFTPS">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>ProxyForFTPS - will use the HTTP, SOCKS4 or SOCKS5 proxy</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:choice>
 				        <xs:element ref="HTTPProxy"/>
@@ -1771,6 +1859,12 @@ SSH, etc.) server to which a connection has to be made.</p>
             <ul>
                            <li>
                               <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+proxy_protocol">proxy_protocol</a>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-351">YADE-351</a>
                            </li>
                         </ul>
                      </li>
@@ -2198,6 +2292,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="LocalPreProcessing" minOccurs="0"/>
 				        <xs:element ref="LocalPostProcessing" minOccurs="0"/>
+				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
 				        <!--
 				<xs:element ref="Zip" minOccurs="0"/>
@@ -2240,6 +2335,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="LocalPreProcessing" minOccurs="0"/>
 				        <xs:element ref="LocalPostProcessing" minOccurs="0"/>
+				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
@@ -3361,6 +3457,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="FTPPreProcessing" minOccurs="0"/>
 				        <xs:element ref="FTPPostProcessing" minOccurs="0"/>
+				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
 			      </xs:sequence>
 			      <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
@@ -3442,6 +3539,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="SFTPPreProcessing" minOccurs="0"/>
 				        <xs:element ref="SFTPPostProcessing" minOccurs="0"/>
+				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
 				        <xs:element ref="ZlibCompression" minOccurs="0"/>
 			      </xs:sequence>
@@ -3701,6 +3799,10 @@ SSH, etc.) server to which a connection has to be made.</p>
                      </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Post transfer commands execution in case of the successful transfers.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -3731,8 +3833,18 @@ SSH, etc.) server to which a connection has to be made.</p>
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Post transfer commands execution on transfer error. 
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -3763,8 +3875,18 @@ SSH, etc.) server to which a connection has to be made.</p>
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Post transfer commands execution at transfer end independent of the transfer status. 
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -5234,6 +5356,20 @@ SSH, etc.) server to which a connection has to be made.</p>
                      </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			This element references a writeable fragment that is used to move files in a
+			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Move"
+                     shape="rect">Move</a> operation.
+		</p>
+               <p>
+			Any number of reusable <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Fragments"
+                     shape="rect">Fragments</a> 
+			elements can be configured and are distinguished by YADE based on their <em>name</em> attribute.
+		</p>
+               <p>
+			A subsequent fragment reference element points to the fragment that is used as target in the <em>Move</em> operation.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -6125,7 +6261,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
-	  <xs:element name="Execute"/>
+	  <!--xs:element name="Execute"/-->
 	  <xs:element name="BackgroundServiceHost" default="localhost">
 		    <xs:annotation>
          <xs:appinfo>
@@ -6467,6 +6603,12 @@ SSH, etc.) server to which a connection has to be made.</p>
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-403">YADE-403</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
                <strong>Notes</strong>
@@ -6496,6 +6638,12 @@ SSH, etc.) server to which a connection has to be made.</p>
             <ul>
                            <li>
                               <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+system_property_files">system_property_files</a>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-400">YADE-400</a>
                            </li>
                         </ul>
                      </li>
@@ -6751,6 +6899,15 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    </xs:simpleType>
 	  </xs:element>
 	  <xs:element name="Header">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>
+			Header of an e-mail notification.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="From" minOccurs="0"/>
@@ -6874,6 +7031,10 @@ SSH, etc.) server to which a connection has to be made.</p>
                      </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+        Domain for authentication at one of the systems involved in file transfer, e.g. an SMB server.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -6946,6 +7107,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                      </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>Number of expected hits in result-list.</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -7113,6 +7276,13 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    </xs:simpleType>
 	  </xs:element>
 	  <xs:element name="CheckResultSetCount">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>Check number of expected hits in result-list.</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="ExpectedResultSetCount"/>
@@ -8408,6 +8578,22 @@ A fragment is referenced via this attribute value by a transfer profile.
                      </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			A URL connection specifies parameters such as a <em>Hostname</em>, <em>Port</em>, <em>Account</em>
+			by which a connection is established within the URL.
+		</p>
+               <p>
+			The use of URLs depends on the server system, e.g. the following protocols and configuration items could be used:
+			<br/>
+			http|https :// [ account [ : password ] @ ] hostname [ : port ] 
+			<br/>
+			If the port is empty, the default ports will be used:
+			<ul>
+                     <li>HTTP: 80</li>
+                     <li>HTTPS: 443</li>
+                  </ul>
+		             </p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -8718,7 +8904,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 	  <xs:element name="DisableMakeDirectories" type="xs:boolean" default="false">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="make_dirs" opposite_value="true"/>
+				        <FlatParameter name="make_dirs" suppress_prefix="true" opposite_value="true"/>
 				        <FlatParameter name="createFoldersOnTarget"/>
 				        <FlatParameter name="create_folders_on_target"/>
 			      </xs:appinfo>
@@ -9341,7 +9527,17 @@ A fragment is referenced via this attribute value by a transfer profile.
          </xs:documentation>
       </xs:annotation>
 	  </xs:element>
-	  <xs:element name="MailServer" type="MailServerType"/>
+	  <xs:element name="MailServer" type="MailServerType">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>
+			This parameter specifies a mail server setiings.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+   </xs:element>
 	  <xs:element name="CredentialStoreFragments">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragments">
@@ -9607,7 +9803,21 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:complexType>
 			      <xs:complexContent>
 				        <xs:extension base="MailServerType">
-					          <xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+					          <xs:attribute name="name" type="xs:NMTOKEN" use="required">
+                  <xs:annotation>
+                     <xs:documentation>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                           <p>
+			This attribute identifies the current fragment. 
+			Any number of fragments can be used and are distinguished by YADE according their name.
+			</p>
+                           <p>
+			A fragment is referenced by a transfer profile using the value of this attribute.
+			</p>
+                        </div>
+                     </xs:documentation>
+                  </xs:annotation>
+               </xs:attribute>
 				        </xs:extension>
 			      </xs:complexContent>
 		    </xs:complexType>
@@ -9770,6 +9980,15 @@ A fragment is referenced via this attribute value by a transfer profile.
       </xs:annotation>
 	  </xs:element>
 	  <xs:element name="KeyFileAuthentication">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>
+			A Credential Store	can be accessed using a private key or using a password or a combination of both.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="CSKeyFile"/>
@@ -9778,6 +9997,15 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="PasswordAuthentication">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>
+			A Credential Store	can be accessed using a private key or using a password or a combination of both.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="CSPassword"/>
@@ -9906,8 +10134,18 @@ A fragment is referenced via this attribute value by a transfer profile.
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Specifies the commands to be executed for each file on the jump server before transfer of files.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -9940,8 +10178,18 @@ A fragment is referenced via this attribute value by a transfer profile.
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Specifies the commands to be executed for each file on the jump server after the transfer.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -9974,8 +10222,18 @@ A fragment is referenced via this attribute value by a transfer profile.
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Commands to be executed before the transfer of files starts on the jump server.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -10008,8 +10266,18 @@ A fragment is referenced via this attribute value by a transfer profile.
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Post transfer commands execution in case of the successful transfers.
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -10042,8 +10310,18 @@ A fragment is referenced via this attribute value by a transfer profile.
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Post transfer commands execution on transfer error. 
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -10076,8 +10354,18 @@ A fragment is referenced via this attribute value by a transfer profile.
                            </li>
                         </ul>
                      </li>
+                     <li>Release:
+            <ul>
+                           <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
                </p>
+               <strong>Notes</strong>
+               <p>
+			Post transfer commands execution at transfer end independent of the transfer status. 
+		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -10099,6 +10387,15 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    </xs:sequence>
 	  </xs:complexType>
 	  <xs:element name="MailHost">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>
+			This parameter specifies a mail host setiings.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="BasicConnection"/>
@@ -10438,7 +10735,24 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:complexType>
 			      <xs:simpleContent>
 				        <xs:extension base="xs:anyURI">
-					          <xs:attribute name="href" type="xs:anyURI" use="required"/>
+					          <xs:attribute name="href" type="xs:anyURI" use="required">
+                  <xs:annotation>
+                     <xs:documentation>
+                        <div xmlns="http://www.w3.org/1999/xhtml">
+                           <p>
+			A number of <em>Links</em> can be added to a 
+			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Documentation"
+                                 shape="rect">Documentation</a> 
+			that explains the use of the file transfer configuration.
+		</p>
+                           <p>
+			A <em>Link</em> is specified by its text and <em>href</em> attribute that points to the URI that
+			is referenced by the <em>Link</em>.
+		</p>
+                        </div>
+                     </xs:documentation>
+                  </xs:annotation>
+               </xs:attribute>
 				        </xs:extension>
 			      </xs:simpleContent>
 		    </xs:complexType>
