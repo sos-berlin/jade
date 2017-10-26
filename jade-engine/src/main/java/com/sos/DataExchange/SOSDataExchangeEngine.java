@@ -835,7 +835,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void sendNotifications() {
         if (objOptions.mailOnError.isTrue() && (sourceFileList.getFailedTransfers() > 0 || !JobSchedulerException.LastErrorMessage.isEmpty())) {
             doProcessMail(enuMailClasses.MailOnError);
-        } else if (objOptions.mailOnSuccess.isTrue() && sourceFileList.getFailedTransfers() <= 0) {
+        } else if (objOptions.mailOnSuccess.isTrue() && sourceFileList.getSuccessfulTransfers() > 0) {
             doProcessMail(enuMailClasses.MailOnSuccess);
         }
         if (objOptions.mailOnEmptyFiles.isTrue() && sourceFileList.getZeroByteCount() > 0) {
