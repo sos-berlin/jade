@@ -1060,7 +1060,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         if (commands.isNotEmpty()) {
             LOGGER.info(commandCallerMethod);
             for (String command : commands.split()) {
-                fileTransfer.getHandler().executeCommand(objOptions.replaceVars(command));
+                if(!SOSString.isEmpty(command.trim())){
+                    fileTransfer.getHandler().executeCommand(objOptions.replaceVars(command.trim()));
+                }
             }
         }
     }
