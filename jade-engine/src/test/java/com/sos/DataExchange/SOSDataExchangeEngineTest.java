@@ -1034,7 +1034,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objOptions.remoteDir.setValue("/home/kb/");
         objOptions.localDir.setValue(TEST_PATH_NAME);
         objOptions.operation.setValue("receive");
-        objOptions.controlEncoding.setValue("UTF-8");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.execute();
         objJadeEngine.logout();

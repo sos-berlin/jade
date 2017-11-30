@@ -541,7 +541,6 @@ public abstract class JadeTestBase extends JSToolBox {
         objVFS = VFSFactory.getHandler(objOptions.protocol.getValue());
         ftpClient = (ISOSVfsFileTransfer) objVFS;
         objOptions.logFilename.setValue(objOptions.getTempDir() + "/test.log");
-        objOptions.checkServerFeatures.setTrue();
     }
 
     private void authenticate() throws Exception {
@@ -1058,8 +1057,6 @@ public abstract class JadeTestBase extends JSToolBox {
         objOptions.remoteDir.setValue("/home/kb/");
         objOptions.appendFiles.value(false);
         objOptions.operation.setValue("receive");
-        objOptions.checkServerFeatures.setTrue();
-        objOptions.controlEncoding.setValue("UTF-8");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.execute();
         long intNoOfFilesTransferred = objJadeEngine.getFileList().getSuccessfulTransfers();
@@ -1142,7 +1139,6 @@ public abstract class JadeTestBase extends JSToolBox {
         objOptions.remoteDir.setValue("/home/kb/");
         objOptions.localDir.setValue(strTestPathName);
         objOptions.operation.setValue("receive");
-        objOptions.controlEncoding.setValue("UTF-8");
         JadeEngine objJadeEngine = new JadeEngine(objOptions);
         objJadeEngine.execute();
         objJadeEngine.logout();

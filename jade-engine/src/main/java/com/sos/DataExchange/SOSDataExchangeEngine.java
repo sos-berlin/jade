@@ -1318,14 +1318,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
     protected void executeTransferCommands(String commandOptionName, final ISOSVfsFileTransfer fileTransfer, final String commands,
             final String delimiter) throws Exception {
-        if (!SOSString.isEmpty(commands)) {
+        if (commands != null && commands.trim().length() > 0) {
             LOGGER.info(String.format("[%s]",commandOptionName));
             if (SOSString.isEmpty(delimiter)) {
                 fileTransfer.getHandler().executeCommand(commands);
             } else {
                 String[] values = commands.split(delimiter);
                 for (String command : values) {
-                    fileTransfer.getHandler().executeCommand(command);
+                    if(!SOSString.isEmpty(command.trim())){
+                        fileTransfer.getHandler().executeCommand(command);
+                    }
                 }
             }
         }
