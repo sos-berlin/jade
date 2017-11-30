@@ -340,7 +340,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 updateHelper.executeBefore();
                 objOptions = updateHelper.getOptions();
             }
-            // /changes here
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
                 dbHelper = new YadeDBOperationHelper(this);
@@ -858,9 +857,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
         if (maxParallelTransfers <= 0 || objOptions.cumulateFiles.isTrue()) {
             for (SOSFileListEntry entry : fileList.getList()) {
-//                if(dbSession != null) {
-//                    dbHelper.updateFileInformationToDB(dbSession, entry);
-//                }
                 entry.setOptions(objOptions);
                 entry.setDataSourceClient(sourceClient);
                 entry.setDataTargetClient(targetClient);
@@ -872,9 +868,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     dbHelper.updateFileInformationToDB(dbSession, entry, true);
                 }
             }
-//            if(dbSession != null) {
-//                dbHelper.storeTransferInformationToDB(dbSession);
-//            }
         } else {
             SOSThreadPoolExecutor executor = new SOSThreadPoolExecutor(maxParallelTransfers);
             for (SOSFileListEntry entry : fileList.getList()) {
