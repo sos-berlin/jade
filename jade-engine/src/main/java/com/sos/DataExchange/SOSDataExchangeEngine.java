@@ -66,6 +66,7 @@ import com.sos.exception.SOSYadeTargetConnectionException;
 import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
+import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Params;
@@ -100,7 +101,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private SOSHibernateSession dbSession = null;
     private YadeDBOperationHelper dbHelper = null;
     private Long transferId;
+    private Long parentTransferId;
     private IJobSchedulerEventHandler eventHandler = null;
+    private boolean isIntervention = false;
 
 
     public SOSDataExchangeEngine() throws Exception {
@@ -341,15 +344,34 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
                 dbHelper = new YadeDBOperationHelper(this);
-                transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                if (parentTransferId != null) {
+                    DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
+                    if (existingTransfer != null
+                            && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
+                            && existingTransfer.getOrderId().equals(objOptions.getOrderId())
+                            && existingTransfer.getState() == 3) {
+                        existingTransfer.setHasIntervention(true);
+                        dbSession.beginTransaction();
+                        dbSession.update(existingTransfer);
+                        dbSession.commit();
+                        transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
+                    } else {
+                        transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                    }
+                } else {
+                    transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                }
             }
             ok = transfer();
+            if (dbSession != null) {
+                dbHelper.updateSuccessfulTransfer(dbSession);
+            }
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }
         } catch (SOSYadeSourceConnectionException | SOSYadeTargetConnectionException e) {
             if (dbSession != null) {
-                dbHelper.storeFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
             }
             throw new JobSchedulerException(e.getCause());
         } catch (JobSchedulerException e) {
@@ -850,9 +872,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     dbHelper.updateFileInformationToDB(dbSession, entry, true);
                 }
             }
-            if(dbSession != null) {
-                dbHelper.storeTransferInformationToDB(dbSession);
-            }
+//            if(dbSession != null) {
+//                dbHelper.storeTransferInformationToDB(dbSession);
+//            }
         } else {
             SOSThreadPoolExecutor executor = new SOSThreadPoolExecutor(maxParallelTransfers);
             for (SOSFileListEntry entry : fileList.getList()) {
@@ -1034,10 +1056,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 long startPollingServer = System.currentTimeMillis() / CONST1000;
                 countPollingServerFiles = 0;
                 executePreTransferCommands();
-                // options are fully processed
-                // Save file informations to DB
-                // Save protocol informations to DB
-                // Save transfer informations to DB
                 if (dbSession != null) {
                     // set parameters for restart of transfer here
                     // put the saving of the options to DB somewhere for restarting the job with same options and adjusted filepath
@@ -1091,7 +1109,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                     sourceFileList.objDataTargetClient = targetClient;
                                     makeDirs();
                                 }
-                                if(dbSession != null) {
+                                if (dbSession != null) {
                                     dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.size());
                                     if (transferId != null) {
                                         dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, sourceFileList);
@@ -1396,4 +1414,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         this.eventHandler  = eventHandler;
     }
     
+    public Long getTransferId(){
+        return transferId;
+    }
+    
+    public void setParentTransferId (Long parentTransferId) {
+        this.parentTransferId = parentTransferId;
+    }
+    
+    public void setIsIntervention (boolean isIntervention) {
+        this.isIntervention = isIntervention;
+    }
 }

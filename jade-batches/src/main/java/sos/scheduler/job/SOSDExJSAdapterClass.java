@@ -64,6 +64,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
     private static final String SCHEDULER_ORDER_ID_PARAM = "SCHEDULER_ORDER_ID";
     private static final String SCHEDULER_TASK_ID_PARAM = "SCHEDULER_TASK_ID";
+    private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private JADEOptions jadeOptions = null;
     private JadeEngine jadeEngine = null;
@@ -137,11 +138,17 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         if (schedulerParams.get(SCHEDULER_TASK_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_TASK_ID_PARAM).isEmpty()) {
             jadeEngine.getOptions().setTaskId(schedulerParams.get(SCHEDULER_TASK_ID_PARAM));
         }
+        if (schedulerParams.get(YADE_TRANSFER_ID) != null) {
+            jadeEngine.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
+        }
         try {
             jadeEngine.execute();
         } catch (Exception e) {
             throw e;
         } finally {
+            if (isOrderJob() && jadeEngine.getTransferId() != null) {
+                setOrderParameter(YADE_TRANSFER_ID, jadeEngine.getTransferId().toString());
+            }
         	jadeEngine.logout();
         }
         transfFiles = jadeEngine.getFileList();

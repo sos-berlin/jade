@@ -42,7 +42,7 @@ public class YadeDBOperationHelper {
         addAdditionalJobInfosFromOptions();
     }
 
-    public Long storeTransferInformationToDB(SOSHibernateSession dbSession) {
+    public Long storeTransferInformationToDB(SOSHibernateSession dbSession, Long parentTransferId) {
         Long transferId = null;
         YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
         try {
@@ -198,6 +198,9 @@ public class YadeDBOperationHelper {
                     transferFromDb.setErrorMessage(JobSchedulerException.LastErrorMessage);
                 }
                 transferFromDb.setTaskId(taskId);
+                if(parentTransferId != null) {
+                    transferFromDb.setParentTransferId(parentTransferId);
+                }
                 transferFromDb.setModified(now);
                 try {
                     dbLayer.getSession().update(transferFromDb);
@@ -250,6 +253,9 @@ public class YadeDBOperationHelper {
                 if (yadeEngine.getOptions().getProfile() != null) {
                     newTransfer.setProfileName(yadeEngine.getOptions().getProfile().getValue());
                     LOGGER.debug("profile = " + yadeEngine.getOptions().getProfile().getValue());
+                }
+                if(parentTransferId != null) {
+                    newTransfer.setParentTransferId(parentTransferId);
                 }
                 newTransfer.setModified(now);
                 dbLayer.getSession().save(newTransfer);
@@ -391,12 +397,14 @@ public class YadeDBOperationHelper {
     }
 
     public Long storeInitialTransferInformations(SOSHibernateSession dbSession) {
+        return storeInitialTransferInformations(dbSession, null);
+    }
+
+    public Long storeInitialTransferInformations(SOSHibernateSession dbSession, Long parentTransferId) {
         Long transferId = null;
         if (dbSession != null) {
-            transferId = storeTransferInformationToDB(dbSession);
+            transferId = storeTransferInformationToDB(dbSession, parentTransferId);
             LOGGER.debug("initial transfer information stored to DB!");
-//            storeInitialFilesInformationToDB(transferDBItem.getId(), dbSession, yadeEngine.getFileList());
-//            LOGGER.debug("initial file informations stored to DB!");
         }
         return transferId;
     }
@@ -426,10 +434,21 @@ public class YadeDBOperationHelper {
         }
     }
     
-    public void storeFailedTransfer(SOSHibernateSession dbSession, String errorMessage) throws SOSHibernateException {
+    public void updateFailedTransfer(SOSHibernateSession dbSession, String errorMessage) throws SOSHibernateException {
         if (transferDBItem != null) {
             transferDBItem.setState(3);
             transferDBItem.setErrorMessage(errorMessage);
+            transferDBItem.setEnd(Date.from(Instant.now()));
+            transferDBItem.setModified(Date.from(Instant.now()));
+            dbSession.beginTransaction();
+            dbSession.update(transferDBItem);
+            dbSession.commit();
+        }        
+    }
+    
+    public void updateSuccessfulTransfer(SOSHibernateSession dbSession) throws SOSHibernateException {
+        if (transferDBItem != null) {
+            transferDBItem.setState(1);
             transferDBItem.setEnd(Date.from(Instant.now()));
             transferDBItem.setModified(Date.from(Instant.now()));
             dbSession.beginTransaction();
@@ -446,6 +465,11 @@ public class YadeDBOperationHelper {
             dbSession.update(transferDBItem);
             dbSession.commit();
         }
+    }
+    
+    public DBItemYadeTransfers getTransfer(Long id, SOSHibernateSession dbSession) throws SOSHibernateException {
+        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+        return dbLayer.getTransferFromDb(id);
     }
     
     private Integer getOperation(SOSOptionJadeOperation jadeOperation) {
