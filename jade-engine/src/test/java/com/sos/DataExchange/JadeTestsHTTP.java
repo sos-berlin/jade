@@ -1,11 +1,23 @@
 package com.sos.DataExchange;
 
-import org.junit.After;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpHost;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.TraceMethod;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.common.io.Files;
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTPRequestEntity;
 
 public class JadeTestsHTTP extends JadeTestBase {
 
@@ -21,7 +33,120 @@ public class JadeTestsHTTP extends JadeTestBase {
         objOptions.profile.setValue("http_2_local_one_file");
         this.execute(objOptions);
     }
+    
+    @Test
+    @Ignore
+    public void testHttpClientPutMethod() throws Exception {
 
+        HostConfiguration hc = new HostConfiguration();
+        hc.setHost(new HttpHost("localhost", 8080));
+
+        MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
+        HttpClient httpClient = new HttpClient(cm);
+        httpClient.setHostConfiguration(hc);
+
+        File file = new File("D://yade_test.txt");
+        String uri = "http://localhost:8080/yade_http/" + file.getName();
+        
+        PutMethod m = null;
+        InputStream source = null;
+        OutputStream target = null;
+        try {
+            m = new PutMethod(uri);
+            SOSVfsHTTPRequestEntity re = new SOSVfsHTTPRequestEntity();
+            m.setRequestEntity(re);
+            target = re.getOutputStream();
+
+            byte[] buffer = new byte[objOptions.bufferSize.value()];
+            int bytesTransferred;
+            source = Files.asByteSource(file).openStream();
+            while ((bytesTransferred = source.read(buffer)) != -1) {
+
+                target.write(buffer, 0, bytesTransferred);
+            }
+            source.close();
+            source = null;
+
+            target.flush();
+            target.close();
+            target = null;
+
+            int statusCode = httpClient.executeMethod(m);
+            System.out.println("statusCode=" + statusCode + ", statusText=" + m.getStatusText());
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (target != null) {
+                target.flush();
+                target.close();
+            }
+            if (m != null) {
+                m.releaseConnection();
+            }
+            cm.shutdown();
+        }
+    }
+
+    @Test
+    @Ignore
+    public void testHttpClientTraceMethod() throws Exception {
+
+        HostConfiguration hc = new HostConfiguration();
+        hc.setHost(new HttpHost("localhost", 8080));
+
+        MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
+        HttpClient httpClient = new HttpClient(cm);
+        httpClient.setHostConfiguration(hc);
+
+        String uri = "http://localhost:8080/yade_http";
+        TraceMethod m = null;
+        try {
+            m = new TraceMethod(uri);
+            int statusCode = httpClient.executeMethod(m);
+            System.out.println("statusCode=" + statusCode + ", statusText=" + m.getStatusText());
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (m != null) {
+                m.releaseConnection();
+            }
+            cm.shutdown();
+        }
+    }
+    
+    @Test
+    @Ignore
+    public void testHttpClientDeleteMethod() throws Exception {
+
+        HostConfiguration hc = new HostConfiguration();
+        hc.setHost(new HttpHost("localhost", 8080));
+
+        MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
+        HttpClient httpClient = new HttpClient(cm);
+        httpClient.setHostConfiguration(hc);
+
+        String uri = "http://localhost:8080/yade_http/yade_test.txt";
+        DeleteMethod m = null;
+        try {
+            m = new DeleteMethod(uri);
+            int statusCode = httpClient.executeMethod(m);
+            System.out.println("statusCode=" + statusCode + ", statusText=" + m.getStatusText());
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (m != null) {
+                m.releaseConnection();
+            }
+            cm.shutdown();
+        }
+    }
+    
     @Test
     public void testHttps2LocalTrustedCertificateOneFile() throws Exception {
         objOptions.profile.setValue("https_2_local_trusted_certificate_one_file");
