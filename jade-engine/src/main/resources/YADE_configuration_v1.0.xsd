@@ -3243,7 +3243,8 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="AlternativeCopySourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-				        <xs:element ref="SourceFileOptions"/>
+                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
+                <xs:element ref="SourceFileOptions" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -3291,7 +3292,8 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="AlternativeMoveSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-				        <xs:element ref="SourceFileOptions"/>
+                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
+        		  <xs:element ref="SourceFileOptions" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -3572,6 +3574,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="pre_command"/>
+                <Note include="PostPreProcessing-Variables"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -3601,53 +3604,115 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      you can use shell commands, depending on the operating system (Unix, Windows).</li>
                   </ul>
 		             </p>
-               <p>The following special variables are available to the commands:
-		<ul>
-                     <li>
-                        <em>$TargetFileName</em> - the "final" file name to be set on the Target where:
-		  	<ul>
+				
+                <p/>
+               <p>The following special variables are available:
+            <ul>
+                     <li>See:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is ignored</li>
+                              <a href="https://kb.sos-berlin.com/x/_gCg" shape="rect">YADE User Manual - Pre- &amp; Post-Processing / Variables</a>
+                           </li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
+                              <a href="https://change.sos-berlin.com/browse/YADE-448" shape="rect">YADE-448 Refactoring variables used in pre- and post-processing commands</a>
+                           </li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$TargetTransferFileName</em> - the name to be used for the file during transfer where: 
-		     <ul>
+                     </li>
+                     <li>Date/time variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is considered</li>
+                              <em>$date</em> - the current date in yyyy-MM-dd format.</li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is ignored</li>
+                              <em>$time</em> - the current time in Format HH:mm:ss format.</li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$SourceFileName</em> - the "original" file name on the source</li>
-                     <li>
-                        <em>$RenamedSourceFileName</em> - the file name where 
-		    <ul>
+                     </li>
+                     <li>Directory variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
-                        </ul> 
-		                   </li>
-                     <li>
-                        <em>$source_dir</em> - the name of the source <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$target_dir</em> - the name of the target <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$date</em> - the current date in yyyy-MM-dd format.</li>
-                     <li>
-                        <em>$time</em> - the current time in Format HH:mm:ss format.</li>
+                              <em>${TargetDirFullName}</em> - the directory where files are stored on the target system.</li>
+                           <li>
+                              <em>${SourceDirFullName}</em> - the directory where files are stored on the source system.</li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the target host:
+                    <ul>
+                           <li>
+                              <em>${TargetFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the target host during transfer (a file name can be prefixed or suffixed):
+                    <ul>
+                           <li>
+                              <em>${TargetTransferFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host:
+                    <ul>
+                           <li>
+                              <em>${SourceFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host after Rename operation:
+                    <ul>
+                           <li>
+                              <em>${SourceFileRenamedFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
-		             </p>
-            </div>
+               </p>
+			         </div>
          </xs:documentation>
       </xs:annotation>
 		    <xs:simpleType>
@@ -3699,6 +3764,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="post_command"/>
+                <Note include="PostPreProcessing-Variables"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -3722,53 +3788,115 @@ SSH, etc.) server to which a connection has to be made.</p>
 			Specifies the commands to be executed for each file on the server after the transfer and the <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
                      shape="rect">Rename</a>.
 		</p>
-               <p>The following special variables are available to the commands:
-		<ul>
-                     <li>
-                        <em>$TargetFileName</em> - the "final" file name to be set on the Target where:
-		  	<ul>
+				
+                <p/>
+               <p>The following special variables are available:
+            <ul>
+                     <li>See:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is ignored</li>
+                              <a href="https://kb.sos-berlin.com/x/_gCg" shape="rect">YADE User Manual - Pre- &amp; Post-Processing / Variables</a>
+                           </li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
+                              <a href="https://change.sos-berlin.com/browse/YADE-448" shape="rect">YADE-448 Refactoring variables used in pre- and post-processing commands</a>
+                           </li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$TargetTransferFileName</em> - the name to be used for the file during transfer where: 
-		     <ul>
+                     </li>
+                     <li>Date/time variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is considered</li>
+                              <em>$date</em> - the current date in yyyy-MM-dd format.</li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is ignored</li>
+                              <em>$time</em> - the current time in Format HH:mm:ss format.</li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$SourceFileName</em> - the "original" file name on the source</li>
-                     <li>
-                        <em>$RenamedSourceFileName</em> - the file name where 
-		    <ul>
+                     </li>
+                     <li>Directory variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
+                              <em>${TargetDirFullName}</em> - the directory where files are stored on the target system.</li>
+                           <li>
+                              <em>${SourceDirFullName}</em> - the directory where files are stored on the source system.</li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$source_dir</em> - the name of the source <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$target_dir</em> - the name of the target <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$date</em> - the current date in yyyy-MM-dd format.</li>
-                     <li>
-                        <em>$time</em> - the current time in Format HH:mm:ss format.</li>
+                     </li>
+                     <li>The name of a file on the target host:
+                    <ul>
+                           <li>
+                              <em>${TargetFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the target host during transfer (a file name can be prefixed or suffixed):
+                    <ul>
+                           <li>
+                              <em>${TargetTransferFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host:
+                    <ul>
+                           <li>
+                              <em>${SourceFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host after Rename operation:
+                    <ul>
+                           <li>
+                              <em>${SourceFileRenamedFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
-		             </p>
-            </div>
+               </p>
+			         </div>
          </xs:documentation>
       </xs:annotation>
 		    <xs:simpleType>
@@ -4054,7 +4182,11 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
 		    <xs:complexType>
-			      <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
+			      <xs:sequence>
+                <!-- re added 2017-12-01 JADE-287 -->
+                <xs:element ref="Rename" minOccurs="0"/>
+	        </xs:sequence>
+            <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
             <xs:annotation>
                <xs:documentation>
                   <div xmlns="http://www.w3.org/1999/xhtml">
@@ -4096,7 +4228,11 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
 		    <xs:complexType>
-			      <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
+			      <xs:sequence>
+                <!-- re added 2017-12-01 JADE-287 -->
+                <xs:element ref="Rename" minOccurs="0"/>
+	        </xs:sequence>
+            <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
             <xs:annotation>
                <xs:documentation>
                   <div xmlns="http://www.w3.org/1999/xhtml">
@@ -4183,7 +4319,8 @@ SSH, etc.) server to which a connection has to be made.</p>
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
-				        <xs:element ref="Selection">
+				<!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
+                <xs:element ref="Selection" minOccurs="0">
 					          <xs:annotation>
                   <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection">
                      <div xmlns="http://www.w3.org/1999/xhtml">
@@ -6190,6 +6327,10 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:choice>
 			      <xs:element ref="FTPFragmentRef"/>
 			      <xs:element ref="FTPSFragmentRef"/>
+            <xs:element ref="HTTPFragmentRef"/>  
+         <!-- re added 2017-12-01 JADE-287 -->
+			      <xs:element ref="HTTPSFragmentRef"/> 
+         <!-- re added 2017-12-01 JADE-287 -->
 			      <xs:element ref="LocalTarget"/>
 			      <xs:element ref="SFTPFragmentRef"/>
 			      <xs:element ref="SMBFragmentRef"/>
@@ -7861,7 +8002,8 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="AlternativeRemoveSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-				        <xs:element ref="SourceFileOptions"/>
+                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
+            	<xs:element ref="SourceFileOptions" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -7909,7 +8051,8 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="AlternativeGetListSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-				        <xs:element ref="SourceFileOptions"/>
+                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
+         		<xs:element ref="SourceFileOptions" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -8176,6 +8319,7 @@ A fragment is referenced via this attribute value by a transfer profile.
          <xs:appinfo>
 				        <FlatParameter name="cumulative_file_separator" suppress_prefix="true"/>
 				        <FlatParameter name="CumulativeFileSeparator" suppress_prefix="true"/>
+                <Note include="PostPreProcessing-Variables"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -8202,53 +8346,116 @@ A fragment is referenced via this attribute value by a transfer profile.
 			This parameter is used to specify a string that is placed in the target file as a separator between the
 			content of the individual files in order to be able to parse file boundaries later on.
 		</p>
+				
+				
+                <p/>
                <p>The following special variables are available:
-		<ul>
-                     <li>
-                        <em>$TargetFileName</em> - the "final" file name to be set on the Target where:
-		  	<ul>
+            <ul>
+                     <li>See:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is ignored</li>
+                              <a href="https://kb.sos-berlin.com/x/_gCg" shape="rect">YADE User Manual - Pre- &amp; Post-Processing / Variables</a>
+                           </li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
+                              <a href="https://change.sos-berlin.com/browse/YADE-448" shape="rect">YADE-448 Refactoring variables used in pre- and post-processing commands</a>
+                           </li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$TargetTransferFileName</em> - the name to be used for the file during transfer where: 
-		     <ul>
+                     </li>
+                     <li>Date/time variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is considered</li>
+                              <em>$date</em> - the current date in yyyy-MM-dd format.</li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is ignored</li>
+                              <em>$time</em> - the current time in Format HH:mm:ss format.</li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$SourceFileName</em> - the "original" file name on the source</li>
-                     <li>
-                        <em>$RenamedSourceFileName</em> - the file name where 
-		    <ul>
+                     </li>
+                     <li>Directory variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
+                              <em>${TargetDirFullName}</em> - the directory where files are stored on the target system.</li>
+                           <li>
+                              <em>${SourceDirFullName}</em> - the directory where files are stored on the source system.</li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$source_dir</em> - the name of the source <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$target_dir</em> - the name of the target <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$date</em> - the current date in yyyy-MM-dd format.</li>
-                     <li>
-                        <em>$time</em> - the current time in Format HH:mm:ss format.</li>
+                     </li>
+                     <li>The name of a file on the target host:
+                    <ul>
+                           <li>
+                              <em>${TargetFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the target host during transfer (a file name can be prefixed or suffixed):
+                    <ul>
+                           <li>
+                              <em>${TargetTransferFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host:
+                    <ul>
+                           <li>
+                              <em>${SourceFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host after Rename operation:
+                    <ul>
+                           <li>
+                              <em>${SourceFileRenamedFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
-		             </p>
-            </div>
+               </p>
+			         </div>
          </xs:documentation>
       </xs:annotation>
 		    <xs:simpleType>
@@ -8466,6 +8673,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="tfn_post_command"/>
+                <Note include="PostPreProcessing-Variables"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -8497,53 +8705,115 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      you can use shell commands, depending on the operating system (Unix, Windows).</li>
                   </ul>
 		             </p>
-               <p>The following special variables are available to the commands:
-		<ul>
-                     <li>
-                        <em>$TargetFileName</em> - the "final" file name to be set on the Target where:
-		  	<ul>
+				
+                <p/>
+               <p>The following special variables are available:
+            <ul>
+                     <li>See:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is ignored</li>
+                              <a href="https://kb.sos-berlin.com/x/_gCg" shape="rect">YADE User Manual - Pre- &amp; Post-Processing / Variables</a>
+                           </li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
+                              <a href="https://change.sos-berlin.com/browse/YADE-448" shape="rect">YADE-448 Refactoring variables used in pre- and post-processing commands</a>
+                           </li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$TargetTransferFileName</em> - the name to be used for the file during transfer where: 
-		     <ul>
+                     </li>
+                     <li>Date/time variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity"
-                                 shape="rect">Atomicities</a> is considered</li>
+                              <em>$date</em> - the current date in yyyy-MM-dd format.</li>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is ignored</li>
+                              <em>$time</em> - the current time in Format HH:mm:ss format.</li>
                         </ul>
-		                   </li>
-                     <li>
-                        <em>$SourceFileName</em> - the "original" file name on the source</li>
-                     <li>
-                        <em>$RenamedSourceFileName</em> - the file name where 
-		    <ul>
+                     </li>
+                     <li>Directory variables:
+                    <ul>
                            <li>
-                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
-                                 shape="rect">Rename</a> is considered</li>
-                        </ul>   
-		                   </li>
-                     <li>
-                        <em>$source_dir</em> - the name of the source <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$target_dir</em> - the name of the target <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
-                           shape="rect">Directory</a>.</li>
-                     <li>
-                        <em>$date</em> - the current date in yyyy-MM-dd format.</li>
-                     <li>
-                        <em>$time</em> - the current time in Format HH:mm:ss format.</li>
+                              <em>${TargetDirFullName}</em> - the directory where files are stored on the target system.</li>
+                           <li>
+                              <em>${SourceDirFullName}</em> - the directory where files are stored on the source system.</li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the target host:
+                    <ul>
+                           <li>
+                              <em>${TargetFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the target host during transfer (a file name can be prefixed or suffixed):
+                    <ul>
+                           <li>
+                              <em>${TargetTransferFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${TargetTransferFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host:
+                    <ul>
+                           <li>
+                              <em>${SourceFileFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>The name of a file on the source host after Rename operation:
+                    <ul>
+                           <li>
+                              <em>${SourceFileRenamedFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedRelativeName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedBaseName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentFullName}</em>
+                           </li>
+                           <li>
+                              <em>${SourceFileRenamedParentBaseName}</em>
+                           </li>
+                        </ul>
+                     </li>
                   </ul>
-		             </p>
-            </div>
+               </p>
+			         </div>
          </xs:documentation>
       </xs:annotation>
 		    <xs:simpleType>
