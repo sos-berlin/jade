@@ -332,6 +332,10 @@ public class YadeDBOperationHelper {
                 if (finalUpdate && fileEntry.getStatus() == 4) {
                     fileFromDb.setState(5);
                     hasErrors = false;
+                } else if (finalUpdate && fileEntry.getStatus() == 6) {
+                    fileFromDb.setState(7);
+                } else if (finalUpdate && (fileEntry.getStatus() == 0 || fileEntry.getStatus() == 7)) {
+                    fileFromDb.setState(8);
                 } else {
                     hasErrors = getHasErrorsFromFileState(fileEntry.getStatus());
                     fileFromDb.setState(fileEntry.getStatus());
@@ -353,6 +357,24 @@ public class YadeDBOperationHelper {
                     dbSession.update(fileFromDb);
                     dbSession.commit();
                     LOGGER.debug("file saved: " + fileFromDb.getSourcePath());
+                    if (finalUpdate && parentTransferId != null) {
+                        DBItemYadeFiles intervenedFileFromDb = null;
+                        LOGGER.debug(String.format(
+                                "calling getTransferFileFromDbByConstraint! with transferId=%1$d and path=%2$s",
+                                parentTransferId, fileEntry.getSourceFilename()));
+                        intervenedFileFromDb = dbLayer.getTransferFileFromDbByConstraint(parentTransferId, fileEntry.getSourceFilename());
+                        if (intervenedFileFromDb != null) {
+                            LOGGER.debug("File entry to update with intervention id found in DB!");
+                            intervenedFileFromDb.setInterventionTransferId(transferDBItem.getId());
+                            dbSession.beginTransaction();
+                            dbSession.update(intervenedFileFromDb);
+                            dbSession.commit();
+                        } else {
+                            LOGGER.debug(String.format(
+                                    "File entry with id=%1$d and path=%2$s to update with intervention id=%3$d not found in DB!", 
+                                    parentTransferId, fileEntry.getSourceFilename(), transferDBItem.getId()));
+                        }
+                    }
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                     try {
@@ -578,6 +600,10 @@ public class YadeDBOperationHelper {
 
     public void setYadeEngine(SOSDataExchangeEngine yadeEngine) {
         this.yadeEngine = yadeEngine;
+    }
+
+    public void setParentTransferId(Long parentTransferId) {
+        this.parentTransferId = parentTransferId;
     }
 
 }

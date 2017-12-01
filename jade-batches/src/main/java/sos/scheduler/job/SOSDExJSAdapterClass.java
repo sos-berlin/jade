@@ -58,6 +58,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_TARGET_FILE_NAME = "scheduler_target_file_name";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
+    private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
     private static final String SCHEDULER_ID_PARAM = "SCHEDULER_ID";
     private static final String SCHEDULER_JOB_NAME_PARAM = "SCHEDULER_JOB_NAME";
     private static final String SCHEDULER_JOB_CHAIN_NAME_PARAM = "SCHEDULER_JOB_CHAIN_NAME";
@@ -140,6 +141,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         if (schedulerParams.get(YADE_TRANSFER_ID) != null) {
             jadeEngine.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
+        }
+        if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null
+                && !schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION).isEmpty()) {
+            jadeEngine.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
+            LOGGER.debug(ORDER_PARAMETER_FILE_PATH_RESTRICTION + " was set to: " + schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
         }
         try {
             jadeEngine.execute();
@@ -378,32 +384,42 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             // the DBItem to update instead of creating a new one 
             DBItemYadeFiles file = null;
             try {
-                file = dbLayer.getTransferFileFromDB(id);
+                String filePath = values.get("file_path");
+                file = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getTransferId(), filePath);
+                
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
             }
             if (file != null) {
+                if(jadeEngine.getParentTransferId() != null) {
+                    DBItemYadeFiles intervenedFile = null;
+                    try {
+                        String filePath = values.get("sourcePath");
+                        intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
+                        intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
+                        try {
+                            session.beginTransaction();
+                            session.update(intervenedFile);
+                            session.commit();
+                        } catch (SOSHibernateException e) {
+                            LOGGER.error(e.getMessage(), e);
+                            try {
+                                session.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
                 for (String key : values.keySet()) {
                     // key = propertyName
                     // values.get(key) = propertyValue
                     switch (key) {
-                    case "transferId":
-                        file.setTransferId(Long.parseLong(values.get(key)));
-                        break;
-                    case "interventionTransferId":
-                        file.setInterventionTransferId(Long.parseLong(values.get(key)));
-                        break;
                     case "sourcePath":
                         file.setSourcePath(values.get(key));
                         break;
                     case "targetPath":
                         file.setTargetPath(values.get(key));
-                        break;
-                    case "size":
-                        file.setSize(Long.parseLong(values.get(key)));
-                        break;
-                    case "modificationDate":
-                        file.setModificationDate(new Date(Long.parseLong(values.get(key))));
                         break;
                     case "state":
                         file.setState(Integer.parseInt(values.get(key)));
@@ -413,12 +429,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                         break;
                     case "errorMessage":
                         file.setErrorMessage(values.get(key));
-                        break;
-                    case "integrityHash":
-                        file.setIntegrityHash(values.get(key));
-                        break;
-                    case "modified":
-                        file.setModified(new Date(Long.parseLong(values.get(key))));
                         break;
                     default:
                         break;
