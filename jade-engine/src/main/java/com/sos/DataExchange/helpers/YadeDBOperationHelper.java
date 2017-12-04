@@ -342,6 +342,8 @@ public class YadeDBOperationHelper {
                         DBItemYadeFiles intervenedFileFromDb = null;
                         intervenedFileFromDb = dbLayer.getTransferFileFromDbByConstraint(parentTransferId, fileEntry.getSourceFilename());
                         if (intervenedFileFromDb != null) {
+                            LOGGER.debug(String.format("File entry with transfer id = %1$d to update with intervention id = %2$d found in DB!"),
+                                    parentTransferId, transferDBItem.getId());
                             intervenedFileFromDb.setInterventionTransferId(transferDBItem.getId());
                             dbSession.beginTransaction();
                             dbSession.update(intervenedFileFromDb);
