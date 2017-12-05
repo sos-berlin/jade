@@ -60,8 +60,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
     private static final String SCHEDULER_ID_PARAM = "SCHEDULER_ID";
-    private static final String SCHEDULER_JOB_NAME_PARAM = "SCHEDULER_JOB_NAME";
-    private static final String SCHEDULER_JOB_CHAIN_NAME_PARAM = "SCHEDULER_JOB_CHAIN_NAME";
+    private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
+    private static final String SCHEDULER_JOB_CHAIN_PATH_PARAM = "SCHEDULER_JOB_CHAIN_PATH";
     private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
     private static final String SCHEDULER_ORDER_ID_PARAM = "SCHEDULER_ORDER_ID";
     private static final String SCHEDULER_TASK_ID_PARAM = "SCHEDULER_TASK_ID";
@@ -124,12 +124,12 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
      	if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
      	    jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
      	}
-     	if (schedulerParams.get(SCHEDULER_JOB_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_NAME_PARAM).isEmpty()) {
-     	    jadeEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_NAME_PARAM));
+     	if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
+     	    jadeEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
      	}
-     	if (schedulerParams.get(SCHEDULER_JOB_CHAIN_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_CHAIN_NAME_PARAM).isEmpty()) {
-     	    jadeEngine.getOptions().setJobChain(schedulerParams.get(SCHEDULER_JOB_CHAIN_NAME_PARAM));
-     	}
+        if (schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM).isEmpty()) {
+            jadeEngine.getOptions().setJobChain(schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM));
+        }
      	if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
      	    jadeEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
      	}
@@ -139,7 +139,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         if (schedulerParams.get(SCHEDULER_TASK_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_TASK_ID_PARAM).isEmpty()) {
             jadeEngine.getOptions().setTaskId(schedulerParams.get(SCHEDULER_TASK_ID_PARAM));
         }
-        if (schedulerParams.get(YADE_TRANSFER_ID) != null) {
+        if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
             jadeEngine.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
         }
         if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null
