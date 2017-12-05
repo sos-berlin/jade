@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -414,6 +416,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         String pattern4Rename = "  | %-22s= %s -> %s%n";
         sb.append(String.format(pattern4String, "Protocol", options.protocol.getValue()));
         sb.append(String.format(pattern4String, "Host", options.host.getValue()));
+        try {
+            sb.append(String.format(pattern4String, "IP", InetAddress.getByName(options.host.getValue()).getHostAddress()));
+        } catch (UnknownHostException e) {
+            sb.append(String.format(pattern4String, "IP", "could not be resolved!"));
+        }
         if (!options.protocol.isLocal()) {
             sb.append(String.format(pattern4String, "User", options.user.getValue()));
             if (options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && options.protocol
