@@ -1128,10 +1128,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                 sendFiles(sourceFileList);
                                 if (dbSession != null) {
                                     for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                        if(dbSession != null) {
-                                            dbHelper.updateFileInformationToDB(dbSession, entry, true);
-                                        }
+                                        dbHelper.updateFileInformationToDB(dbSession, entry, true);
                                     }
+                                    dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
                                 }
                                 sourceFileList.renameTargetAndSourceFiles();
                                 executePostTransferCommands();
@@ -1166,10 +1165,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                         }
                         if (dbSession != null) {
                             for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                if(dbSession != null) {
-                                    dbHelper.updateFileInformationToDB(dbSession, entry, true);
-                                }
+                                dbHelper.updateFileInformationToDB(dbSession, entry, true);
                             }
+                            dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
                         }
                         LOGGER.error(msg);
                         JADE_REPORT_LOGGER.error(msg);
@@ -1380,9 +1378,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 fillFileList(fileList, sourceDir.getValue());
             }
             setInfo(String.format("%1$d files found for regexp '%2$s'.", sourceFileList.size(), regExp.getValue()));
-        } else {
-            sourceFileList.add(sourceDir.getValue());
         }
+//        else {
+//            sourceFileList.add(sourceDir.getValue());
+//        }
         return sourceFileList.size();
     }
 

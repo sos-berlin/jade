@@ -194,6 +194,11 @@ public class YadeDBOperationHelper {
                     transferFromDb.setErrorCode(null);
                     transferFromDb.setErrorMessage(JobSchedulerException.LastErrorMessage);
                 }
+                if (yadeEngine.getFileList() != null) {
+                    transferFromDb.setNumOfFiles(yadeEngine.getFileList().count());
+                } else {
+                    transferFromDb.setNumOfFiles(0L);
+                }
                 transferFromDb.setTaskId(taskId);
                 if(parentTransferId != null) {
                     transferFromDb.setParentTransferId(parentTransferId);
@@ -234,6 +239,8 @@ public class YadeDBOperationHelper {
                 newTransfer.setTaskId(taskId);
                 if (yadeEngine.getFileList() != null) {
                     newTransfer.setNumOfFiles(yadeEngine.getFileList().count());
+                } else {
+                    newTransfer.setNumOfFiles(0L);
                 }
                 if (yadeEngine.getOptions().getProfile() != null) {
                     newTransfer.setProfileName(yadeEngine.getOptions().getProfile().getValue());
@@ -259,7 +266,7 @@ public class YadeDBOperationHelper {
     
     public void storeInitialFilesInformationToDB(Long transferId, SOSHibernateSession dbSession, SOSFileList files) {
         Long fileSizeSum = 0L;
-        if (files != null) {
+        if (files != null && files.getList() != null && !files.getList().isEmpty()) {
             for (SOSFileListEntry fileEntry : files.getList()) {
                 DBItemYadeFiles file = new DBItemYadeFiles();
                 file.setTransferId(transferId);
