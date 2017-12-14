@@ -1172,6 +1172,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                         LOGGER.error(msg);
                         JADE_REPORT_LOGGER.error(msg);
                         sourceFileList.rollback();
+                        if (dbSession != null) {
+                            if (transferId != null) {
+                                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, sourceFileList);
+                            }
+                            for (SOSFileListEntry entry : sourceFileList.getList()) {
+                                dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                            }
+                            dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
+                        }
                         sendTransferHistory();
                         throw e;
                     }

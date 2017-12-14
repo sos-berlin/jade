@@ -55,11 +55,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             } else {
                 throw new JobSchedulerException(Messages.getMsg("Jade4DMZ-E-001"));
             }
+            
             UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(getOptions());
             if (updateHelper.checkBefore()) {
                 updateHelper.executeBefore();
                 objOptions = updateHelper.getOptions();
             }
+            objOptions.checkMandatory();
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
                 dbHelper = new YadeDBOperationHelper(this);

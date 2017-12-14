@@ -3,6 +3,7 @@ package com.sos.DataExchange.helpers;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,10 @@ import com.sos.DataExchange.SOSDataExchangeEngine;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionTransferType;
+import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
+import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.jade.db.DBItemYadeFiles;
@@ -53,15 +56,20 @@ public class YadeDBOperationHelper {
         this.parentTransferId = parentTransferId;
         Long transferId = null;
         YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+        SOSConnection2OptionsAlternate sourceOptions = yadeEngine.getOptions().getSource();
+        SOSConnection2OptionsAlternate targetOptions = yadeEngine.getOptions().getTarget();
         try {
             if (sourceProtocolDBItem == null && yadeEngine.getOptions().sourceDir.isDirty()) {
                 dbSession.beginTransaction();
                 sourceProtocolDBItem = new DBItemYadeProtocols();
-                sourceProtocolDBItem.setHostname(yadeEngine.getOptions().getSource().host.getValue());
-                sourceProtocolDBItem.setPort(yadeEngine.getOptions().getSource().getPort().value());
-                Integer sourceProtocol = getProtocolFromTransferType(yadeEngine.getOptions().getSource().getProtocol().getEnum());
-                if (sourceProtocol == 7) {
-                    URL url = yadeEngine.getOptions().getSource().getUrl().getUrl();
+                sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
+                sourceProtocolDBItem.setPort(sourceOptions.port.value());
+                Integer sourceProtocol = getProtocolFromTransferType(sourceOptions.protocol.getEnum());
+                if (sourceOptions.protocol.getEnum() == enuTransferTypes.local) {
+                    sourceProtocolDBItem.setPort(0);
+                }
+                if (sourceOptions.protocol.getEnum() == enuTransferTypes.webdav) {
+                    URL url = sourceOptions.url.getUrl();
                     if (url.getProtocol().toLowerCase().equals("webdavs")) {
                         sourceProtocolDBItem.setProtocol(8);
                     } else {
@@ -70,7 +78,7 @@ public class YadeDBOperationHelper {
                 } else {
                     sourceProtocolDBItem.setProtocol(sourceProtocol);
                 }
-                sourceProtocolDBItem.setAccount(yadeEngine.getOptions().getSource().user.getValue());
+                sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
@@ -93,12 +101,15 @@ public class YadeDBOperationHelper {
             if (targetProtocolDBItem == null && yadeEngine.getOptions().targetDir.isDirty()) {
                 dbSession.beginTransaction();
                 targetProtocolDBItem = new DBItemYadeProtocols();
-                targetProtocolDBItem.setHostname(yadeEngine.getOptions().getTarget().host.getValue());
-                targetProtocolDBItem.setPort(yadeEngine.getOptions().getTarget().getPort().value());
-                Integer targetProtocol = getProtocolFromTransferType(yadeEngine.getOptions().getTarget().getProtocol().getEnum());
-                if (targetProtocol == 7) {
-                    URL url = yadeEngine.getOptions().getTarget().getUrl().getUrl();
-                    if (url.getProtocol().toLowerCase().equals("https")) {
+                targetProtocolDBItem.setHostname(targetOptions.host.getValue());
+                targetProtocolDBItem.setPort(targetOptions.port.value());
+                Integer targetProtocol = getProtocolFromTransferType(targetOptions.protocol.getEnum());
+                if (targetOptions.protocol.getEnum() == enuTransferTypes.local) {
+                    targetProtocolDBItem.setPort(0);
+                }
+                if (targetOptions.protocol.getEnum() == enuTransferTypes.webdav) {
+                    URL url = targetOptions.url.getUrl();
+                    if (url.getProtocol().toLowerCase().equals("webdavs")) {
                         targetProtocolDBItem.setProtocol(8);
                     } else {
                         targetProtocolDBItem.setProtocol(targetProtocol);
@@ -106,7 +117,7 @@ public class YadeDBOperationHelper {
                 } else {
                     targetProtocolDBItem.setProtocol(targetProtocol);
                 }
-                targetProtocolDBItem.setAccount(yadeEngine.getOptions().getTarget().user.getValue());
+                targetProtocolDBItem.setAccount(targetOptions.user.getValue());
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
@@ -126,13 +137,13 @@ public class YadeDBOperationHelper {
                 dbSession.commit();
             }
             
-            if (jumpProtocolDBItem == null && yadeEngine.getOptions().getJumpHost().isDirty()) { 
+            if (jumpProtocolDBItem == null && yadeEngine.getOptions().jumpHost.isDirty()) { 
                 dbSession.beginTransaction();
                 jumpProtocolDBItem = new DBItemYadeProtocols();
-                jumpProtocolDBItem.setHostname(yadeEngine.getOptions().getJumpHost().getValue());
-                jumpProtocolDBItem.setPort(yadeEngine.getOptions().getJumpPort().value());
-                jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeEngine.getOptions().getJumpProtocol().getValue()));
-                jumpProtocolDBItem.setAccount(yadeEngine.getOptions().getJumpUser().getValue());
+                jumpProtocolDBItem.setHostname(yadeEngine.getOptions().jumpHost.getValue());
+                jumpProtocolDBItem.setPort(yadeEngine.getOptions().jumpPort.value());
+                jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeEngine.getOptions().jumpProtocol.getValue()));
+                jumpProtocolDBItem.setAccount(yadeEngine.getOptions().jumpUser.getValue());
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
@@ -164,10 +175,9 @@ public class YadeDBOperationHelper {
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
             }
-            Date now = Date.from(Instant.now());
             if(transferFromDb != null) {
                 transferId = transferFromDb.getId();
-                transferFromDb.setEnd(now);
+                transferFromDb.setEnd(getUTCDateFromInstant(Instant.now()));
                 if (hasErrors == null) {
                     transferFromDb.setState(2);
                     transferFromDb.setErrorCode(null);
@@ -190,7 +200,7 @@ public class YadeDBOperationHelper {
                 if(parentTransferId != null) {
                     transferFromDb.setParentTransferId(parentTransferId);
                 }
-                transferFromDb.setModified(now);
+                transferFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbLayer.getSession().update(transferFromDb);
                     LOGGER.debug("transfer DB Item updated!");
@@ -211,9 +221,9 @@ public class YadeDBOperationHelper {
                 if (jumpProtocolDBItem != null) {
                     newTransfer.setJumpProtocolId(jumpProtocolDBItem.getId());
                 }
-                newTransfer.setMandator(yadeEngine.getOptions().getMandator().getValue());
-                newTransfer.setOperation(getOperation(yadeEngine.getOptions().getOperation()));
-                newTransfer.setStart(Date.from(Instant.now()));
+                newTransfer.setMandator(yadeEngine.getOptions().mandator.getValue());
+                newTransfer.setOperation(getOperation(yadeEngine.getOptions().operation));
+                newTransfer.setStart(getUTCDateFromInstant(Instant.now()));
                 newTransfer.setEnd(null);
                 newTransfer.setState(2);
                 newTransfer.setErrorCode(null);
@@ -230,12 +240,12 @@ public class YadeDBOperationHelper {
                     newTransfer.setNumOfFiles(0L);
                 }
                 if (yadeEngine.getOptions().getProfile() != null) {
-                    newTransfer.setProfileName(yadeEngine.getOptions().getProfile().getValue());
+                    newTransfer.setProfileName(yadeEngine.getOptions().profile.getValue());
                 }
                 if(parentTransferId != null) {
                     newTransfer.setParentTransferId(parentTransferId);
                 }
-                newTransfer.setModified(now);
+                newTransfer.setModified(getUTCDateFromInstant(Instant.now()));
                 dbLayer.getSession().save(newTransfer);
                 transferId = newTransfer.getId();
                 transferDBItem = newTransfer;
@@ -255,15 +265,20 @@ public class YadeDBOperationHelper {
         this.parentTransferId = parentTransferId;
         Long transferId = null;
         YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+        SOSConnection2OptionsAlternate sourceOptions = yadeDMZEngine.getOptions().getSource();
+        SOSConnection2OptionsAlternate targetOptions = yadeDMZEngine.getOptions().getTarget();
         try {
             if (sourceProtocolDBItem == null && yadeDMZEngine.getOptions().sourceDir.isDirty()) {
                 dbSession.beginTransaction();
                 sourceProtocolDBItem = new DBItemYadeProtocols();
-                sourceProtocolDBItem.setHostname(yadeDMZEngine.getOptions().getSource().host.getValue());
-                sourceProtocolDBItem.setPort(yadeDMZEngine.getOptions().getSource().getPort().value());
-                Integer sourceProtocol = getProtocolFromTransferType(yadeDMZEngine.getOptions().getSource().getProtocol().getEnum());
-                if (sourceProtocol == 7) {
-                    URL url = yadeDMZEngine.getOptions().getSource().getUrl().getUrl();
+                sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
+                sourceProtocolDBItem.setPort(sourceOptions.port.value());
+                Integer sourceProtocol = getProtocolFromTransferType(sourceOptions.protocol.getEnum());
+                if (sourceOptions.protocol.getEnum() == enuTransferTypes.local) {
+                    sourceProtocolDBItem.setPort(0);
+                }
+                if (sourceOptions.protocol.getEnum() == enuTransferTypes.webdav) {
+                    URL url = sourceOptions.url.getUrl();
                     if (url.getProtocol().toLowerCase().equals("webdavs")) {
                         sourceProtocolDBItem.setProtocol(8);
                     } else {
@@ -272,7 +287,7 @@ public class YadeDBOperationHelper {
                 } else {
                     sourceProtocolDBItem.setProtocol(sourceProtocol);
                 }
-                sourceProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getSource().user.getValue());
+                sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
@@ -295,12 +310,15 @@ public class YadeDBOperationHelper {
             if (targetProtocolDBItem == null && yadeDMZEngine.getOptions().targetDir.isDirty()) {
                 dbSession.beginTransaction();
                 targetProtocolDBItem = new DBItemYadeProtocols();
-                targetProtocolDBItem.setHostname(yadeDMZEngine.getOptions().getTarget().host.getValue());
-                targetProtocolDBItem.setPort(yadeDMZEngine.getOptions().getTarget().getPort().value());
-                Integer targetProtocol = getProtocolFromTransferType(yadeDMZEngine.getOptions().getTarget().getProtocol().getEnum());
-                if (targetProtocol == 7) {
-                    URL url = yadeDMZEngine.getOptions().getTarget().getUrl().getUrl();
-                    if (url.getProtocol().toLowerCase().equals("https")) {
+                targetProtocolDBItem.setHostname(targetOptions.host.getValue());
+                targetProtocolDBItem.setPort(targetOptions.port.value());
+                Integer targetProtocol = getProtocolFromTransferType(targetOptions.protocol.getEnum());
+                if (targetOptions.protocol.getEnum() == enuTransferTypes.local) {
+                    targetProtocolDBItem.setPort(0);
+                }
+                if (targetOptions.protocol.getEnum() == enuTransferTypes.webdav) {
+                    URL url = targetOptions.url.getUrl();
+                    if (url.getProtocol().toLowerCase().equals("webdavs")) {
                         targetProtocolDBItem.setProtocol(8);
                     } else {
                         targetProtocolDBItem.setProtocol(targetProtocol);
@@ -328,13 +346,13 @@ public class YadeDBOperationHelper {
                 dbSession.commit();
             }
             
-            if (jumpProtocolDBItem == null && yadeDMZEngine.getOptions().getJumpHost().isDirty()) { 
+            if (jumpProtocolDBItem == null && yadeDMZEngine.getOptions().jumpHost.isDirty()) { 
                 dbSession.beginTransaction();
                 jumpProtocolDBItem = new DBItemYadeProtocols();
-                jumpProtocolDBItem.setHostname(yadeDMZEngine.getOptions().getJumpHost().getValue());
-                jumpProtocolDBItem.setPort(yadeDMZEngine.getOptions().getJumpPort().value());
-                jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeDMZEngine.getOptions().getJumpProtocol().getValue()));
-                jumpProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getJumpUser().getValue());
+                jumpProtocolDBItem.setHostname(yadeDMZEngine.getOptions().jumpHost.getValue());
+                jumpProtocolDBItem.setPort(yadeDMZEngine.getOptions().jumpPort.value());
+                jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeDMZEngine.getOptions().jumpProtocol.getValue()));
+                jumpProtocolDBItem.setAccount(yadeDMZEngine.getOptions().jumpUser.getValue());
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
@@ -366,10 +384,9 @@ public class YadeDBOperationHelper {
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
             }
-            Date now = Date.from(Instant.now());
             if(transferFromDb != null) {
                 transferId = transferFromDb.getId();
-                transferFromDb.setEnd(now);
+                transferFromDb.setEnd(getUTCDateFromInstant(Instant.now()));
                 if (hasErrors == null) {
                     transferFromDb.setState(2);
                     transferFromDb.setErrorCode(null);
@@ -392,7 +409,7 @@ public class YadeDBOperationHelper {
                 if(parentTransferId != null) {
                     transferFromDb.setParentTransferId(parentTransferId);
                 }
-                transferFromDb.setModified(now);
+                transferFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbLayer.getSession().update(transferFromDb);
                     LOGGER.debug("transfer DB Item updated!");
@@ -413,9 +430,9 @@ public class YadeDBOperationHelper {
                 if (jumpProtocolDBItem != null) {
                     newTransfer.setJumpProtocolId(jumpProtocolDBItem.getId());
                 }
-                newTransfer.setMandator(yadeDMZEngine.getOptions().getMandator().getValue());
-                newTransfer.setOperation(getOperation(yadeDMZEngine.getOptions().getOperation()));
-                newTransfer.setStart(Date.from(Instant.now()));
+                newTransfer.setMandator(yadeDMZEngine.getOptions().mandator.getValue());
+                newTransfer.setOperation(getOperation(yadeDMZEngine.getOptions().operation));
+                newTransfer.setStart(getUTCDateFromInstant(Instant.now()));
                 newTransfer.setEnd(null);
                 newTransfer.setState(2);
                 newTransfer.setErrorCode(null);
@@ -432,12 +449,12 @@ public class YadeDBOperationHelper {
                     newTransfer.setNumOfFiles(0L);
                 }
                 if (yadeDMZEngine.getOptions().getProfile() != null) {
-                    newTransfer.setProfileName(yadeDMZEngine.getOptions().getProfile().getValue());
+                    newTransfer.setProfileName(yadeDMZEngine.getOptions().profile.getValue());
                 }
                 if(parentTransferId != null) {
                     newTransfer.setParentTransferId(parentTransferId);
                 }
-                newTransfer.setModified(now);
+                newTransfer.setModified(getUTCDateFromInstant(Instant.now()));
                 dbLayer.getSession().save(newTransfer);
                 transferId = newTransfer.getId();
                 transferDBItem = newTransfer;
@@ -474,7 +491,7 @@ public class YadeDBOperationHelper {
                 }
                 file.setIntegrityHash(fileEntry.getMd5());
                 file.setModificationDate(fileEntry.getModified());
-                file.setModified(Date.from(Instant.now()));
+                file.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbSession.beginTransaction();
                     dbSession.save(file);
@@ -507,18 +524,16 @@ public class YadeDBOperationHelper {
                 LOGGER.error(e.getMessage(), e);
             }
             if (fileFromDb != null) {
-                if (finalUpdate && fileEntry.getStatus() == 4) {
-                    fileFromDb.setState(5);
-                    hasErrors = false;
-                } else if (finalUpdate && fileEntry.getStatus() == 6) {
-                    fileFromDb.setState(7);
-                } else if (finalUpdate && (fileEntry.getStatus() == 0 || fileEntry.getStatus() == 7)) {
+                if (finalUpdate && (fileEntry.getStatus() == 0 || fileEntry.getStatus() == 7)) {
                     fileFromDb.setState(8);
-                } else {
-                    hasErrors = getHasErrorsFromFileState(fileEntry.getStatus());
-                    fileFromDb.setState(fileEntry.getStatus());
+                } else if (finalUpdate) {
+                     fileFromDb.setState(fileEntry.getStatus() + 1);
                 }
-                fileFromDb.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                if (finalUpdate && fileFromDb.getState() != 7 && fileFromDb.getState() != 8 && fileFromDb.getState() != 14) {
+                    fileFromDb.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                } else {
+                    fileFromDb.setTargetPath(null);
+                }
                 String lastErrorMessage = fileEntry.getLastErrorMessage();
                 if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
                     fileFromDb.setErrorCode("ERRORCODE");
@@ -529,7 +544,7 @@ public class YadeDBOperationHelper {
                 }
                 fileFromDb.setIntegrityHash(fileEntry.getMd5());
                 fileFromDb.setModificationDate(fileEntry.getModificationDate());
-                fileFromDb.setModified(Date.from(Instant.now()));
+                fileFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbSession.beginTransaction();
                     dbSession.update(fileFromDb);
@@ -565,9 +580,17 @@ public class YadeDBOperationHelper {
                 DBItemYadeFiles file = new DBItemYadeFiles();
                 file.setTransferId(transferDBItem.getId());
                 file.setSourcePath(fileEntry.getSourceFilename());
-                file.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                if (finalUpdate && (fileEntry.getStatus() == 0 || fileEntry.getStatus() == 7)) {
+                    file.setState(8);
+                } else if (finalUpdate) {
+                     file.setState(fileEntry.getStatus() + 1);
+                }
+                if (finalUpdate && file.getState() != 7 && file.getState() != 8 && file.getState() != 14) {
+                    file.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                } else {
+                    file.setTargetPath(null);
+                }
                 file.setSize(fileEntry.getFileSize());
-                file.setState(fileEntry.getStatus());
                 file.setModificationDate(fileEntry.getModified());
                 String lastErrorMessage = fileEntry.getLastErrorMessage();
                 if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
@@ -579,7 +602,7 @@ public class YadeDBOperationHelper {
                 }
                 file.setIntegrityHash(fileEntry.getMd5());
                 file.setModificationDate(fileEntry.getModified());
-                file.setModified(Date.from(Instant.now()));
+                file.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbSession.beginTransaction();
                     dbSession.save(file);
@@ -669,8 +692,8 @@ public class YadeDBOperationHelper {
         if (transferDBItem != null) {
             transferDBItem.setState(3);
             transferDBItem.setErrorMessage(errorMessage);
-            transferDBItem.setEnd(Date.from(Instant.now()));
-            transferDBItem.setModified(Date.from(Instant.now()));
+            transferDBItem.setEnd(getUTCDateFromInstant(Instant.now()));
+            transferDBItem.setModified(getUTCDateFromInstant(Instant.now()));
             dbSession.beginTransaction();
             dbSession.update(transferDBItem);
             dbSession.commit();
@@ -680,8 +703,8 @@ public class YadeDBOperationHelper {
     public void updateSuccessfulTransfer(SOSHibernateSession dbSession) throws SOSHibernateException {
         if (transferDBItem != null) {
             transferDBItem.setState(1);
-            transferDBItem.setEnd(Date.from(Instant.now()));
-            transferDBItem.setModified(Date.from(Instant.now()));
+            transferDBItem.setEnd(getUTCDateFromInstant(Instant.now()));
+            transferDBItem.setModified(getUTCDateFromInstant(Instant.now()));
             dbSession.beginTransaction();
             dbSession.update(transferDBItem);
             dbSession.commit();
@@ -691,7 +714,7 @@ public class YadeDBOperationHelper {
     public void updateTransfersNumOfFiles(SOSHibernateSession dbSession, Long numOfFiles) throws SOSHibernateException {
         if (transferDBItem != null) {
             transferDBItem.setNumOfFiles(numOfFiles);
-            transferDBItem.setModified(Date.from(Instant.now()));
+            transferDBItem.setModified(getUTCDateFromInstant(Instant.now()));
             dbSession.beginTransaction();
             dbSession.update(transferDBItem);
             dbSession.commit();
@@ -784,12 +807,12 @@ public class YadeDBOperationHelper {
         case 11:
         case 12:
         case 13:
-        case 14:
         case 15:
             return false;
         case 6:
         case 7:
         case 10:
+        case 14:
             return true;
         }
         return null;
@@ -822,5 +845,8 @@ public class YadeDBOperationHelper {
     public void setParentTransferId(Long parentTransferId) {
         this.parentTransferId = parentTransferId;
     }
-
+    
+    private Date getUTCDateFromInstant(Instant inDate) {
+        return new Date(inDate.toEpochMilli() - TimeZone.getDefault().getOffset(inDate.toEpochMilli()));
+    }
 }
