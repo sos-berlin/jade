@@ -8,10 +8,18 @@ import sos.util.SOSString;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
+import com.sos.DataExchange.helpers.YadeDBOperationHelper;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
+import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.classes.SOSHibernateSession;
+import com.sos.hibernate.exceptions.SOSHibernateException;
+import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jade.db.DBItemYadeTransfers;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
@@ -21,6 +29,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private String uuid = null;
     private String sourceListFilename = null;
     private String historyFilename = null;
+    private SOSHibernateFactory dbFactory = null;
+    private SOSHibernateSession dbSession = null;
+    private YadeDBOperationHelper dbHelper = null;
+    private Long transferId;
+    private Long parentTransferId;
+    private IJobSchedulerEventHandler eventHandler = null;
+    private boolean isIntervention = false;
+    private String filePathRestriction = null;
 
     private enum Operation {
         copyToInternet, copyFromInternet
@@ -44,11 +60,50 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 updateHelper.executeBefore();
                 objOptions = updateHelper.getOptions();
             }
+            if (dbFactory != null) {
+                dbSession = initStatelessSession();
+                dbHelper = new YadeDBOperationHelper(this);
+                if (parentTransferId != null) {
+                    dbHelper.setParentTransferId(parentTransferId);
+                    DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
+                    if (existingTransfer != null
+                            && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
+                            && existingTransfer.getOrderId().equals(objOptions.getOrderId())
+                            && existingTransfer.getState() == 3) {
+                        existingTransfer.setHasIntervention(true);
+                        dbSession.beginTransaction();
+                        dbSession.update(existingTransfer);
+                        dbSession.commit();
+                        transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
+                    } else {
+                        transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                    }
+                } else {
+                    transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                }
+            }
             transfer(operation, subDir);
+            if (dbSession != null) {
+                dbHelper.updateSuccessfulTransfer(dbSession);
+            }
         } catch (JobSchedulerException e) {
+            if (dbSession != null) {
+                try {
+                    dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                } catch (SOSHibernateException she) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException shex) {}
+                }
+            }
             throw e;
         } catch (Exception e) {
             throw new JobSchedulerException("Transfer failed", e);
+        } finally {
+            if (dbSession != null) {
+                dbSession.close();
+                dbFactory.close();
+            }
         }
     }
 
@@ -63,7 +118,24 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
             }
             fileList = jade.getFileList();
+            if (dbSession != null) {
+                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
+                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                for (SOSFileListEntry entry : fileList.getList()) {
+                    dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                }
+            }
         } catch (Exception e) {
+            if (dbSession != null) {
+                fileList = jade.getFileList();
+                try {
+                    dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                } catch (SOSHibernateException e1) {}
+                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
+                for (SOSFileListEntry entry : fileList.getList()) {
+                    dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                }
+            }
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
             removeDirOnDMZ(jade, operation, dir);
@@ -443,4 +515,42 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         return historyFilename;
     }
 
+    public void setDBFactory(SOSHibernateFactory factory) {
+        this.dbFactory = factory;
+    }
+    
+    private SOSHibernateSession initStatelessSession() {
+        SOSHibernateSession dbSession = null;
+        try {
+            dbSession = dbFactory.openStatelessSession("YadeJob");
+        } catch (SOSHibernateOpenSessionException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return dbSession;
+    }
+    
+    public void setJobSchedulerEventHandler(IJobSchedulerEventHandler eventHandler) {
+        this.eventHandler  = eventHandler;
+    }
+    
+    public Long getTransferId(){
+        return transferId;
+    }
+        
+    public Long getParentTransferId() {
+        return parentTransferId;
+    }
+
+    public void setParentTransferId (Long parentTransferId) {
+        this.parentTransferId = parentTransferId;
+    }
+    
+    public void setIsIntervention (boolean isIntervention) {
+        this.isIntervention = isIntervention;
+    }
+    
+    public void setFilePathRestriction(String filePathRestriction) {
+        this.filePathRestriction = filePathRestriction;
+    }
+        
 }

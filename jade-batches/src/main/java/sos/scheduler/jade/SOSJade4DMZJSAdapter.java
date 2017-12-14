@@ -9,6 +9,8 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
 import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 
 import java.io.File;
+import java.sql.Connection;
+import java.util.HashMap;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
@@ -20,7 +22,11 @@ import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.exceptions.SOSHibernateConfigurationException;
+import com.sos.hibernate.exceptions.SOSHibernateFactoryBuildException;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jitl.reporting.db.DBLayer;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
@@ -35,15 +41,24 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_TARGET_FILE_NAME = "scheduler_target_file_name";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
+    private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
     private static final String CLASSNAME = "SOSJade4DMZJSAdapter";
     private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
     private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
     private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
     private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
     private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
+    private static final String SCHEDULER_ID_PARAM = "SCHEDULER_ID";
+    private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
+    private static final String SCHEDULER_JOB_CHAIN_PATH_PARAM = "SCHEDULER_JOB_CHAIN_PATH";
+    private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    private static final String SCHEDULER_ORDER_ID_PARAM = "SCHEDULER_ORDER_ID";
+    private static final String SCHEDULER_TASK_ID_PARAM = "SCHEDULER_TASK_ID";
+    private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private SOSFTPOptions jadeOptions = null;
     private SchedulerObjectFactory jobSchedulerFactory = null;
+    private SOSHibernateFactory dbFactory;
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
@@ -70,7 +85,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         Jade4DMZ jade4DMZEngine = new Jade4DMZ();
         jadeOptions = jade4DMZEngine.getOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
-        jadeOptions.setAllOptions2(jadeOptions.deletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
+        HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
+        jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
         int intLogLevel = -1 * spooler_log.level();
         if (intLogLevel > jadeOptions.verbose.value()) {
             jadeOptions.verbose.value(intLogLevel);
@@ -80,6 +96,32 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         }
         logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
         jade4DMZEngine.setJSJobUtilites(this);
+        jade4DMZEngine.setDBFactory(initDBFactory());
+        if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
+            jade4DMZEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
+        }
+        if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
+            jade4DMZEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
+        }
+        if (schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM).isEmpty()) {
+            jade4DMZEngine.getOptions().setJobChain(schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM));
+        }
+        if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
+            jade4DMZEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
+        }
+        if (schedulerParams.get(SCHEDULER_ORDER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ORDER_ID_PARAM).isEmpty()) {
+            jade4DMZEngine.getOptions().setOrderId(schedulerParams.get(SCHEDULER_ORDER_ID_PARAM));
+        }
+        if (schedulerParams.get(SCHEDULER_TASK_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_TASK_ID_PARAM).isEmpty()) {
+            jade4DMZEngine.getOptions().setTaskId(schedulerParams.get(SCHEDULER_TASK_ID_PARAM));
+        }
+        if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
+            jade4DMZEngine.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
+        }
+        if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null
+                && !schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION).isEmpty()) {
+            jade4DMZEngine.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
+        }
         jade4DMZEngine.Execute();
         transfFiles = jade4DMZEngine.getFileList();
         int resultSetSize = 0;
@@ -273,4 +315,14 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         }
     }
 
+    private SOSHibernateFactory initDBFactory() throws SOSHibernateConfigurationException, SOSHibernateFactoryBuildException {
+        dbFactory = new SOSHibernateFactory(getHibernateConfigurationReporting());
+        dbFactory.setIdentifier("YADE");
+        dbFactory.setAutoCommit(false);
+        dbFactory.addClassMapping(DBLayer.getYadeClassMapping());
+        dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        dbFactory.build();
+        return dbFactory;
+    }
+    
 }

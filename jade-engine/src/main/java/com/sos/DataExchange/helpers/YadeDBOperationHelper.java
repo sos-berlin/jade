@@ -7,6 +7,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sos.DataExchange.Jade4DMZ;
 import com.sos.DataExchange.SOSDataExchangeEngine;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
@@ -33,6 +34,7 @@ public class YadeDBOperationHelper {
     private DBItemYadeProtocols jumpProtocolDBItem;
     private DBItemYadeTransfers transferDBItem;
     private SOSDataExchangeEngine yadeEngine;
+    private Jade4DMZ yadeDMZEngine;
     private Long parentTransferId = null;
     private Long taskId = null;
     private Boolean hasErrors = null; 
@@ -42,7 +44,13 @@ public class YadeDBOperationHelper {
         addAdditionalJobInfosFromOptions();
     }
 
-    public Long storeTransferInformationToDB(SOSHibernateSession dbSession, Long parentTransferId) {
+    public YadeDBOperationHelper(Jade4DMZ yadeDMZEngine) {
+        this.yadeDMZEngine = yadeDMZEngine;
+        addAdditionalJobInfosFromOptions();
+    }
+
+    public Long storeYadeTransferInformationToDB(SOSHibernateSession dbSession, Long parentTransferId) {
+        this.parentTransferId = parentTransferId;
         Long transferId = null;
         YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
         try {
@@ -63,10 +71,6 @@ public class YadeDBOperationHelper {
                     sourceProtocolDBItem.setProtocol(sourceProtocol);
                 }
                 sourceProtocolDBItem.setAccount(yadeEngine.getOptions().getSource().user.getValue());
-//                LOGGER.debug("source Host = " + yadeEngine.getOptions().getSource().host.getValue());
-//                LOGGER.debug("source port = " + yadeEngine.getOptions().getSource().getPort().value());
-//                LOGGER.debug("source protocol = " + yadeEngine.getOptions().getSource().getProtocol().getEnum().getText());
-//                LOGGER.debug("source account = " + yadeEngine.getOptions().getSource().user.getValue());
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
@@ -74,14 +78,11 @@ public class YadeDBOperationHelper {
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
-                Long sourceProtocolId = null;
                 if (sourceProtocolFromDb != null) {
-                    sourceProtocolId = sourceProtocolFromDb.getId();
                     sourceProtocolDBItem = sourceProtocolFromDb;
                 } else {
                     try {
                         dbLayer.getSession().save(sourceProtocolDBItem);
-                        sourceProtocolId = sourceProtocolDBItem.getId();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
@@ -106,10 +107,6 @@ public class YadeDBOperationHelper {
                     targetProtocolDBItem.setProtocol(targetProtocol);
                 }
                 targetProtocolDBItem.setAccount(yadeEngine.getOptions().getTarget().user.getValue());
-//                LOGGER.debug("target Host = " + yadeEngine.getOptions().getTarget().host.getValue());
-//                LOGGER.debug("target port = " + yadeEngine.getOptions().getTarget().getPort().value());
-//                LOGGER.debug("target protocol = " + yadeEngine.getOptions().getTarget().getProtocol().getEnum().getText());
-//                LOGGER.debug("target account = " + yadeEngine.getOptions().getTarget().user.getValue());
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
@@ -117,14 +114,11 @@ public class YadeDBOperationHelper {
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
-                Long targetProtocolId = null;
                 if (targetProtocolFromDb != null) {
-                    targetProtocolId = targetProtocolFromDb.getId();
                     targetProtocolDBItem = targetProtocolFromDb;
                 } else {
                     try {
                         dbLayer.getSession().save(targetProtocolDBItem);
-                        targetProtocolId = targetProtocolDBItem.getId();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
@@ -139,10 +133,6 @@ public class YadeDBOperationHelper {
                 jumpProtocolDBItem.setPort(yadeEngine.getOptions().getJumpPort().value());
                 jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeEngine.getOptions().getJumpProtocol().getValue()));
                 jumpProtocolDBItem.setAccount(yadeEngine.getOptions().getJumpUser().getValue());
-//                LOGGER.debug("jump Host = " + yadeEngine.getOptions().getJumpHost().getValue());
-//                LOGGER.debug("jump port = " + yadeEngine.getOptions().getJumpPort().value());
-//                LOGGER.debug("jump protocol = " + yadeEngine.getOptions().getJumpProtocol().getValue());
-//                LOGGER.debug("jump account = " + yadeEngine.getOptions().getJumpUser().getValue());
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
@@ -150,14 +140,11 @@ public class YadeDBOperationHelper {
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
-                Long jumpProtocolId = null;
                 if (jumpProtocolFromDb != null) {
-                    jumpProtocolId = jumpProtocolFromDb.getId();
                     jumpProtocolDBItem = jumpProtocolFromDb;
                 } else {
                     try {
                         dbLayer.getSession().save(jumpProtocolDBItem);
-                        jumpProtocolId = jumpProtocolDBItem.getId();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
@@ -264,6 +251,208 @@ public class YadeDBOperationHelper {
         return transferId;
     }
     
+    public Long storeYadeDMZTransferInformationToDB(SOSHibernateSession dbSession, Long parentTransferId) {
+        this.parentTransferId = parentTransferId;
+        Long transferId = null;
+        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+        try {
+            if (sourceProtocolDBItem == null && yadeDMZEngine.getOptions().sourceDir.isDirty()) {
+                dbSession.beginTransaction();
+                sourceProtocolDBItem = new DBItemYadeProtocols();
+                sourceProtocolDBItem.setHostname(yadeDMZEngine.getOptions().getSource().host.getValue());
+                sourceProtocolDBItem.setPort(yadeDMZEngine.getOptions().getSource().getPort().value());
+                Integer sourceProtocol = getProtocolFromTransferType(yadeDMZEngine.getOptions().getSource().getProtocol().getEnum());
+                if (sourceProtocol == 7) {
+                    URL url = yadeDMZEngine.getOptions().getSource().getUrl().getUrl();
+                    if (url.getProtocol().toLowerCase().equals("webdavs")) {
+                        sourceProtocolDBItem.setProtocol(8);
+                    } else {
+                        sourceProtocolDBItem.setProtocol(sourceProtocol);
+                    }
+                } else {
+                    sourceProtocolDBItem.setProtocol(sourceProtocol);
+                }
+                sourceProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getSource().user.getValue());
+                DBItemYadeProtocols sourceProtocolFromDb = null;
+                try {
+                    sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
+                            sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol());
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                if (sourceProtocolFromDb != null) {
+                    sourceProtocolDBItem = sourceProtocolFromDb;
+                } else {
+                    try {
+                        dbLayer.getSession().save(sourceProtocolDBItem);
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
+                dbSession.commit();
+            }
+            
+            if (targetProtocolDBItem == null && yadeDMZEngine.getOptions().targetDir.isDirty()) {
+                dbSession.beginTransaction();
+                targetProtocolDBItem = new DBItemYadeProtocols();
+                targetProtocolDBItem.setHostname(yadeDMZEngine.getOptions().getTarget().host.getValue());
+                targetProtocolDBItem.setPort(yadeDMZEngine.getOptions().getTarget().getPort().value());
+                Integer targetProtocol = getProtocolFromTransferType(yadeDMZEngine.getOptions().getTarget().getProtocol().getEnum());
+                if (targetProtocol == 7) {
+                    URL url = yadeDMZEngine.getOptions().getTarget().getUrl().getUrl();
+                    if (url.getProtocol().toLowerCase().equals("https")) {
+                        targetProtocolDBItem.setProtocol(8);
+                    } else {
+                        targetProtocolDBItem.setProtocol(targetProtocol);
+                    }
+                } else {
+                    targetProtocolDBItem.setProtocol(targetProtocol);
+                }
+                targetProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getTarget().user.getValue());
+                DBItemYadeProtocols targetProtocolFromDb = null;
+                try {
+                    targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
+                            targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol());
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                if (targetProtocolFromDb != null) {
+                    targetProtocolDBItem = targetProtocolFromDb;
+                } else {
+                    try {
+                        dbLayer.getSession().save(targetProtocolDBItem);
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
+                dbSession.commit();
+            }
+            
+            if (jumpProtocolDBItem == null && yadeDMZEngine.getOptions().getJumpHost().isDirty()) { 
+                dbSession.beginTransaction();
+                jumpProtocolDBItem = new DBItemYadeProtocols();
+                jumpProtocolDBItem.setHostname(yadeDMZEngine.getOptions().getJumpHost().getValue());
+                jumpProtocolDBItem.setPort(yadeDMZEngine.getOptions().getJumpPort().value());
+                jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeDMZEngine.getOptions().getJumpProtocol().getValue()));
+                jumpProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getJumpUser().getValue());
+                DBItemYadeProtocols jumpProtocolFromDb = null;
+                try {
+                    jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
+                            jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol());
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                if (jumpProtocolFromDb != null) {
+                    jumpProtocolDBItem = jumpProtocolFromDb;
+                } else {
+                    try {
+                        dbLayer.getSession().save(jumpProtocolDBItem);
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
+                dbSession.commit();
+            }
+
+            dbSession.beginTransaction();
+            DBItemYadeTransfers transferFromDb = null;
+            try {
+                if (transferDBItem != null && transferDBItem.getId() != null) {
+                    transferFromDb = dbLayer.getTransferFromDb(transferDBItem.getId());
+                }
+                if (transferFromDb != null) {
+                    LOGGER.debug(String.format("transfer item with id = %1$s found in DB!", transferDBItem.getId()));
+                }
+            } catch (SOSHibernateException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+            Date now = Date.from(Instant.now());
+            if(transferFromDb != null) {
+                transferId = transferFromDb.getId();
+                transferFromDb.setEnd(now);
+                if (hasErrors == null) {
+                    transferFromDb.setState(2);
+                    transferFromDb.setErrorCode(null);
+                    transferFromDb.setErrorMessage(null);
+                } else if (!hasErrors) {
+                    transferFromDb.setState(1);
+                    transferFromDb.setErrorCode(null);
+                    transferFromDb.setErrorMessage(null);
+                } else {
+                    transferFromDb.setState(3);
+                    transferFromDb.setErrorCode(null);
+                    transferFromDb.setErrorMessage(JobSchedulerException.LastErrorMessage);
+                }
+                if (yadeDMZEngine.getFileList() != null) {
+                    transferFromDb.setNumOfFiles(yadeDMZEngine.getFileList().count());
+                } else {
+                    transferFromDb.setNumOfFiles(0L);
+                }
+                transferFromDb.setTaskId(taskId);
+                if(parentTransferId != null) {
+                    transferFromDb.setParentTransferId(parentTransferId);
+                }
+                transferFromDb.setModified(now);
+                try {
+                    dbLayer.getSession().update(transferFromDb);
+                    LOGGER.debug("transfer DB Item updated!");
+                } catch (SOSHibernateException e) {
+                    LOGGER.error("error occurred trying to update transfer DB Item!");
+                    LOGGER.error(e.getMessage(), e);
+                }
+                transferDBItem = transferFromDb;
+            } else {
+                LOGGER.debug("processing new transfer data!");
+                DBItemYadeTransfers newTransfer = new DBItemYadeTransfers();
+                if (sourceProtocolDBItem != null) {
+                    newTransfer.setSourceProtocolId(sourceProtocolDBItem.getId());
+                }
+                if (targetProtocolDBItem != null) {
+                    newTransfer.setTargetProtocolId(targetProtocolDBItem.getId());
+                }
+                if (jumpProtocolDBItem != null) {
+                    newTransfer.setJumpProtocolId(jumpProtocolDBItem.getId());
+                }
+                newTransfer.setMandator(yadeDMZEngine.getOptions().getMandator().getValue());
+                newTransfer.setOperation(getOperation(yadeDMZEngine.getOptions().getOperation()));
+                newTransfer.setStart(Date.from(Instant.now()));
+                newTransfer.setEnd(null);
+                newTransfer.setState(2);
+                newTransfer.setErrorCode(null);
+                newTransfer.setErrorMessage(null);
+                newTransfer.setJobschedulerId(currentJobschedulerId);
+                newTransfer.setJob(currentJob);
+                newTransfer.setJobChain(currentJobChain);
+                newTransfer.setJobChainNode(currentNodeName);
+                newTransfer.setOrderId(currentOrderId);
+                newTransfer.setTaskId(taskId);
+                if (yadeDMZEngine.getFileList() != null) {
+                    newTransfer.setNumOfFiles(yadeDMZEngine.getFileList().count());
+                } else {
+                    newTransfer.setNumOfFiles(0L);
+                }
+                if (yadeDMZEngine.getOptions().getProfile() != null) {
+                    newTransfer.setProfileName(yadeDMZEngine.getOptions().getProfile().getValue());
+                }
+                if(parentTransferId != null) {
+                    newTransfer.setParentTransferId(parentTransferId);
+                }
+                newTransfer.setModified(now);
+                dbLayer.getSession().save(newTransfer);
+                transferId = newTransfer.getId();
+                transferDBItem = newTransfer;
+            }
+            dbSession.commit();
+            LOGGER.debug("store transfer information finished!");
+        } catch (SOSHibernateException e) {
+            try {
+                dbSession.rollback();
+            } catch (SOSHibernateException e1) {}
+            LOGGER.error(e.getMessage(), e);
+        }
+        return transferId;
+    }
+    
     public void storeInitialFilesInformationToDB(Long transferId, SOSHibernateSession dbSession, SOSFileList files) {
         Long fileSizeSum = 0L;
         if (files != null && files.getList() != null && !files.getList().isEmpty()) {
@@ -303,6 +492,7 @@ public class YadeDBOperationHelper {
         }
         files.setSumOfFileSizes(fileSizeSum);
     }
+    
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) {
         updateFileInformationToDB(dbSession, fileEntry, false);
     }
@@ -347,9 +537,11 @@ public class YadeDBOperationHelper {
                     dbSession.refresh(fileFromDb);
                     if (finalUpdate && parentTransferId != null) {
                         DBItemYadeFiles intervenedFileFromDb = null;
-                        intervenedFileFromDb = dbLayer.getTransferFileFromDbByConstraint(parentTransferId, fileEntry.getSourceFilename());
+                        intervenedFileFromDb = 
+                                dbLayer.getTransferFileFromDbByConstraint(parentTransferId, fileEntry.getSourceFilename());
                         if (intervenedFileFromDb != null) {
-                            LOGGER.debug(String.format("File entry with transfer id = %1$d to update with intervention id = %2$d found in DB!"),
+                            LOGGER.debug(String.format(
+                                    "File entry with transfer id = %1$d to update with intervention id = %2$d found in DB!"),
                                     parentTransferId, transferDBItem.getId());
                             intervenedFileFromDb.setInterventionTransferId(transferDBItem.getId());
                             dbSession.beginTransaction();
@@ -357,7 +549,8 @@ public class YadeDBOperationHelper {
                             dbSession.commit();
                         } else {
                             LOGGER.debug(String.format(
-                                    "File entry with transfer id=%1$d and path=%2$s not updated with intervention id=%3$d due to item not found in DB!", 
+                                    "File entry with transfer id=%1$d and path=%2$s not updated with intervention id=%3$d "
+                                    + "due to item not found in DB!", 
                                     parentTransferId, fileEntry.getSourceFilename(), transferDBItem.getId()));
                         }
                     }
@@ -409,36 +602,66 @@ public class YadeDBOperationHelper {
     }
 
     public Long storeInitialTransferInformations(SOSHibernateSession dbSession, Long parentTransferId) {
+        this.parentTransferId = parentTransferId;
         Long transferId = null;
         if (dbSession != null) {
-            transferId = storeTransferInformationToDB(dbSession, parentTransferId);
+            if (yadeEngine != null) {
+                transferId = storeYadeTransferInformationToDB(dbSession, parentTransferId);
+            } else if (yadeDMZEngine != null) {
+                transferId = storeYadeDMZTransferInformationToDB(dbSession, parentTransferId);
+            }
             LOGGER.debug("initial transfer information stored to DB!");
         }
         return transferId;
     }
 
     public void addAdditionalJobInfosFromOptions() {
-        if (yadeEngine.getOptions().getJobSchedulerId() != null) {
-            currentJobschedulerId = yadeEngine.getOptions().getJobSchedulerId();
-        }
-        if (yadeEngine.getOptions().getJobChain() != null) {
-            currentJobChain = yadeEngine.getOptions().getJobChain();
-        }
-        if (yadeEngine.getOptions().getJob() != null) {
-            currentJob = yadeEngine.getOptions().getJob();
-        }
-        if (yadeEngine.getOptions().getJobChainNodeName() != null) {
-            currentNodeName = yadeEngine.getOptions().getJobChainNodeName();
-        }
-        if (yadeEngine.getOptions().getOrderId() != null) {
-            currentOrderId = yadeEngine.getOptions().getOrderId();
-        }
-        if (yadeEngine.getOptions().getParentTransferId() != null) {
-            parentTransferId = yadeEngine.getOptions().getParentTransferId();
-        }
-        if (yadeEngine.getOptions().getTaskId() != null) {
-            String taskIdFromOptions = yadeEngine.getOptions().getTaskId();
-            taskId = Long.parseLong(taskIdFromOptions);
+        if (yadeEngine != null) {
+            if (yadeEngine.getOptions().getJobSchedulerId() != null) {
+                currentJobschedulerId = yadeEngine.getOptions().getJobSchedulerId();
+            }
+            if (yadeEngine.getOptions().getJobChain() != null) {
+                currentJobChain = yadeEngine.getOptions().getJobChain();
+            }
+            if (yadeEngine.getOptions().getJob() != null) {
+                currentJob = yadeEngine.getOptions().getJob();
+            }
+            if (yadeEngine.getOptions().getJobChainNodeName() != null) {
+                currentNodeName = yadeEngine.getOptions().getJobChainNodeName();
+            }
+            if (yadeEngine.getOptions().getOrderId() != null) {
+                currentOrderId = yadeEngine.getOptions().getOrderId();
+            }
+            if (yadeEngine.getOptions().getParentTransferId() != null) {
+                parentTransferId = yadeEngine.getOptions().getParentTransferId();
+            }
+            if (yadeEngine.getOptions().getTaskId() != null) {
+                String taskIdFromOptions = yadeEngine.getOptions().getTaskId();
+                taskId = Long.parseLong(taskIdFromOptions);
+            }
+        } else if (yadeDMZEngine != null) {
+            if (yadeDMZEngine.getOptions().getJobSchedulerId() != null) {
+                currentJobschedulerId = yadeDMZEngine.getOptions().getJobSchedulerId();
+            }
+            if (yadeDMZEngine.getOptions().getJobChain() != null) {
+                currentJobChain = yadeDMZEngine.getOptions().getJobChain();
+            }
+            if (yadeDMZEngine.getOptions().getJob() != null) {
+                currentJob = yadeDMZEngine.getOptions().getJob();
+            }
+            if (yadeDMZEngine.getOptions().getJobChainNodeName() != null) {
+                currentNodeName = yadeDMZEngine.getOptions().getJobChainNodeName();
+            }
+            if (yadeDMZEngine.getOptions().getOrderId() != null) {
+                currentOrderId = yadeDMZEngine.getOptions().getOrderId();
+            }
+            if (yadeDMZEngine.getOptions().getParentTransferId() != null) {
+                parentTransferId = yadeDMZEngine.getOptions().getParentTransferId();
+            }
+            if (yadeDMZEngine.getOptions().getTaskId() != null) {
+                String taskIdFromOptions = yadeDMZEngine.getOptions().getTaskId();
+                taskId = Long.parseLong(taskIdFromOptions);
+            }
         }
     }
     
@@ -586,6 +809,14 @@ public class YadeDBOperationHelper {
 
     public void setYadeEngine(SOSDataExchangeEngine yadeEngine) {
         this.yadeEngine = yadeEngine;
+    }
+    
+    public Jade4DMZ getYadeDMZEngine() {
+        return yadeDMZEngine;
+    }
+    
+    public void setYadeDMZEngine(Jade4DMZ yadeDMZEngine) {
+        this.yadeDMZEngine = yadeDMZEngine;
     }
 
     public void setParentTransferId(Long parentTransferId) {
