@@ -82,7 +82,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
-                            sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol());
+                            sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol(), sourceProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -96,6 +96,8 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
+            } else {
+                
             }
             
             if (targetProtocolDBItem == null && yadeEngine.getOptions().targetDir.isDirty()) {
@@ -121,7 +123,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
-                            targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol());
+                            targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol(), targetProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -147,7 +149,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
-                            jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol());
+                            jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol(), jumpProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -291,7 +293,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
-                            sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol());
+                            sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol(), sourceProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -330,7 +332,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
-                            targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol());
+                            targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol(), targetProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -356,7 +358,7 @@ public class YadeDBOperationHelper {
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
-                            jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol());
+                            jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol(), jumpProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                 }

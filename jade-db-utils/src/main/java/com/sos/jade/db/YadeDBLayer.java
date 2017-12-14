@@ -14,7 +14,7 @@ public class YadeDBLayer {
         this.session = session;
     }
 
-    public DBItemYadeProtocols getProtocolFromDb(String hostname, Integer port, Integer protocol) throws SOSHibernateException {
+    public DBItemYadeProtocols getProtocolFromDb(String hostname, Integer port, Integer protocol, String account) throws SOSHibernateException {
         StringBuilder sql = new StringBuilder();
         sql.append("from ").append(DBItemYadeProtocols.class.getSimpleName());
         sql.append(" where hostname = :hostname");
@@ -22,10 +22,13 @@ public class YadeDBLayer {
         sql.append(" port = :port");
         sql.append(" and");
         sql.append(" protocol = :protocol");
+        sql.append(" and");
+        sql.append(" account = :account");
         Query<DBItemYadeProtocols> query = getSession().createQuery(sql.toString());
         query.setParameter("hostname", hostname);
         query.setParameter("port", port);
         query.setParameter("protocol", protocol);
+        query.setParameter("account", account);
         return getSession().getSingleResult(query);
     }
     
