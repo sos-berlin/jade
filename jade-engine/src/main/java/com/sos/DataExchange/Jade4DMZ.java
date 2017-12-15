@@ -39,12 +39,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private IJobSchedulerEventHandler eventHandler = null;
     private boolean isIntervention = false;
     private String filePathRestriction = null;
+    private String initialTargetDir = null;
 
     private enum Operation {
         copyToInternet, copyFromInternet
     }
 
     public void Execute() {
+        initialTargetDir = getOptions().targetDir.getValue();
         String dir = normalizeDirectoryPath(getOptions().jumpDir.getValue());
         String uuid = "jade-dmz-" + getUUID();
         String subDir = dir + uuid;
@@ -142,7 +144,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
                 dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
                 for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                    dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
                 }
             }
         } catch (Exception e) {
@@ -153,7 +155,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 } catch (SOSHibernateException e1) {}
                 dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
                 for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                    dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
                 }
             }
             throw new JobSchedulerException("Transfer failed", e);
@@ -542,7 +544,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private SOSHibernateSession initStatelessSession() {
         SOSHibernateSession dbSession = null;
         try {
-            dbSession = dbFactory.openStatelessSession("YadeJob");
+            dbSession = dbFactory.openStatelessSession("Jade4DMZJob");
         } catch (SOSHibernateOpenSessionException e) {
             LOGGER.error(e.getMessage(), e);
         }

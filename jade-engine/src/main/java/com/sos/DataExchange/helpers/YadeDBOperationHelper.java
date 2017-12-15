@@ -516,10 +516,10 @@ public class YadeDBOperationHelper {
     }
     
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) {
-        updateFileInformationToDB(dbSession, fileEntry, false);
+        updateFileInformationToDB(dbSession, fileEntry, false, null);
     }
     
-    public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry, boolean finalUpdate) {
+    public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry, boolean finalUpdate, String targetPath) {
         YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
         if (fileEntry != null) {
             DBItemYadeFiles fileFromDb = null;
@@ -535,7 +535,11 @@ public class YadeDBOperationHelper {
                      fileFromDb.setState(fileEntry.getStatus() + 1);
                 }
                 if (finalUpdate && fileFromDb.getState() != 7 && fileFromDb.getState() != 8 && fileFromDb.getState() != 14) {
-                    fileFromDb.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                    if (targetPath != null) {
+                        fileFromDb.setTargetPath(targetPath + fileEntry.getTargetFileName());
+                    } else {
+                        fileFromDb.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                    }
                 } else {
                     fileFromDb.setTargetPath(null);
                 }

@@ -1135,7 +1135,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                 sendFiles(sourceFileList);
                                 if (dbSession != null) {
                                     for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                        dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                                        dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
                                     }
                                     dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
                                 }
@@ -1172,7 +1172,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                         }
                         if (dbSession != null) {
                             for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                                dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
                             }
                             dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
                         }
@@ -1184,7 +1184,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                 dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, sourceFileList);
                             }
                             for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                                dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
                             }
                             dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
                         }
@@ -1198,7 +1198,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (dbSession != null) {
                     for (SOSFileListEntry entry : sourceFileList.getList()) {
                         if(dbSession != null) {
-                            dbHelper.updateFileInformationToDB(dbSession, entry, true);
+                            dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
                         }
                     }
                 }
