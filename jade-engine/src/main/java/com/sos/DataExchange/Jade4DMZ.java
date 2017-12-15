@@ -79,26 +79,40 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                         dbSession.update(existingTransfer);
                         dbSession.commit();
                         transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
+                        LOGGER.info("*** transferId afterDB Update = " + transferId.toString());
                     } else {
                         transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                        LOGGER.info("*** transferId afterDB Update = " + transferId.toString());
                     }
                 } else {
                     transferId = dbHelper.storeInitialTransferInformations(dbSession);
+                    LOGGER.info("*** transferId afterDB Update = " + transferId.toString());
                 }
-            }
-            if (eventHandler != null) {
-                Map<String, String> values = new HashMap<String, String>();
-                values.put("transferId", transferId.toString());
-                eventHandler.sendEvent("YADETransferStarted", values);
+                if (eventHandler != null) {
+                    Map<String, String> values = new HashMap<String, String>();
+                    LOGGER.info("transferId for sendEvent = " + transferId.toString());
+                    values.put("transferId", transferId.toString());
+                    eventHandler.sendEvent("YADETransferStarted", values);
+                }
             }
             transfer(operation, subDir);
             if (dbSession != null) {
                 dbHelper.updateSuccessfulTransfer(dbSession);
             }
+            if (eventHandler != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferFinished", values);
+            }
         } catch (JobSchedulerException e) {
             if (dbSession != null) {
                 try {
                     dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                    if (eventHandler != null) {
+                        Map<String, String> values = new HashMap<String, String>();
+                        values.put("transferId", transferId.toString());
+                        eventHandler.sendEvent("YADETransferFinished", values);
+                    }
                 } catch (SOSHibernateException she) {
                     try {
                         dbSession.rollback();
@@ -109,11 +123,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         } catch (Exception e) {
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
-            if (eventHandler != null) {
-                Map<String, String> values = new HashMap<String, String>();
-                values.put("transferId", transferId.toString());
-                eventHandler.sendEvent("YADETransferFinished", values);
-            }
             if (dbSession != null) {
                 dbSession.close();
                 dbFactory.close();

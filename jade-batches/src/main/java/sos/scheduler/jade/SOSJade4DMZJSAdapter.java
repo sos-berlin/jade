@@ -338,12 +338,19 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     }
     
     @Override
+    public void updateDb(Long id, String type, Map<String, String> values) {
+        if (type.equals("YADE_FILE")) {
+            updateFileInDB(values);
+        }
+    }
+    
+    @Override
     public void sendEvent(String key, Map<String,String> values) {
         YadeEvent event = new YadeEvent();
         event.setKey(key);
         YadeVariables variables = new YadeVariables();
         if (values != null && values.containsKey("transferId")) {
-            variables.setTransferId(values.get("transfeId"));
+            variables.setTransferId(values.get("transferId"));
         } else {
             variables.setTransferId(jade4DMZEngine.getTransferId().toString());
         }
