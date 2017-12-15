@@ -178,9 +178,6 @@ public class YadeDBOperationHelper {
                 if (transferDBItem != null && transferDBItem.getId() != null) {
                     transferFromDb = dbLayer.getTransferFromDb(transferDBItem.getId());
                 }
-                if (transferFromDb != null) {
-                    LOGGER.debug(String.format("transfer item with id = %1$s found in DB!", transferDBItem.getId()));
-                }
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -214,14 +211,12 @@ public class YadeDBOperationHelper {
                     dbLayer.getSession().update(transferFromDb);
                     dbSession.commit();
                     dbSession.refresh(transferFromDb);
-                    LOGGER.debug("transfer DB Item updated!");
                 } catch (SOSHibernateException e) {
                     LOGGER.error("error occurred trying to update transfer DB Item!");
                     LOGGER.error(e.getMessage(), e);
                 }
                 transferDBItem = transferFromDb;
             } else {
-                LOGGER.debug("processing new transfer data!");
                 DBItemYadeTransfers newTransfer = new DBItemYadeTransfers();
                 if (sourceProtocolDBItem != null) {
                     newTransfer.setSourceProtocolId(sourceProtocolDBItem.getId());
@@ -263,7 +258,6 @@ public class YadeDBOperationHelper {
                 dbSession.commit();
                 dbSession.refresh(newTransfer);
             }
-            LOGGER.debug("store transfer information finished!");
         } catch (SOSHibernateException e) {
             try {
                 dbSession.rollback();
@@ -393,9 +387,6 @@ public class YadeDBOperationHelper {
                 if (transferDBItem != null && transferDBItem.getId() != null) {
                     transferFromDb = dbLayer.getTransferFromDb(transferDBItem.getId());
                 }
-                if (transferFromDb != null) {
-                    LOGGER.debug(String.format("transfer item with id = %1$s found in DB!", transferDBItem.getId()));
-                }
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -429,14 +420,12 @@ public class YadeDBOperationHelper {
                     dbLayer.getSession().update(transferFromDb);
                     dbSession.commit();
                     dbSession.refresh(transferFromDb);
-                    LOGGER.debug("transfer DB Item updated!");
                 } catch (SOSHibernateException e) {
                     LOGGER.error("error occurred trying to update transfer DB Item!");
                     LOGGER.error(e.getMessage(), e);
                 }
                 transferDBItem = transferFromDb;
             } else {
-                LOGGER.debug("processing new transfer data!");
                 DBItemYadeTransfers newTransfer = new DBItemYadeTransfers();
                 if (sourceProtocolDBItem != null) {
                     newTransfer.setSourceProtocolId(sourceProtocolDBItem.getId());
@@ -478,7 +467,6 @@ public class YadeDBOperationHelper {
                 transferId = newTransfer.getId();
                 transferDBItem = newTransfer;
             }
-            LOGGER.debug("store transfer information finished!");
         } catch (SOSHibernateException e) {
             try {
                 dbSession.rollback();
@@ -515,7 +503,6 @@ public class YadeDBOperationHelper {
                     dbSession.save(file);
                     dbSession.commit();
                     dbSession.refresh(file);
-                    LOGGER.debug("YADE_FILE stored in DB: " + file.getSourcePath());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                     try {
@@ -524,7 +511,6 @@ public class YadeDBOperationHelper {
                     }
                 }
             }
-            LOGGER.debug("store transfer files information finished!");
         }
         files.setSumOfFileSizes(fileSizeSum);
     }
@@ -577,9 +563,6 @@ public class YadeDBOperationHelper {
                         intervenedFileFromDb = 
                                 dbLayer.getTransferFileFromDbByConstraint(parentTransferId, fileEntry.getSourceFilename());
                         if (intervenedFileFromDb != null) {
-                            LOGGER.debug(String.format(
-                                    "File entry with transfer id = %1$d to update with intervention id = %2$d found in DB!"),
-                                    parentTransferId, transferDBItem.getId());
                             intervenedFileFromDb.setInterventionTransferId(transferDBItem.getId());
                             dbSession.beginTransaction();
                             dbSession.update(intervenedFileFromDb);
@@ -638,7 +621,6 @@ public class YadeDBOperationHelper {
                     Map<String, String> values = new HashMap<String, String>();
                     values.put("fileId", file.getId().toString());
                     eventHandler.sendEvent("YADEFileStateChanged", values);
-                    LOGGER.debug("YADE_FILE stored in DB: " + file.getSourcePath());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
                     try {
@@ -647,7 +629,6 @@ public class YadeDBOperationHelper {
                     }
                 }
             }
-            LOGGER.debug("store transfer files information finished!");
         }
     }
 
@@ -664,7 +645,6 @@ public class YadeDBOperationHelper {
             } else if (yadeDMZEngine != null) {
                 transferId = storeYadeDMZTransferInformationToDB(dbSession, parentTransferId);
             }
-            LOGGER.debug("initial transfer information stored to DB!");
         }
         return transferId;
     }

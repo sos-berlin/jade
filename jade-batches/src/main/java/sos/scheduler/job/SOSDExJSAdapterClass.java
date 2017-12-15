@@ -11,7 +11,6 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
