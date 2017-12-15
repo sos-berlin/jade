@@ -79,18 +79,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                         dbSession.update(existingTransfer);
                         dbSession.commit();
                         transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
-                        LOGGER.info("*** transferId afterDB Update = " + transferId.toString());
                     } else {
                         transferId = dbHelper.storeInitialTransferInformations(dbSession);
-                        LOGGER.info("*** transferId afterDB Update = " + transferId.toString());
                     }
                 } else {
                     transferId = dbHelper.storeInitialTransferInformations(dbSession);
-                    LOGGER.info("*** transferId afterDB Update = " + transferId.toString());
                 }
                 if (eventHandler != null) {
                     Map<String, String> values = new HashMap<String, String>();
-                    LOGGER.info("transferId for sendEvent = " + transferId.toString());
                     values.put("transferId", transferId.toString());
                     eventHandler.sendEvent("YADETransferStarted", values);
                 }
