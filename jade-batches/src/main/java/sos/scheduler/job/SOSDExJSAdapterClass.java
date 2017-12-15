@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -37,6 +39,8 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jade.db.DBItemYadeFiles;
 import com.sos.jade.db.YadeDBLayer;
 import com.sos.jitl.reporting.db.DBLayer;
+import com.sos.jobscheduler.model.event.YadeEvent;
+import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
@@ -375,75 +379,99 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     
     @Override
     public void updateDb(Long id, String type, Map<String, String> values) {
-        // TODO Auto-generated method stub
-//        super.updateDb(id, type, values);
+        if (type.equals("YADE_FILE")) {
+            updateFileInDB(values);
+        }
+    }
+    
+    @Override
+    public void sendEvent(String key, Map<String,String> values) {
+        YadeEvent event = new YadeEvent();
+        event.setKey(key);
+        YadeVariables variables = new YadeVariables();
+        if (values != null && values.containsKey("transferId")) {
+            variables.setTransferId(values.get("transferId"));
+        } else {
+            variables.setTransferId(jadeEngine.getTransferId().toString());
+        }
+        if (values != null && values.get("fileId") != null && !values.get("fileId").isEmpty()) {
+            variables.setFileId(values.get("fileId"));
+        }
+        event.setVariables(variables);
+        try {
+            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
+        } catch (JsonProcessingException e) {
+            LOGGER.error("unable to send event due to: " +e.getMessage(), e);
+        }
+    }
+    
+    private void updateFileInDB(Map<String, String> values) {
         SOSHibernateSession session = initStatelessSession();
         YadeDBLayer dbLayer = new YadeDBLayer(session);
-        if (type.equals("YADE_FILE")) {
-            // a helper class (like a DBLayer class) should be called to get
-            // the DBItem to update instead of creating a new one 
-            DBItemYadeFiles file = null;
-            try {
-                String filePath = values.get("file_path");
-                file = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getTransferId(), filePath);
-                
-            } catch (SOSHibernateException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-            if (file != null) {
-                if(jadeEngine.getParentTransferId() != null) {
-                    DBItemYadeFiles intervenedFile = null;
+        DBItemYadeFiles file = null;
+        String filePath = null;
+        try {
+            filePath = values.get("sourcePath");
+            file = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getTransferId(), filePath);
+        } catch (SOSHibernateException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        if (file != null) {
+            if(jadeEngine.getParentTransferId() != null) {
+                DBItemYadeFiles intervenedFile = null;
+                try {
+                    filePath = values.get("sourcePath");
+                    intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
+                    intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
                     try {
-                        String filePath = values.get("sourcePath");
-                        intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
-                        intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
-                        try {
-                            session.beginTransaction();
-                            session.update(intervenedFile);
-                            session.commit();
-                        } catch (SOSHibernateException e) {
-                            LOGGER.error(e.getMessage(), e);
-                            try {
-                                session.rollback();
-                            } catch (SOSHibernateException e1) {}
-                        }
+                        session.beginTransaction();
+                        session.update(intervenedFile);
+                        session.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        try {
+                            session.rollback();
+                        } catch (SOSHibernateException e1) {}
                     }
-                }
-                for (String key : values.keySet()) {
-                    // key = propertyName
-                    // values.get(key) = propertyValue
-                    switch (key) {
-                    case "sourcePath":
-                        file.setSourcePath(values.get(key));
-                        break;
-                    case "targetPath":
-                        file.setTargetPath(values.get(key));
-                        break;
-                    case "state":
-                        file.setState(Integer.parseInt(values.get(key)));
-                        break;
-                    case "errorCode":
-                        file.setErrorCode(values.get(key));
-                        break;
-                    case "errorMessage":
-                        file.setErrorMessage(values.get(key));
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                try {
-                    session.beginTransaction();
-                    session.update(file);
-                    session.commit();
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
-                    try {
-                        session.rollback();
-                    } catch (SOSHibernateException e1) {}
                 }
+            }
+            for (String key : values.keySet()) {
+                // key = propertyName
+                // values.get(key) = propertyValue
+                switch (key) {
+                case "sourcePath":
+                    file.setSourcePath(values.get(key));
+                    break;
+                case "targetPath":
+                    file.setTargetPath(values.get(key));
+                    break;
+                case "state":
+                    file.setState(Integer.parseInt(values.get(key)));
+                    break;
+                case "errorCode":
+                    file.setErrorCode(values.get(key));
+                    break;
+                case "errorMessage":
+                    file.setErrorMessage(values.get(key));
+                    break;
+                default:
+                    break;
+                }
+            }
+            try {
+                session.beginTransaction();
+                session.update(file);
+                session.commit();
+                Map<String, String> eventValues = new HashMap<String, String>();
+                eventValues.put("fileId", file.getId().toString());
+                sendEvent("YADEFileStateChanged", eventValues);
+            } catch (SOSHibernateException e) {
+                LOGGER.error(e.getMessage(), e);
+                try {
+                    session.rollback();
+                } catch (SOSHibernateException e1) {}
             }
         }
     }
@@ -451,7 +479,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private SOSHibernateSession initStatelessSession() {
         SOSHibernateSession dbSession = null;
         try {
-            dbSession = dbFactory.openStatelessSession("YadeJob");
+            dbSession = dbFactory.openStatelessSession("JadeJob");
         } catch (SOSHibernateOpenSessionException e) {
             LOGGER.error(e.getMessage(), e);
         }

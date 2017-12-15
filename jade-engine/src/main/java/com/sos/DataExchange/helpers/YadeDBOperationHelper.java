@@ -3,6 +3,8 @@ package com.sos.DataExchange.helpers;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionTransferType;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
+import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
@@ -41,14 +44,17 @@ public class YadeDBOperationHelper {
     private Long parentTransferId = null;
     private Long taskId = null;
     private Boolean hasErrors = null; 
+    private IJobSchedulerEventHandler eventHandler = null;
     
-    public YadeDBOperationHelper(SOSDataExchangeEngine yadeEngine) {
+    public YadeDBOperationHelper(SOSDataExchangeEngine yadeEngine, IJobSchedulerEventHandler eventHandler) {
         this.yadeEngine = yadeEngine;
+        this.eventHandler = eventHandler;
         addAdditionalJobInfosFromOptions();
     }
 
-    public YadeDBOperationHelper(Jade4DMZ yadeDMZEngine) {
+    public YadeDBOperationHelper(Jade4DMZ yadeDMZEngine, IJobSchedulerEventHandler eventHandler) {
         this.yadeDMZEngine = yadeDMZEngine;
+        this.eventHandler = eventHandler;
         addAdditionalJobInfosFromOptions();
     }
 
@@ -96,8 +102,7 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
-            } else {
-                
+                dbSession.refresh(sourceProtocolDBItem);
             }
             
             if (targetProtocolDBItem == null && yadeEngine.getOptions().targetDir.isDirty()) {
@@ -137,6 +142,7 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
+                dbSession.refresh(targetProtocolDBItem);
             }
             
             if (jumpProtocolDBItem == null && yadeEngine.getOptions().jumpHost.isDirty()) { 
@@ -163,6 +169,7 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
+                dbSession.refresh(jumpProtocolDBItem);
             }
 
             dbSession.beginTransaction();
@@ -205,6 +212,8 @@ public class YadeDBOperationHelper {
                 transferFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbLayer.getSession().update(transferFromDb);
+                    dbSession.commit();
+                    dbSession.refresh(transferFromDb);
                     LOGGER.debug("transfer DB Item updated!");
                 } catch (SOSHibernateException e) {
                     LOGGER.error("error occurred trying to update transfer DB Item!");
@@ -251,8 +260,9 @@ public class YadeDBOperationHelper {
                 dbLayer.getSession().save(newTransfer);
                 transferId = newTransfer.getId();
                 transferDBItem = newTransfer;
+                dbSession.commit();
+                dbSession.refresh(newTransfer);
             }
-            dbSession.commit();
             LOGGER.debug("store transfer information finished!");
         } catch (SOSHibernateException e) {
             try {
@@ -307,6 +317,7 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
+                dbSession.refresh(sourceProtocolDBItem);
             }
             
             if (targetProtocolDBItem == null && yadeDMZEngine.getOptions().targetDir.isDirty()) {
@@ -346,6 +357,7 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
+                dbSession.refresh(targetProtocolDBItem);
             }
             
             if (jumpProtocolDBItem == null && yadeDMZEngine.getOptions().jumpHost.isDirty()) { 
@@ -372,6 +384,7 @@ public class YadeDBOperationHelper {
                     }
                 }
                 dbSession.commit();
+                dbSession.refresh(jumpProtocolDBItem);
             }
 
             dbSession.beginTransaction();
@@ -414,6 +427,8 @@ public class YadeDBOperationHelper {
                 transferFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbLayer.getSession().update(transferFromDb);
+                    dbSession.commit();
+                    dbSession.refresh(transferFromDb);
                     LOGGER.debug("transfer DB Item updated!");
                 } catch (SOSHibernateException e) {
                     LOGGER.error("error occurred trying to update transfer DB Item!");
@@ -458,10 +473,11 @@ public class YadeDBOperationHelper {
                 }
                 newTransfer.setModified(getUTCDateFromInstant(Instant.now()));
                 dbLayer.getSession().save(newTransfer);
+                dbSession.commit();
+                dbSession.refresh(newTransfer);
                 transferId = newTransfer.getId();
                 transferDBItem = newTransfer;
             }
-            dbSession.commit();
             LOGGER.debug("store transfer information finished!");
         } catch (SOSHibernateException e) {
             try {
@@ -498,6 +514,7 @@ public class YadeDBOperationHelper {
                     dbSession.beginTransaction();
                     dbSession.save(file);
                     dbSession.commit();
+                    dbSession.refresh(file);
                     LOGGER.debug("YADE_FILE stored in DB: " + file.getSourcePath());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
@@ -552,6 +569,9 @@ public class YadeDBOperationHelper {
                     dbSession.update(fileFromDb);
                     dbSession.commit();
                     dbSession.refresh(fileFromDb);
+                    Map<String, String> values = new HashMap<String, String>();
+                    values.put("fileId", fileFromDb.getId().toString());
+                    eventHandler.sendEvent("YADEFileStateChanged", values);
                     if (finalUpdate && parentTransferId != null) {
                         DBItemYadeFiles intervenedFileFromDb = null;
                         intervenedFileFromDb = 
@@ -564,6 +584,11 @@ public class YadeDBOperationHelper {
                             dbSession.beginTransaction();
                             dbSession.update(intervenedFileFromDb);
                             dbSession.commit();
+                            dbSession.refresh(intervenedFileFromDb);
+                            values = new HashMap<String, String>();
+                            values.put("transferId", parentTransferId.toString());
+                            values.put("fileId", intervenedFileFromDb.getId().toString());
+                            eventHandler.sendEvent("YADEFileStateChanged", values);
                         } else {
                             LOGGER.debug(String.format(
                                     "File entry with transfer id=%1$d and path=%2$s not updated with intervention id=%3$d "
@@ -609,6 +634,10 @@ public class YadeDBOperationHelper {
                     dbSession.beginTransaction();
                     dbSession.save(file);
                     dbSession.commit();
+                    dbSession.refresh(file);
+                    Map<String, String> values = new HashMap<String, String>();
+                    values.put("fileId", file.getId().toString());
+                    eventHandler.sendEvent("YADEFileStateChanged", values);
                     LOGGER.debug("YADE_FILE stored in DB: " + file.getSourcePath());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
@@ -699,6 +728,8 @@ public class YadeDBOperationHelper {
             dbSession.beginTransaction();
             dbSession.update(transferDBItem);
             dbSession.commit();
+            dbSession.refresh(transferDBItem);
+            eventHandler.sendEvent("YADETransferUpdated", null);
         }        
     }
     
@@ -710,6 +741,8 @@ public class YadeDBOperationHelper {
             dbSession.beginTransaction();
             dbSession.update(transferDBItem);
             dbSession.commit();
+            dbSession.refresh(transferDBItem);
+            eventHandler.sendEvent("YADETransferUpdated", null);
         }        
     }
     
@@ -720,6 +753,8 @@ public class YadeDBOperationHelper {
             dbSession.beginTransaction();
             dbSession.update(transferDBItem);
             dbSession.commit();
+            dbSession.refresh(transferDBItem);
+            eventHandler.sendEvent("YADETransferUpdated", null);
         }
     }
     

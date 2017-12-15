@@ -323,6 +323,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
     @Override
     public boolean execute() throws Exception {
+        
         setLogger();
         objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
         objOptions.logFilename.setLogger(JADE_REPORT_LOGGER);
@@ -345,7 +346,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             }
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
-                dbHelper = new YadeDBOperationHelper(this);
+                dbHelper = new YadeDBOperationHelper(this, eventHandler);
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
@@ -364,6 +365,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 } else {
                     transferId = dbHelper.storeInitialTransferInformations(dbSession);
                 }
+                eventHandler.sendEvent("YADETransferStarted", null);
             }
             ok = transfer();
             if (dbSession != null) {
@@ -387,6 +389,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         } finally {
             showResult();
             sendNotifications();
+            if (eventHandler != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferStarted", values);
+            }
             if (dbSession != null) {
                 dbSession.close();
                 dbFactory.close();
@@ -1459,6 +1466,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         return transferId;
     }
         
+    public void setTransferId (Long transferId) {
+        this.transferId = transferId;
+    }
+    
     public Long getParentTransferId() {
         return parentTransferId;
     }

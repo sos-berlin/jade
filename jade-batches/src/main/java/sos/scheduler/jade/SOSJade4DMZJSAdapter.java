@@ -11,11 +11,14 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 import java.io.File;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Map;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.Jade4DMZ;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
@@ -23,10 +26,17 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.hibernate.classes.SOSHibernateFactory;
+import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateConfigurationException;
+import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.hibernate.exceptions.SOSHibernateFactoryBuildException;
+import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jade.db.DBItemYadeFiles;
+import com.sos.jade.db.YadeDBLayer;
 import com.sos.jitl.reporting.db.DBLayer;
+import com.sos.jobscheduler.model.event.YadeEvent;
+import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
@@ -59,6 +69,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private SOSFTPOptions jadeOptions = null;
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private SOSHibernateFactory dbFactory;
+    private Jade4DMZ jade4DMZEngine;
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
@@ -82,7 +93,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private void doProcessing() throws Exception {
         jadeOptions = null;
-        Jade4DMZ jade4DMZEngine = new Jade4DMZ();
+        jade4DMZEngine = new Jade4DMZ();
         jadeOptions = jade4DMZEngine.getOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
         HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
@@ -97,6 +108,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
         jade4DMZEngine.setJSJobUtilites(this);
         jade4DMZEngine.setDBFactory(initDBFactory());
+        jade4DMZEngine.setEventHandler(this);
         if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
             jade4DMZEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
         }
@@ -323,6 +335,98 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
         dbFactory.build();
         return dbFactory;
+    }
+    
+    @Override
+    public void sendEvent(String key, Map<String,String> values) {
+        YadeEvent event = new YadeEvent();
+        event.setKey(key);
+        YadeVariables variables = new YadeVariables();
+        if (values != null && values.containsKey("transferId")) {
+            variables.setTransferId(values.get("transfeId"));
+        } else {
+            variables.setTransferId(jade4DMZEngine.getTransferId().toString());
+        }
+        if (values != null && values.get("fileId") != null && !values.get("fileId").isEmpty()) {
+            variables.setFileId(values.get("fileId"));
+        }
+        event.setVariables(variables);
+        try {
+            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
+        } catch (JsonProcessingException e) {}
+    }
+    
+    private void updateFileInDB(Map<String, String> values) {
+        SOSHibernateSession session = initStatelessSession();
+        YadeDBLayer dbLayer = new YadeDBLayer(session);
+        DBItemYadeFiles file = null;
+        String filePath = null;
+        try {
+            filePath = values.get("sourcePath");
+            file = dbLayer.getTransferFileFromDbByConstraint(jade4DMZEngine.getTransferId(), filePath);
+        } catch (SOSHibernateException e) {}
+        if (file != null) {
+            if(jade4DMZEngine.getParentTransferId() != null) {
+                DBItemYadeFiles intervenedFile = null;
+                try {
+                    filePath = values.get("sourcePath");
+                    intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jade4DMZEngine.getParentTransferId(), filePath);
+                    intervenedFile.setInterventionTransferId(jade4DMZEngine.getTransferId());
+                    try {
+                        session.beginTransaction();
+                        session.update(intervenedFile);
+                        session.commit();
+                    } catch (SOSHibernateException e) {
+                        try {
+                            session.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } catch (SOSHibernateException e) {}
+            }
+            for (String key : values.keySet()) {
+                // key = propertyName
+                // values.get(key) = propertyValue
+                switch (key) {
+                case "sourcePath":
+                    file.setSourcePath(values.get(key));
+                    break;
+                case "targetPath":
+                    file.setTargetPath(values.get(key));
+                    break;
+                case "state":
+                    file.setState(Integer.parseInt(values.get(key)));
+                    break;
+                case "errorCode":
+                    file.setErrorCode(values.get(key));
+                    break;
+                case "errorMessage":
+                    file.setErrorMessage(values.get(key));
+                    break;
+                default:
+                    break;
+                }
+            }
+            try {
+                session.beginTransaction();
+                session.update(file);
+                session.commit();
+                Map<String, String> eventValues = new HashMap<String, String>();
+                eventValues.put("fileId", file.getId().toString());
+                sendEvent("YADEFileStateChanged", eventValues);
+            } catch (SOSHibernateException e) {
+                try {
+                    session.rollback();
+                } catch (SOSHibernateException e1) {}
+            }
+        }
+    }
+    
+    private SOSHibernateSession initStatelessSession() {
+        SOSHibernateSession dbSession = null;
+        try {
+            dbSession = dbFactory.openStatelessSession("Jade4DMZJob");
+        } catch (SOSHibernateOpenSessionException e) {}
+        return dbSession;
     }
     
 }

@@ -1,5 +1,7 @@
 package com.sos.DataExchange;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -64,7 +66,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             objOptions.checkMandatory();
             if (dbFactory != null) {
                 dbSession = initStatelessSession();
-                dbHelper = new YadeDBOperationHelper(this);
+                dbHelper = new YadeDBOperationHelper(this, eventHandler);
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
@@ -84,6 +86,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                     transferId = dbHelper.storeInitialTransferInformations(dbSession);
                 }
             }
+            if (eventHandler != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferStarted", values);
+            }
             transfer(operation, subDir);
             if (dbSession != null) {
                 dbHelper.updateSuccessfulTransfer(dbSession);
@@ -102,6 +109,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         } catch (Exception e) {
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
+            if (eventHandler != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferFinished", values);
+            }
             if (dbSession != null) {
                 dbSession.close();
                 dbFactory.close();
@@ -115,6 +127,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         fileList = null;
         try {
             jade = new JadeEngine(getTransferOptions(operation, dir));
+            jade.setTransferId(transferId);
             jade.execute();
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
@@ -531,7 +544,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         return dbSession;
     }
     
-    public void setJobSchedulerEventHandler(IJobSchedulerEventHandler eventHandler) {
+    public void setEventHandler(IJobSchedulerEventHandler eventHandler) {
         this.eventHandler  = eventHandler;
     }
     
