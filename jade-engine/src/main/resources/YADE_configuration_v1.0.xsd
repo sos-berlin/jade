@@ -598,8 +598,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-415">YADE-415</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-415">YADE-415</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -937,6 +937,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="SendTransferHistory" value="true"/>
+                <Release deprecated="1.10.10, 1.11.6" removed="1.12"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragment">
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -952,6 +953,11 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <li>
                            <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+SendTransferHistory">SendTransferHistory</a>
                         </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li> Deprecated with 1.10.10, 1.11.6. Removed with 1.12.</li>
                      </ul>
                   </li>
                </ul>
@@ -1800,8 +1806,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-351">YADE-351</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-351">YADE-351</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -2718,6 +2724,9 @@ SSH, etc.) server to which a connection has to be made.</p>
 	  </xs:element>
 	  <xs:element name="BackgroundServiceFragmentRef">
 		    <xs:annotation>
+         <xs:appinfo>
+		          <Release deprecated="1.10.10, 1.11.6" removed="1.12"/>
+			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragmentRef">
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -2726,6 +2735,11 @@ SSH, etc.) server to which a connection has to be made.</p>
                         href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServiceFragmentRef.html">BackgroundServiceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragmentRef">BackgroundServiceFragmentRef</a>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li> Deprecated with 1.10.10, 1.11.6. Removed with 1.12.</li>
+                     </ul>
                   </li>
                </ul>
                <strong>Notes</strong>
@@ -3808,8 +3822,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -3848,8 +3862,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -6473,8 +6487,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-403">YADE-403</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-403">YADE-403</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -6509,8 +6523,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-400">YADE-400</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-400">YADE-400</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -10001,8 +10015,8 @@ A fragment is referenced via this attribute value by a transfer profile.
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -10043,8 +10057,8 @@ A fragment is referenced via this attribute value by a transfer profile.
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -10085,8 +10099,8 @@ A fragment is referenced via this attribute value by a transfer profile.
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -10127,8 +10141,8 @@ A fragment is referenced via this attribute value by a transfer profile.
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -10169,8 +10183,8 @@ A fragment is referenced via this attribute value by a transfer profile.
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
@@ -10211,8 +10225,8 @@ A fragment is referenced via this attribute value by a transfer profile.
                   </li>
                   <li>Release:
             <ul>
-                        <li>Availability starting with 1.11: <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a>
-                        </li>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-406">YADE-406</a> Availability starting with 1.11.</li>
                      </ul>
                   </li>
                </ul>
