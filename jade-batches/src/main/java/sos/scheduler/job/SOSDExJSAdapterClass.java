@@ -434,6 +434,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     }
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    try {
+                        session.rollback();
+                    } catch (SOSHibernateException e1) {}
                 }
             }
             for (String key : values.keySet()) {

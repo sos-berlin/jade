@@ -66,7 +66,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 objOptions = updateHelper.getOptions();
             }
             objOptions.checkMandatory();
-            if (dbFactory != null) {
+            if (dbFactory != null && objOptions.writeTransferHistory.value()) {
                 dbSession = initStatelessSession();
                 dbHelper = new YadeDBOperationHelper(this, eventHandler);
                 if (parentTransferId != null) {
@@ -152,11 +152,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 fileList = jade.getFileList();
                 try {
                     dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                    for (SOSFileListEntry entry : fileList.getList()) {
+                        dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
+                    }
                 } catch (SOSHibernateException e1) {}
-                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
-                }
             }
             throw new JobSchedulerException("Transfer failed", e);
         } finally {

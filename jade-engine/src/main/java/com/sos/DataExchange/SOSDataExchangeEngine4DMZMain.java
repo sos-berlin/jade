@@ -53,8 +53,6 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             jade4dmz = new Jade4DMZ();
             JADEOptions options = jade4dmz.getOptions();
             jade4dmz.setJSJobUtilites(this);
-            //TODOjade4dmz.setJ
-            options.sendTransferHistory.value(true);
             options.commandLineArgs(args);
             try {
                 if (options.log4jPropertyFileName.isDirty()) {
@@ -63,9 +61,8 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
                         PropertyConfigurator.configure(log4j.getAbsolutePath());
                     }
                 }
-            } catch (Exception e) {
-            }
-            // if rootLogger gets basis configuration if it doesn't have already
+            } catch (Exception e) {}
+            // rootLogger gets basis configuration if it doesn't have already
             // an appender
             if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
                 BasicConfigurator.configure();
