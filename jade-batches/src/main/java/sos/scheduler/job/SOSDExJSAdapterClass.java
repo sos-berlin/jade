@@ -421,16 +421,18 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 try {
                     filePath = values.get("sourcePath");
                     intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
-                    intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
-                    try {
-                        session.beginTransaction();
-                        session.update(intervenedFile);
-                        session.commit();
-                    } catch (SOSHibernateException e) {
-                        LOGGER.error(e.getMessage(), e);
+                    if (intervenedFile != null) {
+                        intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
                         try {
-                            session.rollback();
-                        } catch (SOSHibernateException e1) {}
+                            session.beginTransaction();
+                            session.update(intervenedFile);
+                            session.commit();
+                        } catch (SOSHibernateException e) {
+                            LOGGER.error(e.getMessage(), e);
+                            try {
+                                session.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
                     }
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
