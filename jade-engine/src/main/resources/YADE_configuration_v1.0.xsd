@@ -4638,7 +4638,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 	  <xs:element name="FileList">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="File_List_Name"/>
+				        <FlatParameter name="File_List_Name" suppress_prefix="true"/>
 				        <FlatParameter name="FileListName"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FileList">
