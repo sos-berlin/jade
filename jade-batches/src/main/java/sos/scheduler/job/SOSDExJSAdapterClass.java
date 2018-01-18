@@ -124,6 +124,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeOptions.verbose.value(intLogLevel);
         }
         jadeEngine.setJSJobUtilites(this);
+        jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
         jadeEngine.setJobSchedulerEventHandler(this);
      	jadeEngine.setDBFactory(initDBFactory());
      	if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
