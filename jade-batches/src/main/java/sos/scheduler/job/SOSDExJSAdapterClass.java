@@ -1,19 +1,12 @@
 package sos.scheduler.job;
 
-import com.sos.DataExchange.JadeEngine;
-import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.io.Files.JSTextFile;
-import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
-import com.sos.i18n.annotation.I18NResourceBundle;
-import com.sos.scheduler.model.SchedulerObjectFactory;
-import com.sos.scheduler.model.commands.JSCmdAddOrder;
-import com.sos.scheduler.model.objects.Spooler;
-
-import sos.spooler.Order;
-import sos.spooler.Variable_set;
+import static com.sos.scheduler.messages.JSMessages.JSJ_E_0040;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0080;
+import static com.sos.scheduler.messages.JSMessages.JSJ_F_0090;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0017;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0018;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
+import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -22,7 +15,19 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.sos.scheduler.messages.JSMessages.*;
+import com.sos.DataExchange.JadeEngine;
+import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.JSHelper.io.Files.JSTextFile;
+import com.sos.VirtualFileSystem.DataElements.SOSFileList;
+import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
+import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.scheduler.model.SchedulerObjectFactory;
+import com.sos.scheduler.model.commands.JSCmdAddOrder;
+import com.sos.scheduler.model.objects.Spooler;
+
+import sos.spooler.Order;
+import sos.spooler.Variable_set;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
@@ -43,7 +48,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private SOSFileList transfFiles = null;
-    private SOSFTPOptions jadeOptions = null;
+    private JADEOptions jadeOptions = null;
     private JadeEngine jadeEngine = null;
     private SchedulerObjectFactory jobSchedulerFactory = null;
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
@@ -69,11 +74,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private void doProcessing() throws Exception {
         String method = "doProcessing";
-        jadeOptions = null;
-        jadeEngine = new JadeEngine();
-        jadeOptions = jadeEngine.getOptions();
+        jadeOptions = new JADEOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
-
+        jadeEngine = new JadeEngine(jadeOptions);
         Path xml2iniFile = null;
         HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
         if (schedulerParams != null && schedulerParams.containsKey("settings")) {
