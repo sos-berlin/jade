@@ -46,8 +46,9 @@ import com.sos.scheduler.model.objects.Spooler;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
-	private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
+
     private static final String CLASSNAME = "SOSDExJSAdapterClass";
     private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
     private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
@@ -78,7 +79,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
     private SOSHibernateFactory dbFactory;
 
-    public SOSDExJSAdapterClass() { 
+    public SOSDExJSAdapterClass() {
         super();
     }
 
@@ -88,7 +89,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()),e);
+            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()), e);
             LOGGER.debug("", e);
             throw e;
         } finally {
@@ -99,30 +100,31 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private void doProcessing() throws Exception {
         String method = "doProcessing";
-    	jadeOptions = new JADEOptions();
+        jadeOptions = new JADEOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
         jadeEngine = new JadeEngine(jadeOptions);
-        boolean deleteSettingsFile = false;
-        HashMap<String,String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
-        if(schedulerParams != null && schedulerParams.containsKey("settings")){
-        	String settings = schedulerParams.get("settings");
-        	jadeOptions.setOriginalSettingsFile(settings);
-        	LOGGER.debug(String.format("%s: schedulerParams settings=%s",method,settings));
-        	if (settings.toLowerCase().endsWith(".xml")) {
-        		deleteSettingsFile = true;
-            	JADEOptions jo = new JADEOptions();
-        		Path iniFile = jo.convertXml2Ini(settings);
-        		schedulerParams.put("settings",iniFile.toString());
-        	} 
+        Path xml2iniFile = null;
+        HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
+        if (schedulerParams != null && schedulerParams.containsKey("settings")) {
+            String settings = schedulerParams.get("settings");
+            jadeOptions.setOriginalSettingsFile(settings);
+            LOGGER.debug(String.format("%s: schedulerParams settings=%s", method, settings));
+            if (settings.toLowerCase().endsWith(".xml")) {
+                JADEOptions jo = new JADEOptions();
+                xml2iniFile = jo.convertXml2Ini(settings);
+                schedulerParams.put("settings", xml2iniFile.toString());
+            }
         }
         jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
+        if (xml2iniFile != null) {// !!! setAllOptions2 override the jadeOptions.settings
+            jadeOptions.settings.setValue(xml2iniFile.toString());
+        }
         int intLogLevel = -1 * spooler_log.level();
         if (intLogLevel > jadeOptions.verbose.value()) {
             jadeOptions.verbose.value(intLogLevel);
         }
         jadeEngine.setJSJobUtilites(this);
         jadeEngine.setJobSchedulerEventHandler(this);
-        jadeEngine.getOptions().setDeleteSettingsFileOnExit(deleteSettingsFile);
      	jadeEngine.setDBFactory(initDBFactory());
      	if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
      	    jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
@@ -158,7 +160,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             if (isOrderJob() && jadeEngine.getTransferId() != null) {
                 setOrderParameter(YADE_TRANSFER_ID, jadeEngine.getTransferId().toString());
             }
-        	jadeEngine.logout();
+            jadeEngine.logout();
         }
         transfFiles = jadeEngine.getFileList();
         int resultSetSize = transfFiles.getList().size();
@@ -186,11 +188,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             }
         }
         createOrderParameter(jadeEngine);
-        
-        if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles.isTrue())){
+
+        if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles.isTrue())) {
             jadeOptions.createOrder.setTrue();
         }
-        
+
         if (resultSetSize > 0 && jadeOptions.createOrder.isTrue()) {
             String jobChainName = jadeOptions.orderJobchainName.getValue();
             if (jadeOptions.createOrdersForAllFiles.isTrue()) {
@@ -267,9 +269,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             orderParams.merge(spooler_task.order().params());
         }
         String[] targetFile = getFilenameParts(jadeOptions.targetDir.getValue(), listItem.getTargetFileName());
-        if (jadeOptions.paramNameForPath.isDirty()){
+        if (jadeOptions.paramNameForPath.isDirty()) {
             orderParams.set_value(jadeOptions.paramNameForPath.getValue(), targetFile[0]);
-        }else{
+        } else {
             orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PATH, targetFile[0]);
         }
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PARENT, targetFile[1]);
@@ -359,7 +361,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }
         } catch (JobSchedulerException e) {
-        	LOGGER.error("error occurred creating order Parameter: " + e.getMessage(),e);
+            LOGGER.error("error occurred creating order Parameter: " + e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);
