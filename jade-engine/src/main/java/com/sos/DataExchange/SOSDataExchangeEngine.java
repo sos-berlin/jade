@@ -361,11 +361,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 } else {
                     transferId = dbHelper.storeInitialTransferInformations(dbSession);
                 }
-                eventHandler.sendEvent("YADETransferStarted", null);
+                if (eventHandler != null && transferId != null) {
+                    Map<String, String> values = new HashMap<String, String>();
+                    values.put("transferId", transferId.toString());
+                    eventHandler.sendEvent("YADETransferStarted", values);
+                }
             }
             ok = transfer();
             if (dbSession != null) {
                 dbHelper.updateSuccessfulTransfer(dbSession);
+                dbSession.close();
+                dbFactory.close();
+            }
+            if (eventHandler != null && transferId != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferFinished", values);
             }
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
@@ -373,27 +384,42 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         } catch (SOSYadeSourceConnectionException | SOSYadeTargetConnectionException e) {
             if (dbSession != null) {
                 dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                dbSession.close();
+                dbFactory.close();
+            }
+            if (eventHandler != null && transferId != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferFinished", values);
             }
             throw new JobSchedulerException(e.getCause());
         } catch (JobSchedulerException e) {
             if (dbSession != null) {
                 dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                dbSession.close();
+                dbFactory.close();
+            }
+            if (eventHandler != null && transferId != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferFinished", values);
             }
             throw e;
         } catch (Exception e) {
+            if (dbSession != null) {
+                dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                dbSession.close();
+                dbFactory.close();
+            }
+            if (eventHandler != null && transferId != null) {
+                Map<String, String> values = new HashMap<String, String>();
+                values.put("transferId", transferId.toString());
+                eventHandler.sendEvent("YADETransferFinished", values);
+            }
             throw new JobSchedulerException(e.getMessage());
         } finally {
             showResult();
             sendNotifications();
-            if (eventHandler != null) {
-                Map<String, String> values = new HashMap<String, String>();
-                values.put("transferId", transferId.toString());
-                eventHandler.sendEvent("YADETransferStarted", values);
-            }
-            if (dbSession != null) {
-                dbSession.close();
-                dbFactory.close();
-            }
         }
         return ok;
     }
