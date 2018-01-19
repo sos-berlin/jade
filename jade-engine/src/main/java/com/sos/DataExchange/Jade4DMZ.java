@@ -66,7 +66,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 objOptions = updateHelper.getOptions();
             }
             objOptions.checkMandatory();
-            if (dbFactory != null && objOptions.writeTransferHistory.value()) {
+            if (dbFactory != null) {
                 dbSession = initStatelessSession();
                 dbHelper = new YadeDBOperationHelper(this, eventHandler);
                 if (parentTransferId != null) {
