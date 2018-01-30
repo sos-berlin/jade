@@ -496,7 +496,7 @@ public class YadeDBOperationHelper {
                     file.setErrorMessage(null);
                 }
                 file.setIntegrityHash(fileEntry.getMd5());
-                file.setModificationDate(fileEntry.getModified());
+                file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
                 file.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbSession.beginTransaction();
@@ -552,7 +552,7 @@ public class YadeDBOperationHelper {
                     fileFromDb.setErrorMessage(null);
                 }
                 fileFromDb.setIntegrityHash(fileEntry.getMd5());
-                fileFromDb.setModificationDate(fileEntry.getModificationDate());
+                fileFromDb.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
                 fileFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbSession.beginTransaction();
@@ -605,7 +605,7 @@ public class YadeDBOperationHelper {
                     file.setTargetPath(null);
                 }
                 file.setSize(fileEntry.getFileSize());
-                file.setModificationDate(fileEntry.getModified());
+                file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
                 String lastErrorMessage = fileEntry.getLastErrorMessage();
                 if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
                     file.setErrorCode("ERRORCODE");
@@ -615,7 +615,7 @@ public class YadeDBOperationHelper {
                     file.setErrorMessage(null);
                 }
                 file.setIntegrityHash(fileEntry.getMd5());
-                file.setModificationDate(fileEntry.getModified());
+                file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
                 file.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
                     dbSession.beginTransaction();
@@ -868,6 +868,13 @@ public class YadeDBOperationHelper {
     }
     
     private Date getUTCDateFromInstant(Instant inDate) {
-        return new Date(inDate.toEpochMilli() - TimeZone.getDefault().getOffset(inDate.toEpochMilli()));
+        return getUTCDateFromTimeStamp(inDate.toEpochMilli());
+    }
+    
+    private Date getUTCDateFromTimeStamp(long timestamp) {
+        if (timestamp < 0L) {
+            return null;
+        }
+        return new Date(timestamp - TimeZone.getDefault().getOffset(timestamp));
     }
 }

@@ -686,13 +686,23 @@ public class JADEHistoryJob extends JobSchedulerJobAdapter {
                     throw new JobSchedulerException("illegal value for parameter [" + attrName + "] found [yyyy-MM-dd HH:mm:ss]: " + attrVal);
                 }
             }
-        } else if (MAPPING_FILE_SIZE.equals(mappingName) || MAPPING_PID.equals(mappingName) || MAPPING_PPID.equals(mappingName)
+        } else if (MAPPING_PID.equals(mappingName) || MAPPING_PPID.equals(mappingName)
                 || MAPPING_PORT.equals(mappingName) || MAPPING_JUMP_PORT.equals(mappingName)) {
             if (attrVal.length() == 0) {
                 attrVal = "0";
             } else {
                 try {
                     Integer.parseInt(attrVal);
+                } catch (Exception e) {
+                    throw new JobSchedulerException("illegal non-numeric value for parameter [" + attrName + "]: " + attrVal);
+                }
+            }
+        } else if (MAPPING_FILE_SIZE.equals(mappingName)) {
+            if (attrVal.length() == 0) {
+                attrVal = "0";
+            } else {
+                try {
+                    Long.parseLong(attrVal);
                 } catch (Exception e) {
                     throw new JobSchedulerException("illegal non-numeric value for parameter [" + attrName + "]: " + attrVal);
                 }

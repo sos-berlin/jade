@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Configurations>
+  <Fragments>
+    <ProtocolFragments>
+      <HTTPFragment name="localhost">
+        <URLConnection>
+          <URL>http://localhost:8080</URL>
+        </URLConnection>
+      </HTTPFragment>
+    </ProtocolFragments>
+  </Fragments>
+  <Profiles>
+    <Profile profile_id="http_2_local_one_file">
+      <Operation>
+        <Copy>
+          <CopySource>
+            <CopySourceFragmentRef>
+              <HTTPFragmentRef ref="localhost" />
+            </CopySourceFragmentRef>
+            <SourceFileOptions>
+              <Selection>
+                <FilePathSelection>
+                  <FilePath><![CDATA[/docs/extras.html]]></FilePath>
+                </FilePathSelection>
+              </Selection>
+            </SourceFileOptions>
+          </CopySource>
+          <CopyTarget>
+            <CopyTargetFragmentRef>
+              <LocalTarget />
+            </CopyTargetFragmentRef>
+            <Directory><![CDATA[R:/nobackup/junittests/testdata/JADE_Target_Dir]]></Directory>
+          </CopyTarget>
+        </Copy>
+      </Operation>
+      <Logging>
+        <DebugLevel>9</DebugLevel>
+      </Logging>
+    </Profile>
+  </Profiles>
+</Configurations>
