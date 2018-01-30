@@ -359,6 +359,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.keepModificationDate = objOptions.keepModificationDate;
         // special handling: options.remove_files = objOptions.remove_files;
         options.verbose = objOptions.verbose;
+        options.protocolCommandListener = objOptions.protocolCommandListener;
         options.zeroByteTransfer = objOptions.zeroByteTransfer;
         options.checkIntegrityHash = objOptions.checkIntegrityHash;
         options.integrityHashType = objOptions.integrityHashType;
@@ -383,6 +384,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.skipTransfer = objOptions.skipTransfer;
         options.keepModificationDate = objOptions.keepModificationDate;
         options.verbose = objOptions.verbose;
+        options.protocolCommandListener = objOptions.protocolCommandListener;
         options.zeroByteTransfer = objOptions.zeroByteTransfer;
         options.checkIntegrityHash = objOptions.checkIntegrityHash;
         options.createIntegrityHashFile = objOptions.createIntegrityHashFile;
