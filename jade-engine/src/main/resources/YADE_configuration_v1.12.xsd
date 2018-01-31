@@ -343,7 +343,7 @@
          <xs:appinfo>
 				        <FlatParameter name="host" mail_name="mail_smtp"/>
                 <Note include="CredentialStore-Fields"/>
-            </xs:appinfo>
+			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -593,7 +593,7 @@ SSH, etc.) server to which a connection has to be made.</p>
          <xs:appinfo>
 				        <FlatParameter name="user" mail_name="mail_smtp_user"/>
                 <Note include="CredentialStore-Fields"/>
-            </xs:appinfo>
+			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -2504,7 +2504,7 @@ SSH, etc.) server to which a connection has to be made.</p>
          <xs:appinfo>
 				        <FlatParameter name="ssh_auth_file"/>
                 <Note include="CredentialStore-Fields"/>
-            </xs:appinfo>
+			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AuthenticationFile">
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -10413,7 +10413,7 @@ A fragment is referenced via this attribute value by a transfer profile.
          <xs:appinfo>
 				        <FlatParameter name="use_credential_store" value="true"/>
                 <Note include="CredentialStore-Fields"/>
-       	    </xs:appinfo>
+			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragment">
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -10482,12 +10482,15 @@ A fragment is referenced via this attribute value by a transfer profile.
                <p>
 			Any number of credential store fragments can be configured and are distinguished by YADE according to their <em>name</em> attribute.
 		</p>
+               <p>
 			A fragment is referenced by a transfer <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Profile"
                      shape="rect">Profile</a> 
 			using the value of the <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragmentRef"
                      shape="rect">CredentialStoreFragmentRef</a> <em>ref</em> attribute.
+		</p>
 				
                 <p/>
+               <p>
 			               <strong>Referencing CredentialStore fields.</strong>
                </p>
                <p>
@@ -10500,9 +10503,14 @@ A fragment is referenced via this attribute value by a transfer profile.
                <p>        <strong>cs://[<em>entry_path</em>]@<em>entry_field</em>
                   </strong>
                </p>
+               <p>
+			where
+			<ul>
+                     <li>
                         <strong>
                            <em>cs://</em>
                         </strong>        is a constant prefix that is used by YADE to identify this setting to be a reference to a <em>CredentialStore</em>.</li>
+                     <li>
                         <strong>
                            <em>entry_path</em>
                         </strong>    
@@ -10514,6 +10522,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                            <em>entry_field</em>
                         </strong>        
 					is one of the standard fields available in a <em>CredentialStore</em>:
+					<ul>
                            <li>
                               <em>title</em>
                            </li>
@@ -10532,17 +10541,23 @@ A fragment is referenced via this attribute value by a transfer profile.
                            <li>
                               <em>attachment</em>
                            </li>
+                        </ul>
                     or the <em>custom fields</em>.
              	</li>
+                  </ul>
+		             </p>
                <p/>
+               <p>
                   <strong>
                      <em>&lt;Hostname&gt;</em>
                   </strong> element:
             <ul>
                      <li>Usage like the examples below.</li>
                      <li>If the entry field value is defined with <em>host:port</em>, YADE sets the <em>&lt;Hostname&gt;</em> and <em>&lt;Port&gt;</em> automatically.</li>
+                  </ul>
      	         </p>
                <p/>
+               <p>
                   <strong>Examples</strong>
                   <ul>
                      <li>Examples for fully specified entry path:
