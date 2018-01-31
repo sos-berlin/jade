@@ -16,7 +16,7 @@
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Configurations.html">Configurations</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Configurations.html">Configurations</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Configurations">Configurations</a>
                   </li>
@@ -185,7 +185,7 @@
                      <strong>References</strong>
                      <ul>
                         <li>Schema: <a target="_blank"
-                              href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_.html"/>
+                              href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_.html"/>
                         </li>
                         <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Hostname"/>
                         </li>
@@ -201,7 +201,7 @@
                      <strong>References</strong>
                      <ul>
                         <li>Schema: <a target="_blank"
-                              href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_.html"/>
+                              href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_.html"/>
                         </li>
                         <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Port"/>
                         </li>
@@ -290,7 +290,7 @@
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ConfigurationFile.html">ConfigurationFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ConfigurationFile.html">ConfigurationFile</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ConfigurationFile">ConfigurationFile</a>
                   </li>
@@ -320,7 +320,7 @@
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SystemPropertyFile.html">SystemPropertyFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SystemPropertyFile.html">SystemPropertyFile</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SystemPropertyFile">SystemPropertyFile</a>
                   </li>
@@ -349,7 +349,7 @@
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Hostname.html">Hostname</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Hostname.html">Hostname</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -557,7 +557,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Port.html">Port</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Port.html">Port</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -599,7 +599,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Account.html">Account</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Account.html">Account</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -814,7 +814,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Password.html">Password</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Password.html">Password</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -1036,7 +1036,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PassiveMode.html">PassiveMode</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PassiveMode.html">PassiveMode</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+PassiveMode">PassiveMode</a>
                   </li>
@@ -1067,7 +1067,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_TransferMode.html">TransferMode</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_TransferMode.html">TransferMode</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+TransferMode">TransferMode</a>
                   </li>
@@ -1117,7 +1117,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ProcessingCommandDelimiter.html">ProcessingCommandDelimiter</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ProcessingCommandDelimiter.html">ProcessingCommandDelimiter</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ProcessingCommandDelimiter">ProcessingCommandDelimiter</a>
                   </li>
@@ -1152,7 +1152,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CumulateFiles.html">CumulateFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CumulateFiles.html">CumulateFiles</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CumulateFiles">CumulateFiles</a>
                   </li>
@@ -1208,7 +1208,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CompressFiles.html">CompressFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CompressFiles.html">CompressFiles</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CompressFiles">CompressFiles</a>
                   </li>
@@ -1257,7 +1257,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Rename.html">Rename</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Rename.html">Rename</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename">Rename</a>
                   </li>
@@ -1296,7 +1296,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AcceptUntrustedCertificate.html">AcceptUntrustedCertificate</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AcceptUntrustedCertificate.html">AcceptUntrustedCertificate</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AcceptUntrustedCertificate">AcceptUntrustedCertificate</a>
                   </li>
@@ -1350,7 +1350,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_DisableCertificateHostnameVerification.html">DisableCertificateHostnameVerification</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DisableCertificateHostnameVerification.html">DisableCertificateHostnameVerification</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+DisableCertificateHostnameVerification">DisableCertificateHostnameVerification</a>
                   </li>
@@ -1382,7 +1382,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Fragments.html">Fragments</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Fragments.html">Fragments</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Fragments">Fragments</a>
                   </li>
@@ -1422,7 +1422,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MailFragment.html">MailFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MailFragment.html">MailFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MailFragment">MailFragment</a>
                   </li>
@@ -1476,7 +1476,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServiceFragment.html">BackgroundServiceFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceFragment.html">BackgroundServiceFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragment">BackgroundServiceFragment</a>
                   </li>
@@ -1560,7 +1560,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ProtocolFragments.html">ProtocolFragments</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ProtocolFragments.html">ProtocolFragments</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ProtocolFragments">ProtocolFragments</a>
                   </li>
@@ -1619,7 +1619,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FTPFragment.html">FTPFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FTPFragment.html">FTPFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPFragment">FTPFragment</a>
                   </li>
@@ -1698,7 +1698,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SFTPFragment.html">SFTPFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SFTPFragment.html">SFTPFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SFTPFragment">SFTPFragment</a>
                   </li>
@@ -1768,7 +1768,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FTPSFragment.html">FTPSFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FTPSFragment.html">FTPSFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPSFragment">FTPSFragment</a>
                   </li>
@@ -1839,7 +1839,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_WebDAVFragment.html">WebDAVFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_WebDAVFragment.html">WebDAVFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+WebDAVFragment">WebDAVFragment</a>
                   </li>
@@ -1910,7 +1910,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HTTPFragment.html">HTTPFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HTTPFragment.html">HTTPFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HTTPFragment">HTTPFragment</a>
                   </li>
@@ -1979,7 +1979,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HTTPSFragment.html">HTTPSFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HTTPSFragment.html">HTTPSFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HTTPSFragment">HTTPSFragment</a>
                   </li>
@@ -2050,7 +2050,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SMBFragment.html">SMBFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SMBFragment.html">SMBFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SMBFragment">SMBFragment</a>
                   </li>
@@ -2115,7 +2115,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BasicAuthentication.html">BasicAuthentication</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BasicAuthentication.html">BasicAuthentication</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BasicAuthentication">BasicAuthentication</a>
                   </li>
@@ -2152,7 +2152,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SMBAuthentication.html">SMBAuthentication</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SMBAuthentication.html">SMBAuthentication</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SMBAuthentication">SMBAuthentication</a>
                   </li>
@@ -2181,7 +2181,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SSHAuthentication.html">SSHAuthentication</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SSHAuthentication.html">SSHAuthentication</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SSHAuthentication">SSHAuthentication</a>
                   </li>
@@ -2212,7 +2212,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BasicConnection.html">BasicConnection</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BasicConnection.html">BasicConnection</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BasicConnection">BasicConnection</a>
                   </li>
@@ -2318,7 +2318,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HTTPProxy.html">HTTPProxy</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HTTPProxy.html">HTTPProxy</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HTTPProxy">HTTPProxy</a>
                   </li>
@@ -2359,7 +2359,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SOCKS4Proxy.html">SOCKS4Proxy</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SOCKS4Proxy.html">SOCKS4Proxy</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SOCKS4Proxy">SOCKS4Proxy</a>
                   </li>
@@ -2389,7 +2389,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SOCKS5Proxy.html">SOCKS5Proxy</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SOCKS5Proxy.html">SOCKS5Proxy</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SOCKS5Proxy">SOCKS5Proxy</a>
                   </li>
@@ -2419,7 +2419,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AuthenticationMethodPassword.html">AuthenticationMethodPassword</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AuthenticationMethodPassword.html">AuthenticationMethodPassword</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -2461,7 +2461,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AuthenticationMethodPublickey.html">AuthenticationMethodPublickey</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AuthenticationMethodPublickey.html">AuthenticationMethodPublickey</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -2510,7 +2510,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AuthenticationFile.html">AuthenticationFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AuthenticationFile.html">AuthenticationFile</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AuthenticationFile">AuthenticationFile</a>
                   </li>
@@ -2737,7 +2737,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Passphrase.html">Passphrase</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Passphrase.html">Passphrase</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -2957,7 +2957,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FTPSProtocol.html">FTPSProtocol</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FTPSProtocol.html">FTPSProtocol</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPSProtocol">FTPSProtocol</a>
                   </li>
@@ -2994,7 +2994,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SecurityMode.html">SecurityMode</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SecurityMode.html">SecurityMode</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3029,7 +3029,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_URLConnection.html">URLConnection</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_URLConnection.html">URLConnection</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+URLConnection">URLConnection</a>
                   </li>
@@ -3071,7 +3071,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_LocalSource.html">LocalSource</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_LocalSource.html">LocalSource</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+LocalSource">LocalSource</a>
                   </li>
@@ -3112,7 +3112,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_LocalTarget.html">LocalTarget</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_LocalTarget.html">LocalTarget</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+LocalTarget">LocalTarget</a>
                   </li>
@@ -3150,7 +3150,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_From.html">From</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_From.html">From</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3183,7 +3183,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_To.html">To</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_To.html">To</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3216,7 +3216,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CC.html">CC</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CC.html">CC</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3249,7 +3249,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BCC.html">BCC</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BCC.html">BCC</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3282,7 +3282,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Subject.html">Subject</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Subject.html">Subject</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3315,7 +3315,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Body.html">Body</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Body.html">Body</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3348,7 +3348,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Attachment.html">Attachment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Attachment.html">Attachment</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3382,7 +3382,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Encoding.html">Encoding</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Encoding.html">Encoding</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3418,7 +3418,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ContentType.html">ContentType</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ContentType.html">ContentType</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3448,7 +3448,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_NotificationTriggers.html">NotificationTriggers</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_NotificationTriggers.html">NotificationTriggers</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+NotificationTriggers">NotificationTriggers</a>
                   </li>
@@ -3486,7 +3486,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_OnSuccess.html">OnSuccess</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_OnSuccess.html">OnSuccess</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3514,7 +3514,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_OnError.html">OnError</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_OnError.html">OnError</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3542,7 +3542,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_OnEmptyFiles.html">OnEmptyFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_OnEmptyFiles.html">OnEmptyFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -3567,7 +3567,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MailFragmentRef.html">MailFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MailFragmentRef.html">MailFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MailFragmentRef">MailFragmentRef</a>
                   </li>
@@ -3612,7 +3612,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServiceFragmentRef.html">BackgroundServiceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceFragmentRef.html">BackgroundServiceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragmentRef">BackgroundServiceFragmentRef</a>
                   </li>
@@ -3660,7 +3660,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MailServerFragmentRef.html">MailServerFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MailServerFragmentRef.html">MailServerFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MailServerFragmentRef">MailServerFragmentRef</a>
                   </li>
@@ -3702,7 +3702,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Profiles.html">Profiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Profiles.html">Profiles</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Profiles">Profiles</a>
                   </li>
@@ -3731,7 +3731,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Profile.html">Profile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Profile.html">Profile</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Profile">Profile</a>
                   </li>
@@ -3792,7 +3792,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_General.html">General</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_General.html">General</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+General">General</a>
                   </li>
@@ -3832,7 +3832,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Operation.html">Operation</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Operation.html">Operation</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Operation">Operation</a>
                   </li>
@@ -3874,7 +3874,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Copy.html">Copy</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Copy.html">Copy</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Copy">Copy</a>
                   </li>
@@ -3923,7 +3923,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Move.html">Move</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Move.html">Move</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Move">Move</a>
                   </li>
@@ -3972,7 +3972,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CopySource.html">CopySource</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CopySource.html">CopySource</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CopySource">CopySource</a>
                   </li>
@@ -4007,8 +4007,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="AlternativeCopySourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-                <xs:element ref="SourceFileOptions" minOccurs="0"/>
+                <xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -4019,7 +4018,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MoveSource.html">MoveSource</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MoveSource.html">MoveSource</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MoveSource">MoveSource</a>
                   </li>
@@ -4054,8 +4053,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="AlternativeMoveSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-        		  <xs:element ref="SourceFileOptions" minOccurs="0"/>
+         		<xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -4066,7 +4064,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CopySourceFragmentRef.html">CopySourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CopySourceFragmentRef.html">CopySourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CopySourceFragmentRef">CopySourceFragmentRef</a>
                   </li>
@@ -4096,7 +4094,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_GetListSourceFragmentRef.html">GetListSourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_GetListSourceFragmentRef.html">GetListSourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+GetListSourceFragmentRef">GetListSourceFragmentRef</a>
                   </li>
@@ -4126,7 +4124,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MoveSourceFragmentRef.html">MoveSourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MoveSourceFragmentRef.html">MoveSourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MoveSourceFragmentRef">MoveSourceFragmentRef</a>
                   </li>
@@ -4156,7 +4154,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_RemoveSourceFragmentRef.html">RemoveSourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RemoveSourceFragmentRef.html">RemoveSourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+RemoveSourceFragmentRef">RemoveSourceFragmentRef</a>
                   </li>
@@ -4186,7 +4184,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FTPFragmentRef.html">FTPFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FTPFragmentRef.html">FTPFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPFragmentRef">FTPFragmentRef</a>
                   </li>
@@ -4268,7 +4266,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SFTPFragmentRef.html">SFTPFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SFTPFragmentRef.html">SFTPFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SFTPFragmentRef">SFTPFragmentRef</a>
                   </li>
@@ -4331,7 +4329,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandBeforeFile.html">CommandBeforeFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandBeforeFile.html">CommandBeforeFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -4480,7 +4478,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandBeforeOperation.html">CommandBeforeOperation</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandBeforeOperation.html">CommandBeforeOperation</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -4517,7 +4515,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandAfterFile.html">CommandAfterFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandAfterFile.html">CommandAfterFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -4659,7 +4657,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandAfterOperationOnSuccess.html">CommandAfterOperationOnSuccess</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandAfterOperationOnSuccess.html">CommandAfterOperationOnSuccess</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -4693,7 +4691,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandAfterOperationOnError.html">CommandAfterOperationOnError</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandAfterOperationOnError.html">CommandAfterOperationOnError</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -4733,7 +4731,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandAfterOperationFinal.html">CommandAfterOperationFinal</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandAfterOperationFinal.html">CommandAfterOperationFinal</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -4781,7 +4779,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FTPSFragmentRef.html">FTPSFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FTPSFragmentRef.html">FTPSFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPSFragmentRef">FTPSFragmentRef</a>
                   </li>
@@ -4824,7 +4822,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_WebDAVFragmentRef.html">WebDAVFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_WebDAVFragmentRef.html">WebDAVFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+WebDAVFragmentRef">WebDAVFragmentRef</a>
                   </li>
@@ -4894,7 +4892,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HTTPFragmentRef.html">HTTPFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HTTPFragmentRef.html">HTTPFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HTTPFragment">HTTPFragmentRef</a>
                   </li>
@@ -4938,7 +4936,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HTTPSFragmentRef.html">HTTPSFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HTTPSFragmentRef.html">HTTPSFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HTTPSFragmentRef">HTTPSFragmentRef</a>
                   </li>
@@ -4982,7 +4980,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SMBFragmentRef.html">SMBFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SMBFragmentRef.html">SMBFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SMBFragmentRef">SMBFragmentRef</a>
                   </li>
@@ -5025,7 +5023,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SourceFileOptions">SourceFileOptions</a>
                   </li>
@@ -5045,15 +5043,14 @@ SSH, etc.) server to which a connection has to be made.</p>
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
-				<!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-                <xs:element ref="Selection" minOccurs="0">
+			         <xs:element ref="Selection">
 					          <xs:annotation>
                   <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection">
                      <div xmlns="http://www.w3.org/1999/xhtml">
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection">SourceFileOptions</a>
                            </li>
@@ -5079,7 +5076,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CheckSteadyState">SourceFileOptions</a>
                            </li>
@@ -5105,7 +5102,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directives">SourceFileOptions</a>
                            </li>
@@ -5137,7 +5134,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SourceFileOptions.html">SourceFileOptions</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Polling">SourceFileOptions</a>
                            </li>
@@ -5172,7 +5169,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Selection.html">Selection</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Selection.html">Selection</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection">Selection</a>
                   </li>
@@ -5252,7 +5249,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FilePath.html">FilePath</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FilePath.html">FilePath</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FilePath">FilePath</a>
                   </li>
@@ -5280,13 +5277,23 @@ SSH, etc.) server to which a connection has to be made.</p>
 			More than one file can be specified by using a ";" between the file names.
 			All files will be processed in the order in which they are defined in this parameter.
 		</p>
+               <p/>
                <p>
-			This parameter accepts absolute and relative paths of files that are to be processed.
-			In case of a relative path...
+			This parameter accepts <em>absolute</em>, <em>relative</em> and <em>runtime</em> paths of files that are to be processed.
+        </p>
+               <p>
+			In case of a <em>relative</em> path:
 			<ul>
                      <li>if the parameter <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
                            shape="rect">Directory</a> is specified, the path of each specified file is set relative to that directory.</li>
                      <li>otherwise the path is relative to the server's working directory, where the working directory depends on the server configuration.</li>
+                  </ul>
+		             </p>
+               <p>
+			In case of a <em>runtime</em> path (file to process for a file-order in a <em>file_order_source</em> job chain):
+			<ul>
+                     <li>the value must be set to <em>${scheduler_file_path}</em>
+                     </li>
                   </ul>
 		             </p>
             </div>
@@ -5345,7 +5352,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FileSpec.html">FileSpec</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FileSpec.html">FileSpec</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FileSpec">FileSpec</a>
                   </li>
@@ -5401,7 +5408,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Directory.html">Directory</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Directory.html">Directory</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory">Directory</a>
                   </li>
@@ -5457,7 +5464,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Recursive.html">Recursive</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Recursive.html">Recursive</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5533,7 +5540,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FileList.html">FileList</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FileList.html">FileList</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FileList">FileList</a>
                   </li>
@@ -5587,7 +5594,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Polling.html">Polling</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Polling.html">Polling</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Polling">Polling</a>
                   </li>
@@ -5629,7 +5636,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PollInterval.html">PollInterval</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PollInterval.html">PollInterval</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5660,7 +5667,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PollTimeout.html">PollTimeout</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PollTimeout.html">PollTimeout</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5701,7 +5708,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MinFiles.html">MinFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MinFiles.html">MinFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5737,7 +5744,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_WaitForSourceFolder.html">WaitForSourceFolder</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_WaitForSourceFolder.html">WaitForSourceFolder</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5772,7 +5779,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PollErrorState.html">PollErrorState</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PollErrorState.html">PollErrorState</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5821,7 +5828,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PollingServer.html">PollingServer</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PollingServer.html">PollingServer</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5867,7 +5874,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PollingServerDuration.html">PollingServerDuration</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PollingServerDuration.html">PollingServerDuration</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5907,7 +5914,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_PollForever.html">PollForever</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PollForever.html">PollForever</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -5984,7 +5991,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Directives.html">Directives</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Directives.html">Directives</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directives">Directives</a>
                   </li>
@@ -6022,7 +6029,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_DisableErrorOnNoFilesFound.html">DisableErrorOnNoFilesFound</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DisableErrorOnNoFilesFound.html">DisableErrorOnNoFilesFound</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+DisableErrorOnNoFilesFound">DisableErrorOnNoFilesFound</a>
                   </li>
@@ -6073,7 +6080,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_TransferZeroByteFiles.html">TransferZeroByteFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_TransferZeroByteFiles.html">TransferZeroByteFiles</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+TransferZeroByteFiles">TransferZeroByteFiles</a>
                   </li>
@@ -6136,7 +6143,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CopyTargetFragmentRef.html">CopyTargetFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CopyTargetFragmentRef.html">CopyTargetFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CopyTargetFragmentRef">CopyTargetFragmentRef</a>
                   </li>
@@ -6166,7 +6173,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MoveTargetFragmentRef.html">MoveTargetFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MoveTargetFragmentRef.html">MoveTargetFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MoveTargetFragmentRef">MoveTargetFragmentRef</a>
                   </li>
@@ -6196,7 +6203,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CopyTarget.html">CopyTarget</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CopyTarget.html">CopyTarget</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CopyTarget">CopyTarget</a>
                   </li>
@@ -6241,7 +6248,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MoveTarget.html">MoveTarget</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MoveTarget.html">MoveTarget</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MoveTarget">MoveTarget</a>
                   </li>
@@ -6290,7 +6297,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckSize.html">CheckSize</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckSize.html">CheckSize</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -6324,7 +6331,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_TargetFileOptions.html">TargetFileOptions</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_TargetFileOptions.html">TargetFileOptions</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+TargetFileOptions">TargetFileOptions</a>
                   </li>
@@ -6366,7 +6373,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_DisableOverwriteFiles.html">DisableOverwriteFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DisableOverwriteFiles.html">DisableOverwriteFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -6398,7 +6405,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AppendFiles.html">AppendFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AppendFiles.html">AppendFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -6438,7 +6445,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CreateIntegrityHashFile.html">CreateIntegrityHashFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CreateIntegrityHashFile.html">CreateIntegrityHashFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -6475,7 +6482,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_TransferOptions.html">TransferOptions</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_TransferOptions.html">TransferOptions</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+TransferOptions">TransferOptions</a>
                   </li>
@@ -6502,7 +6509,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Atomicity.html">Atomicity</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Atomicity.html">Atomicity</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Atomicity">Atomicity</a>
                   </li>
@@ -6525,7 +6532,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AtomicPrefix.html">AtomicPrefix</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AtomicPrefix.html">AtomicPrefix</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AtomicPrefix">AtomicPrefix</a>
                   </li>
@@ -6569,7 +6576,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AtomicSuffix.html">AtomicSuffix</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AtomicSuffix.html">AtomicSuffix</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AtomicSuffix">AtomicSuffix</a>
                   </li>
@@ -6615,7 +6622,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ConcurrentTransfer.html">ConcurrentTransfer</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ConcurrentTransfer.html">ConcurrentTransfer</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ConcurrentTransfer">ConcurrentTransfer</a>
                   </li>
@@ -6649,7 +6656,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MaxConcurrentTransfers.html">MaxConcurrentTransfers</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MaxConcurrentTransfers.html">MaxConcurrentTransfers</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -6684,7 +6691,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Transactional.html">Transactional</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Transactional.html">Transactional</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Transactional">Transactional</a>
                   </li>
@@ -6738,7 +6745,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckIntegrityHash.html">CheckIntegrityHash</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckIntegrityHash.html">CheckIntegrityHash</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CheckIntegrityHash">CheckIntegrityHash</a>
                   </li>
@@ -6781,7 +6788,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckIntegrityHash.html">CheckIntegrityHash</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckIntegrityHash.html">CheckIntegrityHash</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+">CheckIntegrityHash</a>
                            </li>
@@ -6823,7 +6830,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HashAlgorithm.html">HashAlgorithm</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HashAlgorithm.html">HashAlgorithm</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HashAlgorithm">HashAlgorithm</a>
                   </li>
@@ -6870,7 +6877,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckSteadyState.html">CheckSteadyState</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckSteadyState.html">CheckSteadyState</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CheckSteadyState">CheckSteadyState</a>
                   </li>
@@ -6930,7 +6937,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Remove.html">Remove</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Remove.html">Remove</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Remove">Remove</a>
                   </li>
@@ -7009,7 +7016,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_GetList.html">GetList</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_GetList.html">GetList</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+GetList">GetList</a>
                   </li>
@@ -7053,7 +7060,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServiceHost.html">BackgroundServiceHost</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceHost.html">BackgroundServiceHost</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7102,7 +7109,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServicePort.html">BackgroundServicePort</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServicePort.html">BackgroundServicePort</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7149,7 +7156,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServiceProtocol.html">BackgroundServiceProtocol</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceProtocol.html">BackgroundServiceProtocol</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7191,7 +7198,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BackgroundServiceJobChainName.html">BackgroundServiceJobChainName</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceJobChainName.html">BackgroundServiceJobChainName</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7234,7 +7241,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_HistoryFile.html">HistoryFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HistoryFile.html">HistoryFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7282,7 +7289,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_DisableHistoryFileAppendMode.html">DisableHistoryFileAppendMode</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DisableHistoryFileAppendMode.html">DisableHistoryFileAppendMode</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7313,7 +7320,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_DebugLevel.html">DebugLevel</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DebugLevel.html">DebugLevel</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7358,7 +7365,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ConfigurationFiles.html">ConfigurationFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ConfigurationFiles.html">ConfigurationFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7394,7 +7401,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SystemPropertyFiles.html">SystemPropertyFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SystemPropertyFiles.html">SystemPropertyFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7436,7 +7443,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Logging.html">Logging</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Logging.html">Logging</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Logging">Logging</a>
                   </li>
@@ -7480,7 +7487,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_LogFile.html">LogFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_LogFile.html">LogFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7524,7 +7531,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Log4JPropertyFile.html">Log4JPropertyFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Log4JPropertyFile.html">Log4JPropertyFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7585,7 +7592,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckSteadyStateInterval.html">CheckSteadyStateInterval</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckSteadyStateInterval.html">CheckSteadyStateInterval</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7621,7 +7628,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckSteadyStateCount.html">CheckSteadyStateCount</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckSteadyStateCount.html">CheckSteadyStateCount</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7681,7 +7688,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CheckSteadyStateErrorState.html">CheckSteadyStateErrorState</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CheckSteadyStateErrorState.html">CheckSteadyStateErrorState</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7722,7 +7729,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpFragmentRef.html">JumpFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpFragmentRef.html">JumpFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragmentRef">JumpFragmentRef</a>
                   </li>
@@ -7766,7 +7773,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Domain.html">Domain</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Domain.html">Domain</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7799,7 +7806,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ResultSetFile.html">ResultSetFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ResultSetFile.html">ResultSetFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7838,7 +7845,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ExpectedResultSetCount.html">ExpectedResultSetCount</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ExpectedResultSetCount.html">ExpectedResultSetCount</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7869,7 +7876,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_RaiseErrorIfResultSetIs.html">RaiseErrorIfResultSetIs</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RaiseErrorIfResultSetIs.html">RaiseErrorIfResultSetIs</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -7974,7 +7981,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_EmptyResultSetState.html">EmptyResultSetState</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_EmptyResultSetState.html">EmptyResultSetState</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8040,7 +8047,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ResultSet.html">ResultSet</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ResultSet.html">ResultSet</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ResultSet">ResultSet</a>
                   </li>
@@ -8089,7 +8096,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_StrictHostkeyChecking.html">StrictHostkeyChecking</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_StrictHostkeyChecking.html">StrictHostkeyChecking</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+StrictHostkeyChecking">StrictHostkeyChecking</a>
                   </li>
@@ -8128,7 +8135,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_KeepModificationDate.html">KeepModificationDate</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_KeepModificationDate.html">KeepModificationDate</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8167,7 +8174,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ProtocolCommandListener.html">ProtocolCommandListener</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ProtocolCommandListener.html">ProtocolCommandListener</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8208,7 +8215,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpDirectory.html">JumpDirectory</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpDirectory.html">JumpDirectory</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8325,7 +8332,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpFragment.html">JumpFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpFragment.html">JumpFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpFragment</a>
                   </li>
@@ -8368,7 +8375,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpFragment.html">JumpFragment</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpFragment.html">JumpFragment</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BasicConnection">JumpFragment</a>
                            </li>
@@ -8410,7 +8417,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpFragment.html">JumpFragment</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpFragment.html">JumpFragment</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SSHAuthentication">JumpFragment</a>
                            </li>
@@ -8462,7 +8469,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <strong>References</strong>
                         <ul>
                            <li>Schema: <a target="_blank"
-                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpFragment.html">JumpFragment</a>
+                                 href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpFragment.html">JumpFragment</a>
                            </li>
                            <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+StrictHostkeyChecking">JumpFragment</a>
                            </li>
@@ -8518,9 +8525,19 @@ A fragment is referenced via this attribute value by a transfer profile.
 	  <xs:complexType name="SSHAuthenticationType">
 		    <xs:sequence>
 			      <xs:element ref="Account"/>
+			      <!-- YADE-462 -->
 			      <xs:choice>
-				        <xs:element ref="AuthenticationMethodPassword"/>
-				        <xs:element ref="AuthenticationMethodPublickey"/>
+                <xs:element ref="PreferredAuthentications" minOccurs="0"/>
+                <xs:element ref="RequiredAuthentications" minOccurs="0"/>
+			      </xs:choice>
+	        <xs:choice>
+                <xs:sequence>
+                    <xs:element ref="AuthenticationMethodPassword"/>
+					          <xs:element ref="AuthenticationMethodPublickey" minOccurs="0"/>
+				        </xs:sequence>
+				        <xs:sequence>
+                    <xs:element ref="AuthenticationMethodPublickey"/>
+				        </xs:sequence>
 			      </xs:choice>
 		    </xs:sequence>
 	  </xs:complexType>
@@ -8543,7 +8560,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_RemoveSource.html">RemoveSource</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RemoveSource.html">RemoveSource</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+RemoveSource">RemoveSource</a>
                   </li>
@@ -8578,8 +8595,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="AlternativeRemoveSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-            	<xs:element ref="SourceFileOptions" minOccurs="0"/>
+            	<xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -8590,7 +8606,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_GetListSource.html">GetListSource</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_GetListSource.html">GetListSource</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+GetListSource">GetListSource</a>
                   </li>
@@ -8625,8 +8641,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="AlternativeGetListSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-         		<xs:element ref="SourceFileOptions" minOccurs="0"/>
+         		<xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -8637,7 +8652,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Client.html">Client</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Client.html">Client</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Client">Client</a>
                   </li>
@@ -8675,7 +8690,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ZlibCompressionLevel.html">ZlibCompressionLevel</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ZlibCompressionLevel.html">ZlibCompressionLevel</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8717,7 +8732,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ZlibCompression.html">ZlibCompression</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ZlibCompression.html">ZlibCompression</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8754,7 +8769,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_KeyStoreType.html">KeyStoreType</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_KeyStoreType.html">KeyStoreType</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8792,7 +8807,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_KeyStoreFile.html">KeyStoreFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_KeyStoreFile.html">KeyStoreFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8826,7 +8841,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_KeyStorePassword.html">KeyStorePassword</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_KeyStorePassword.html">KeyStorePassword</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -8864,7 +8879,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_FTPSClientSecurity.html">FTPSClientSecurity</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_FTPSClientSecurity.html">FTPSClientSecurity</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPSClientSecurity">FTPSClientSecurity</a>
                   </li>
@@ -8887,7 +8902,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CumulativeFileSeparator.html">CumulativeFileSeparator</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CumulativeFileSeparator.html">CumulativeFileSeparator</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9034,7 +9049,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CumulativeFilename.html">CumulativeFilename</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CumulativeFilename.html">CumulativeFilename</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9071,7 +9086,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CumulativeFileDelete.html">CumulativeFileDelete</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CumulativeFileDelete.html">CumulativeFileDelete</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9104,7 +9119,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_QueueDirectory.html">QueueDirectory</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_QueueDirectory.html">QueueDirectory</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9140,7 +9155,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MaxFiles.html">MaxFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MaxFiles.html">MaxFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9183,7 +9198,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_BufferSize.html">BufferSize</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BufferSize.html">BufferSize</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9229,7 +9244,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CommandBeforeRename.html">CommandBeforeRename</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CommandBeforeRename.html">CommandBeforeRename</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9380,7 +9395,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_URL.html">URL</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_URL.html">URL</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9471,7 +9486,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MergeOrderParameters.html">MergeOrderParameters</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MergeOrderParameters.html">MergeOrderParameters</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9500,7 +9515,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_NextState.html">NextState</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_NextState.html">NextState</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9533,7 +9548,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CreateOrderForAllFiles.html">CreateOrderForAllFiles</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CreateOrderForAllFiles.html">CreateOrderForAllFiles</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9569,7 +9584,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_OrderJobChainName.html">OrderJobChainName</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_OrderJobChainName.html">OrderJobChainName</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9608,7 +9623,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CreateOrder.html">CreateOrder</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CreateOrder.html">CreateOrder</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9652,7 +9667,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JobScheduler.html">JobScheduler</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JobScheduler.html">JobScheduler</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JobScheduler">JobScheduler</a>
                   </li>
@@ -9681,7 +9696,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CompressedFileExtension.html">CompressedFileExtension</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CompressedFileExtension.html">CompressedFileExtension</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9714,7 +9729,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_DisableMakeDirectories.html">DisableMakeDirectories</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DisableMakeDirectories.html">DisableMakeDirectories</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9762,7 +9777,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ReplaceWhat.html">ReplaceWhat</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ReplaceWhat.html">ReplaceWhat</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9856,7 +9871,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ReplaceWith.html">ReplaceWith</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ReplaceWith.html">ReplaceWith</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -9959,7 +9974,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_NotificationFragments.html">NotificationFragments</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_NotificationFragments.html">NotificationFragments</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+NotificationFragments">NotificationFragments</a>
                   </li>
@@ -9990,7 +10005,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSStoreType.html">CSStoreType</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSStoreType.html">CSStoreType</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10130,7 +10145,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSEntryPath.html">CSEntryPath</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSEntryPath.html">CSEntryPath</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10166,7 +10181,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSPassword.html">CSPassword</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSPassword.html">CSPassword</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10203,7 +10218,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSKeyFile.html">CSKeyFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSKeyFile.html">CSKeyFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10240,7 +10255,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSFile.html">CSFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSFile.html">CSFile</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10281,7 +10296,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Notifications.html">Notifications</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Notifications.html">Notifications</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Notifications">Notifications</a>
                   </li>
@@ -10334,7 +10349,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CredentialStoreFragments.html">CredentialStoreFragments</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CredentialStoreFragments.html">CredentialStoreFragments</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragments">CredentialStoreFragments</a>
                   </li>
@@ -10374,7 +10389,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MailServerFragments.html">MailServerFragments</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MailServerFragments.html">MailServerFragments</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MailServerFragments">MailServerFragments</a>
                   </li>
@@ -10404,7 +10419,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CredentialStoreFragment.html">CredentialStoreFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CredentialStoreFragment.html">CredentialStoreFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragment">CredentialStoreFragment</a>
                   </li>
@@ -10681,7 +10696,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_MailServerFragment.html">MailServerFragment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_MailServerFragment.html">MailServerFragment</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MailServerFragment">MailServerFragment</a>
                   </li>
@@ -10731,7 +10746,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CredentialStoreFragmentRef.html">CredentialStoreFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CredentialStoreFragmentRef.html">CredentialStoreFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragmentRef">CredentialStoreFragmentRef</a>
                   </li>
@@ -10776,7 +10791,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_SupplyingClient.html">SupplyingClient</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SupplyingClient.html">SupplyingClient</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10808,7 +10823,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_ReceivingClient.html">ReceivingClient</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ReceivingClient.html">ReceivingClient</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10848,7 +10863,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_History.html">History</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_History.html">History</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+History">History</a>
                   </li>
@@ -10916,7 +10931,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSAuthentication.html">CSAuthentication</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSAuthentication.html">CSAuthentication</a>
                   </li>
                   <li>Mapping:
             <ul>
@@ -10951,7 +10966,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSExportAttachment.html">CSExportAttachment</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSExportAttachment.html">CSExportAttachment</a>
                   </li>
                   <li>Release:
             <ul>
@@ -10988,7 +11003,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommand.html">JumpCommand</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommand.html">JumpCommand</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommand</a>
                   </li>
@@ -11028,7 +11043,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommandBeforeFile.html">JumpCommandBeforeFile</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandBeforeFile.html">JumpCommandBeforeFile</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommandBeforeFile</a>
                   </li>
@@ -11070,7 +11085,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommandAfterFileOnSuccess.html">JumpCommandAfterFileOnSuccess</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandAfterFileOnSuccess.html">JumpCommandAfterFileOnSuccess</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommandAfterFileOnSuccess</a>
                   </li>
@@ -11112,7 +11127,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommandBeforeOperation.html">JumpCommandBeforeOperation</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandBeforeOperation.html">JumpCommandBeforeOperation</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommandBeforeOperation</a>
                   </li>
@@ -11154,7 +11169,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommandAfterOperationOnSuccess.html">JumpCommandAfterOperationOnSuccess</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandAfterOperationOnSuccess.html">JumpCommandAfterOperationOnSuccess</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommandAfterOperationOnSuccess</a>
                   </li>
@@ -11196,7 +11211,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommandAfterOperationOnError.html">JumpCommandAfterOperationOnError</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandAfterOperationOnError.html">JumpCommandAfterOperationOnError</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommandAfterOperationOnError</a>
                   </li>
@@ -11238,7 +11253,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_JumpCommandAfterOperationFinal.html">JumpCommandAfterOperationFinal</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandAfterOperationFinal.html">JumpCommandAfterOperationFinal</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">JumpCommandAfterOperationFinal</a>
                   </li>
@@ -11304,7 +11319,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AlternativeCopySourceFragmentRef.html">AlternativeCopySourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AlternativeCopySourceFragmentRef.html">AlternativeCopySourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AlternativeCopySourceFragmentRef">AlternativeCopySourceFragmentRef</a>
                   </li>
@@ -11341,7 +11356,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AlternativeCopyTargetFragmentRef.html">AlternativeCopyTargetFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AlternativeCopyTargetFragmentRef.html">AlternativeCopyTargetFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AlternativeCopyTargetFragmentRef">AlternativeCopyTargetFragmentRef</a>
                   </li>
@@ -11378,7 +11393,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AlternativeGetListSourceFragmentRef.html">AlternativeGetListSourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AlternativeGetListSourceFragmentRef.html">AlternativeGetListSourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AlternativeGetListSourceFragmentRef">AlternativeGetListSourceFragmentRef</a>
                   </li>
@@ -11415,7 +11430,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AlternativeRemoveSourceFragmentRef.html">AlternativeRemoveSourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AlternativeRemoveSourceFragmentRef.html">AlternativeRemoveSourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AlternativeRemoveSourceFragmentRef">AlternativeRemoveSourceFragmentRef</a>
                   </li>
@@ -11452,7 +11467,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AlternativeMoveTargetFragmentRef.html">AlternativeMoveTargetFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AlternativeMoveTargetFragmentRef.html">AlternativeMoveTargetFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AlternativeMoveTargetFragmentRef">AlternativeMoveTargetFragmentRef</a>
                   </li>
@@ -11489,7 +11504,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_AlternativeMoveSourceFragmentRef.html">AlternativeMoveSourceFragmentRef</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AlternativeMoveSourceFragmentRef.html">AlternativeMoveSourceFragmentRef</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AlternativeMoveSourceFragmentRef">AlternativeMoveSourceFragmentRef</a>
                   </li>
@@ -11574,7 +11589,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Assertions.html">Assertions</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Assertions.html">Assertions</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Assertions">Assertions</a>
                   </li>
@@ -11680,7 +11695,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>References</strong>
                <ul>
                   <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_Documentation.html">Documentation</a>
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Documentation.html">Documentation</a>
                   </li>
                   <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Documentation">Documentation</a>
                   </li>
@@ -11728,4 +11743,80 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      <xs:element ref="Link" minOccurs="0" maxOccurs="unbounded"/>
 		    </xs:sequence>
 	  </xs:complexType>
+    <xs:element name="PreferredAuthentications">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="preferred_authentications"/>
+			      </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_PreferredAuthentications.html">PreferredAuthentications</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+preferred_authentications">preferred_authentications</a>
+                        </li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>Specifies the order in which the client should try protocol 2 authentication methods.</p>
+               <p>This allows a client to prefer one method (e.g. <em>publickey</em>) over another method (e.g. <em>password</em>).</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="password,publickey"/>
+				        <xs:enumeration value="publickey,password"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+	  <xs:element name="RequiredAuthentications">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="required_authentications"/>
+			      </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RequiredAuthentications.html">RequiredAuthentications</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+required_authentications">required_authentications</a>
+                        </li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>Specifies the authentication methods that must be successfully completed for a user to be granted access.</p>
+               <p/>
+               <p>See SSH configuration: 
+            <ul>
+                     <li>
+                        <em>AuthenticationMethods</em>
+                     </li>
+                     <li>
+                        <em>RequiredAuthentications2</em>
+                     </li>
+                  </ul>
+               </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="password,publickey"/>
+				        <xs:enumeration value="publickey,password"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
 </xs:schema>

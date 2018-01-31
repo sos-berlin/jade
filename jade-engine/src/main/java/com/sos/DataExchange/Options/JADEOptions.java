@@ -22,7 +22,7 @@ public class JADEOptions extends SOSFTPOptions {
 
     private static final long serialVersionUID = -5788970501747521212L;
     private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
-    private static final String SCHEMA_RESSOURCE_NAME = "YADE_configuration_v1.0.xsd";
+    private static final String SCHEMA_RESSOURCE_NAME = "YADE_configuration_v1.12.xsd";
     
     public JADEOptions() {
         super();
