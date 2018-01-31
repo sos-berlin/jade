@@ -342,7 +342,7 @@
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="host" mail_name="mail_smtp"/>
-			      </xs:appinfo>
+            </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -415,7 +415,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="user" mail_name="mail_smtp_user"/>
-			      </xs:appinfo>
+            </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -1971,7 +1971,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="ssh_auth_file"/>
-			      </xs:appinfo>
+            </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AuthenticationFile">
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -3120,8 +3120,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="AlternativeCopySourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-                <xs:element ref="SourceFileOptions" minOccurs="0"/>
+                <xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -3167,8 +3166,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="AlternativeMoveSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-        		  <xs:element ref="SourceFileOptions" minOccurs="0"/>
+           	    <xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -4158,8 +4156,7 @@ SSH, etc.) server to which a connection has to be made.</p>
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
-				<!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-                <xs:element ref="Selection" minOccurs="0">
+				        <xs:element ref="Selection">
 					          <xs:annotation>
                   <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection">
                      <div xmlns="http://www.w3.org/1999/xhtml">
@@ -4393,13 +4390,23 @@ SSH, etc.) server to which a connection has to be made.</p>
 			More than one file can be specified by using a ";" between the file names.
 			All files will be processed in the order in which they are defined in this parameter.
 		</p>
+               <p/>
                <p>
-			This parameter accepts absolute and relative paths of files that are to be processed.
-			In case of a relative path...
+			This parameter accepts <em>absolute</em>, <em>relative</em> and <em>runtime</em> paths of files that are to be processed.
+        </p>
+               <p>
+			In case of a <em>relative</em> path:
 			<ul>
                      <li>if the parameter <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Directory"
                            shape="rect">Directory</a> is specified, the path of each specified file is set relative to that directory.</li>
                      <li>otherwise the path is relative to the server's working directory, where the working directory depends on the server configuration.</li>
+                  </ul>
+		             </p>
+               <p>
+			In case of a <em>runtime</em> path (file to process for a file-order in a <em>file_order_source</em> job chain):
+			<ul>
+                     <li>the value must be set to <em>${scheduler_file_path}</em>
+                     </li>
                   </ul>
 		             </p>
             </div>
@@ -7691,8 +7698,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="AlternativeRemoveSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-            	<xs:element ref="SourceFileOptions" minOccurs="0"/>
+            	<xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -7738,8 +7744,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="AlternativeGetListSourceFragmentRef"
                         minOccurs="0"
                         maxOccurs="unbounded"/>
-                <!-- re 2017-11-29: minOccurs="0" added. YADE-452 -->
-         		<xs:element ref="SourceFileOptions" minOccurs="0"/>
+           	    <xs:element ref="SourceFileOptions"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -9096,6 +9101,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="CredentialStore_StoreType"/>
+        		  <Release removed="1.12.1" issue="YADE-464"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -9109,6 +9115,12 @@ A fragment is referenced via this attribute value by a transfer profile.
                         <li>
                            <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+CredentialStore_StoreType">CredentialStore_StoreType</a>
                         </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-464">YADE-464</a> Removed with 1.12.1.</li>
                      </ul>
                   </li>
                </ul>
@@ -9375,7 +9387,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:sequence>
 			      <xs:element ref="CSFile"/>
 			      <xs:element ref="CSAuthentication"/>
-			      <xs:element ref="CSEntryPath"/>
+			      <xs:element ref="CSEntryPath" minOccurs="0"/>
 			      <xs:element ref="CSExportAttachment" minOccurs="0"/>
 			      <xs:element ref="CSStoreType" minOccurs="0"/>
 		    </xs:sequence>
@@ -9503,7 +9515,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="use_credential_store" value="true"/>
-			      </xs:appinfo>
+       	    </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragment">
             <div xmlns="http://www.w3.org/1999/xhtml">
                <strong>References</strong>
@@ -9529,8 +9541,9 @@ A fragment is referenced via this attribute value by a transfer profile.
 			If you want to store secure access data, i.e. account, password, SSH key, database connection strings,
 			in an encrypted database, then configure access to a <em>CredentialStore</em> accordingly.
 		</p>
+               <p/>
                <p>
-			A <em>CredentialStore</em> is a KeePassX database that stores secure access data.
+			A <em>CredentialStore</em> is a KeePass database that stores secure access data.
 			Such credentials can be referenced from YADE configuration items instead of being exposed in plain text.
 		</p>
                <p>
@@ -9538,6 +9551,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 			References to a <em>CredentialStore</em> use the value of the <em>name</em> attribute to identify the respective
 			<em>CredentialStore</em>.
 		</p>
+               <p/>
                <p>
 			               <strong>Use by configuration items</strong>
 		             </p>
@@ -9566,55 +9580,15 @@ A fragment is referenced via this attribute value by a transfer profile.
                      </li>
                   </ul>	
 		             </p>
-               <p>
-			               <strong>Referencing CredentialStore fields</strong>
-		             </p>
-               <p>
-			Referencing a field in the <em>CredentialStore</em> is effected by the following syntax:
-		</p>
-               <p>
-			cs://@<em>entry_field</em>
-		             </p>
-               <p>
-			where
-			<ul>
-                     <li>
-                        <em>cs://</em>
-                        <br/>
-				    is a constant prefix that is used by YADE to identify this setting to be a reference to a <em>CredentialStore</em>.</li>
-                     <li>
-                        <em>entry_field</em>
-                        <br/>
-					is one of the fields available in a <em>CredentialStore</em>:
-					<ul>
-                           <li>user</li>
-                           <li>password</li>
-                           <li>url</li>
-                           <li>attachment</li>
-                        </ul>
-				                 </li>
-                  </ul>
-		             </p>
-               <p>
-			               <strong>Examples</strong>
-		             </p>
-               <p>
-			               <ul>
-                     <li>&lt;Account&gt;cs://@user&lt;/Account&gt;</li>
-                     <li>&lt;Password&gt;cs://@password&lt;/Password&gt;</li>
-                  </ul>
-		             </p>
+               <p/>
                <p>
 			Any number of credential store fragments can be configured and are distinguished by YADE according to their <em>name</em> attribute.
 		</p>
                <p>
-			A fragment is referenced by a transfer 
-			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Profile"
+			A fragment is referenced by a transfer <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Profile"
                      shape="rect">Profile</a> 
-			using the value of the 
-			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragmentRef"
-                     shape="rect">CredentialStoreFragmentRef</a> 
-                  <em>ref</em> attribute.
+			using the value of the <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+CredentialStoreFragmentRef"
+                     shape="rect">CredentialStoreFragmentRef</a> <em>ref</em> attribute.
 		</p>
             </div>
          </xs:documentation>
@@ -9909,9 +9883,25 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="CSExportAttachment">
-      <xs:annotation>
+        <xs:annotation>
+         <xs:appinfo>
+				        <Release removed="1.12.1" issue="YADE-464"/>
+			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0/YADE_configuration_v1_0_xsd_Element_CSExportAttachment.html">CSExportAttachment</a>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-464">YADE-464</a> Removed with 1.12.1.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
                <p>
 			At run-time YADE can export the file included with the attachment field of a 
 			Credential Store
