@@ -7348,10 +7348,18 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
 		    <xs:simpleType>
-			      <xs:restriction base="xs:int">
-				        <xs:minInclusive value="0"/>
-				        <xs:maxInclusive value="9"/>
-			      </xs:restriction>
+			      <xs:restriction base="xs:integer">
+                <xs:enumeration value="0"/>
+				        <xs:enumeration value="1"/>
+				        <xs:enumeration value="2"/>
+                <xs:enumeration value="3"/>
+                <xs:enumeration value="4"/>
+                <xs:enumeration value="5"/>
+                <xs:enumeration value="6"/>
+                <xs:enumeration value="7"/>
+                <xs:enumeration value="8"/>
+                <xs:enumeration value="9"/>
+            </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
     <xs:element name="ConfigurationFiles" type="ConfigurationFilesType">
