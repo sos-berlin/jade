@@ -33,8 +33,8 @@
 			The root element of a YADE configuration file.
 		</p>
                <p>
-			This element can be assigned the location of the XSD schema, e.g. <a href="http://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0.xsd"
-                     shape="rect">http://www.sos-berlin.com/schema/yade/YADE_configuration_v1.0.xsd</a>
+			This element can be assigned the location of the XSD schema, e.g. <a href="http://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12.xsd"
+                     shape="rect">http://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12.xsd</a>
 		             </p>
                <p>
 			We recommend to assign the XSD schema version for which the YADE configuration has been created. This allows to validate 
