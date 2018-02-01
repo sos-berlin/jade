@@ -86,10 +86,6 @@
 			      <xs:selector xpath=".//MailFragment"/>
 			      <xs:field xpath="@name"/>
 		    </xs:key>
-		    <xs:key name="BackgroundServiceFragmentKey">
-			      <xs:selector xpath=".//BackgroundServiceFragment"/>
-			      <xs:field xpath="@name"/>
-		    </xs:key>
 		    <xs:key name="MailServerFragmentKey">
 			      <xs:selector xpath=".//MailServerFragment"/>
 			      <xs:field xpath="@name"/>
@@ -132,11 +128,6 @@
 		    </xs:keyref>
 		    <xs:keyref name="MailFragmentKeyRef" refer="MailFragmentKey">
 			      <xs:selector xpath=".//MailFragmentRef"/>
-			      <xs:field xpath="@ref"/>
-		    </xs:keyref>
-		    <xs:keyref name="BackgroundServiceFragmentKeyRef"
-                 refer="BackgroundServiceFragmentKey">
-			      <xs:selector xpath=".//BackgroundServiceFragmentRef"/>
 			      <xs:field xpath="@ref"/>
 		    </xs:keyref>
 		    <xs:keyref name="MailServerFragmentKeyRef" refer="MailServerFragmentKey">
@@ -270,15 +261,7 @@
 			      <xs:element ref="Encoding" minOccurs="0"/>
 		    </xs:sequence>
 	  </xs:complexType>
-	  <xs:complexType name="BackgroundServiceType">
-		    <xs:sequence>
-			      <xs:element ref="BackgroundServiceHost" minOccurs="0"/>
-			      <xs:element ref="BackgroundServicePort" minOccurs="0"/>
-			      <xs:element ref="BackgroundServiceProtocol" minOccurs="0"/>
-			      <xs:element ref="BackgroundServiceJobChainName" minOccurs="0"/>
-		    </xs:sequence>
-	  </xs:complexType>
-    <xs:complexType name="ConfigurationFilesType">
+	  <xs:complexType name="ConfigurationFilesType">
 		    <xs:sequence>
 			      <xs:element ref="ConfigurationFile" minOccurs="1" maxOccurs="1"/>
 		    </xs:sequence>
@@ -1465,94 +1448,6 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      </xs:complexContent>
 		    </xs:complexType>
 	  </xs:element>
-	  <xs:element name="BackgroundServiceFragment">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="SendTransferHistory" value="true"/>
-                <Release deprecated="1.10.10, 1.11.6" removed="1.12"/>
-			      </xs:appinfo>
-         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragment">
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceFragment.html">BackgroundServiceFragment</a>
-                  </li>
-                  <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragment">BackgroundServiceFragment</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+SendTransferHistory">SendTransferHistory</a>
-                        </li>
-                     </ul>
-                  </li>
-                  <li>Release:
-            <ul>
-                        <li> Deprecated with 1.10.10, 1.11.6. Removed with 1.12.</li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			This element includes the parameters for a YADE Background Service that would receive information from the
-			YADE Client about the execution of file transfers.
-		</p>
-               <p>
-			Any number of fragments can be configured and are distinguished by YADE according to their <em>name</em> attribute.
-			Therefore a unique identifier should be specified for the <em>name</em> attribute.
-		</p>
-               <p>
-			A fragment is referenced by the 
-			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+General"
-                     shape="rect">General</a> branch
-			with the
-			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Notifications"
-                     shape="rect">Notifications</a> 
-			element using the value of the 
-			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragmentRef"
-                     shape="rect">BackgroundServiceFragmentRef</a> 
-			and its <em>ref</em> attribute.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:complexType>
-			      <xs:complexContent>
-				        <xs:extension base="BackgroundServiceType">
-					          <xs:attribute name="name" type="xs:NMTOKEN" use="required">
-                  <xs:annotation>
-                     <xs:documentation>
-                        <div xmlns="http://www.w3.org/1999/xhtml">
-                           <p>
-			This attribute identifies the current fragment. 
-			Any number of fragments can be used and are distinguished by YADE based on their name.
-		</p>
-                           <p>
-			A fragment is referenced via this attribute value by a transfer profile.
-		</p>
-                        </div>
-                     </xs:documentation>
-                  </xs:annotation>
-               </xs:attribute>
-				        </xs:extension>
-			      </xs:complexContent>
-		    </xs:complexType>
-	  </xs:element>
-	  <!--
-	<xs:element name="TESTFragment">
-		<xs:annotation>
-			<xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MailFragment"/>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="MailType">
-					<xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
-				</xs:extension>
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
-	-->
 	  <xs:element name="ProtocolFragments">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ProtocolFragments">
@@ -1664,13 +1559,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="PassiveMode" minOccurs="0"/>
 				        <xs:element ref="TransferMode" minOccurs="0"/>
 				        <xs:element ref="ProxyForFTP" minOccurs="0"/>
-                <!-- ap 2015-08-27: encoding is reported not to work and is temporarily dismissed from the schema
-				<xs:element ref="ControlEncoding" minOccurs="0"/>
-				-->
-				        <!-- ap 2015-08-27: listing server features makes no sense in automated transfers and is therefore permanently removed from the schema
-				<xs:element ref="CheckServerFeatures" minOccurs="0"/>
-				-->
-			      </xs:sequence>
+    		   </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
                <xs:documentation>
@@ -3595,57 +3484,6 @@ SSH, etc.) server to which a connection has to be made.</p>
                   <div xmlns="http://www.w3.org/1999/xhtml">
                      <p>
 			This attribute identifies the fragment that is used for notification about file transfers.
-			</p>
-                  </div>
-               </xs:documentation>
-            </xs:annotation>
-         </xs:attribute>
-		    </xs:complexType>
-	  </xs:element>
-	  <xs:element name="BackgroundServiceFragmentRef">
-		    <xs:annotation>
-         <xs:appinfo>
-		          <Release deprecated="1.10.10, 1.11.6" removed="1.12"/>
-			      </xs:appinfo>
-         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragmentRef">
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceFragmentRef.html">BackgroundServiceFragmentRef</a>
-                  </li>
-                  <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragmentRef">BackgroundServiceFragmentRef</a>
-                  </li>
-                  <li>Release:
-            <ul>
-                        <li> Deprecated with 1.10.10, 1.11.6. Removed with 1.12.</li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			This element references the fragment that is used for communication with a YADE Background Service
-			in case of notification of a file transfer operation.
-		</p>
-               <p>
-			Any number of reusable <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+BackgroundServiceFragment"
-                     shape="rect">BackgroundServiceFragment</a> 
-			elements can be configured and are distinguished by YADE based on their <em>name</em> attribute.
-		</p>
-               <p>
-			The reference to a fragment is based on the value of the <em>ref</em> attribute of this element 
-			to the corresponding <em>name</em> attribute of the <em>BackgroundServiceFragment</em> element.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:complexType>
-			      <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
-            <xs:annotation>
-               <xs:documentation>
-                  <div xmlns="http://www.w3.org/1999/xhtml">
-                     <p>
-			This attribute identifies the fragment that is used for YADE Background Services in case of notification about file transfers.
 			</p>
                   </div>
                </xs:documentation>
@@ -7047,187 +6885,6 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
-	  <!--xs:element name="Execute"/-->
-	  <xs:element name="BackgroundServiceHost" default="localhost">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="BackgroundServiceHost"/>
-				        <FlatParameter name="Background_Service_Host"/>
-				        <FlatParameter name="scheduler_host"/>
-			      </xs:appinfo>
-         <xs:documentation>
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceHost.html">BackgroundServiceHost</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+BackgroundServiceHost">BackgroundServiceHost</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+Background_Service_Host">Background_Service_Host</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+scheduler_host">scheduler_host</a>
-                        </li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			This parameter specifies the host name or IP address of a server for which JobScheduler is operated 
-			and runs the YADE Background Service jobs.
-		</p>
-               <p>				
-			This parameter causes the file transfer history
-			for the current YADE session to be transferred to JobScheduler. 
-			Should JobScheduler not be accessible then no errors are reported, 
-			instead, the contents of the file transfer history will automatically be processed later on.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:simpleType>
-			      <xs:restriction base="xs:string">
-				        <xs:minLength value="1"/>
-			      </xs:restriction>
-		    </xs:simpleType>
-	  </xs:element>
-	  <xs:element name="BackgroundServicePort" default="4444">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="BackgroundServicePort"/>
-				        <FlatParameter name="Background_Service_Port"/>
-				        <FlatParameter name="Background_Service_PortNumber"/>
-				        <FlatParameter name="scheduler_port"/>
-			      </xs:appinfo>
-         <xs:documentation>
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServicePort.html">BackgroundServicePort</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+BackgroundServicePort">BackgroundServicePort</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+Background_Service_Port">Background_Service_Port</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+Background_Service_PortNumber">Background_Service_PortNumber</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+scheduler_port">scheduler_port</a>
-                        </li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			Specifies the TCP port to which a JobScheduler is listening, 
-			see <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SchedulerHostname"
-                     shape="rect">SchedulerHostname</a> parameter.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:simpleType>
-			      <xs:restriction base="xs:int">
-				        <xs:maxInclusive value="65535"/>
-				        <xs:minInclusive value="0"/>
-			      </xs:restriction>
-		    </xs:simpleType>
-	  </xs:element>
-	  <xs:element name="BackgroundServiceProtocol" default="udp">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="BackgroundServiceTransferMethod"/>
-				        <FlatParameter name="Background_Service_Transfer_Method"/>
-				        <FlatParameter name="Scheduler_Transfer_Method"/>
-			      </xs:appinfo>
-         <xs:documentation>
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceProtocol.html">BackgroundServiceProtocol</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+BackgroundServiceTransferMethod">BackgroundServiceTransferMethod</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+Background_Service_Transfer_Method">Background_Service_Transfer_Method</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+Scheduler_Transfer_Method">Scheduler_Transfer_Method</a>
-                        </li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			Specifies the technical protocol for communication between the YADE Client and the JobScheduler.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:simpleType>
-			      <xs:restriction base="xs:string">
-				        <xs:enumeration value="udp"/>
-				        <xs:enumeration value="tcp"/>
-			      </xs:restriction>
-		    </xs:simpleType>
-	  </xs:element>
-	  <xs:element name="BackgroundServiceJobChainName" default="/sos/jade/jade_history">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="BackgroundServiceJobChainName"/>
-				        <FlatParameter name="scheduler_sosftp_history"/>
-				        <FlatParameter name="scheduler_job_chain"/>
-			      </xs:appinfo>
-         <xs:documentation>
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_BackgroundServiceJobChainName.html">BackgroundServiceJobChainName</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+BackgroundServiceJobChainName">BackgroundServiceJobChainName</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+scheduler_sosftp_history">scheduler_sosftp_history</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+scheduler_job_chain">scheduler_job_chain</a>
-                        </li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			Specifies the name of a job chain for processing of file transfer history data with JobScheduler, 
-			The job chain accepts history data and performs an import into a database.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:simpleType>
-			      <xs:restriction base="xs:string">
-				        <xs:minLength value="1"/>
-			      </xs:restriction>
-		    </xs:simpleType>
-	  </xs:element>
 	  <xs:element name="HistoryFile">
 		    <xs:annotation>
          <xs:appinfo>
@@ -8249,90 +7906,6 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
-	  <!-- ap 2015-08-27: listing server features makes no sense in automated transfers and is therefore permanently removed from the schema
-	<xs:element name="CheckServerFeatures" type="xs:boolean" default="false">
-		<xs:annotation>
-			<xs:appinfo>
-				<FlatParameter name="check_server_features" suppress_prefix="true"/>
-				<FlatParameter name="CheckServerFeatures" suppress_prefix="true"/>
-			</xs:appinfo>
-		</xs:annotation>
-	</xs:element>
-	-->
-	  <!-- ap 2015-11-10: YADE-381 deferred feature
-	<xs:element name="MinFileSize">
-		<xs:annotation>
-			<xs:appinfo>
-				<FlatParameter name="min_file_size"/>
-				<FlatParameter name="FileSizeMinimum"/>
-			</xs:appinfo>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:int">
-				<xs:maxInclusive value="1"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="MaxFileSize">
-		<xs:annotation>
-			<xs:appinfo>
-				<FlatParameter name="max_file_size"/>
-				<FlatParameter name="FileSizeMaximum"/>
-			</xs:appinfo>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:int">
-				<xs:maxInclusive value="1"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	-->
-	  <!-- ap 2015-11-10: YADE-380 deferred feature 
-	<xs:element name="MinFileAge">
-		<xs:annotation>
-			<xs:appinfo>
-				<FlatParameter name="min_file_age"/>
-				<FlatParameter name="FileAgeMinimum"/>
-			</xs:appinfo>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:minLength value="1"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="MaxFileAge">
-		<xs:annotation>
-			<xs:appinfo>
-				<FlatParameter name="max_file_age"/>
-				<FlatParameter name="FileAgeMaximum"/>
-			</xs:appinfo>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:minLength value="1"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="FileAge">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="MinFileAge" minOccurs="0"/>
-				<xs:element ref="MaxFileAge" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	-->
-	  <!-- ap 2015-11-10: YADE-381 deferred feature
-	<xs:element name="FileSize">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="MinFileSize" minOccurs="0"/>
-				<xs:element ref="MaxFileSize" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	-->
 	  <xs:element name="JumpFragment">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -9998,7 +9571,6 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="MailFragment" minOccurs="0" maxOccurs="unbounded"/>
-				        <xs:element ref="BackgroundServiceFragment" minOccurs="0" maxOccurs="unbounded"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -11735,7 +11307,6 @@ A fragment is referenced via this attribute value by a transfer profile.
 	  <xs:complexType name="NotificationType">
 		    <xs:sequence>
 			      <xs:element ref="MailServerFragmentRef" minOccurs="0"/>
-			      <xs:element ref="BackgroundServiceFragmentRef" minOccurs="0"/>
 		    </xs:sequence>
 	  </xs:complexType>
 	  <xs:complexType name="LoggingType">
