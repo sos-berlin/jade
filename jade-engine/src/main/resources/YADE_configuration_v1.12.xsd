@@ -2617,7 +2617,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 	  <xs:element name="Passphrase">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="password"/>
+				        <FlatParameter name="passphrase"/>
                 <Note include="CredentialStore-Fields"/>
                 <XmlEditor type="password"/>
 			      </xs:appinfo>
@@ -2631,7 +2631,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+password">password</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+passphrase">passphrase</a>
                         </li>
                      </ul>
                   </li>
