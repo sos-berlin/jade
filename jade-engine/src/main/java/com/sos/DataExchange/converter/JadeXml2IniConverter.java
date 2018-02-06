@@ -940,6 +940,18 @@ public class JadeXml2IniConverter {
                                     String jumpInclude = _jumpIncludes.get(includeName);
                                     if ("copyfrominternet".equals(operation) || "copytointernet".equals(operation)) {
                                         if (_profileJumpInclude == null) {
+                                            String[] jumpArr = jumpInclude.split("=");
+                                            String jumpName = jumpArr.length > 0 ? jumpArr[1].trim() : null;
+                                            if (jumpName != null) {
+                                                if (_credentialStoreIncludes.containsKey(jumpName)) {
+                                                    String csInclude = _credentialStoreIncludes.get(jumpName);
+                                                    String[] csArr = csInclude.split("=");
+                                                    if (arr.length == 2) {
+                                                        jumpInclude += "," + csArr[1].trim();
+                                                    }
+                                                }
+                                            }
+
                                             writeLine(jumpInclude);
                                             writeNewLine();
                                             _profileJumpInclude = jumpInclude;
