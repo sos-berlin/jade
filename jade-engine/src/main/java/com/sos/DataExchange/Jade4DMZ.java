@@ -59,7 +59,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             } else {
                 throw new JobSchedulerException(Messages.getMsg("Jade4DMZ-E-001"));
             }
-            
+
             UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(getOptions());
             if (updateHelper.checkBefore()) {
                 updateHelper.executeBefore();
@@ -72,10 +72,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
-                    if (existingTransfer != null
-                            && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
-                            && existingTransfer.getOrderId().equals(objOptions.getOrderId())
-                            && existingTransfer.getState() == 3) {
+                    if (existingTransfer != null && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName()) && existingTransfer
+                            .getOrderId().equals(objOptions.getOrderId()) && existingTransfer.getState() == 3) {
                         existingTransfer.setHasIntervention(true);
                         dbSession.beginTransaction();
                         dbSession.update(existingTransfer);
@@ -114,7 +112,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 } catch (SOSHibernateException she) {
                     try {
                         dbSession.rollback();
-                    } catch (SOSHibernateException shex) {}
+                    } catch (SOSHibernateException shex) {
+                    }
                 }
             }
             throw e;
@@ -155,7 +154,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                     for (SOSFileListEntry entry : fileList.getList()) {
                         dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
                     }
-                } catch (SOSHibernateException e1) {}
+                } catch (SOSHibernateException e1) {
+                }
             }
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
@@ -471,9 +471,17 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             }
             String command = getRemoveDirCommand(dir);
             if (operation.equals(Operation.copyToInternet)) {
-                jade.executeTransferCommands("target remove dir", jade.getTargetClient(), command, null);
+                if (jade.getTargetClient() != null && jade.getTargetClient().getHandler() != null) {
+                    jade.executeTransferCommands("target remove dir", jade.getTargetClient(), command, null);
+                } else {
+                    LOGGER.warn(String.format("[skip][%s]targetClient or targetClient.Handler is null", command));
+                }
             } else {
-                jade.executeTransferCommands("source remove dir", jade.getSourceClient(), command, null);
+                if (jade.getSourceClient() != null && jade.getSourceClient().getHandler() != null) {
+                    jade.executeTransferCommands("source remove dir", jade.getSourceClient(), command, null);
+                } else {
+                    LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
+                }
             }
         } catch (Exception ex) {
             LOGGER.warn(String.format("%s", ex.toString()));
@@ -541,7 +549,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     public void setDBFactory(SOSHibernateFactory factory) {
         this.dbFactory = factory;
     }
-    
+
     private SOSHibernateSession initStatelessSession() {
         SOSHibernateSession dbSession = null;
         try {
@@ -551,29 +559,29 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         }
         return dbSession;
     }
-    
+
     public void setEventHandler(IJobSchedulerEventHandler eventHandler) {
-        this.eventHandler  = eventHandler;
+        this.eventHandler = eventHandler;
     }
-    
-    public Long getTransferId(){
+
+    public Long getTransferId() {
         return transferId;
     }
-        
+
     public Long getParentTransferId() {
         return parentTransferId;
     }
 
-    public void setParentTransferId (Long parentTransferId) {
+    public void setParentTransferId(Long parentTransferId) {
         this.parentTransferId = parentTransferId;
     }
-    
-    public void setIsIntervention (boolean isIntervention) {
+
+    public void setIsIntervention(boolean isIntervention) {
         this.isIntervention = isIntervention;
     }
-    
+
     public void setFilePathRestriction(String filePathRestriction) {
         this.filePathRestriction = filePathRestriction;
     }
-        
+
 }

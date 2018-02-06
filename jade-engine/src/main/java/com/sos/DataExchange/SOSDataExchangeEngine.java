@@ -104,7 +104,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private boolean isIntervention = false;
     private String filePathRestriction = null;
 
-
     public SOSDataExchangeEngine() throws Exception {
         this.getOptions();
     }
@@ -319,7 +318,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
     @Override
     public boolean execute() throws Exception {
-        
+
         setLogger();
         objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
         objOptions.logFilename.setLogger(JADE_REPORT_LOGGER);
@@ -346,10 +345,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
-                    if (existingTransfer != null
-                            && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
-                            && existingTransfer.getOrderId().equals(objOptions.getOrderId())
-                            && existingTransfer.getState() == 3) {
+                    if (existingTransfer != null && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName()) && existingTransfer
+                            .getOrderId().equals(objOptions.getOrderId()) && existingTransfer.getState() == 3) {
                         existingTransfer.setHasIntervention(true);
                         dbSession.beginTransaction();
                         dbSession.update(existingTransfer);
@@ -433,16 +430,49 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
         if (!options.protocol.isLocal()) {
             sb.append(String.format(pattern4String, "User", options.user.getValue()));
-            if (options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && options.protocol
-                    .getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
+            if (options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.sftp && options.protocol
+                    .getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && options.protocol
+                            .getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
                 sb.append(String.format(pattern4String, "AuthMethod", options.sshAuthMethod.getValue()));
             }
-            if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp && !"password".equalsIgnoreCase(options.sshAuthMethod
-                    .getValue())) {
-                sb.append(String.format(pattern4String, "AuthFile", "***"));
+            if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp) {
+                if (options.required_authentications.isNotEmpty()) {
+                    sb.append(String.format(pattern4String, "AuthMethods", options.required_authentications.getValue()));
+                    sb.append(String.format(pattern4String, "Password", "***"));
+                    sb.append(String.format(pattern4String, "AuthFile", "***"));
+                    if (options.passphrase.isNotEmpty()) {
+                        sb.append(String.format(pattern4String, "Passphrase", "***"));
+                    }
+                } else {
+                    String am = "";
+                    if (options.password.isNotEmpty() && options.authFile.isNotEmpty()) {
+                        am = "password,publickey";
+                    } else {
+                        am = options.authMethod.getValue();
+                    }
+                    String pa = options.preferred_authentications.getValue();
+                    if (SOSString.isEmpty(pa)) {
+                        pa = am;
+                    }
+                    sb.append(String.format(pattern4String, am.indexOf(",") == -1 ? "AuthMethod" : "AuthMethods", am));
+                    if (pa.indexOf(",") != -1) {
+                        sb.append(String.format(pattern4String, "PreferredAuthentications", pa));
+                    }
+                    if (options.password.isNotEmpty()) {
+                        sb.append(String.format(pattern4String, "Password", "***"));
+                    }
+                    if (options.authFile.isNotEmpty()) {
+                        sb.append(String.format(pattern4String, "AuthFile", "***"));
+                    }
+                    if (options.passphrase.isNotEmpty()) {
+                        sb.append(String.format(pattern4String, "Passphrase", "***"));
+                    }
+                }
+
             } else {
                 sb.append(String.format(pattern4String, "Password", "***"));
             }
+
             if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.ftp) {
                 sb.append(String.format(pattern4Bool, "Passive", options.passiveMode.value()));
                 sb.append(String.format(pattern4String, "TransferMode", options.transferMode.getValue()));
@@ -599,7 +629,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private String[] getSingleFileNames() {
         Vector<String> fileList = new Vector<String>();
         String localDir = objOptions.sourceDir.getValueWithFileSeparator();
-        
+
         if (objOptions.filePath.isNotEmpty()) {
             String filePath = objOptions.filePath.getValue();
             LOGGER.debug(String.format("single file(s) specified : '%1$s'", filePath));
@@ -1071,10 +1101,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 executePreTransferCommands();
                 if (dbSession != null) {
                     // if transfer was restarted with a reduced fileList
-                    if(filePathRestriction != null) {
+                    if (filePathRestriction != null) {
                         LOGGER.info("*** transfer was restarted with a reduced fileList");
                         LOGGER.info("*** with the filePathRestriction: " + filePathRestriction);
-                        if(objOptions.fileListName.isNotEmpty()) {
+                        if (objOptions.fileListName.isNotEmpty()) {
                             objOptions.fileListName.setNull();
                         }
                         objOptions.filePath.setValue(filePathRestriction);
@@ -1195,7 +1225,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             } catch (Exception e) {
                 if (dbSession != null) {
                     for (SOSFileListEntry entry : sourceFileList.getList()) {
-                        if(dbSession != null) {
+                        if (dbSession != null) {
                             dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
                         }
                     }
@@ -1362,13 +1392,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     protected void executeTransferCommands(String commandOptionName, final ISOSVfsFileTransfer fileTransfer, final String commands,
             final String delimiter) throws Exception {
         if (commands != null && commands.trim().length() > 0) {
-            LOGGER.info(String.format("[%s]",commandOptionName));
+            LOGGER.info(String.format("[%s]", commandOptionName));
             if (SOSString.isEmpty(delimiter)) {
                 fileTransfer.getHandler().executeCommand(commands);
             } else {
                 String[] values = commands.split(delimiter);
                 for (String command : values) {
-                    if(!SOSString.isEmpty(command.trim())){
+                    if (!SOSString.isEmpty(command.trim())) {
                         fileTransfer.getHandler().executeCommand(command);
                     }
                 }
@@ -1399,7 +1429,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     public void setDBFactory(SOSHibernateFactory factory) {
         this.dbFactory = factory;
     }
-    
+
     private SOSHibernateSession initStatelessSession() {
         SOSHibernateSession dbSession = null;
         try {
@@ -1409,33 +1439,33 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
         return dbSession;
     }
-    
+
     public void setJobSchedulerEventHandler(IJobSchedulerEventHandler eventHandler) {
-        this.eventHandler  = eventHandler;
+        this.eventHandler = eventHandler;
     }
-    
-    public Long getTransferId(){
+
+    public Long getTransferId() {
         return transferId;
     }
-        
-    public void setTransferId (Long transferId) {
+
+    public void setTransferId(Long transferId) {
         this.transferId = transferId;
     }
-    
+
     public Long getParentTransferId() {
         return parentTransferId;
     }
 
-    public void setParentTransferId (Long parentTransferId) {
+    public void setParentTransferId(Long parentTransferId) {
         this.parentTransferId = parentTransferId;
     }
-    
-    public void setIsIntervention (boolean isIntervention) {
+
+    public void setIsIntervention(boolean isIntervention) {
         this.isIntervention = isIntervention;
     }
-    
+
     public void setFilePathRestriction(String filePathRestriction) {
         this.filePathRestriction = filePathRestriction;
     }
-        
+
 }
