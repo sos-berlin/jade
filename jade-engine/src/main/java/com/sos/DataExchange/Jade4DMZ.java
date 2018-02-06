@@ -182,6 +182,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.strictHostKeyChecking.value(objOptions.jumpStrictHostkeyChecking.value());
         options.directory.setValue(dir);
         options.configuration_files.setValue(objOptions.jumpConfigurationFiles.getValue());
+        options.passphrase.setValue(objOptions.jump_passphrase.getValue());
+        options.preferred_authentications.setValue(objOptions.jump_preferred_authentications.getValue());
+        options.required_authentications.setValue(objOptions.jump_required_authentications.getValue());
         return options;
     }
 
@@ -293,6 +296,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.postTransferCommands.setPrefix(prefix);
         options.directory.setPrefix(prefix);
         options.postTransferCommandsFinal.setPrefix(prefix);
+        options.postTransferCommandsOnError.setPrefix(prefix);
+        options.keepass_attachment_property_name.setPrefix(prefix);
+        options.passphrase.setPrefix(prefix);
+        options.preferred_authentications.setPrefix(prefix);
+        options.required_authentications.setPrefix(prefix);
         return options;
     }
 
