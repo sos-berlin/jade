@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import sos.util.SOSString;
 
+import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.helpers.YadeDBOperationHelper;
@@ -134,6 +135,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         try {
             jade = new JadeEngine(getTransferOptions(operation, dir));
             jade.setTransferId(transferId);
+            jade.getOptions().checkMandatory();
             jade.execute();
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
@@ -185,6 +187,17 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.passphrase.setValue(objOptions.jump_passphrase.getValue());
         options.preferred_authentications.setValue(objOptions.jump_preferred_authentications.getValue());
         options.required_authentications.setValue(objOptions.jump_required_authentications.getValue());
+
+        if (objOptions.jump_use_credential_store.value()) {
+            SOSCredentialStoreOptions csOptions = new SOSCredentialStoreOptions();
+            csOptions.useCredentialStore.setValue(objOptions.jump_use_credential_store.getValue());
+            csOptions.credentialStoreFileName.setValue(objOptions.jump_CredentialStore_FileName.getValue());
+            csOptions.credentialStoreAuthenticationMethod.setValue(objOptions.jump_CredentialStore_AuthenticationMethod.getValue());
+            csOptions.credentialStoreKeyFileName.setValue(objOptions.jump_CredentialStore_KeyFileName.getValue());
+            csOptions.credentialStorePassword.setValue(objOptions.jump_CredentialStore_Password.getValue());
+            csOptions.credentialStoreKeyPath.setValue(objOptions.jump_CredentialStore_KeyPath.getValue());
+            options.setCredentialStore(csOptions);
+        }
         return options;
     }
 
