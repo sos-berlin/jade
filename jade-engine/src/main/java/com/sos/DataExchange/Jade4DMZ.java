@@ -6,8 +6,6 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import sos.util.SOSString;
-
 import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
@@ -23,6 +21,8 @@ import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jade.db.DBItemYadeTransfers;
+
+import sos.util.SOSString;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
@@ -47,6 +47,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     }
 
     public void Execute() {
+
+        setLogger();
         initialTargetDir = getOptions().targetDir.getValue();
         String dir = normalizeDirectoryPath(getOptions().jumpDir.getValue());
         String uuid = "jade-dmz-" + getUUID();
@@ -135,7 +137,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         try {
             jade = new JadeEngine(getTransferOptions(operation, dir));
             jade.setTransferId(transferId);
-            jade.getOptions().checkMandatory();
             jade.execute();
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
@@ -178,15 +179,21 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.host.setValue(objOptions.jumpHost.getValue());
         options.port.setValue(objOptions.jumpPort.getValue());
         options.user.setValue(objOptions.jumpUser.getValue());
-        options.password.setValue(objOptions.jumpPassword.getValue());
+        options.required_authentications.setValue(objOptions.jump_required_authentications.getValue());
+        options.preferred_authentications.setValue(objOptions.jump_preferred_authentications.getValue());
         options.sshAuthMethod.setValue(objOptions.jumpSshAuthMethod.getValue());
+        options.password.setValue(objOptions.jumpPassword.getValue());
         options.sshAuthFile.setValue(objOptions.jumpSshAuthFile.getValue());
+        options.passphrase.setValue(objOptions.jump_passphrase.getValue());
         options.strictHostKeyChecking.value(objOptions.jumpStrictHostkeyChecking.value());
         options.directory.setValue(dir);
         options.configuration_files.setValue(objOptions.jumpConfigurationFiles.getValue());
-        options.passphrase.setValue(objOptions.jump_passphrase.getValue());
-        options.preferred_authentications.setValue(objOptions.jump_preferred_authentications.getValue());
-        options.required_authentications.setValue(objOptions.jump_required_authentications.getValue());
+
+        options.proxyProtocol.setValue(objOptions.jumpProxyProtocol.getValue());
+        options.proxyHost.setValue(objOptions.jumpProxyHost.getValue().trim());
+        options.proxyPort.setValue(objOptions.jumpProxyPort.getValue().trim());
+        options.proxyUser.setValue(objOptions.jumpProxyUser.getValue().trim());
+        options.proxyPassword.setValue(objOptions.jumpProxyPassword.getValue());
 
         if (objOptions.jump_use_credential_store.value()) {
             SOSCredentialStoreOptions csOptions = new SOSCredentialStoreOptions();
@@ -197,16 +204,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             csOptions.credentialStorePassword.setValue(objOptions.jump_CredentialStore_Password.getValue());
             csOptions.credentialStoreKeyPath.setValue(objOptions.jump_CredentialStore_KeyPath.getValue());
             options.setCredentialStore(csOptions);
+            options.checkCredentialStoreOptions();
+            csOptions.useCredentialStore.setValue("false");// prevent double checkCredentialStore
+            objOptions.jumpHost.setValue(options.host.getValue());// override possible cs://...
         }
-        return options;
-    }
-
-    private SOSConnection2OptionsAlternate setJumpProxy(SOSConnection2OptionsAlternate options) {
-        options.proxyProtocol.setValue(objOptions.jumpProxyProtocol.getValue());
-        options.proxyHost.setValue(objOptions.jumpProxyHost.getValue().trim());
-        options.proxyPort.setValue(objOptions.jumpProxyPort.getValue().trim());
-        options.proxyUser.setValue(objOptions.jumpProxyUser.getValue().trim());
-        options.proxyPassword.setValue(objOptions.jumpProxyPassword.getValue());
         return options;
     }
 
@@ -260,7 +261,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         JADEOptions options = null;
         JADEOptions jumpCommandOptions;
         SOSConnection2OptionsAlternate jumpOptions = createJumpOptions(dir);
-        jumpOptions = setJumpProxy(jumpOptions);
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(dir);
             jumpCommandOptions = createPostTransferOptions(dir);
@@ -310,6 +310,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.directory.setPrefix(prefix);
         options.postTransferCommandsFinal.setPrefix(prefix);
         options.postTransferCommandsOnError.setPrefix(prefix);
+        options.keepass_database.setPrefix(prefix);
+        options.keepass_database_entry.setPrefix(prefix);
         options.keepass_attachment_property_name.setPrefix(prefix);
         options.passphrase.setPrefix(prefix);
         options.preferred_authentications.setPrefix(prefix);
@@ -452,6 +454,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.history.setValue(getHistoryFilename());
         options.getSource().user.setDefaultValue("");
         options.getTarget().user.setDefaultValue("");
+        options.getSource().include.setValue("");
+        options.getTarget().include.setValue("");
         StringBuilder command = new StringBuilder(objOptions.jumpCommand.getValue() + " ");
         command.append("-SendTransferHistory=false ");
         command.append(options.getOptionsAsQuotedCommandLine());

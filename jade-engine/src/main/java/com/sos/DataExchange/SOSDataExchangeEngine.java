@@ -32,13 +32,7 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import sos.net.SOSMail;
-import sos.net.mail.options.SOSSmtpMailOptions;
-import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
-import sos.util.SOSString;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
@@ -59,7 +53,6 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.DataElements.SOSTransferStateCounts;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
-import com.sos.VirtualFileSystem.Factory.VFSFactory;
 import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVFSHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
@@ -75,10 +68,15 @@ import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 
+import sos.net.SOSMail;
+import sos.net.mail.options.SOSSmtpMailOptions;
+import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
+import sos.util.SOSString;
+
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
 
     private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngine.class);
-    private static final String JADE_LOGGER_NAME = "JadeReportLog";
+    protected static final String JADE_LOGGER_NAME = "JadeReportLog";
     private static final Logger JADE_REPORT_LOGGER = Logger.getLogger(JADE_LOGGER_NAME);
     private static final String KEYWORD_LAST_ERROR = "last_error";
     private static final String KEYWORD_STATE = "state";
@@ -299,23 +297,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
     }
 
-    private void setLogger() {
-        VFSFactory.setParentLogger(JADE_LOGGER_NAME);
-        int verbose = objOptions.verbose.value();
-        if (verbose <= 1) {
-            Logger.getRootLogger().setLevel(Level.INFO);
-        } else {
-            if (verbose > 8) {
-                Logger.getRootLogger().setLevel(Level.TRACE);
-                LOGGER.setLevel(Level.TRACE);
-                LOGGER.debug("set loglevel to TRACE due to option verbose = " + verbose);
-            } else {
-                Logger.getRootLogger().setLevel(Level.DEBUG);
-                LOGGER.debug("set loglevel to DEBUG due to option verbose = " + verbose);
-            }
-        }
-    }
-
     @Override
     public boolean execute() throws Exception {
 
@@ -437,7 +418,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             }
             if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp) {
                 if (options.required_authentications.isNotEmpty()) {
-                    sb.append(String.format(pattern4String, "AuthMethods", options.required_authentications.getValue()));
+                    sb.append(String.format(pattern4String, "RequiredAuths", options.required_authentications.getValue()));
                     sb.append(String.format(pattern4String, "Password", "***"));
                     sb.append(String.format(pattern4String, "AuthFile", "***"));
                     if (options.passphrase.isNotEmpty()) {
@@ -456,7 +437,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     }
                     sb.append(String.format(pattern4String, am.indexOf(",") == -1 ? "AuthMethod" : "AuthMethods", am));
                     if (pa.indexOf(",") != -1) {
-                        sb.append(String.format(pattern4String, "PreferredAuthentications", pa));
+                        sb.append(String.format(pattern4String, "PreferredAuths", pa));
                     }
                     if (options.password.isNotEmpty()) {
                         sb.append(String.format(pattern4String, "Password", "***"));
