@@ -456,6 +456,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.getTarget().user.setDefaultValue("");
         options.getSource().include.setValue("");
         options.getTarget().include.setValue("");
+        options.getSource().keepass_attachment_property_name.setValue("");
+        options.getTarget().keepass_attachment_property_name.setValue("");
         StringBuilder command = new StringBuilder(objOptions.jumpCommand.getValue() + " ");
         command.append("-SendTransferHistory=false ");
         command.append(options.getOptionsAsQuotedCommandLine());
