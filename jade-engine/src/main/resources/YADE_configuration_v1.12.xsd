@@ -4400,7 +4400,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      shape="rect">Rename</a>.
 		</p>
                <p/>
-               <p>The following environment variables are available for a SFTP transfer:
+               <p>The following environment variables are available in the <em>SFTPPostProcessing</em> and <em>LocalPostProcessing</em>:
             <ul>
                      <li>See <a href="https://change.sos-berlin.com/browse/YADE-471" shape="rect">YADE-471</a>.</li>
                      <li>
