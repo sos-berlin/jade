@@ -4399,6 +4399,26 @@ SSH, etc.) server to which a connection has to be made.</p>
 			Specifies the commands to be executed for each file on the server after the transfer and the <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Rename"
                      shape="rect">Rename</a>.
 		</p>
+               <p/>
+               <p>The following environment variables are available for a SFTP transfer:
+            <ul>
+                     <li>See <a href="https://change.sos-berlin.com/browse/YADE-471" shape="rect">YADE-471</a>.</li>
+                     <li>
+                        <em>YADE_FILE_TRANSFER_STATUS</em>
+                        <ul>
+                           <li>possible values: <em>transferUndefined, waiting4transfer, transferring, transferInProgress, transferred, transfer_skipped, transfer_has_errors, transfer_aborted, compressed, notOverwritten, deleted, renamed, ignoredDueToZerobyteConstraint, setBack, polling</em>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>
+                        <em>YADE_FILE_IS_TRANSFERRED</em>
+                        <ul>
+                           <li>possible values: <em>0, 1</em>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+               </p>
 				
                 <p/>
                <p>The following special variables are available:
