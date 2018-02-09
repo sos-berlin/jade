@@ -1,5 +1,7 @@
 package com.sos.DataExchange;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jade.db.DBItemYadeTransfers;
+import com.sos.keepass.SOSKeePassDatabase;
 
 import sos.util.SOSString;
 
@@ -204,7 +207,27 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             csOptions.credentialStorePassword.setValue(objOptions.jump_CredentialStore_Password.getValue());
             csOptions.credentialStoreKeyPath.setValue(objOptions.jump_CredentialStore_KeyPath.getValue());
             options.setCredentialStore(csOptions);
+
+            Path jumpKpdPath = Paths.get(csOptions.credentialStoreFileName.getValue());
+            Object jumpKpd = null;
+            Object kpd = objOptions.getSource().keepass_database.value();
+            if (kpd != null && ((SOSKeePassDatabase) kpd).getFile().equals(jumpKpdPath)) {
+                LOGGER.debug("set jump settings from source KeePass");
+                jumpKpd = kpd;
+            }
+            if (jumpKpd == null) {
+                kpd = objOptions.getTarget().keepass_database.value();
+                if (kpd != null && ((SOSKeePassDatabase) kpd).getFile().equals(jumpKpdPath)) {
+                    LOGGER.debug("set jump settings from target KeePass");
+                    jumpKpd = kpd;
+                }
+            }
+            if (jumpKpd == null) {
+                LOGGER.debug("set jump settings from jump KeePass");
+            }
+            options.keepass_database.value(jumpKpd);
             options.checkCredentialStoreOptions();
+            options.keepass_database.value(null);
             csOptions.useCredentialStore.setValue("false");// prevent double checkCredentialStore
             objOptions.jumpHost.setValue(options.host.getValue());// override possible cs://...
         }
