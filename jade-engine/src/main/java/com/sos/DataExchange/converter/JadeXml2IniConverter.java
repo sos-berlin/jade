@@ -938,7 +938,7 @@ public class JadeXml2IniConverter {
                                 String includeName = arr[1].trim().split(",")[0].trim();
                                 if (_jumpIncludes.containsKey(includeName)) {
                                     String jumpInclude = _jumpIncludes.get(includeName);
-                                    if ("copyfrominternet".equals(operation) || "copytointernet".equals(operation)) {
+                                    if ("copyfrominternet".equals(operation) || "copytointernet".equals(operation) || "remove".equals(operation)) {
                                         if (_profileJumpInclude == null) {
                                             String[] jumpArr = jumpInclude.split("=");
                                             String jumpName = jumpArr.length > 0 ? jumpArr[1].trim() : null;
