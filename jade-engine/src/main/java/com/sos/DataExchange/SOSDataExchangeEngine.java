@@ -1055,6 +1055,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
      * @throws Exception */
     public boolean transfer() throws Exception {
         boolean rc = false;
+        Exception exception = null;
         try {
             getOptions().checkMandatory();
             LOGGER.debug(getOptions().dirtyString());
@@ -1221,16 +1222,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0013.get());
             JADE_REPORT_LOGGER.info(SOSJADE_E_0101.params(e.getMessage()), e);
             try {
-                executePostTransferCommandsOnError();
+                executePostTransferCommandsOnError(e);
             } catch (Exception ex) {
-                LOGGER.error("executePostTransferCommandsOnError: " + ex.toString());
+                LOGGER.error(ex.toString());
             }
+            exception = e;
             throw e;
         } finally {
             try {
-                executePostTransferCommandsFinal();
-            } catch (Exception ex) {
-                LOGGER.error("executePostTransferCommandsFinal: " + ex.toString());
+                executePostTransferCommandsFinal(exception);
+            } catch (Exception e) {
+                LOGGER.error(e.toString());
             }
         }
     }
@@ -1286,41 +1288,46 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
     }
 
-    private void executePostTransferCommandsOnError() throws Exception {
+    private void executePostTransferCommandsOnError(Exception e) throws Exception {
         StringBuilder exception = new StringBuilder();
-        SOSConnection2OptionsAlternate target = objOptions.getTarget();
-        String caller = "target_post_transfer_commands_on_error";
-        if (target.alternateOptionsUsed.isTrue()) {
-            target = target.getAlternatives();
-            caller = "alternative_" + caller;
-        }
-        try {
-            executeTransferCommands(caller, targetClient, target.postTransferCommandsOnError.getValue(), target.commandDelimiter.getValue());
-        } catch (Exception ex) {
-            exception.append(String.format("[%s]:%s", caller, ex.toString()));
-        }
-        SOSConnection2OptionsAlternate source = objOptions.getSource();
-        caller = "source_post_transfer_commands_on_error";
-        if (source.alternateOptionsUsed.isTrue()) {
-            source = source.getAlternatives();
-            caller = "alternative_" + caller;
-        }
-        if (!SOSString.isEmpty(source.postTransferCommandsOnError.getValue())) {
+        String caller = "";
+        if (e instanceof SOSYadeSourceConnectionException) {
+            SOSConnection2OptionsAlternate target = objOptions.getTarget();
+            caller = "target_post_transfer_commands_on_error";
+            if (target.alternateOptionsUsed.isTrue()) {
+                target = target.getAlternatives();
+                caller = "alternative_" + caller;
+            }
             try {
-                // with JADE4DMZ it could be that the
-                // target.PostTransferCommands
-                // needs more time than the source connection is still
-                // established
-                if (sourceClient == null) {
-                    throw new Exception("sourceClient is NULL");
-                }
-                sourceClient.reconnect(source);
-                executeTransferCommands(caller, sourceClient, source.postTransferCommandsOnError.getValue(), source.commandDelimiter.getValue());
+                executeTransferCommands(caller, targetClient, target.postTransferCommandsOnError.getValue(), target.commandDelimiter.getValue());
             } catch (Exception ex) {
-                if (exception.length() > 0) {
-                    exception.append(", ");
-                }
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
+            }
+        }
+        if (e instanceof SOSYadeTargetConnectionException) {
+            SOSConnection2OptionsAlternate source = objOptions.getSource();
+            caller = "source_post_transfer_commands_on_error";
+            if (source.alternateOptionsUsed.isTrue()) {
+                source = source.getAlternatives();
+                caller = "alternative_" + caller;
+            }
+            if (!SOSString.isEmpty(source.postTransferCommandsOnError.getValue())) {
+                try {
+                    // with JADE4DMZ it could be that the
+                    // target.PostTransferCommands
+                    // needs more time than the source connection is still
+                    // established
+                    if (sourceClient == null) {
+                        throw new Exception("sourceClient is NULL");
+                    }
+                    sourceClient.reconnect(source);
+                    executeTransferCommands(caller, sourceClient, source.postTransferCommandsOnError.getValue(), source.commandDelimiter.getValue());
+                } catch (Exception ex) {
+                    if (exception.length() > 0) {
+                        exception.append(", ");
+                    }
+                    exception.append(String.format("[%s]:%s", caller, ex.toString()));
+                }
             }
         }
         if (exception.length() > 0) {
@@ -1328,41 +1335,47 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
     }
 
-    private void executePostTransferCommandsFinal() throws Exception {
+    private void executePostTransferCommandsFinal(Exception e) throws Exception {
         StringBuilder exception = new StringBuilder();
-        SOSConnection2OptionsAlternate target = objOptions.getTarget();
-        String caller = "target_post_transfer_commands_final";
-        if (target.alternateOptionsUsed.isTrue()) {
-            target = target.getAlternatives();
-            caller = "alternative_" + caller;
-        }
-        try {
-            executeTransferCommands(caller, targetClient, target.postTransferCommandsFinal.getValue(), target.commandDelimiter.getValue());
-        } catch (Exception ex) {
-            exception.append(String.format("[%s]:%s", caller, ex.toString()));
-        }
-        SOSConnection2OptionsAlternate source = objOptions.getSource();
-        caller = "source_post_transfer_commands_final";
-        if (source.alternateOptionsUsed.isTrue()) {
-            source = source.getAlternatives();
-            caller = "alternative_" + caller;
-        }
-        if (!SOSString.isEmpty(source.postTransferCommandsFinal.getValue())) {
+        String caller = "";
+        if (e == null || e instanceof SOSYadeSourceConnectionException) {
+            SOSConnection2OptionsAlternate target = objOptions.getTarget();
+            caller = "target_post_transfer_commands_final";
+            if (target.alternateOptionsUsed.isTrue()) {
+                target = target.getAlternatives();
+                caller = "alternative_" + caller;
+            }
             try {
-                // with JADE4DMZ it could be that the
-                // target.PostTransferCommands
-                // needs more time than the source connection is still
-                // established
-                if (sourceClient == null) {
-                    throw new Exception("objDataSourceClient is NULL");
-                }
-                sourceClient.reconnect(source);
-                executeTransferCommands(caller, sourceClient, source.postTransferCommandsFinal.getValue(), source.commandDelimiter.getValue());
+                executeTransferCommands(caller, targetClient, target.postTransferCommandsFinal.getValue(), target.commandDelimiter.getValue());
             } catch (Exception ex) {
-                if (exception.length() > 0) {
-                    exception.append(", ");
-                }
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
+            }
+        }
+
+        if (e == null || e instanceof SOSYadeTargetConnectionException) {
+            SOSConnection2OptionsAlternate source = objOptions.getSource();
+            caller = "source_post_transfer_commands_final";
+            if (source.alternateOptionsUsed.isTrue()) {
+                source = source.getAlternatives();
+                caller = "alternative_" + caller;
+            }
+            if (!SOSString.isEmpty(source.postTransferCommandsFinal.getValue())) {
+                try {
+                    // with JADE4DMZ it could be that the
+                    // target.PostTransferCommands
+                    // needs more time than the source connection is still
+                    // established
+                    if (sourceClient == null) {
+                        throw new Exception("objDataSourceClient is NULL");
+                    }
+                    sourceClient.reconnect(source);
+                    executeTransferCommands(caller, sourceClient, source.postTransferCommandsFinal.getValue(), source.commandDelimiter.getValue());
+                } catch (Exception ex) {
+                    if (exception.length() > 0) {
+                        exception.append(", ");
+                    }
+                    exception.append(String.format("[%s]:%s", caller, ex.toString()));
+                }
             }
         }
         if (exception.length() > 0) {
