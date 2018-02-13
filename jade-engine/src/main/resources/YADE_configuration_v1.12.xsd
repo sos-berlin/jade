@@ -3687,7 +3687,6 @@ SSH, etc.) server to which a connection has to be made.</p>
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
-				        <xs:element ref="History" minOccurs="0"/>
 				        <xs:element ref="SystemPropertyFiles" minOccurs="0"/>
                 <xs:element ref="Logging" minOccurs="0"/>
                 <xs:element ref="Notifications" minOccurs="0"/>
@@ -7005,88 +7004,6 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="GetListSource"/>
 			      </xs:sequence>
 		    </xs:complexType>
-	  </xs:element>
-	  <xs:element name="HistoryFile">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="history"/>
-				        <FlatParameter name="HistoryFileName"/>
-				        <FlatParameter name="history_file_name"/>
-				        <FlatParameter name="SOSFtpHistoryFileName"/>
-			      </xs:appinfo>
-         <xs:documentation>
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_HistoryFile.html">HistoryFile</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+history">history</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+HistoryFileName">HistoryFileName</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+history_file_name">history_file_name</a>
-                        </li>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+SOSFtpHistoryFileName">SOSFtpHistoryFileName</a>
-                        </li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			When using the <em>History</em> then this parameter specifies the location of the history file.
-			A path is exepected as value for this parameter.
-		</p>
-               <p>
-			The history file is automatically created by the YADE Client with a CSV format.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
-		    <xs:simpleType>
-			      <xs:restriction base="xs:string">
-				        <xs:minLength value="1"/>
-			      </xs:restriction>
-		    </xs:simpleType>
-	  </xs:element>
-	  <xs:element name="DisableHistoryFileAppendMode"
-               type="xs:boolean"
-               default="false">
-		    <xs:annotation>
-         <xs:appinfo>
-				        <FlatParameter name="HistoryFileAppendMode" opposite_value="true"/>
-			      </xs:appinfo>
-         <xs:documentation>
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_DisableHistoryFileAppendMode.html">DisableHistoryFileAppendMode</a>
-                  </li>
-                  <li>Mapping:
-            <ul>
-                        <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+HistoryFileAppendMode">HistoryFileAppendMode</a>
-                        </li>
-                     </ul>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			               <ul>
-                     <li>If set to the value "true" then a history file which already exists will be overwritten.</li>
-                     <li>If set to the value "false" then a history file which already exists will be appended. This is the default behaviour.</li>
-                  </ul>
-		             </p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
 	  </xs:element>
 	  <xs:element name="DebugLevel" default="0">
 		    <xs:annotation>
@@ -10561,44 +10478,6 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:minLength value="1"/>
 			      </xs:restriction>
 		    </xs:simpleType>
-	  </xs:element>
-	  <xs:complexType name="HistoryType">
-		    <xs:sequence>
-			      <xs:element ref="HistoryFile" minOccurs="0"/>
-			      <xs:element ref="DisableHistoryFileAppendMode" minOccurs="0"/>
-		    </xs:sequence>
-	  </xs:complexType>
-	  <xs:element name="History" type="HistoryType">
-		    <xs:annotation>
-         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+History">
-            <div xmlns="http://www.w3.org/1999/xhtml">
-               <strong>References</strong>
-               <ul>
-                  <li>Schema: <a target="_blank"
-                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_History.html">History</a>
-                  </li>
-                  <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+History">History</a>
-                  </li>
-               </ul>
-               <strong>Notes</strong>
-               <p>
-			The YADE Client can be configured to store the transfer history persistently.
-			<ul>
-                     <li>
-                        <em>History</em>: use a CSV file located with the YADE Client to store the history.</li>
-                     <li>
-                        <em>BackgroundService</em>: submit history information directly to the YADE Background Service.
-					Should the YADE Background Service not be accessible then the <em>History</em> can be used 
-					as intermediate store and can later on be imported by the YADE Background Service.
-				</li>
-                  </ul>
-		             </p>
-               <p>
-			When using the <em>History</em> then parameters for the file location and entry handling can be specified.
-		</p>
-            </div>
-         </xs:documentation>
-      </xs:annotation>
 	  </xs:element>
 	  <xs:element name="KeyFileAuthentication">
       <xs:annotation>
