@@ -1291,7 +1291,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void executePostTransferCommandsOnError(Exception e) throws Exception {
         StringBuilder exception = new StringBuilder();
         String caller = "";
-        if (e instanceof SOSYadeSourceConnectionException) {
+        if (!(e instanceof SOSYadeTargetConnectionException)) {
             SOSConnection2OptionsAlternate target = objOptions.getTarget();
             caller = "target_post_transfer_commands_on_error";
             if (target.alternateOptionsUsed.isTrue()) {
@@ -1304,7 +1304,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
             }
         }
-        if (e instanceof SOSYadeTargetConnectionException) {
+        if (!(e instanceof SOSYadeSourceConnectionException)) {
             SOSConnection2OptionsAlternate source = objOptions.getSource();
             caller = "source_post_transfer_commands_on_error";
             if (source.alternateOptionsUsed.isTrue()) {
@@ -1338,7 +1338,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private void executePostTransferCommandsFinal(Exception e) throws Exception {
         StringBuilder exception = new StringBuilder();
         String caller = "";
-        if (e == null || e instanceof SOSYadeSourceConnectionException) {
+        if (e == null || !(e instanceof SOSYadeTargetConnectionException)) {
             SOSConnection2OptionsAlternate target = objOptions.getTarget();
             caller = "target_post_transfer_commands_final";
             if (target.alternateOptionsUsed.isTrue()) {
@@ -1352,7 +1352,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             }
         }
 
-        if (e == null || e instanceof SOSYadeTargetConnectionException) {
+        if (e == null || !(e instanceof SOSYadeSourceConnectionException)) {
             SOSConnection2OptionsAlternate source = objOptions.getSource();
             caller = "source_post_transfer_commands_final";
             if (source.alternateOptionsUsed.isTrue()) {
