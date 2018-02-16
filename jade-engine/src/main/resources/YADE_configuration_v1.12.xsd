@@ -425,7 +425,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples for fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -476,7 +476,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples without fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -685,7 +685,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples for fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -736,7 +736,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples without fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -912,7 +912,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples for fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -963,7 +963,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples without fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -2524,7 +2524,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples for fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -2575,7 +2575,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples without fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -2758,7 +2758,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples for fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -2809,7 +2809,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>Examples without fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -7470,6 +7470,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="domain"/>
+                <Note include="CredentialStore-Fields"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -7490,7 +7491,188 @@ SSH, etc.) server to which a connection has to be made.</p>
                <p>
         Domain for authentication at one of the systems involved in file transfer, e.g. an SMB server.
 		</p>
-            </div>
+				
+                <p/>
+               <p>
+			               <strong>Support for KeePass versions 1 and 2.</strong>
+               </p>
+               <p>
+                  <strong>Note:</strong> Availability starting with <a href="https://change.sos-berlin.com/browse/YADE-464" shape="rect">YADE-464</a>.</p>
+               <p/>
+               <p>
+			               <strong>Referencing CredentialStore fields.</strong>
+               </p>
+               <p>
+                  <strong>Note:</strong> Availability starting with <a href="https://change.sos-berlin.com/browse/YADE-481" shape="rect">YADE-481</a>.</p>
+               <p/>
+               <p>
+			Referencing a field in the <em>CredentialStore</em> is effected by the following syntax:
+		</p>
+               <p>        <strong>cs://[<em>entry_path</em>]@<em>entry_field</em>
+                  </strong>
+               </p>
+               <p>
+			where
+			<ul>
+                     <li>
+                        <strong>
+                           <em>cs://</em>
+                        </strong>        is a constant prefix that is used by YADE to identify this setting to be a reference to a <em>CredentialStore</em>.</li>
+                     <li>
+                        <strong>
+                           <em>entry_path</em>
+                        </strong>    
+					specifies the path to an entry within the <em>CredentialStore</em> database.
+					Folders (groups) within a path are separated by a slash "/".
+					This setting is optional. If ommitted then the value of the <em>CSEntryPath</em> configuration item is used.</li>
+                     <li>
+                        <strong>
+                           <em>entry_field</em>
+                        </strong>        
+					is one of the standard fields available in a <em>CredentialStore</em>:
+					<ul>
+                           <li>
+                              <em>title</em>
+                           </li>
+                           <li>
+                              <em>user</em>
+                           </li>
+                           <li>
+                              <em>password</em>
+                           </li>
+                           <li>
+                              <em>url</em>
+                           </li>
+                           <li>
+                              <em>notes</em>
+                           </li>
+                           <li>
+                              <em>attachment</em>
+                           </li>
+                        </ul>
+                    or the <em>custom fields</em>.
+             	</li>
+                  </ul>
+		             </p>
+               <p/>
+               <p>
+                  <strong>
+                     <em>&lt;Hostname&gt;</em>
+                  </strong> element:
+            <ul>
+                     <li>Usage like the examples below.</li>
+                     <li>If the entry field value is defined with <em>host:port</em>, YADE sets the <em>&lt;Hostname&gt;</em> and <em>&lt;Port&gt;</em> automatically.</li>
+                  </ul>
+     	         </p>
+               <p/>
+               <p>
+                  <strong>Examples</strong>
+                  <ul>
+                     <li>Examples for fully specified entry path:
+                    <ul>
+                           <li>
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                            <ul>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@title</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@user</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@password</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@url</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@notes</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@my_custom_field</em>
+                                    </strong>
+                                 </li>
+                              </ul>
+                           </li>
+                           <li>&lt;AuthenticationFile&gt; element:
+                            <ul>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@attachment</em>
+                                    </strong> - the first attachment</li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://sos/mft_server/srv001@my_custom_field</em>
+                                    </strong> - a specified attachment</li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>Examples without fully specified entry path:
+                    <ul>
+                           <li>
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                            <ul>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@title</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@user</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@password</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@url</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@notes</em>
+                                    </strong>
+                                 </li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@my_custom_field</em>
+                                    </strong>
+                                 </li>
+                              </ul>
+                           </li>
+                           <li>&lt;AuthenticationFile&gt; element:
+                            <ul>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@attachment</em>
+                                    </strong> - the first attachment</li>
+                                 <li>
+                                    <strong>
+                                       <em>cs://@my_custom_field</em>
+                                    </strong> - a specified attachment</li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+               </p>
+			         </div>
          </xs:documentation>
       </xs:annotation>
 		    <xs:simpleType>
@@ -10186,7 +10368,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                      <li>Examples for fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
@@ -10237,7 +10419,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                      <li>Examples without fully specified entry path:
                     <ul>
                            <li>
-                              <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
+                              <em>&lt;Domain&gt;</em>, <em>&lt;Hostname&gt;</em>, <em>&lt;Account&gt;</em>, <em>&lt;Password&gt;</em>, <em>&lt;Passphrase&gt;</em> elements:
                             <ul>
                                  <li>
                                     <strong>
