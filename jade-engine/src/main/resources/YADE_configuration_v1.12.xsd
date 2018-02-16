@@ -240,6 +240,15 @@
             <xs:element ref="CommandBeforeRename" minOccurs="0"/>
 		    </xs:sequence>
 	  </xs:complexType>
+    <xs:complexType name="SMBPostProcessingType">
+		    <xs:sequence>
+			      <xs:element ref="CommandAfterFile" minOccurs="0"/>
+			      <xs:element ref="CommandAfterOperationOnSuccess" minOccurs="0"/>
+            <xs:element ref="CommandAfterOperationOnError" minOccurs="0"/>
+            <xs:element ref="CommandAfterOperationFinal" minOccurs="0"/>
+            <xs:element ref="CommandBeforeRename" minOccurs="0"/>
+		    </xs:sequence>
+	  </xs:complexType>
 	  <xs:complexType name="SFTPPreProcessingType">
 		    <xs:sequence>
 			      <xs:element ref="CommandBeforeFile" minOccurs="0"/>
@@ -247,6 +256,12 @@
 		    </xs:sequence>
 	  </xs:complexType>
 	  <xs:complexType name="FTPPreProcessingType">
+		    <xs:sequence>
+			      <xs:element ref="CommandBeforeFile" minOccurs="0"/>
+			      <xs:element ref="CommandBeforeOperation" minOccurs="0"/>
+		    </xs:sequence>
+	  </xs:complexType>
+    <xs:complexType name="SMBPreProcessingType">
 		    <xs:sequence>
 			      <xs:element ref="CommandBeforeFile" minOccurs="0"/>
 			      <xs:element ref="CommandBeforeOperation" minOccurs="0"/>
@@ -4724,6 +4739,34 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
    </xs:element>
+    <xs:element name="SMBPostProcessing" type="SMBPostProcessingType">
+        <xs:annotation>
+         <xs:appinfo>
+                <Release starting="1.12.1" issue="YADE-492"/>
+            </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SMBPostProcessing.html">SMBPostProcessing</a>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-492">YADE-492</a> Availability starting with 1.12.1.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+			Specifies commands that are executed on the server where the YADE Client is located after transfer of files.
+			This includes shell commands.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+    </xs:element>
 	  <xs:element name="FTPSFragmentRef">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FTPSFragmentRef">
@@ -4953,7 +4996,10 @@ SSH, etc.) server to which a connection has to be made.</p>
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
-				        <xs:element ref="Rename" minOccurs="0"/>
+				        <xs:element ref="SMBPreProcessing" minOccurs="0"/>
+				        <xs:element ref="SMBPostProcessing" minOccurs="0"/>
+				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
+	            <xs:element ref="Rename" minOccurs="0"/>
 			      </xs:sequence>
 			      <xs:attribute name="ref" type="xs:NMTOKEN" use="required">
             <xs:annotation>
@@ -4968,6 +5014,34 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:attribute>
 		    </xs:complexType>
 	  </xs:element>
+    <xs:element name="SMBPreProcessing" type="SMBPreProcessingType">
+        <xs:annotation>
+         <xs:appinfo>
+                <Release starting="1.12.1" issue="YADE-492"/>
+            </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SMBPreProcessing.html">SMBPreProcessing</a>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-492">YADE-492</a> Availability starting with 1.12.1.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+			Specifies commands that are executed on the server where the YADE Client is located before transfer of files.
+			This includes shell commands.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+    </xs:element>
 	  <xs:element name="SourceFileOptions">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SourceFileOptions">
