@@ -20,8 +20,10 @@ import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateException;
+import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.jade.db.DBItemYadeFiles;
 import com.sos.jade.db.DBItemYadeProtocols;
 import com.sos.jade.db.DBItemYadeTransfers;
@@ -58,15 +60,15 @@ public class YadeDBOperationHelper {
         addAdditionalJobInfosFromOptions();
     }
 
-    public Long storeYadeTransferInformationToDB(SOSHibernateSession dbSession, Long parentTransferId) {
+    public Long storeYadeTransferInformationToDB(SOSHibernateFactory dbFactory, Long parentTransferId) {
         this.parentTransferId = parentTransferId;
         Long transferId = null;
-        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
-        SOSConnection2OptionsAlternate sourceOptions = yadeEngine.getOptions().getSource();
-        SOSConnection2OptionsAlternate targetOptions = yadeEngine.getOptions().getTarget();
-        try {
+        SOSHibernateSession dbSession = null;
+        YadeDBLayer dbLayer = null;
+        if (dbFactory != null) {
+            SOSConnection2OptionsAlternate sourceOptions = yadeEngine.getOptions().getSource();
+            SOSConnection2OptionsAlternate targetOptions = yadeEngine.getOptions().getTarget();
             if (sourceProtocolDBItem == null && yadeEngine.getOptions().sourceDir.isDirty()) {
-                dbSession.beginTransaction();
                 sourceProtocolDBItem = new DBItemYadeProtocols();
                 sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
                 sourceProtocolDBItem.setPort(sourceOptions.port.value());
@@ -91,26 +93,47 @@ public class YadeDBOperationHelper {
                 }
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
                             sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol(), sourceProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 if (sourceProtocolFromDb != null) {
                     sourceProtocolDBItem = sourceProtocolFromDb;
                 } else {
                     try {
-                        dbLayer.getSession().save(sourceProtocolDBItem);
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(sourceProtocolDBItem);
+                        dbSession.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
-                dbSession.commit();
-                dbSession.refresh(sourceProtocolDBItem);
             }
             
             if (targetProtocolDBItem == null && yadeEngine.getOptions().targetDir.isDirty()) {
-                dbSession.beginTransaction();
                 targetProtocolDBItem = new DBItemYadeProtocols();
                 targetProtocolDBItem.setHostname(targetOptions.host.getValue());
                 targetProtocolDBItem.setPort(targetOptions.port.value());
@@ -135,26 +158,47 @@ public class YadeDBOperationHelper {
                 }
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
                             targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol(), targetProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 if (targetProtocolFromDb != null) {
                     targetProtocolDBItem = targetProtocolFromDb;
                 } else {
                     try {
-                        dbLayer.getSession().save(targetProtocolDBItem);
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(targetProtocolDBItem);
+                        dbSession.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
-                dbSession.commit();
-                dbSession.refresh(targetProtocolDBItem);
             }
             
             if (jumpProtocolDBItem == null && yadeEngine.getOptions().jumpHost.isDirty()) { 
-                dbSession.beginTransaction();
                 jumpProtocolDBItem = new DBItemYadeProtocols();
                 jumpProtocolDBItem.setHostname(yadeEngine.getOptions().jumpHost.getValue());
                 jumpProtocolDBItem.setPort(yadeEngine.getOptions().jumpPort.value());
@@ -167,32 +211,64 @@ public class YadeDBOperationHelper {
                 }
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
                             jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol(), jumpProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 if (jumpProtocolFromDb != null) {
                     jumpProtocolDBItem = jumpProtocolFromDb;
                 } else {
                     try {
-                        dbLayer.getSession().save(jumpProtocolDBItem);
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(jumpProtocolDBItem);
+                        dbSession.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
-                dbSession.commit();
-                dbSession.refresh(jumpProtocolDBItem);
             }
 
-            dbSession.beginTransaction();
             DBItemYadeTransfers transferFromDb = null;
             try {
+                dbSession = initStatelessSession(dbFactory);
+                dbLayer = new YadeDBLayer(dbSession);
+                dbSession.beginTransaction();
                 if (transferDBItem != null && transferDBItem.getId() != null) {
                     transferFromDb = dbLayer.getTransferFromDb(transferDBItem.getId());
                 }
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
+                if (dbSession != null) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {}
+                }
+            } finally {
+                if (dbSession != null) {
+                    dbSession.close();
+                }
             }
             if(transferFromDb != null) {
                 transferId = transferFromDb.getId();
@@ -221,12 +297,22 @@ public class YadeDBOperationHelper {
                 }
                 transferFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
-                    dbLayer.getSession().update(transferFromDb);
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
+                    dbSession.update(transferFromDb);
                     dbSession.commit();
-                    dbSession.refresh(transferFromDb);
                 } catch (SOSHibernateException e) {
                     LOGGER.error("error occurred trying to update transfer DB Item!");
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 transferDBItem = transferFromDb;
             } else {
@@ -265,30 +351,39 @@ public class YadeDBOperationHelper {
                     newTransfer.setParentTransferId(parentTransferId);
                 }
                 newTransfer.setModified(getUTCDateFromInstant(Instant.now()));
-                dbLayer.getSession().save(newTransfer);
-                transferId = newTransfer.getId();
-                transferDBItem = newTransfer;
-                dbSession.commit();
-                dbSession.refresh(newTransfer);
+                try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
+                    dbSession.save(newTransfer);
+                    transferId = newTransfer.getId();
+                    transferDBItem = newTransfer;
+                    dbSession.commit();
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
+                }
             }
-        } catch (SOSHibernateException e) {
-            try {
-                dbSession.rollback();
-            } catch (SOSHibernateException e1) {}
-            LOGGER.error(e.getMessage(), e);
         }
         return transferId;
     }
     
-    public Long storeYadeDMZTransferInformationToDB(SOSHibernateSession dbSession, Long parentTransferId) {
+    public Long storeYadeDMZTransferInformationToDB(SOSHibernateFactory dbFactory, Long parentTransferId) {
         this.parentTransferId = parentTransferId;
         Long transferId = null;
-        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+        YadeDBLayer dbLayer = null;
+        SOSHibernateSession dbSession = null;
         SOSConnection2OptionsAlternate sourceOptions = yadeDMZEngine.getOptions().getSource();
         SOSConnection2OptionsAlternate targetOptions = yadeDMZEngine.getOptions().getTarget();
-        try {
+        if (dbFactory != null) {
             if (sourceProtocolDBItem == null && yadeDMZEngine.getOptions().sourceDir.isDirty()) {
-                dbSession.beginTransaction();
                 sourceProtocolDBItem = new DBItemYadeProtocols();
                 sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
                 sourceProtocolDBItem.setPort(sourceOptions.port.value());
@@ -313,26 +408,47 @@ public class YadeDBOperationHelper {
                 }
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
                             sourceProtocolDBItem.getPort(), sourceProtocolDBItem.getProtocol(), sourceProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 if (sourceProtocolFromDb != null) {
                     sourceProtocolDBItem = sourceProtocolFromDb;
                 } else {
                     try {
-                        dbLayer.getSession().save(sourceProtocolDBItem);
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(sourceProtocolDBItem);
+                        dbSession.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
-                dbSession.commit();
-                dbSession.refresh(sourceProtocolDBItem);
             }
             
             if (targetProtocolDBItem == null && yadeDMZEngine.getOptions().targetDir.isDirty()) {
-                dbSession.beginTransaction();
                 targetProtocolDBItem = new DBItemYadeProtocols();
                 targetProtocolDBItem.setHostname(targetOptions.host.getValue());
                 targetProtocolDBItem.setPort(targetOptions.port.value());
@@ -357,26 +473,47 @@ public class YadeDBOperationHelper {
                 }
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
                             targetProtocolDBItem.getPort(), targetProtocolDBItem.getProtocol(), targetProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 if (targetProtocolFromDb != null) {
                     targetProtocolDBItem = targetProtocolFromDb;
                 } else {
                     try {
-                        dbLayer.getSession().save(targetProtocolDBItem);
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(targetProtocolDBItem);
+                        dbSession.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
-                dbSession.commit();
-                dbSession.refresh(targetProtocolDBItem);
             }
             
             if (jumpProtocolDBItem == null && yadeDMZEngine.getOptions().jumpHost.isDirty()) { 
-                dbSession.beginTransaction();
                 jumpProtocolDBItem = new DBItemYadeProtocols();
                 jumpProtocolDBItem.setHostname(yadeDMZEngine.getOptions().jumpHost.getValue());
                 jumpProtocolDBItem.setPort(yadeDMZEngine.getOptions().jumpPort.value());
@@ -388,32 +525,65 @@ public class YadeDBOperationHelper {
                 }
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
                             jumpProtocolDBItem.getPort(), jumpProtocolDBItem.getProtocol(), jumpProtocolDBItem.getAccount());
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 if (jumpProtocolFromDb != null) {
                     jumpProtocolDBItem = jumpProtocolFromDb;
                 } else {
                     try {
-                        dbLayer.getSession().save(jumpProtocolDBItem);
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(jumpProtocolDBItem);
+                        dbSession.commit();
                     } catch (SOSHibernateException e) {
                         LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
-                dbSession.commit();
-                dbSession.refresh(jumpProtocolDBItem);
             }
 
-            dbSession.beginTransaction();
             DBItemYadeTransfers transferFromDb = null;
             try {
                 if (transferDBItem != null && transferDBItem.getId() != null) {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
                     transferFromDb = dbLayer.getTransferFromDb(transferDBItem.getId());
                 }
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
+                if (dbSession != null) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {}
+                }
+            } finally {
+                if (dbSession != null) {
+                    dbSession.close();
+                }
             }
             if(transferFromDb != null) {
                 transferId = transferFromDb.getId();
@@ -442,12 +612,22 @@ public class YadeDBOperationHelper {
                 }
                 transferFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
-                    dbLayer.getSession().update(transferFromDb);
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
+                    dbSession.update(transferFromDb);
                     dbSession.commit();
-                    dbSession.refresh(transferFromDb);
                 } catch (SOSHibernateException e) {
                     LOGGER.error("error occurred trying to update transfer DB Item!");
                     LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
                 }
                 transferDBItem = transferFromDb;
             } else {
@@ -486,53 +666,70 @@ public class YadeDBOperationHelper {
                     newTransfer.setParentTransferId(parentTransferId);
                 }
                 newTransfer.setModified(getUTCDateFromInstant(Instant.now()));
-                dbLayer.getSession().save(newTransfer);
-                dbSession.commit();
-                dbSession.refresh(newTransfer);
-                transferId = newTransfer.getId();
-                transferDBItem = newTransfer;
+                try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
+                    dbLayer.getSession().save(newTransfer);
+                    dbSession.commit();
+                    transferId = newTransfer.getId();
+                    transferDBItem = newTransfer;
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
+                }
             }
-        } catch (SOSHibernateException e) {
-            try {
-                dbSession.rollback();
-            } catch (SOSHibernateException e1) {}
-            LOGGER.error(e.getMessage(), e);
         }
         return transferId;
     }
     
-    public void storeInitialFilesInformationToDB(Long transferId, SOSHibernateSession dbSession, SOSFileList files) {
+    public void storeInitialFilesInformationToDB(Long transferId, SOSHibernateFactory dbFactory, SOSFileList files) {
         Long fileSizeSum = 0L;
-        if (files != null && files.getList() != null && !files.getList().isEmpty()) {
-            for (SOSFileListEntry fileEntry : files.getList()) {
-                DBItemYadeFiles file = new DBItemYadeFiles();
-                file.setTransferId(transferId);
-                file.setSourcePath(fileEntry.getSourceFilename());
-                file.setTargetPath(fileEntry.getTargetFileNameAndPath());
-                file.setSize(fileEntry.getFileSize());
-                fileSizeSum += fileEntry.getFileSize();
-                file.setState(fileEntry.getStatus());
-                String lastErrorMessage = fileEntry.getLastErrorMessage();
-                if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
-                    file.setErrorCode("ERRORCODE");
-                    file.setErrorMessage(lastErrorMessage);
-                } else {
-                    file.setErrorCode(null);
-                    file.setErrorMessage(null);
-                }
-                file.setIntegrityHash(fileEntry.getMd5());
-                file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
-                file.setModified(getUTCDateFromInstant(Instant.now()));
-                try {
-                    dbSession.beginTransaction();
-                    dbSession.save(file);
-                    dbSession.commit();
-                    dbSession.refresh(file);
-                } catch (SOSHibernateException e) {
-                    LOGGER.error(e.getMessage(), e);
+        SOSHibernateSession dbSession = null;
+        if (dbFactory != null) {
+            if (files != null && files.getList() != null && !files.getList().isEmpty()) {
+                for (SOSFileListEntry fileEntry : files.getList()) {
+                    DBItemYadeFiles file = new DBItemYadeFiles();
+                    file.setTransferId(transferId);
+                    file.setSourcePath(fileEntry.getSourceFilename());
+                    file.setTargetPath(fileEntry.getTargetFileNameAndPath());
+                    file.setSize(fileEntry.getFileSize());
+                    fileSizeSum += fileEntry.getFileSize();
+                    file.setState(fileEntry.getStatus());
+                    String lastErrorMessage = fileEntry.getLastErrorMessage();
+                    if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
+                        file.setErrorCode("ERRORCODE");
+                        file.setErrorMessage(lastErrorMessage);
+                    } else {
+                        file.setErrorCode(null);
+                        file.setErrorMessage(null);
+                    }
+                    file.setIntegrityHash(fileEntry.getMd5());
+                    file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
+                    file.setModified(getUTCDateFromInstant(Instant.now()));
                     try {
-                        dbSession.rollback();
-                    } catch (SOSHibernateException e1) {
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(file);
+                        dbSession.commit();
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
                     }
                 }
             }
@@ -540,18 +737,34 @@ public class YadeDBOperationHelper {
         files.setSumOfFileSizes(fileSizeSum);
     }
     
-    public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) {
-        updateFileInformationToDB(dbSession, fileEntry, false, null);
+    public void updateFileInformationToDB(SOSHibernateFactory dbFactory, SOSFileListEntry fileEntry) {
+        updateFileInformationToDB(dbFactory, fileEntry, false, null);
     }
     
-    public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry, boolean finalUpdate, String targetPath) {
-        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+    public void updateFileInformationToDB(SOSHibernateFactory dbFactory, SOSFileListEntry fileEntry, 
+            boolean finalUpdate, String targetPath) {
+        SOSHibernateSession dbSession = null;
+        YadeDBLayer dbLayer = null;
         if (fileEntry != null) {
             DBItemYadeFiles fileFromDb = null;
             try {
-                fileFromDb = dbLayer.getTransferFileFromDbByConstraint(transferDBItem.getId(), fileEntry.getSourceFilename());
+                if (dbFactory != null) {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbLayer = new YadeDBLayer(dbSession);
+                    dbSession.beginTransaction();
+                    fileFromDb = dbLayer.getTransferFileFromDbByConstraint(transferDBItem.getId(), fileEntry.getSourceFilename());
+                }
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
+                if (dbSession != null) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {}
+                }
+            } finally {
+                if (dbSession != null) {
+                    dbSession.close();
+                }
             }
             if (fileFromDb != null) {
                 if (finalUpdate && (fileEntry.getStatus() == 0 || fileEntry.getStatus() == 7)) {
@@ -579,24 +792,66 @@ public class YadeDBOperationHelper {
                 fileFromDb.setIntegrityHash(fileEntry.getMd5());
                 fileFromDb.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
                 fileFromDb.setModified(getUTCDateFromInstant(Instant.now()));
-                try {
-                    dbSession.beginTransaction();
-                    dbSession.update(fileFromDb);
-                    dbSession.commit();
-                    dbSession.refresh(fileFromDb);
+                if (dbFactory != null) {
+                    try {
+                        dbSession = initStatelessSession(dbFactory);
+                        dbLayer = new YadeDBLayer(dbSession);
+                        dbSession.beginTransaction();
+                        dbSession.update(fileFromDb);
+                        dbSession.commit();
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                        if (dbSession != null) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                        }
+                    }
                     Map<String, String> values = new HashMap<String, String>();
                     values.put("fileId", fileFromDb.getId().toString());
                     eventHandler.sendEvent("YADEFileStateChanged", values);
                     if (finalUpdate && parentTransferId != null) {
                         DBItemYadeFiles intervenedFileFromDb = null;
-                        intervenedFileFromDb = 
+                        try {
+                            dbSession = initStatelessSession(dbFactory);
+                            dbLayer = new YadeDBLayer(dbSession);
+                            intervenedFileFromDb = 
                                 dbLayer.getTransferFileFromDbByConstraint(parentTransferId, fileEntry.getSourceFilename());
+                        } catch (SOSHibernateException e) {
+                            LOGGER.error(e.getMessage(), e);
+                            if (dbSession != null) {
+                                try {
+                                    dbSession.rollback();
+                                } catch (SOSHibernateException e1) {}
+                            }
+                        } finally {
+                            if (dbSession != null) {
+                                dbSession.close();
+                            }
+                        }
                         if (intervenedFileFromDb != null) {
                             intervenedFileFromDb.setInterventionTransferId(transferDBItem.getId());
-                            dbSession.beginTransaction();
-                            dbSession.update(intervenedFileFromDb);
-                            dbSession.commit();
-                            dbSession.refresh(intervenedFileFromDb);
+                            try {
+                                dbSession = initStatelessSession(dbFactory);
+                                dbSession.beginTransaction();
+                                dbSession.update(intervenedFileFromDb);
+                                dbSession.commit();
+                            } catch (SOSHibernateException e) {
+                                LOGGER.error(e.getMessage(), e);
+                                if (dbSession != null) {
+                                    try {
+                                        dbSession.rollback();
+                                    } catch (SOSHibernateException e1) {}
+                                }
+                            } finally {
+                                if (dbSession != null) {
+                                    dbSession.close();
+                                }
+                            }
                             values = new HashMap<String, String>();
                             values.put("transferId", parentTransferId.toString());
                             values.put("fileId", intervenedFileFromDb.getId().toString());
@@ -607,12 +862,6 @@ public class YadeDBOperationHelper {
                                     + "due to item not found in DB!", 
                                     parentTransferId, fileEntry.getSourceFilename(), transferDBItem.getId()));
                         }
-                    }
-                } catch (SOSHibernateException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    try {
-                        dbSession.rollback();
-                    } catch (SOSHibernateException e1) {
                     }
                 }
             } else {
@@ -643,36 +892,43 @@ public class YadeDBOperationHelper {
                 file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
                 file.setModified(getUTCDateFromInstant(Instant.now()));
                 try {
-                    dbSession.beginTransaction();
-                    dbSession.save(file);
-                    dbSession.commit();
-                    dbSession.refresh(file);
-                    Map<String, String> values = new HashMap<String, String>();
-                    values.put("fileId", file.getId().toString());
-                    eventHandler.sendEvent("YADEFileStateChanged", values);
+                    if (dbFactory != null) {
+                        dbSession = initStatelessSession(dbFactory);
+                        dbSession.beginTransaction();
+                        dbSession.save(file);
+                        dbSession.commit();
+                        Map<String, String> values = new HashMap<String, String>();
+                        values.put("fileId", file.getId().toString());
+                        eventHandler.sendEvent("YADEFileStateChanged", values);
+                    }
                 } catch (SOSHibernateException e) {
                     LOGGER.error(e.getMessage(), e);
-                    try {
-                        dbSession.rollback();
-                    } catch (SOSHibernateException e1) {
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
                     }
                 }
             }
         }
     }
 
-    public Long storeInitialTransferInformations(SOSHibernateSession dbSession) {
-        return storeInitialTransferInformations(dbSession, null);
+    public Long storeInitialTransferInformations(SOSHibernateFactory dbFactory) {
+        return storeInitialTransferInformations(dbFactory, null);
     }
 
-    public Long storeInitialTransferInformations(SOSHibernateSession dbSession, Long parentTransferId) {
+    public Long storeInitialTransferInformations(SOSHibernateFactory dbFactory, Long parentTransferId) {
         this.parentTransferId = parentTransferId;
         Long transferId = null;
-        if (dbSession != null) {
+        if (dbFactory != null) {
             if (yadeEngine != null) {
-                transferId = storeYadeTransferInformationToDB(dbSession, parentTransferId);
+                transferId = storeYadeTransferInformationToDB(dbFactory, parentTransferId);
             } else if (yadeDMZEngine != null) {
-                transferId = storeYadeDMZTransferInformationToDB(dbSession, parentTransferId);
+                transferId = storeYadeDMZTransferInformationToDB(dbFactory, parentTransferId);
             }
         }
         return transferId;
@@ -728,48 +984,118 @@ public class YadeDBOperationHelper {
         }
     }
     
-    public void updateFailedTransfer(SOSHibernateSession dbSession, String errorMessage) throws SOSHibernateException {
+    public void updateFailedTransfer(SOSHibernateFactory dbFactory, String errorMessage) {
+        SOSHibernateSession dbSession = null;
         if (transferDBItem != null) {
             transferDBItem.setState(3);
             transferDBItem.setErrorMessage(errorMessage);
             transferDBItem.setEnd(getUTCDateFromInstant(Instant.now()));
             transferDBItem.setModified(getUTCDateFromInstant(Instant.now()));
-            dbSession.beginTransaction();
-            dbSession.update(transferDBItem);
-            dbSession.commit();
-            dbSession.refresh(transferDBItem);
+            if (dbFactory != null) {
+                try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
+                    dbSession.update(transferDBItem);
+                    dbSession.commit();
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
+                }
+            }
             eventHandler.sendEvent("YADETransferUpdated", null);
         }        
     }
     
-    public void updateSuccessfulTransfer(SOSHibernateSession dbSession) throws SOSHibernateException {
+    public void updateSuccessfulTransfer(SOSHibernateFactory dbFactory) {
+        SOSHibernateSession dbSession = null;
         if (transferDBItem != null) {
             transferDBItem.setState(1);
             transferDBItem.setEnd(getUTCDateFromInstant(Instant.now()));
             transferDBItem.setModified(getUTCDateFromInstant(Instant.now()));
-            dbSession.beginTransaction();
-            dbSession.update(transferDBItem);
-            dbSession.commit();
-            dbSession.refresh(transferDBItem);
+            if (dbFactory != null) {
+                try {
+                    dbSession = initStatelessSession(dbFactory);
+                    dbSession.beginTransaction();
+                    dbSession.update(transferDBItem);
+                    dbSession.commit();
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
+                }
+            }
             eventHandler.sendEvent("YADETransferUpdated", null);
         }        
     }
     
-    public void updateTransfersNumOfFiles(SOSHibernateSession dbSession, Long numOfFiles) throws SOSHibernateException {
+    public void updateTransfersNumOfFiles(SOSHibernateFactory dbFactory, Long numOfFiles) {
+        SOSHibernateSession dbSession = null;
         if (transferDBItem != null) {
             transferDBItem.setNumOfFiles(numOfFiles);
             transferDBItem.setModified(getUTCDateFromInstant(Instant.now()));
-            dbSession.beginTransaction();
-            dbSession.update(transferDBItem);
-            dbSession.commit();
-            dbSession.refresh(transferDBItem);
+            if (dbFactory != null) {
+                try {
+                    dbSession = initStatelessSession(dbFactory);
+                    if (dbSession != null) {
+                        dbSession.beginTransaction();
+                        dbSession.update(transferDBItem);
+                        dbSession.commit();
+                    }
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    if (dbSession != null) {
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                    }
+                }
+            }
             eventHandler.sendEvent("YADETransferUpdated", null);
         }
     }
     
-    public DBItemYadeTransfers getTransfer(Long id, SOSHibernateSession dbSession) throws SOSHibernateException {
-        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
-        return dbLayer.getTransferFromDb(id);
+    public DBItemYadeTransfers getTransfer(Long id, SOSHibernateFactory dbFactory) {
+        YadeDBLayer dbLayer = null;
+        SOSHibernateSession dbSession = null;
+        DBItemYadeTransfers transfer = null;
+        if (dbFactory != null) {
+            try {
+                dbSession = initStatelessSession(dbFactory);
+                dbLayer = new YadeDBLayer(dbSession);
+                transfer = dbLayer.getTransferFromDb(id);
+            } catch (SOSHibernateException e) {
+                LOGGER.error(e.getMessage(), e);
+                if (dbSession != null) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {}
+                }
+            } finally {
+                if (dbSession != null) {
+                    dbSession.close();
+                }
+            }
+        }
+        return transfer;
     }
     
     private Integer getOperation(SOSOptionJadeOperation jadeOperation) {
@@ -841,6 +1167,7 @@ public class YadeDBOperationHelper {
         }
     }
 
+    @SuppressWarnings("unused")
     private Boolean getHasErrorsFromFileState(Integer fileEntryState) {
         switch(fileEntryState) {
         case 1:
@@ -902,4 +1229,17 @@ public class YadeDBOperationHelper {
         }
         return new Date(timestamp - TimeZone.getDefault().getOffset(timestamp));
     }
+
+    private SOSHibernateSession initStatelessSession(SOSHibernateFactory dbFactory) {
+        SOSHibernateSession dbSession = null;
+        try {
+            if (dbFactory != null) {
+                dbSession = dbFactory.openStatelessSession("YadeJob");
+            }
+        } catch (SOSHibernateOpenSessionException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return dbSession;
+    }
+    
 }
