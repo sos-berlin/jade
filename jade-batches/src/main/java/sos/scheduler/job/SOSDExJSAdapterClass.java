@@ -92,8 +92,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()), e);
             LOGGER.debug("", e);
             throw e;
-        } finally {
-            dbFactory.close();
         }
         return signalSuccess();
     }
