@@ -105,6 +105,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private IJobSchedulerEventHandler eventHandler = null;
     private boolean isIntervention = false;
     private String filePathRestriction = null;
+    private SOSHibernateSession dbSession = null;
 
     public SOSDataExchangeEngine() throws Exception {
         this.getOptions();
@@ -328,62 +329,93 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             }
             if (dbFactory != null) {
                 dbHelper = new YadeDBOperationHelper(this, eventHandler);
-                if (parentTransferId != null) {
-                    dbHelper.setParentTransferId(parentTransferId);
-                    DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbFactory);
-                    if (existingTransfer != null && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
-                            && existingTransfer.getOrderId().equals(objOptions.getOrderId()) 
-                            && existingTransfer.getState() == 3) {
-                        existingTransfer.setHasIntervention(true);
-                        SOSHibernateSession dbSession = null;
-                        try {
-                            dbSession = initStatelessSession();
-                            dbSession.beginTransaction();
-                            dbSession.update(existingTransfer);
-                            dbSession.commit();
-                        } catch (SOSHibernateException e) {
-                            LOGGER.error(e.getMessage(), e);
-                        } finally {
-                            if (dbSession != null) {
-                                dbSession.close();
+                try {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened before transfer!");
+                    if (parentTransferId != null) {
+                        dbHelper.setParentTransferId(parentTransferId);
+                        DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
+                        if (existingTransfer != null
+                                && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
+                                && existingTransfer.getOrderId().equals(objOptions.getOrderId())
+                                && existingTransfer.getState() == 3) {
+                            existingTransfer.setHasIntervention(true);
+                            try {
+                                dbSession.beginTransaction();
+                                dbSession.update(existingTransfer);
+                                dbSession.commit();
+                            } catch (SOSHibernateException e) {
+                                LOGGER.error(e.getMessage(), e);
                             }
+                            transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
+                        } else {
+                            transferId = dbHelper.storeInitialTransferInformations(dbSession);
                         }
-                        transferId = dbHelper.storeInitialTransferInformations(dbFactory, existingTransfer.getId());
                     } else {
-                        transferId = dbHelper.storeInitialTransferInformations(dbFactory);
+                        transferId = dbHelper.storeInitialTransferInformations(dbSession);
                     }
-                } else {
-                    transferId = dbHelper.storeInitialTransferInformations(dbFactory);
-                }
-                if (eventHandler != null && transferId != null) {
-                    Map<String, String> values = new HashMap<String, String>();
-                    values.put("transferId", transferId.toString());
-                    eventHandler.sendEvent("YADETransferStarted", values);
+                    if (eventHandler != null && transferId != null) {
+                        Map<String, String> values = new HashMap<String, String>();
+                        values.put("transferId", transferId.toString());
+                        eventHandler.sendEvent("YADETransferStarted", values);
+                    }
+                } finally {
+                    dbSession.close();
+                    LOGGER.debug("DB Session closed before transfer!");
                 }
             }
             ok = transfer();
-            if (dbFactory != null) {
-                dbHelper.updateSuccessfulTransfer(dbFactory);
+            try {
+                dbSession = initStatelessSession();
+                LOGGER.debug("DB Session opened after transfer!");
+                dbHelper.updateSuccessfulTransfer(dbSession);
+            } finally {
+                dbSession.close();
+                LOGGER.debug("DB Session closed after transfer!");
             }
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }
         } catch (SOSYadeSourceConnectionException | SOSYadeTargetConnectionException e) {
             if (dbFactory != null) {
-                dbHelper.updateFailedTransfer(dbFactory,
-                        String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                if (dbSession == null || !dbSession.isOpen()) {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened in exception handling!");
+                }
+                try {
+                    dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(),
+                            e.getMessage()));
+                } finally {
+                    dbSession.close();
+                }
             }
             throw new JobSchedulerException(e.getCause());
         } catch (JobSchedulerException e) {
             if (dbFactory != null) {
-                dbHelper.updateFailedTransfer(dbFactory, 
-                        String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                if (dbSession == null || !dbSession.isOpen()) {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened in exception handling!");
+                }
+                try {
+                    dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(),
+                            e.getMessage()));
+                } finally {
+                    dbSession.close();
+                }
             }
             throw e;
         } catch (Exception e) {
             if (dbFactory != null) {
-                dbHelper.updateFailedTransfer(dbFactory,
-                        String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                if (dbSession == null || !dbSession.isOpen()) {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened in exception handling!");
+                }
+                try {
+                    dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(),
+                            e.getMessage()));
+                } finally {
+                    dbSession.close();
+                }
             }
             throw new JobSchedulerException(e.getMessage());
         } finally {
@@ -1166,17 +1198,39 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                                     makeDirs();
                                 }
                                 if (dbFactory != null) {
-                                    dbHelper.updateTransfersNumOfFiles(dbFactory, sourceFileList.size());
-                                    if (transferId != null) {
-                                        dbHelper.storeInitialFilesInformationToDB(transferId, dbFactory, sourceFileList);
+                                    try {
+                                        if (dbSession == null || !dbSession.isOpen()) {
+                                            dbSession = initStatelessSession();
+                                            LOGGER.debug("DB Session opened in transfer()-method before call of sendFiles()!");
+                                        }
+                                        dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.size());
+                                        if (transferId != null) {
+                                            dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, sourceFileList);
+                                        }
+                                    } finally {
+                                        if (dbSession != null) {
+                                            dbSession.close();
+                                            LOGGER.debug("DB Session closed in transfer()-method before call of sendFiles()!");
+                                        }
                                     }
                                 }
                                 sendFiles(sourceFileList);
                                 if (dbFactory != null) {
-                                    for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                        dbHelper.updateFileInformationToDB(dbFactory, entry, true, null);
+                                    try {
+                                        if (dbSession == null || !dbSession.isOpen()) {
+                                            dbSession = initStatelessSession();
+                                            LOGGER.debug("DB Session opened in transfer()-method after call of sendFiles()!");
+                                        }
+                                        for (SOSFileListEntry entry : sourceFileList.getList()) {
+                                            dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
+                                        }
+                                        dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
+                                    } finally {
+                                        if (dbSession != null) {
+                                            dbSession.close();
+                                            LOGGER.debug("DB Session closed in transfer()-method after call of sendFiles()!");
+                                        }
                                     }
-                                    dbHelper.updateTransfersNumOfFiles(dbFactory, sourceFileList.count());
                                 }
                                 sourceFileList.renameTargetAndSourceFiles();
                                 executePostTransferCommands();
@@ -1208,20 +1262,25 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                         } else {
                             msg = TRANSFER_ABORTED.get(e);
                         }
-                        if (dbFactory != null) {
-                            for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                dbHelper.updateFileInformationToDB(dbFactory, entry, true, null);
-                            }
-                            dbHelper.updateTransfersNumOfFiles(dbFactory, sourceFileList.count());
-                        }
                         LOGGER.error(msg);
                         JADE_REPORT_LOGGER.error(msg);
                         sourceFileList.rollback();
                         if (dbFactory != null) {
-                            for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                dbHelper.updateFileInformationToDB(dbFactory, entry, true, null);
+                            try {
+                                if (dbSession == null || !dbSession.isOpen()) {
+                                    dbSession = initStatelessSession();
+                                    LOGGER.debug("DB Session opened in transfer()-methods inner exception handling!");
+                                }
+                                for (SOSFileListEntry entry : sourceFileList.getList()) {
+                                    dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
+                                }
+                                dbHelper.updateTransfersNumOfFiles(dbSession, sourceFileList.count());
+                            } finally {
+                                if (dbSession != null) {
+                                    dbSession.close();
+                                    LOGGER.debug("DB Session closed in transfer()-methods inner exception handling!");
+                                }
                             }
-                            dbHelper.updateTransfersNumOfFiles(dbFactory, sourceFileList.count());
                         }
                         throw e;
                     }
@@ -1230,9 +1289,20 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 return rc;
             } catch (Exception e) {
                 if (dbFactory != null) {
-                    for (SOSFileListEntry entry : sourceFileList.getList()) {
-                        if (dbFactory != null) {
-                            dbHelper.updateFileInformationToDB(dbFactory, entry, true, null);
+                    try {
+                        if (dbSession == null || !dbSession.isOpen()) {
+                            dbSession = initStatelessSession();
+                            LOGGER.debug("DB Session opened in transfer()-methods outer exception handling!");
+                        }
+                        for (SOSFileListEntry entry : sourceFileList.getList()) {
+                            if (dbFactory != null) {
+                                dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
+                            }
+                        }
+                    } finally {
+                        if (dbSession != null) {
+                            dbSession.close();
+                            LOGGER.debug("DB Session closed in transfer()-methods outer exception handling!");
                         }
                     }
                 }

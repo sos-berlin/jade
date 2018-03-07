@@ -127,6 +127,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setJobSchedulerEventHandler(this);
             dbFactory = initDBFactory();
             jadeEngine.setDBFactory(dbFactory);
+            LOGGER.debug("DB Factory initialized!");
             if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
                 jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
             }
@@ -418,97 +419,89 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private void updateFileInDB(Map<String, String> values) {
         if (dbFactory != null) {
             SOSHibernateSession dbSession = null;
-            DBItemYadeFiles file = null;
-            String filePath = null;
             try {
-                filePath = values.get("sourcePath");
                 dbSession = initStatelessSession();
+                LOGGER.debug("DB Session opened in interface while transferring");
                 YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
-                file = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getTransferId(), filePath);
-            } catch (SOSHibernateException e) {
-                LOGGER.error(e.getMessage(), e);
-            } finally {
-                if (dbSession != null) {
-                    dbSession.close();
-                }
-            }
-            if (file != null) {
-                if (jadeEngine.getParentTransferId() != null) {
-                    DBItemYadeFiles intervenedFile = null;
+                DBItemYadeFiles file = null;
+                String filePath = null;
+                try {
                     filePath = values.get("sourcePath");
-                    try {
-                        dbSession = initStatelessSession();
-                        YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
-                        intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
-                    } catch (SOSHibernateException e) {
-                        LOGGER.error(e.getMessage(), e);
+                    dbSession.beginTransaction();
+                    file = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getTransferId(), filePath);
+                    dbSession.commit();
+                } catch (SOSHibernateException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                if (file != null) {
+                    if (jadeEngine.getParentTransferId() != null) {
+                        DBItemYadeFiles intervenedFile = null;
+                        filePath = values.get("sourcePath");
                         try {
-                            dbSession.rollback();
-                        } catch (SOSHibernateException e1) {}
-                    } finally {
-                        if (dbSession != null) {
-                            dbSession.close();
-                        }
-                    }
-                    if (intervenedFile != null) {
-                        intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
-                        try {
-                            dbSession = initStatelessSession();
                             dbSession.beginTransaction();
-                            dbSession.update(intervenedFile);
+                            intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
                             dbSession.commit();
                         } catch (SOSHibernateException e) {
                             LOGGER.error(e.getMessage(), e);
                             try {
                                 dbSession.rollback();
                             } catch (SOSHibernateException e1) {}
-                        } finally {
-                            if (dbSession != null) {
-                                dbSession.close();
+                        }
+                        if (intervenedFile != null) {
+                            intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
+                            try {
+                                dbSession.beginTransaction();
+                                dbSession.update(intervenedFile);
+                                dbSession.commit();
+                            } catch (SOSHibernateException e) {
+                                LOGGER.error(e.getMessage(), e);
+                                try {
+                                    dbSession.rollback();
+                                } catch (SOSHibernateException e1) {}
                             }
                         }
                     }
-                }
-                for (String key : values.keySet()) {
-                    // key = propertyName
-                    // values.get(key) = propertyValue
-                    switch (key) {
-                    case "sourcePath":
-                        file.setSourcePath(values.get(key));
-                        break;
-                    case "targetPath":
-                        file.setTargetPath(values.get(key));
-                        break;
-                    case "state":
-                        file.setState(Integer.parseInt(values.get(key)));
-                        break;
-                    case "errorCode":
-                        file.setErrorCode(values.get(key));
-                        break;
-                    case "errorMessage":
-                        file.setErrorMessage(values.get(key));
-                        break;
-                    default:
-                        break;
+                    for (String key : values.keySet()) {
+                        // key = propertyName
+                        // values.get(key) = propertyValue
+                        switch (key) {
+                        case "sourcePath":
+                            file.setSourcePath(values.get(key));
+                            break;
+                        case "targetPath":
+                            file.setTargetPath(values.get(key));
+                            break;
+                        case "state":
+                            file.setState(Integer.parseInt(values.get(key)));
+                            break;
+                        case "errorCode":
+                            file.setErrorCode(values.get(key));
+                            break;
+                        case "errorMessage":
+                            file.setErrorMessage(values.get(key));
+                            break;
+                        default:
+                            break;
+                        }
                     }
-                }
-                try {
-                    dbSession = initStatelessSession();
-                    dbSession.beginTransaction();
-                    dbSession.update(file);
-                    dbSession.commit();
-                    Map<String, String> eventValues = new HashMap<String, String>();
-                    eventValues.put("fileId", file.getId().toString());
-                    sendEvent("YADEFileStateChanged", eventValues);
-                } catch (SOSHibernateException e) {
-                    LOGGER.error(e.getMessage(), e);
                     try {
-                        dbSession.rollback();
-                    } catch (SOSHibernateException e1) {}
-                } finally {
-                    if (dbSession != null) {
-                        dbSession .close();
+                        dbSession.beginTransaction();
+                        dbSession.update(file);
+                        dbSession.commit();
+                        Map<String, String> eventValues = new HashMap<String, String>();
+                        eventValues.put("fileId", file.getId().toString());
+                        sendEvent("YADEFileStateChanged", eventValues);
+                    } catch (SOSHibernateException e) {
+                        LOGGER.error(e.getMessage(), e);
+                        try {
+                            dbSession.rollback();
+                        } catch (SOSHibernateException e1) {}
                     }
+                }
+            } finally {
+                if (dbSession != null) {
+                    dbSession .close();
+                    LOGGER.debug("DB Session closed in interface while transferring");
                 }
             }
         }

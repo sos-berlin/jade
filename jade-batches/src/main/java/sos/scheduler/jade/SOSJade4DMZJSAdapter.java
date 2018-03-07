@@ -70,9 +70,12 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private SOSHibernateFactory dbFactory;
     private Jade4DMZ jade4DMZEngine;
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
+    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = 
+            "scheduler_SOSFileOperations_ResultSet";
+    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = 
+            "scheduler_SOSFileOperations_ResultSetSize";
+    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = 
+            "scheduler_SOSFileOperations_file_count";
 
     public SOSJade4DMZJSAdapter() {
         super();
@@ -108,24 +111,30 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             }
             logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
             jade4DMZEngine.setJSJobUtilites(this);
-            jade4DMZEngine.setDBFactory(initDBFactory());
+            dbFactory = initDBFactory();
+            jade4DMZEngine.setDBFactory(dbFactory);
             jade4DMZEngine.setEventHandler(this);
             if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
+            if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null
+                    && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM).isEmpty()) {
+            if (schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM) != null 
+                    && !schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setJobChain(schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
+            if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null
+                    && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_ORDER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ORDER_ID_PARAM).isEmpty()) {
+            if (schedulerParams.get(SCHEDULER_ORDER_ID_PARAM) != null
+                    && !schedulerParams.get(SCHEDULER_ORDER_ID_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setOrderId(schedulerParams.get(SCHEDULER_ORDER_ID_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_TASK_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_TASK_ID_PARAM).isEmpty()) {
+            if (schedulerParams.get(SCHEDULER_TASK_ID_PARAM) != null
+                    && !schedulerParams.get(SCHEDULER_TASK_ID_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setTaskId(schedulerParams.get(SCHEDULER_TASK_ID_PARAM));
             }
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
@@ -161,7 +170,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             if (isNotEmpty(raiseErrorIfResultSetIs)) {
                 boolean flgR = jadeOptions.expectedSizeOfResultSet.compare(raiseErrorIfResultSetIs, resultSetSize);
                 if (flgR == true) {
-                    String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expectedSizeOfResultSet.value());
+                    String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs,
+                            jadeOptions.expectedSizeOfResultSet.value());
                     logger.info(strM);
                     throw new JobSchedulerException(strM);
                 }
@@ -335,7 +345,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private SOSHibernateFactory initDBFactory() throws SOSHibernateConfigurationException, SOSHibernateFactoryBuildException {
         dbFactory = new SOSHibernateFactory(getHibernateConfigurationReporting());
-        dbFactory.setIdentifier("YADE");
+        dbFactory.setIdentifier("Yade4DMZJob");
         dbFactory.setAutoCommit(false);
         dbFactory.addClassMapping(DBLayer.getYadeClassMapping());
         dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
@@ -365,71 +375,84 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         }
         event.setVariables(variables);
         try {
-            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
+            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>",
+                    new ObjectMapper().writeValueAsString(event)));
         } catch (JsonProcessingException e) {}
     }
     
     private void updateFileInDB(Map<String, String> values) {
-        SOSHibernateSession session = initStatelessSession();
-        YadeDBLayer dbLayer = new YadeDBLayer(session);
-        DBItemYadeFiles file = null;
-        String filePath = null;
+        SOSHibernateSession dbSession = null;
         try {
-            filePath = values.get("sourcePath");
-            file = dbLayer.getTransferFileFromDbByConstraint(jade4DMZEngine.getTransferId(), filePath);
-        } catch (SOSHibernateException e) {}
-        if (file != null) {
-            if(jade4DMZEngine.getParentTransferId() != null) {
-                DBItemYadeFiles intervenedFile = null;
-                try {
-                    filePath = values.get("sourcePath");
-                    intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jade4DMZEngine.getParentTransferId(), filePath);
-                    intervenedFile.setInterventionTransferId(jade4DMZEngine.getTransferId());
+            dbSession = initStatelessSession();
+            YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
+            DBItemYadeFiles file = null;
+            String filePath = null;
+            try {
+                filePath = values.get("sourcePath");
+                dbSession.beginTransaction();
+                file = dbLayer.getTransferFileFromDbByConstraint(jade4DMZEngine.getTransferId(), filePath);
+                dbSession.commit();
+            } catch (SOSHibernateException e) {}
+            if (file != null) {
+                if(jade4DMZEngine.getParentTransferId() != null) {
+                    DBItemYadeFiles intervenedFile = null;
                     try {
-                        session.beginTransaction();
-                        session.update(intervenedFile);
-                        session.commit();
-                    } catch (SOSHibernateException e) {
+                        filePath = values.get("sourcePath");
+                        dbSession.beginTransaction();
+                        intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jade4DMZEngine.getParentTransferId(),
+                                filePath);
+                        dbSession.commit();
+                        intervenedFile.setInterventionTransferId(jade4DMZEngine.getTransferId());
                         try {
-                            session.rollback();
-                        } catch (SOSHibernateException e1) {}
+                            dbSession.beginTransaction();
+                            dbSession.update(intervenedFile);
+                            dbSession.commit();
+                        } catch (SOSHibernateException e) {
+                            try {
+                                dbSession.rollback();
+                            } catch (SOSHibernateException e1) {}
+                        }
+                    } catch (SOSHibernateException e) {}
+                }
+                for (String key : values.keySet()) {
+                    // key = propertyName
+                    // values.get(key) = propertyValue
+                    switch (key) {
+                    case "sourcePath":
+                        file.setSourcePath(values.get(key));
+                        break;
+                    case "targetPath":
+                        file.setTargetPath(values.get(key));
+                        break;
+                    case "state":
+                        file.setState(Integer.parseInt(values.get(key)));
+                        break;
+                    case "errorCode":
+                        file.setErrorCode(values.get(key));
+                        break;
+                    case "errorMessage":
+                        file.setErrorMessage(values.get(key));
+                        break;
+                    default:
+                        break;
                     }
-                } catch (SOSHibernateException e) {}
-            }
-            for (String key : values.keySet()) {
-                // key = propertyName
-                // values.get(key) = propertyValue
-                switch (key) {
-                case "sourcePath":
-                    file.setSourcePath(values.get(key));
-                    break;
-                case "targetPath":
-                    file.setTargetPath(values.get(key));
-                    break;
-                case "state":
-                    file.setState(Integer.parseInt(values.get(key)));
-                    break;
-                case "errorCode":
-                    file.setErrorCode(values.get(key));
-                    break;
-                case "errorMessage":
-                    file.setErrorMessage(values.get(key));
-                    break;
-                default:
-                    break;
+                }
+                try {
+                    dbSession.beginTransaction();
+                    dbSession.update(file);
+                    dbSession.commit();
+                    Map<String, String> eventValues = new HashMap<String, String>();
+                    eventValues.put("fileId", file.getId().toString());
+                    sendEvent("YADEFileStateChanged", eventValues);
+                } catch (SOSHibernateException e) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {}
                 }
             }
-            try {
-                session.beginTransaction();
-                session.update(file);
-                session.commit();
-                Map<String, String> eventValues = new HashMap<String, String>();
-                eventValues.put("fileId", file.getId().toString());
-                sendEvent("YADEFileStateChanged", eventValues);
-            } catch (SOSHibernateException e) {
-                try {
-                    session.rollback();
-                } catch (SOSHibernateException e1) {}
+        } finally {
+            if (dbSession != null) {
+                dbSession.close();
             }
         }
     }
@@ -437,7 +460,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private SOSHibernateSession initStatelessSession() {
         SOSHibernateSession dbSession = null;
         try {
-            dbSession = dbFactory.openStatelessSession("Jade4DMZJob");
+            dbSession = dbFactory.openStatelessSession("Yade4DMZJob");
         } catch (SOSHibernateOpenSessionException e) {}
         return dbSession;
     }

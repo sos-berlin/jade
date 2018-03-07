@@ -43,6 +43,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private boolean isIntervention = false;
     private String filePathRestriction = null;
     private String initialTargetDir = null;
+    private SOSHibernateSession dbSession = null;
 
     private enum Operation {
         copyToInternet, copyFromInternet, remove
@@ -74,39 +75,56 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             }
             objOptions.checkMandatory();
             if (dbFactory != null) {
-                dbHelper = new YadeDBOperationHelper(this, eventHandler);
-                if (parentTransferId != null) {
-                    dbHelper.setParentTransferId(parentTransferId);
-                    DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbFactory);
-                    if (existingTransfer != null && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
-                            && existingTransfer.getOrderId().equals(objOptions.getOrderId())
-                            && existingTransfer.getState() == 3) {
-                        existingTransfer.setHasIntervention(true);
-                        SOSHibernateSession dbSession = null;
-                        try {
-                            dbSession = initStatelessSession();
-                            dbSession.beginTransaction();
-                            dbSession.update(existingTransfer);
-                            dbSession.commit();
-                        } catch (SOSHibernateException e) {
-                            LOGGER.error(e.getMessage(), e);
+                try {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened before (DMZ) transfer!");
+                    dbHelper = new YadeDBOperationHelper(this, eventHandler);
+                    if (parentTransferId != null) {
+                        dbHelper.setParentTransferId(parentTransferId);
+                        DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
+                        if (existingTransfer != null && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName())
+                                && existingTransfer.getOrderId().equals(objOptions.getOrderId())
+                                && existingTransfer.getState() == 3) {
+                            existingTransfer.setHasIntervention(true);
+                            try {
+                                dbSession.beginTransaction();
+                                dbSession.update(existingTransfer);
+                                dbSession.commit();
+                            } catch (SOSHibernateException e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                            transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
+                        } else {
+                            transferId = dbHelper.storeInitialTransferInformations(dbSession);
                         }
-                        transferId = dbHelper.storeInitialTransferInformations(dbFactory, existingTransfer.getId());
                     } else {
-                        transferId = dbHelper.storeInitialTransferInformations(dbFactory);
+                        transferId = dbHelper.storeInitialTransferInformations(dbSession);
                     }
-                } else {
-                    transferId = dbHelper.storeInitialTransferInformations(dbFactory);
-                }
-                if (eventHandler != null) {
-                    Map<String, String> values = new HashMap<String, String>();
-                    values.put("transferId", transferId.toString());
-                    eventHandler.sendEvent("YADETransferStarted", values);
+                    if (eventHandler != null) {
+                        Map<String, String> values = new HashMap<String, String>();
+                        values.put("transferId", transferId.toString());
+                        eventHandler.sendEvent("YADETransferStarted", values);
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                        LOGGER.debug("DB Session closed before (DMZ) transfer!");
+                    }
                 }
             }
             transfer(operation, subDir);
             if (dbFactory != null) {
-                dbHelper.updateSuccessfulTransfer(dbFactory);
+                try {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened after (DMZ) transfer!");
+                    dbHelper.updateSuccessfulTransfer(dbSession);
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                        LOGGER.debug("DB Session closed after (DMZ) transfer!");
+                    }
+                }
+                
             }
             if (eventHandler != null) {
                 Map<String, String> values = new HashMap<String, String>();
@@ -115,8 +133,17 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             }
         } catch (JobSchedulerException e) {
             if (dbFactory != null) {
-                dbHelper.updateFailedTransfer(dbFactory,
-                        String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+                try {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened in (DMZ) exception handling!");
+                    dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(),
+                            e.getMessage()));
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                        LOGGER.debug("DB Session closed in (DMZ) exception handling!");
+                    }
+                }
                 if (eventHandler != null) {
                     Map<String, String> values = new HashMap<String, String>();
                     values.put("transferId", transferId.toString());
@@ -143,18 +170,38 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             }
             fileList = jade.getFileList();
             if (dbFactory != null) {
-                dbHelper.storeInitialFilesInformationToDB(transferId, dbFactory, fileList);
-                dbHelper.updateTransfersNumOfFiles(dbFactory, fileList.count());
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbFactory, entry, true, initialTargetDir);
+                try {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened in (DMZ) transfer after execute!");
+                    dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
+                    dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                    for (SOSFileListEntry entry : fileList.getList()) {
+                        dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
+                    }
+                } finally {
+                    if (dbSession != null) {
+                        dbSession.close();
+                        LOGGER.debug("DB Session closed after (DMZ) transfer after execute!");
+                    }
                 }
             }
         } catch (Exception e) {
             if (dbFactory != null) {
                 fileList = jade.getFileList();
-                dbHelper.updateTransfersNumOfFiles(dbFactory, fileList.count());
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbFactory, entry, true, initialTargetDir);
+                if (dbSession == null || !dbSession.isOpen()) {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened in (DMZ) exception handling!");
+                }
+                try {
+                    dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                    for (SOSFileListEntry entry : fileList.getList()) {
+                        dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
+                    }
+                } finally {
+                   if (dbSession != null) {
+                       dbSession.close();
+                       LOGGER.debug("DB Session closed in (DMZ) exception handling!");
+                   }
                 }
             }
             throw new JobSchedulerException("Transfer failed", e);
@@ -630,7 +677,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         SOSHibernateSession dbSession = null;
         if (dbFactory != null) {
             try {
-                dbSession = dbFactory.openStatelessSession("Jade4DMZJob");
+                dbSession = dbFactory.openStatelessSession("Yade4DMZJob");
             } catch (SOSHibernateOpenSessionException e) {
                 LOGGER.error(e.getMessage(), e);
             }
