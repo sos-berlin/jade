@@ -365,13 +365,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 }
             }
             ok = transfer();
-            try {
-                dbSession = initStatelessSession();
-                LOGGER.debug("DB Session opened after transfer!");
-                dbHelper.updateSuccessfulTransfer(dbSession);
-            } finally {
-                dbSession.close();
-                LOGGER.debug("DB Session closed after transfer!");
+            if (dbFactory != null) {
+                try {
+                    dbSession = initStatelessSession();
+                    LOGGER.debug("DB Session opened after transfer!");
+                    dbHelper.updateSuccessfulTransfer(dbSession);
+                } finally {
+                    dbSession.close();
+                    LOGGER.debug("DB Session closed after transfer!");
+                }
             }
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
