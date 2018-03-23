@@ -84,7 +84,11 @@ public class YadeDBOperationHelper {
                 } else {
                     sourceProtocolDBItem.setProtocol(sourceProtocol);
                 }
-                sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
+                if (sourceOptions.user.isDirty() && sourceOptions.user.getValue() != null && sourceOptions.user.isNotEmpty()) {
+                    sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
+                } else {
+                    sourceProtocolDBItem.setAccount(".");
+                }
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
@@ -124,7 +128,11 @@ public class YadeDBOperationHelper {
                 } else {
                     targetProtocolDBItem.setProtocol(targetProtocol);
                 }
-                targetProtocolDBItem.setAccount(targetOptions.user.getValue());
+                if (targetOptions.user.isDirty() && targetOptions.user.getValue() != null && targetOptions.user.isNotEmpty()) {
+                    targetProtocolDBItem.setAccount(targetOptions.user.getValue());
+                } else {
+                    targetProtocolDBItem.setAccount(".");
+                }
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
@@ -151,7 +159,12 @@ public class YadeDBOperationHelper {
                 jumpProtocolDBItem.setHostname(yadeEngine.getOptions().jumpHost.getValue());
                 jumpProtocolDBItem.setPort(yadeEngine.getOptions().jumpPort.value());
                 jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeEngine.getOptions().jumpProtocol.getValue()));
-                jumpProtocolDBItem.setAccount(yadeEngine.getOptions().jumpUser.getValue());
+                if (yadeEngine.getOptions().jumpUser.isDirty() && yadeEngine.getOptions().jumpUser.getValue() != null &&
+                        yadeEngine.getOptions().jumpUser.isNotEmpty()) {
+                    jumpProtocolDBItem.setAccount(yadeEngine.getOptions().jumpUser.getValue());
+                } else {
+                    jumpProtocolDBItem.setAccount(".");
+                }
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),
@@ -293,7 +306,11 @@ public class YadeDBOperationHelper {
                 } else {
                     sourceProtocolDBItem.setProtocol(sourceProtocol);
                 }
-                sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
+                if (sourceOptions.user.getValue() != null) {
+                    sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
+                } else {
+                    sourceProtocolDBItem.setAccount(".");
+                }
                 DBItemYadeProtocols sourceProtocolFromDb = null;
                 try {
                     sourceProtocolFromDb = dbLayer.getProtocolFromDb(sourceProtocolDBItem.getHostname(),
@@ -333,7 +350,11 @@ public class YadeDBOperationHelper {
                 } else {
                     targetProtocolDBItem.setProtocol(targetProtocol);
                 }
-                targetProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getTarget().user.getValue());
+                if (yadeDMZEngine.getOptions().getTarget().user.getValue() != null) {
+                    targetProtocolDBItem.setAccount(yadeDMZEngine.getOptions().getTarget().user.getValue());
+                } else {
+                    targetProtocolDBItem.setAccount(".");
+                }
                 DBItemYadeProtocols targetProtocolFromDb = null;
                 try {
                     targetProtocolFromDb = dbLayer.getProtocolFromDb(targetProtocolDBItem.getHostname(),
@@ -360,7 +381,11 @@ public class YadeDBOperationHelper {
                 jumpProtocolDBItem.setHostname(yadeDMZEngine.getOptions().jumpHost.getValue());
                 jumpProtocolDBItem.setPort(yadeDMZEngine.getOptions().jumpPort.value());
                 jumpProtocolDBItem.setProtocol(getProtocolFromString(yadeDMZEngine.getOptions().jumpProtocol.getValue()));
-                jumpProtocolDBItem.setAccount(yadeDMZEngine.getOptions().jumpUser.getValue());
+                if (yadeDMZEngine.getOptions().jumpUser.getValue() != null) {
+                    jumpProtocolDBItem.setAccount(yadeDMZEngine.getOptions().jumpUser.getValue());
+                } else {
+                    jumpProtocolDBItem.setAccount(".");
+                }
                 DBItemYadeProtocols jumpProtocolFromDb = null;
                 try {
                     jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(),

@@ -79,14 +79,22 @@ public class DBItemYadeProtocols extends DbItem implements Serializable {
         this.protocol = protocol;
     }
     
-    @Column(name = "`ACCOUNT`", nullable = true)
+    @Column(name = "`ACCOUNT`", nullable = false)
     public String getAccount() {
-        return account;
+        if(account == null) {
+            return ".";
+        } else {
+            return account;
+        }
     }
     
-    @Column(name = "`ACCOUNT`", nullable = true)
+    @Column(name = "`ACCOUNT`", nullable = false)
     public void setAccount(String account) {
-        this.account = account;
+        if (account == null) {
+            this.account = ".";
+        } else {
+            this.account = account;
+        }
     }
 
     @Override
