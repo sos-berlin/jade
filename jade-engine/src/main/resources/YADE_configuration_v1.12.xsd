@@ -3127,6 +3127,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="LocalPostProcessing" minOccurs="0"/>
 				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
+                <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 				        <!--
 				<xs:element ref="Zip" minOccurs="0"/>
 				-->
@@ -3168,6 +3169,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="LocalPostProcessing" minOccurs="0"/>
 				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
+                <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
