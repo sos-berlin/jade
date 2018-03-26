@@ -2485,6 +2485,10 @@ SSH, etc.) server to which a connection has to be made.</p>
                </ul>
                <strong>Notes</strong>
                <p>
+                  <strong>Usage only with the YADE Client on the command shell.</strong>
+               </p>
+               <p/>
+               <p>
 		The use of this element specifies that for
 		<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SSHAuthentication"
                      shape="rect">SSHAuthentication</a> 
