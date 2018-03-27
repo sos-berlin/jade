@@ -1,4 +1,4 @@
-package com.sos.DataExchange.helpers;
+package com.sos.DataExchange.history;
 
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -52,7 +52,7 @@ public class YadeDBOperationHelperTest {
         jadeOptions.setJobChainNodeName("execute yade job");
         jadeOptions.setOrderId("dummyOrderIdForTesting");
         jadeOptions.setTaskId("32885");
-        engine.setDBFactory(dbFactory);
+        //engine.setDBFactory(dbFactory);
         try {
             engine.execute();
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class YadeDBOperationHelperTest {
         jadeOptions.setJobChainNodeName("execute yade job");
         jadeOptions.setOrderId("dummyOrderIdForTesting");
         jadeOptions.setTaskId("32885");
-        engine.setDBFactory(dbFactory);
+        //engine.setDBFactory(dbFactory);
         try {
             engine.execute();
         } catch (Exception e) {

@@ -10,39 +10,30 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sos.spooler.Order;
-import sos.spooler.Variable_set;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.hibernate.classes.SOSHibernateFactory;
-import com.sos.hibernate.classes.SOSHibernateSession;
-import com.sos.hibernate.exceptions.SOSHibernateConfigurationException;
-import com.sos.hibernate.exceptions.SOSHibernateException;
-import com.sos.hibernate.exceptions.SOSHibernateFactoryBuildException;
-import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import com.sos.jade.db.DBItemYadeFiles;
-import com.sos.jade.db.YadeDBLayer;
-import com.sos.jitl.reporting.db.DBLayer;
 import com.sos.jobscheduler.model.event.YadeEvent;
 import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
+
+import sos.spooler.Order;
+import sos.spooler.Variable_set;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
@@ -77,7 +68,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
-    private SOSHibernateFactory dbFactory;
+    private YadeHistory history;
 
     public SOSDExJSAdapterClass() {
         super();
@@ -125,8 +116,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setJSJobUtilites(this);
             jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
             jadeEngine.setJobSchedulerEventHandler(this);
-            dbFactory = initDBFactory();
-            jadeEngine.setDBFactory(dbFactory);
+
+            history = new YadeHistory(this);
+            history.buildFactory(getHibernateConfigurationReporting());
+            jadeEngine.setHistory(history);
+
             LOGGER.debug("DB Factory initialized!");
             if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
                 jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
@@ -147,11 +141,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 jadeEngine.getOptions().setTaskId(schedulerParams.get(SCHEDULER_TASK_ID_PARAM));
             }
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
-                jadeEngine.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
+                history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
             }
-            if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null
-                    && !schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION).isEmpty()) {
-                jadeEngine.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
+            if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null && !schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION)
+                    .isEmpty()) {
+                history.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
                 LOGGER.debug(ORDER_PARAMETER_FILE_PATH_RESTRICTION + " was set to: " + schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
             }
             try {
@@ -159,8 +153,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             } catch (Exception e) {
                 throw e;
             } finally {
-                if (isOrderJob() && jadeEngine.getTransferId() != null) {
-                    setOrderParameter(YADE_TRANSFER_ID, jadeEngine.getTransferId().toString());
+                if (isOrderJob() && history.getTransferId() != null) {
+                    setOrderParameter(YADE_TRANSFER_ID, history.getTransferId().toString());
                 }
                 jadeEngine.logout();
             }
@@ -191,7 +185,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             }
             createOrderParameter(jadeEngine);
 
-            if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles.isTrue())) {
+            if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles
+                    .isTrue())) {
                 jadeOptions.createOrder.setTrue();
             }
 
@@ -213,11 +208,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     }
                 }
             }
-        } catch (SOSHibernateConfigurationException | SOSHibernateFactoryBuildException e) {
-            LOGGER.error(e.getMessage(), e);
+        } catch (Throwable ex) {
+            LOGGER.error(ex.getMessage(), ex);
         } finally {
-            if (dbFactory != null) {
-                dbFactory.close();
+            if (history != null) {
+                history.closeFactory();
             }
         }
 
@@ -235,8 +230,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         if (jobSchedulerFactory == null) {
-            jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(),
-                    jadeOptions.orderJobschedulerPort.value());
+            jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
             jobSchedulerFactory.getOptions().TransferMethod.set(jadeOptions.schedulerTransferMethod);
             jobSchedulerFactory.getOptions().PortNumber.set(jadeOptions.orderJobschedulerPort);
@@ -377,33 +371,26 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);
         }
     }
-    
-    private SOSHibernateFactory initDBFactory() throws SOSHibernateConfigurationException, SOSHibernateFactoryBuildException {
-        SOSHibernateFactory dbFactory = new SOSHibernateFactory(getHibernateConfigurationReporting());
-        dbFactory.setIdentifier("YADE");
-        dbFactory.setAutoCommit(false);
-        dbFactory.addClassMapping(DBLayer.getYadeClassMapping());
-        dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-        dbFactory.build();
-        return dbFactory;
-    }
-    
+
     @Override
     public void updateDb(Long id, String type, Map<String, String> values) {
-        if (type.equals("YADE_FILE")) {
-            updateFileInDB(values);
+        if (history != null && type.equals("YADE_FILE")) {
+            history.updateFileInDB(values);
         }
     }
-    
+
     @Override
-    public void sendEvent(String key, Map<String,String> values) {
+    public void sendEvent(String key, Map<String, String> values) {
+        if (history == null) {
+            return;
+        }
         YadeEvent event = new YadeEvent();
         event.setKey(key);
         YadeVariables variables = new YadeVariables();
         if (values != null && values.containsKey("transferId")) {
             variables.setTransferId(values.get("transferId"));
         } else {
-            variables.setTransferId(jadeEngine.getTransferId().toString());
+            variables.setTransferId(history.getTransferId().toString());
         }
         if (values != null && values.get("fileId") != null && !values.get("fileId").isEmpty()) {
             variables.setFileId(values.get("fileId"));
@@ -412,111 +399,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         try {
             spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
         } catch (JsonProcessingException e) {
-            LOGGER.error("unable to send event due to: " +e.getMessage(), e);
+            LOGGER.error("unable to send event due to: " + e.getMessage(), e);
         }
     }
-    
-    private void updateFileInDB(Map<String, String> values) {
-        if (dbFactory != null) {
-            SOSHibernateSession dbSession = null;
-            try {
-                dbSession = initStatelessSession();
-                LOGGER.debug("DB Session opened in interface while transferring");
-                YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
-                DBItemYadeFiles file = null;
-                String filePath = null;
-                try {
-                    filePath = values.get("sourcePath");
-                    dbSession.beginTransaction();
-                    file = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getTransferId(), filePath);
-                    dbSession.commit();
-                } catch (SOSHibernateException e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-                if (file != null) {
-                    if (jadeEngine.getParentTransferId() != null) {
-                        DBItemYadeFiles intervenedFile = null;
-                        filePath = values.get("sourcePath");
-                        try {
-                            dbSession.beginTransaction();
-                            intervenedFile = dbLayer.getTransferFileFromDbByConstraint(jadeEngine.getParentTransferId(), filePath);
-                            dbSession.commit();
-                        } catch (SOSHibernateException e) {
-                            LOGGER.error(e.getMessage(), e);
-                            try {
-                                dbSession.rollback();
-                            } catch (SOSHibernateException e1) {}
-                        }
-                        if (intervenedFile != null) {
-                            intervenedFile.setInterventionTransferId(jadeEngine.getTransferId());
-                            try {
-                                dbSession.beginTransaction();
-                                dbSession.update(intervenedFile);
-                                dbSession.commit();
-                            } catch (SOSHibernateException e) {
-                                LOGGER.error(e.getMessage(), e);
-                                try {
-                                    dbSession.rollback();
-                                } catch (SOSHibernateException e1) {}
-                            }
-                        }
-                    }
-                    for (String key : values.keySet()) {
-                        // key = propertyName
-                        // values.get(key) = propertyValue
-                        switch (key) {
-                        case "sourcePath":
-                            file.setSourcePath(values.get(key));
-                            break;
-                        case "targetPath":
-                            file.setTargetPath(values.get(key));
-                            break;
-                        case "state":
-                            file.setState(Integer.parseInt(values.get(key)));
-                            break;
-                        case "errorCode":
-                            file.setErrorCode(values.get(key));
-                            break;
-                        case "errorMessage":
-                            file.setErrorMessage(values.get(key));
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                    try {
-                        dbSession.beginTransaction();
-                        dbSession.update(file);
-                        dbSession.commit();
-                        Map<String, String> eventValues = new HashMap<String, String>();
-                        eventValues.put("fileId", file.getId().toString());
-                        sendEvent("YADEFileStateChanged", eventValues);
-                    } catch (SOSHibernateException e) {
-                        LOGGER.error(e.getMessage(), e);
-                        try {
-                            dbSession.rollback();
-                        } catch (SOSHibernateException e1) {}
-                    }
-                }
-            } finally {
-                if (dbSession != null) {
-                    dbSession .close();
-                    LOGGER.debug("DB Session closed in interface while transferring");
-                }
-            }
-        }
-    }
-    
-    private SOSHibernateSession initStatelessSession() {
-        SOSHibernateSession dbSession = null;
-        try {
-            if (dbFactory != null) {
-                dbSession = dbFactory.openStatelessSession("YadeJob");
-            }
-        } catch (SOSHibernateOpenSessionException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return dbSession;
-    }
-    
+
 }
