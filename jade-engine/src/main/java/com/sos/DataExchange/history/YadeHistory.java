@@ -19,6 +19,8 @@ import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.jade.db.YadeDBLayer;
 import com.sos.jitl.reporting.db.DBLayer;
 
+import sos.util.SOSString;
+
 public class YadeHistory {
 
     private static final Logger LOGGER = Logger.getLogger(YadeHistory.class);
@@ -429,14 +431,21 @@ public class YadeHistory {
             LOGGER.error(String.format("[%s]eventHandler is null", IDENTIFIER));
             return;
         }
-
+        if(values == null || values.size() == 0){
+            return;
+        }
+        
+        String filePath = values.get("sourcePath");
+        if(SOSString.isEmpty(filePath)){
+            return;
+        }
+                
         try {
             SOSHibernateSession dbSession = null;
             try {
                 dbSession = dbFactory.openStatelessSession(IDENTIFIER);
                 YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
                 DBItemYadeFiles file = null;
-                String filePath = null;
                 dbSession.beginTransaction();
                 file = dbLayer.getTransferFileFromDbByConstraint(transferId, filePath);
                 if (file != null) {
