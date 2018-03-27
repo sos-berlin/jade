@@ -120,7 +120,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             history.buildFactory(getHibernateConfigurationReporting());
             jadeEngine.setHistory(history);
 
-            LOGGER.debug("DB Factory initialized!");
             if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
                 jadeEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
             }
