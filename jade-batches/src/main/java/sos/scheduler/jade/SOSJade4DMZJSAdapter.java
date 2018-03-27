@@ -75,8 +75,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            logger.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()));
-            logger.debug("", e);
+            logger.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
             throw e;
         }
         return signalSuccess();

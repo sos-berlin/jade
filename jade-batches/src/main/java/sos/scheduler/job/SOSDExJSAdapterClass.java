@@ -80,8 +80,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.getMessage()), e);
-            LOGGER.debug("", e);
+            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
             throw e;
         }
         return signalSuccess();
@@ -208,8 +207,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     }
                 }
             }
-        } catch (Throwable ex) {
-            LOGGER.error(ex.getMessage(), ex);
         } finally {
             if (history != null) {
                 history.closeFactory();
