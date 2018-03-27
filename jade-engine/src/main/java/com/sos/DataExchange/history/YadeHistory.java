@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.DataExchange.history.YadeDBOperationHelper;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -69,11 +68,12 @@ public class YadeHistory {
             return;
         }
 
+        SOSHibernateSession dbSession = null;
         try {
             dbHelper = new YadeDBOperationHelper(options, eventHandler);
-            SOSHibernateSession dbSession = null;
             try {
                 dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
+                dbSession.beginTransaction();
                 LOGGER.debug("*** parentTransferId = " + parentTransferId);
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
@@ -82,9 +82,7 @@ public class YadeHistory {
                             .getOrderId().equals(options.getOrderId()) && existingTransfer.getState() == 3) {
                         existingTransfer.setHasIntervention(true);
                         try {
-                            dbSession.beginTransaction();
                             dbSession.update(existingTransfer);
-                            dbSession.commit();
                         } catch (SOSHibernateException e) {
                             LOGGER.error(e.getMessage(), e);
                         }
@@ -95,14 +93,22 @@ public class YadeHistory {
                 } else {
                     transferId = dbHelper.storeInitialTransferInformations(fileList, dbSession);
                 }
-                sendYadeEvent("YADETransferStarted");
+                dbSession.commit();
+                sendYadeEventOnStart();
             } finally {
                 dbSession.close();
                 LOGGER.debug("DB Session closed before transfer!");
             }
+        } catch (SOSHibernateException e) {
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;
+            if (dbSession != null) {
+                try {
+                    dbSession.rollback();
+                } catch (SOSHibernateException e1) {}
+            }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
-            hasException = true;
         }
     }
 
@@ -119,7 +125,17 @@ public class YadeHistory {
             SOSHibernateSession dbSession = null;
             try {
                 dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
+                dbSession.beginTransaction();
                 dbHelper.updateSuccessfulTransfer(dbSession);
+                dbSession.commit();
+            } catch (SOSHibernateException e) {
+                LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+                hasException = true;
+                if (dbSession != null) {
+                    try {
+                        dbSession.rollback();
+                    } catch (SOSHibernateException e1) {}
+                }
             } finally {
                 dbSession.close();
             }
@@ -138,21 +154,28 @@ public class YadeHistory {
             return;
         }
 
+        SOSHibernateSession dbSession = null;
         try {
-            SOSHibernateSession dbSession = null;
-            try {
-                dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
-
-                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.size());
-                if (transferId != null) {
-                    dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
-                }
-            } finally {
-                dbSession.close();
+            dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
+            dbSession.beginTransaction();
+            dbHelper.updateTransfersNumOfFiles(dbSession, fileList.size());
+            if (transferId != null) {
+                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
             }
+            dbSession.commit();
+        } catch (SOSHibernateException e) {
+            if (dbSession != null) {
+                try {dbSession.rollback();} catch (SOSHibernateException e1) {}
+            }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;            
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
+        } finally {
+            if (dbSession != null) {
+                dbSession.close();
+            }
         }
     }
 
@@ -165,21 +188,29 @@ public class YadeHistory {
             return;
         }
 
+        SOSHibernateSession dbSession = null;
         try {
-            SOSHibernateSession dbSession = null;
-            try {
-                dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
-
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
-                }
-                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
-            } finally {
-                dbSession.close();
+            dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
+            dbSession.beginTransaction();
+            for (SOSFileListEntry entry : fileList.getList()) {
+                dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
             }
+            dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+            dbSession.commit();
+        } catch (SOSHibernateException e) {
+            if (dbSession != null) {
+                try {
+                    dbSession.rollback();
+                } catch (SOSHibernateException e1) {
+                }
+            }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
+        } finally {
+            dbSession.close();
         }
     }
 
@@ -192,22 +223,30 @@ public class YadeHistory {
             return;
         }
 
+        SOSHibernateSession dbSession = null;
         try {
-            SOSHibernateSession dbSession = null;
-            try {
-                dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
-
-                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
-                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
-                }
-            } finally {
-                dbSession.close();
+            dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
+            dbSession.beginTransaction();
+            dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
+            dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+            for (SOSFileListEntry entry : fileList.getList()) {
+                dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
             }
+            dbSession.commit();
+        } catch (SOSHibernateException e) {
+            if (dbSession != null) {
+                try {
+                    dbSession.rollback();
+                } catch (SOSHibernateException e1) {
+                }
+            }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
+        } finally {
+            dbSession.close();
         }
     }
 
@@ -223,7 +262,18 @@ public class YadeHistory {
         SOSHibernateSession dbSession = null;
         try {
             dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
+            dbSession.beginTransaction();
             dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
+            dbSession.commit();
+        } catch (SOSHibernateException ex) {
+            if (dbSession != null) {
+                try {
+                    dbSession.rollback();
+                } catch (SOSHibernateException ex2) {
+                }
+            }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
+            hasException = true;
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
@@ -244,13 +294,22 @@ public class YadeHistory {
         SOSHibernateSession dbSession = null;
         try {
             dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
-
+            dbSession.beginTransaction();
             for (SOSFileListEntry entry : fileList.getList()) {
                 if (dbFactory != null) {
                     dbHelper.updateFileInformationToDB(dbSession, entry, true, null);
                 }
             }
-
+            dbSession.commit();
+        } catch (SOSHibernateException e) {
+            if (dbSession != null) {
+                try {
+                    dbSession.rollback();
+                } catch (SOSHibernateException ex) {
+                }
+            }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
@@ -271,12 +330,21 @@ public class YadeHistory {
         SOSHibernateSession dbSession = null;
         try {
             dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
-
+            dbSession.beginTransaction();
             dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
             for (SOSFileListEntry entry : fileList.getList()) {
                 dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
             }
-
+            dbSession.commit();
+        } catch (SOSHibernateException e) {
+            if (dbSession != null) {
+                try {
+                    dbSession.rollback();
+                } catch (SOSHibernateException ex) {
+                }
+            }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
@@ -318,42 +386,16 @@ public class YadeHistory {
             YadeDBLayer dbLayer = new YadeDBLayer(dbSession);
             DBItemYadeFiles file = null;
             String filePath = null;
-            try {
-                filePath = values.get("sourcePath");
-                dbSession.beginTransaction();
-                file = dbLayer.getTransferFileFromDbByConstraint(transferId, filePath);
-                dbSession.commit();
-            } catch (SOSHibernateException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            dbSession.beginTransaction();
+            file = dbLayer.getTransferFileFromDbByConstraint(transferId, filePath);
             if (file != null) {
                 if (parentTransferId != null) {
                     DBItemYadeFiles intervenedFile = null;
                     filePath = values.get("sourcePath");
-                    try {
-                        dbSession.beginTransaction();
-                        intervenedFile = dbLayer.getTransferFileFromDbByConstraint(parentTransferId, filePath);
-                        dbSession.commit();
-                    } catch (SOSHibernateException e) {
-                        LOGGER.error(e.getMessage(), e);
-                        try {
-                            dbSession.rollback();
-                        } catch (SOSHibernateException e1) {
-                        }
-                    }
+                    intervenedFile = dbLayer.getTransferFileFromDbByConstraint(parentTransferId, filePath);
                     if (intervenedFile != null) {
                         intervenedFile.setInterventionTransferId(transferId);
-                        try {
-                            dbSession.beginTransaction();
-                            dbSession.update(intervenedFile);
-                            dbSession.commit();
-                        } catch (SOSHibernateException e) {
-                            LOGGER.error(e.getMessage(), e);
-                            try {
-                                dbSession.rollback();
-                            } catch (SOSHibernateException e1) {
-                            }
-                        }
+                        dbSession.update(intervenedFile);
                     }
                 }
                 for (String key : values.keySet()) {
@@ -379,21 +421,21 @@ public class YadeHistory {
                         break;
                     }
                 }
+                dbSession.update(file);
+                Map<String, String> eventValues = new HashMap<String, String>();
+                eventValues.put("fileId", file.getId().toString());
+                eventHandler.sendEvent("YADEFileStateChanged", eventValues);
+            }
+            dbSession.commit();
+        } catch (SOSHibernateException e) {
+            if (dbSession != null) {
                 try {
-                    dbSession.beginTransaction();
-                    dbSession.update(file);
-                    dbSession.commit();
-                    Map<String, String> eventValues = new HashMap<String, String>();
-                    eventValues.put("fileId", file.getId().toString());
-                    eventHandler.sendEvent("YADEFileStateChanged", eventValues);
-                } catch (SOSHibernateException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    try {
-                        dbSession.rollback();
-                    } catch (SOSHibernateException e1) {
-                    }
+                    dbSession.rollback();
+                } catch (SOSHibernateException e1) {
                 }
             }
+            LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, e.toString()), e);
+            hasException = true;
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, ex.toString()), ex);
             hasException = true;
