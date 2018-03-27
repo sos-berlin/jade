@@ -30,20 +30,9 @@ public class YadeDBOperationHelperTest {
         DBItemYadeProtocols sourceProtocolDBItem = null;
         DBItemYadeProtocols targetProtocolDBItem = null;
         DBItemYadeProtocols jumpProtocolDBItem = null;
-        SOSHibernateFactory dbFactory = new SOSHibernateFactory(
-                Paths.get("C:/sp/jobschedulers/approvals/jobscheduler_1.12-SNAPSHOT/sp_4012/config/reporting.hibernate.cfg.xml"));
-        dbFactory.setIdentifier("YADE");
-        dbFactory.setAutoCommit(false);
-        ClassList cl = new ClassList();
-        cl.add(DBItemYadeFiles.class);
-        cl.add(DBItemYadeProtocols.class);
-        cl.add(DBItemYadeTransfers.class);
-        dbFactory.addClassMapping(cl);
-        dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-        dbFactory.build();
         JADEOptions jadeOptions = new JADEOptions();
-        jadeOptions.settings.setValue("C:/sp/testing/yade/local2local.xml");
-        jadeOptions.profile.setValue("local2local");
+        jadeOptions.settings.setValue("C:/sp/jobschedulers/approvals/jobscheduler_1.12-SNAPSHOT/sp_4012/config/live/YADE-463/YADE-463.ini");
+        jadeOptions.profile.setValue("homer");
         JadeEngine engine = new JadeEngine(jadeOptions);
         engine.setJobSchedulerEventHandler(new JobSchedulerJobAdapter());
         jadeOptions.setJobSchedulerId("sp_4012");
@@ -52,7 +41,9 @@ public class YadeDBOperationHelperTest {
         jadeOptions.setJobChainNodeName("execute yade job");
         jadeOptions.setOrderId("dummyOrderIdForTesting");
         jadeOptions.setTaskId("32885");
-        //engine.setDBFactory(dbFactory);
+        YadeHistory history = new YadeHistory(null);
+        engine.setHistory(history);
+        history.buildFactory(Paths.get("C:/sp/jobschedulers/approvals/jobscheduler_1.12-SNAPSHOT/sp_4012/config/reporting.hibernate.cfg.xml"));
         try {
             engine.execute();
         } catch (Exception e) {

@@ -299,12 +299,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         boolean ok = false;
 
         try {
-            if (history != null) {
-                history.beforeTransfer(objOptions,null);
-            }
             JobSchedulerException.LastErrorMessage = "";
             try {
                 getOptions().checkMandatory();
+                if (history != null) {
+                    history.beforeTransfer(objOptions,null);
+                }
             } finally {
                 showBanner();
             }

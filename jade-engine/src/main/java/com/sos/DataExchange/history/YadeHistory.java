@@ -74,7 +74,7 @@ public class YadeHistory {
             SOSHibernateSession dbSession = null;
             try {
                 dbSession = dbFactory.openStatelessSession(SESSION_IDENTIFIER);
-                LOGGER.debug("DB Session opened before transfer!");
+                LOGGER.debug("*** parentTransferId = " + parentTransferId);
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
@@ -304,10 +304,6 @@ public class YadeHistory {
         }
     }
 
-    public void sendYadeEventOnEnd() {
-        sendYadeEvent("YADETransferFinished");
-    }
-
     public void updateFileInDB(Map<String, String> values) {
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]%s", SESSION_IDENTIFIER, "dbFactory is null"));
@@ -409,6 +405,14 @@ public class YadeHistory {
             }
         }
 
+    }
+
+    public void sendYadeEventOnEnd() {
+        sendYadeEvent("YADETransferFinished");
+    }
+
+    public void sendYadeEventOnStart() {
+        sendYadeEvent("YADETransferStarted");
     }
 
     private void sendYadeEvent(String message) {
