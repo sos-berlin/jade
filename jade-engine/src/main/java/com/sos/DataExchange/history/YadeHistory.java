@@ -23,7 +23,7 @@ public class YadeHistory {
 
     private static final Logger LOGGER = Logger.getLogger(YadeHistory.class);
 
-    private static final String IDENTIFIER = "YadeJob";
+    private static final String IDENTIFIER = YadeHistory.class.getSimpleName();
     private SOSHibernateFactory dbFactory;
     private YadeDBOperationHelper dbHelper = null;
     private IJobSchedulerEventHandler eventHandler;
