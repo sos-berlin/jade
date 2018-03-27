@@ -63,11 +63,11 @@ public class YadeHistory {
     }
 
     public void beforeTransfer(JADEOptions options, SOSFileList fileList) {
-        if (dbFactory == null) {
-            LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
+        if (hasException) {
             return;
         }
-        if (hasException) {
+        if (dbFactory == null) {
+            LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
 
@@ -115,11 +115,15 @@ public class YadeHistory {
     }
 
     public void afterTransfer() {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -149,11 +153,15 @@ public class YadeHistory {
     }
 
     public void beforeFileTransfer(SOSFileList fileList) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -187,11 +195,15 @@ public class YadeHistory {
     }
 
     public void afterFileTransfer(SOSFileList fileList) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -224,11 +236,15 @@ public class YadeHistory {
     }
 
     public void afterDMZFileTransfer(SOSFileList fileList, String targetDir) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -262,11 +278,15 @@ public class YadeHistory {
     }
 
     public void onException(Exception e) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -296,11 +316,15 @@ public class YadeHistory {
     }
 
     public void onFileTransferException(SOSFileList fileList) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -334,11 +358,15 @@ public class YadeHistory {
     }
 
     public void onDMZFileTransferException(SOSFileList fileList, String targetDir) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (dbHelper == null) {
+            LOGGER.error(String.format("[%s]dbHelper is null", IDENTIFIER));
             return;
         }
 
@@ -371,11 +399,11 @@ public class YadeHistory {
     }
 
     public void setFileRestriction(JADEOptions options) {
-        if (dbFactory == null) {
-            LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
+        if (hasException) {
             return;
         }
-        if (hasException) {
+        if (dbFactory == null) {
+            LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
 
@@ -390,13 +418,18 @@ public class YadeHistory {
     }
 
     public void updateFileInDB(Map<String, String> values) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (hasException) {
+        if (eventHandler == null) {
+            LOGGER.error(String.format("[%s]eventHandler is null", IDENTIFIER));
             return;
         }
+
         try {
             SOSHibernateSession dbSession = null;
             try {
@@ -473,12 +506,18 @@ public class YadeHistory {
     }
 
     private void sendYadeEvent(String message) {
+        if (hasException) {
+            return;
+        }
         if (dbFactory == null) {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-
-        if (eventHandler != null && transferId != null) {
+        if (eventHandler == null) {
+            LOGGER.error(String.format("[%s]eventHandler is null", IDENTIFIER));
+            return;
+        }
+        if (transferId != null) {
             try {
                 Map<String, String> values = new HashMap<String, String>();
                 values.put("transferId", transferId.toString());
