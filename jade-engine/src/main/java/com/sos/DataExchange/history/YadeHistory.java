@@ -100,14 +100,16 @@ public class YadeHistory {
                 dbSession.commit();
                 sendYadeEventOnStart();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -135,14 +137,16 @@ public class YadeHistory {
                 dbHelper.updateSuccessfulTransfer(dbSession);
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -174,14 +178,16 @@ public class YadeHistory {
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -214,14 +220,16 @@ public class YadeHistory {
                 dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -254,14 +262,16 @@ public class YadeHistory {
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -290,14 +300,16 @@ public class YadeHistory {
                 dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
                 dbSession.commit();
             } catch (SOSHibernateException ex) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw ex;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex1) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex1.toString()), ex1);
@@ -330,14 +342,16 @@ public class YadeHistory {
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -369,14 +383,16 @@ public class YadeHistory {
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
@@ -472,14 +488,16 @@ public class YadeHistory {
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
-                LOGGER.error(e.toString(), e);
                 try {
                     dbSession.rollback();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
+                throw e;
             } finally {
                 try {
                     dbSession.close();
-                } catch (Throwable e1) {}
+                } catch (Throwable e1) {
+                }
             }
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
