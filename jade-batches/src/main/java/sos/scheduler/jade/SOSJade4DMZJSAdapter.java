@@ -9,12 +9,16 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
 import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
 import com.sos.DataExchange.Jade4DMZ;
+import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
@@ -70,17 +74,38 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         Jade4DMZ jade4DMZEngine = new Jade4DMZ();
         jadeOptions = jade4DMZEngine.getOptions();
         jadeOptions.setCurrentNodeName(getCurrentNodeName());
-        jadeOptions.setAllOptions2(jadeOptions.deletePrefix(getSchedulerParameterAsProperties(getJobOrOrderParameters()), "ftp_"));
-        int intLogLevel = -1 * spooler_log.level();
-        if (intLogLevel > jadeOptions.verbose.value()) {
-            jadeOptions.verbose.value(intLogLevel);
+
+        Path xml2iniFile = null;
+        try {
+            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
+            if (schedulerParams != null && schedulerParams.containsKey("settings")) {
+                String settings = schedulerParams.get("settings");
+                jadeOptions.setOriginalSettingsFile(settings);
+                logger.debug(String.format("doProcessing: schedulerParams settings=%s", settings));
+                if (settings.toLowerCase().endsWith(".xml")) {
+                    JADEOptions jo = new JADEOptions();
+                    xml2iniFile = jo.convertXml2Ini(settings);
+                    schedulerParams.put("settings", xml2iniFile.toString());
+                }
+            }
+            jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
+            if (xml2iniFile != null) {// !!! setAllOptions2 override the jadeOptions.settings
+                jadeOptions.settings.setValue(xml2iniFile.toString());
+            }
+            int intLogLevel = -1 * spooler_log.level();
+            if (intLogLevel > jadeOptions.verbose.value()) {
+                jadeOptions.verbose.value(intLogLevel);
+            }
+            if (jadeOptions.schedulerHost.isNotDirty()) {
+                jadeOptions.schedulerHost.setValue("");
+            }
+            logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
+            jade4DMZEngine.setJSJobUtilites(this);
+            jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
+            jade4DMZEngine.Execute();
+        } finally {
+            deleteXml2IniSettingsFile(xml2iniFile);
         }
-        if (jadeOptions.schedulerHost.isNotDirty()) {
-            jadeOptions.schedulerHost.setValue("");
-        }
-        logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
-        jade4DMZEngine.setJSJobUtilites(this);
-        jade4DMZEngine.Execute();
         transfFiles = jade4DMZEngine.getFileList();
         int resultSetSize = 0;
         if (isNotNull(transfFiles)) {
@@ -125,6 +150,21 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         logger.info(String.format("%1$s with operation %2$s ended.", "JADE4DMZ", jadeOptions.operation.getValue()));
     }
 
+    private void deleteXml2IniSettingsFile(Path xml2iniFile) {
+        if (xml2iniFile != null) {
+            try {
+                // usually JadeEngine delete the ini settings file (created from xml) on logout
+                // execute delete settings file in job when JadeEngine can't be instantiated (wrong operation or profile for example)
+                if (Files.exists(xml2iniFile)) {
+                    logger.debug(String.format("[job]try do delete settings file %s", xml2iniFile));
+                    Files.delete(xml2iniFile);
+                }
+            } catch (Throwable e) {
+                logger.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile, e.toString()), e);
+            }
+        }
+    }
+
     protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
         String feedback;
         if (jadeOptions.orderJobschedulerHost.isNotEmpty()) {
@@ -137,8 +177,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
         if (jobSchedulerFactory == null) {
-            jobSchedulerFactory =
-                    new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
+            jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
             jobSchedulerFactory.getOptions().TransferMethod.set(jadeOptions.schedulerTransferMethod);
             jobSchedulerFactory.getOptions().PortNumber.set(jadeOptions.orderJobschedulerPort);
