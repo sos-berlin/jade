@@ -117,7 +117,14 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setJobSchedulerEventHandler(this);
 
             history = new YadeHistory(this);
-            history.buildFactory(getHibernateConfigurationReporting());
+            Path hibernateConfigFile = null;
+            try {
+                hibernateConfigFile = getHibernateConfigurationReporting();
+            } catch (Throwable t) {
+                hibernateConfigFile = null;
+                LOGGER.warn("No ./config/reporting.hibernate.cfg.xml found on file system! Transfer history won´t be processed.");
+            }
+            history.buildFactory(hibernateConfigFile);
             jadeEngine.setHistory(history);
 
             if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
