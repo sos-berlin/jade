@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -41,12 +42,20 @@ public class YadeHistory {
 
     public void buildFactory(Path hibernateFile) {
         try {
-            dbFactory = new SOSHibernateFactory(hibernateFile);
-            dbFactory.setIdentifier(IDENTIFIER);
-            dbFactory.setAutoCommit(false);
-            dbFactory.addClassMapping(DBLayer.getYadeClassMapping());
-            dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-            dbFactory.build();
+            if (hibernateFile != null) {
+                dbFactory = new SOSHibernateFactory(hibernateFile);
+                dbFactory.setIdentifier(IDENTIFIER);
+                dbFactory.setAutoCommit(false);
+                dbFactory.addClassMapping(DBLayer.getYadeClassMapping());
+                dbFactory.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                dbFactory.build();
+            } else {
+                dbFactory = null;
+                LOGGER.warn("No ./config/reporting.hibernate.cfg.xml found on file system! Transfer history won´t be processed.");
+            }
+        } catch (JobSchedulerException e) {
+            dbFactory = null;
+            LOGGER.warn("No ./config/reporting.hibernate.cfg.xml found on the file system! Transfer history won´t be processed.");
         } catch (Throwable ex) {
             LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
             hasException = true;
