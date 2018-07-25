@@ -178,6 +178,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 }
             }
             createOrderParameter(jade4DMZEngine);
+            
             if (resultSetSize > 0 && jadeOptions.createOrder.isTrue()) {
                 String jobChainName = jadeOptions.orderJobchainName.getValue();
                 if (jadeOptions.createOrdersForAllFiles.isTrue()) {
@@ -185,9 +186,19 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                         createOrder(listItem, jobChainName);
                     }
                 } else {
-                    createOrder(transfFiles.getList().get(0), jobChainName);
+                    if (jadeOptions.createOrdersForNewFiles.isTrue()) {
+                        for (SOSFileListEntry listItem : transfFiles.getList()) {
+                            if (!listItem.isTargetFileAlreadyExists()) {
+                                createOrder(listItem, jobChainName);
+                            }
+                        }
+                    } else {
+                        createOrder(transfFiles.getList().get(0), jobChainName);
+                    }
                 }
             }
+            
+            
             logger.info(String.format("%1$s with operation %2$s ended.", "JADE4DMZ", jadeOptions.operation.getValue()));
         } finally {
             if (history != null) {
@@ -267,7 +278,11 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             orderParams.merge(spooler_task.order().params());
         }
         String[] targetFile = getFilenameParts(jadeOptions.targetDir.getValue(), listItem.getTargetFileName());
-        orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PATH, targetFile[0]);
+        if (jadeOptions.paramNameForPath.isDirty()) {
+            orderParams.set_value(jadeOptions.paramNameForPath.getValue(), targetFile[0]);
+        } else {
+            orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PATH, targetFile[0]);
+        }
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_PARENT, targetFile[1]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_FILE_NAME, targetFile[2]);
         orderParams.set_value(ORDER_PARAMETER_SCHEDULER_TARGET_FILE_PARENT, targetFile[1]);
