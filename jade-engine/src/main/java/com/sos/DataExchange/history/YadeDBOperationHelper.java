@@ -445,9 +445,7 @@ public class YadeDBOperationHelper {
         if (dbSession != null) {
             dbLayer = new YadeDBLayer(dbSession);
             try {
-                dbSession.beginTransaction();
                 transfer = dbLayer.getTransferFromDb(id);
-                dbSession.commit();
             } catch (SOSHibernateException e) {
                 LOGGER.error(e.getMessage(), e);
                 if (dbSession != null) {
