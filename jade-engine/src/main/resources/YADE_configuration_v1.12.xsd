@@ -8430,7 +8430,8 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="JumpCommandAfterOperationOnSuccess" minOccurs="0"/>
 				        <xs:element ref="JumpCommandAfterOperationOnError" minOccurs="0"/>
 				        <xs:element ref="JumpCommandAfterOperationFinal" minOccurs="0"/>
-		          <xs:element ref="JumpDirectory" minOccurs="0"/>
+				        <xs:element ref="JumpCommandDelimiter" minOccurs="0"/>
+			         <xs:element ref="JumpDirectory" minOccurs="0"/>
 				        <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 				        <xs:element ref="ProxyForSFTP" minOccurs="0"/>
 				        <xs:element ref="StrictHostkeyChecking" minOccurs="0">
@@ -11312,6 +11313,63 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:minLength value="1"/>
 			      </xs:restriction>
 		    </xs:simpleType>
+	  </xs:element>
+	  <xs:element name="JumpCommandDelimiter" default=";">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="command_delimiter"/>
+                <Release starting="1.12.5" issue="YADE-516"/>
+			      </xs:appinfo>
+         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpCommandDelimiter">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandDelimiter.html">JumpCommandDelimiter</a>
+                  </li>
+                  <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpCommandDelimiter">JumpCommandDelimiter</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+command_delimiter">command_delimiter</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-516">YADE-516</a> Availability starting with 1.12.5.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>A command delimiter option for executing the jump pre- and postcommands:</p>
+               <p>
+		                <ul>
+                     <li>
+                        <em>JumpCommandBeforeFile</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterFileOnSuccess</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandBeforeOperation</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterOperationOnSuccess</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterOperationOnError</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterOperationFinal</em>
+                     </li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 	  </xs:element>
     <xs:complexType name="NotificationTriggerType">
 		    <xs:sequence>
