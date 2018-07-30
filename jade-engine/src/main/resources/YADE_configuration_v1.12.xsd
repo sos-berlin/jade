@@ -11064,7 +11064,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandBeforeFile">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_pre_command"/>
+				        <FlatParameter name="pre_command"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11079,7 +11079,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_pre_command">jump_pre_command</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+pre_command">pre_command</a>
                         </li>
                      </ul>
                   </li>
@@ -11106,7 +11106,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandAfterFileOnSuccess">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_command_on_success"/>
+				        <FlatParameter name="post_command_on_success"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11121,7 +11121,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_command_on_success">jump_post_command_on_success</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_command_on_success">post_command_on_success</a>
                         </li>
                      </ul>
                   </li>
@@ -11148,7 +11148,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandBeforeOperation">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_pre_transfer_commands"/>
+				        <FlatParameter name="pre_transfer_commands"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11163,7 +11163,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_pre_transfer_commands">jump_pre_transfer_commands</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+pre_transfer_commands">pre_transfer_commands</a>
                         </li>
                      </ul>
                   </li>
@@ -11190,7 +11190,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 	  <xs:element name="JumpCommandAfterOperationOnSuccess">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_transfer_commands_on_success"/>
+				        <FlatParameter name="post_transfer_commands_on_success"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11205,7 +11205,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_transfer_commands_on_success">jump_post_transfer_commands_on_success</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_transfer_commands_on_success">post_transfer_commands_on_success</a>
                         </li>
                      </ul>
                   </li>
@@ -11232,7 +11232,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandAfterOperationOnError">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_transfer_commands_on_error"/>
+				        <FlatParameter name="post_transfer_commands_on_error"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11247,7 +11247,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_transfer_commands_on_error">jump_post_transfer_commands_on_error</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_transfer_commands_on_error">post_transfer_commands_on_error</a>
                         </li>
                      </ul>
                   </li>
@@ -11274,7 +11274,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandAfterOperationFinal">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_transfer_commands_final"/>
+				        <FlatParameter name="post_transfer_commands_final"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11289,7 +11289,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_transfer_commands_final">jump_post_transfer_commands_final</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_transfer_commands_final">post_transfer_commands_final</a>
                         </li>
                      </ul>
                   </li>
