@@ -22,7 +22,7 @@ import sos.util.SOSString;
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Jade4DMZ.class);
-    private static final String COPYTOINTERNET_COMMAND_DELIMITER = "SOSCOPYTOINTERNETCD";
+    private static final String INTERNALLY_COMMAND_DELIMITER = "SOSJUMPCD";
     private SOSFileList fileList = null;
     private String uuid = null;
     private String sourceListFilename = null;
@@ -228,21 +228,21 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(operation, dir);
             jumpCommandOptions = createPostTransferOptions(operation, dir);
-            
-            jumpOptions.preCommand.setValue(getCopyToInternetCommand(objOptions.jumpPreCommand.getValue()));
-            jumpOptions.postCommand.setValue(getCopyToInternetCommand(objOptions.jumpPostCommandOnSuccess.getValue()));
-            jumpOptions.preTransferCommands.setValue(getCopyToInternetCommand(objOptions.jumpPreTransferCommands.getValue()));
+
+            jumpOptions.preCommand.setValue(getJumpCommand(objOptions.jumpPreCommand.getValue()));
+            jumpOptions.postCommand.setValue(getJumpCommand(objOptions.jumpPostCommandOnSuccess.getValue()));
+            jumpOptions.preTransferCommands.setValue(getJumpCommand(objOptions.jumpPreTransferCommands.getValue()));
 
             String firstCommand = "";
-            String jumpPostTransferCommandsOnSuccess = getCopyToInternetCommand(objOptions.jumpPostTransferCommandsOnSuccess.getValue());
+            String jumpPostTransferCommandsOnSuccess = getJumpCommand(objOptions.jumpPostTransferCommandsOnSuccess.getValue());
             if (!SOSString.isEmpty(jumpPostTransferCommandsOnSuccess)) {
-                firstCommand = jumpPostTransferCommandsOnSuccess.endsWith(COPYTOINTERNET_COMMAND_DELIMITER) ? jumpPostTransferCommandsOnSuccess
-                        : jumpPostTransferCommandsOnSuccess + COPYTOINTERNET_COMMAND_DELIMITER;
+                firstCommand = jumpPostTransferCommandsOnSuccess.endsWith(INTERNALLY_COMMAND_DELIMITER) ? jumpPostTransferCommandsOnSuccess
+                        : jumpPostTransferCommandsOnSuccess + INTERNALLY_COMMAND_DELIMITER;
             }
             jumpOptions.postTransferCommands.setValue(firstCommand + getJadeOnDMZCommand(operation, jumpCommandOptions));
-            jumpOptions.postTransferCommandsOnError.setValue(getCopyToInternetCommand(objOptions.jumpPostTransferCommandsOnError.getValue()));
-            jumpOptions.postTransferCommandsFinal.setValue(getCopyToInternetCommand(objOptions.jumpPostTransferCommandsFinal.getValue()));
-            jumpOptions.commandDelimiter.setValue(COPYTOINTERNET_COMMAND_DELIMITER);
+            jumpOptions.postTransferCommandsOnError.setValue(getJumpCommand(objOptions.jumpPostTransferCommandsOnError.getValue()));
+            jumpOptions.postTransferCommandsFinal.setValue(getJumpCommand(objOptions.jumpPostTransferCommandsFinal.getValue()));
+            jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
 
             jumpOptions = setDestinationOptionsPrefix("target_", jumpOptions);
 
@@ -253,6 +253,9 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             jumpCommandOptions = createPreTransferOptions(operation, dir);
             jumpOptions.preTransferCommands.setValue(getJadeOnDMZCommand(operation, jumpCommandOptions));
             jumpOptions = setDestinationOptionsPrefix("source_", jumpOptions);
+            
+            jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
+            
             options.getConnectionOptions().setSource(jumpOptions);
             options.getConnectionOptions().setTarget(objOptions.getTarget());
         }
@@ -262,11 +265,11 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         return options;
     }
 
-    private String getCopyToInternetCommand(String value) {
+    private String getJumpCommand(String value) {
         if (value == null) {
             return null;
         }
-        return value.replaceAll(objOptions.jumpCommandDelimiter.getValue(), COPYTOINTERNET_COMMAND_DELIMITER);
+        return value.replaceAll(objOptions.jumpCommandDelimiter.getValue(), INTERNALLY_COMMAND_DELIMITER);
     }
 
     private SOSConnection2OptionsAlternate setDestinationOptionsPrefix(String prefix, SOSConnection2OptionsAlternate options) {
