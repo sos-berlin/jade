@@ -22,6 +22,7 @@ import sos.util.SOSString;
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Jade4DMZ.class);
+    private static final String COPYTOINTERNET_COMMAND_DELIMITER = "SOSCOPYTOINTERNETCD";
     private SOSFileList fileList = null;
     private String uuid = null;
     private String sourceListFilename = null;
@@ -195,12 +196,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         targetOptions.postTransferCommands.setValue(objOptions.jumpPostTransferCommandsOnSuccess.getValue());
         targetOptions.postTransferCommandsOnError.setValue(objOptions.jumpPostTransferCommandsOnError.getValue());
         targetOptions.postTransferCommandsFinal.setValue(objOptions.jumpPostTransferCommandsFinal.getValue());
+        targetOptions.commandDelimiter.setValue(objOptions.jumpCommandDelimiter.getValue());
         targetOptions.preCommand.setPrefix(prefix);
         targetOptions.postCommand.setPrefix(prefix);
         targetOptions.preTransferCommands.setPrefix(prefix);
         targetOptions.postTransferCommands.setPrefix(prefix);
         targetOptions.postTransferCommandsOnError.setPrefix(prefix);
         targetOptions.postTransferCommandsFinal.setPrefix(prefix);
+        targetOptions.commandDelimiter.setPrefix(prefix);
         options.getConnectionOptions().setTarget(targetOptions);
         SOSConnection2OptionsAlternate sourceOptions = objOptions.getSource();
         options.getConnectionOptions().setSource(sourceOptions);
@@ -225,16 +228,24 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(operation, dir);
             jumpCommandOptions = createPostTransferOptions(operation, dir);
-            jumpOptions.preCommand.setValue(objOptions.jumpPreCommand.getValue());
-            jumpOptions.postCommand.setValue(objOptions.jumpPostCommandOnSuccess.getValue());
-            jumpOptions.preTransferCommands.setValue(objOptions.jumpPreTransferCommands.getValue());
-            String firstCommand = SOSString.isEmpty(objOptions.jumpPostTransferCommandsOnSuccess.getValue()) ? ""
-                    : (objOptions.jumpPostTransferCommandsOnSuccess.getValue().endsWith(";") ? objOptions.jumpPostTransferCommandsOnSuccess.getValue()
-                            : objOptions.jumpPostTransferCommandsOnSuccess.getValue() + ";");
+            
+            jumpOptions.preCommand.setValue(getCopyToInternetCommand(objOptions.jumpPreCommand.getValue()));
+            jumpOptions.postCommand.setValue(getCopyToInternetCommand(objOptions.jumpPostCommandOnSuccess.getValue()));
+            jumpOptions.preTransferCommands.setValue(getCopyToInternetCommand(objOptions.jumpPreTransferCommands.getValue()));
+
+            String firstCommand = "";
+            String jumpPostTransferCommandsOnSuccess = getCopyToInternetCommand(objOptions.jumpPostTransferCommandsOnSuccess.getValue());
+            if (!SOSString.isEmpty(jumpPostTransferCommandsOnSuccess)) {
+                firstCommand = jumpPostTransferCommandsOnSuccess.endsWith(COPYTOINTERNET_COMMAND_DELIMITER) ? jumpPostTransferCommandsOnSuccess
+                        : jumpPostTransferCommandsOnSuccess + COPYTOINTERNET_COMMAND_DELIMITER;
+            }
             jumpOptions.postTransferCommands.setValue(firstCommand + getJadeOnDMZCommand(operation, jumpCommandOptions));
-            jumpOptions.postTransferCommandsOnError.setValue(objOptions.jumpPostTransferCommandsOnError.getValue());
-            jumpOptions.postTransferCommandsFinal.setValue(objOptions.jumpPostTransferCommandsFinal.getValue());
+            jumpOptions.postTransferCommandsOnError.setValue(getCopyToInternetCommand(objOptions.jumpPostTransferCommandsOnError.getValue()));
+            jumpOptions.postTransferCommandsFinal.setValue(getCopyToInternetCommand(objOptions.jumpPostTransferCommandsFinal.getValue()));
+            jumpOptions.commandDelimiter.setValue(COPYTOINTERNET_COMMAND_DELIMITER);
+
             jumpOptions = setDestinationOptionsPrefix("target_", jumpOptions);
+
             options.getConnectionOptions().setSource(objOptions.getSource());
             options.getConnectionOptions().setTarget(jumpOptions);
         } else {
@@ -249,6 +260,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.setDmzOption("history", getHistoryFilename());
         options.setDmzOption("resultfile", getSourceListFilename());
         return options;
+    }
+
+    private String getCopyToInternetCommand(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replaceAll(objOptions.jumpCommandDelimiter.getValue(), COPYTOINTERNET_COMMAND_DELIMITER);
     }
 
     private SOSConnection2OptionsAlternate setDestinationOptionsPrefix(String prefix, SOSConnection2OptionsAlternate options) {
