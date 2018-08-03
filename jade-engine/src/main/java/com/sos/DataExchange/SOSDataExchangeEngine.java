@@ -76,6 +76,7 @@ import sos.util.SOSString;
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
 
     private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngine.class);
+    private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
     protected static final String JADE_LOGGER_NAME = "JadeReportLog";
     private static final Logger JADE_REPORT_LOGGER = Logger.getLogger(JADE_LOGGER_NAME);
     private static final String KEYWORD_LAST_ERROR = "last_error";
@@ -95,6 +96,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private ISOSVfsFileTransfer sourceClient = null;
     private IJobSchedulerEventHandler eventHandler = null;
     private YadeHistory history;
+    private IJadeEngineClientHandler engineClientHandler = null;
 
     public SOSDataExchangeEngine() throws Exception {
         this.getOptions();
@@ -303,7 +305,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             try {
                 getOptions().checkMandatory();
                 if (history != null) {
-                    history.beforeTransfer(objOptions,null);
+                    history.beforeTransfer(objOptions, null);
                 }
             } finally {
                 showBanner();
@@ -602,8 +604,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     String filename = "";
                     while ((line = file.getLine()) != null) {
                         filename = line.toString().trim();
-                        if (filename.length() > 0) {
-                            if (localDir.trim().length() > 0 && isAPathName(filename)) {
+                        // see filePath above
+                        if (!filename.isEmpty()) {
+                            if (!localDir.trim().isEmpty() && !isAPathName(filename)) {
                                 filename = localDir + filename;
                             }
                             fileList.add(filename);
@@ -693,8 +696,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                     cd = targetClient.isDirectory(path);
                 }
             }
+            if (isDebugEnabled) {
+                LOGGER.debug(String.format("[target][makeDirs]%s", path));
+            }
         } catch (Exception e) {
-            throw new JobSchedulerException("..error in makeDirs: " + e, e);
+            throw new JobSchedulerException(String.format("[target][makeDirs][%s][failed]%s", path, e.toString()), e);
         }
         return cd;
     }
@@ -1015,6 +1021,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         return sourceClient;
     }
 
+    public void setEngineClientHandler(IJadeEngineClientHandler handler) {
+        engineClientHandler = handler;
+    }
+
     /** Send files by .... from source to a target
      *
      * @return boolean
@@ -1046,6 +1056,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 String targetDir = objOptions.targetDir.getValue();
                 long startPollingServer = System.currentTimeMillis() / CONST1000;
                 countPollingServerFiles = 0;
+
+                if (engineClientHandler != null) {
+                    engineClientHandler.onBeforeOperation(sourceClient, targetClient);
+                }
+
                 executePreTransferCommands();
 
                 if (history != null) {

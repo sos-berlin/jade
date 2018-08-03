@@ -30,7 +30,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private String initialTargetDir = null;
     private YadeHistory history = null;
 
-    private enum Operation {
+    protected enum Operation {
         copyToInternet, copyFromInternet, remove, getlist
     }
 
@@ -42,6 +42,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         String uuid = "jade-dmz-" + getUUID();
         String subDir = dir + uuid;
         Operation operation = null;
+        Jade4DMZEngineClientHandler clientHandler = null;
         try {
             if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
@@ -66,7 +67,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 history.beforeTransfer(objOptions, null);
             }
 
-            transfer(operation, subDir);
+            clientHandler = new Jade4DMZEngineClientHandler(objOptions, operation, dir, uuid);
+            transfer(operation, subDir, clientHandler);
 
             if (history != null) {
                 history.afterTransfer();
@@ -85,13 +87,15 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         }
     }
 
-    private void transfer(Operation operation, String dir) {
+    private void transfer(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) {
         LOGGER.info(String.format("operation = %s, jump dir = %s", operation, dir));
         JadeEngine jade = null;
         fileList = null;
         try {
-            jade = new JadeEngine(getTransferOptions(operation, dir));
+            jade = new JadeEngine(getTransferOptions(operation, dir, clientHandler));
+            jade.setEngineClientHandler(clientHandler);
             jade.execute();
+
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
             }
@@ -217,10 +221,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
     /** Transfer from Intranet/Internet to DMZ
      * 
-     * @param operation
-     * @param dir
      * @return */
-    private JADEOptions getTransferOptions(Operation operation, String dir) throws Exception {
+    private JADEOptions getTransferOptions(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) throws Exception {
         LOGGER.debug(String.format("operation = %s, jump dir = %s", operation, dir));
         JADEOptions options = null;
         JADEOptions jumpCommandOptions;
@@ -251,11 +253,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         } else {
             options = createTransferFromDMZOptions(operation, dir);
             jumpCommandOptions = createPreTransferOptions(operation, dir);
+            if (clientHandler.isCopyFromInternetWithFileList()) {
+                jumpCommandOptions.setFileListName(clientHandler.getJumpFileListName());
+            }
             jumpOptions.preTransferCommands.setValue(getJadeOnDMZCommand(operation, jumpCommandOptions));
             jumpOptions = setDestinationOptionsPrefix("source_", jumpOptions);
-            
+
             jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
-            
+
             options.getConnectionOptions().setSource(jumpOptions);
             options.getConnectionOptions().setTarget(objOptions.getTarget());
         }
