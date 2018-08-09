@@ -88,20 +88,33 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private void doProcessing() throws Exception {
         try {
-            String method = "doProcessing";
             jadeOptions = new JADEOptions();
             jadeOptions.setCurrentNodeName(getCurrentNodeName());
             jadeEngine = new JadeEngine(jadeOptions);
             Path xml2iniFile = null;
             HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
-            if (schedulerParams != null && schedulerParams.containsKey("settings")) {
-                String settings = schedulerParams.get("settings");
-                jadeOptions.setOriginalSettingsFile(settings);
-                LOGGER.debug(String.format("%s: schedulerParams settings=%s", method, settings));
-                if (settings.toLowerCase().endsWith(".xml")) {
-                    JADEOptions jo = new JADEOptions();
-                    xml2iniFile = jo.convertXml2Ini(settings);
-                    schedulerParams.put("settings", xml2iniFile.toString());
+            if (schedulerParams != null) {
+                if (schedulerParams.containsKey("settings")) {
+                    File f = new File(schedulerParams.get("settings"));
+                    String settings = f.getCanonicalPath();
+                    if (!f.exists()) {
+                        throw new JobSchedulerException(String.format("[%s]settings file not found", settings));
+                    }
+                    if (!schedulerParams.containsKey("profile")) {
+                        throw new JobSchedulerException(String.format("[%s]missing 'profile' parameter", settings));
+                    }
+
+                    jadeOptions.setOriginalSettingsFile(settings);
+                    LOGGER.debug(String.format("settings=%s", settings));
+                    if (settings.toLowerCase().endsWith(".xml")) {
+                        JADEOptions jo = new JADEOptions();
+                        xml2iniFile = jo.convertXml2Ini(settings);
+                        schedulerParams.put("settings", xml2iniFile.toString());
+                    }
+                } else {
+                    if (schedulerParams.containsKey("profile")) {
+                        throw new JobSchedulerException(String.format("[%s]missing 'settings' parameter", schedulerParams.get("profile")));
+                    }
                 }
             }
             jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));

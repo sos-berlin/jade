@@ -509,12 +509,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             sb.append(String.format("%072d%n", 0).replace('0', '*'));
             sb.append(String.format(pattern4String, "Version", VersionInfo.VERSION_STRING));
             sb.append(String.format(pattern4String, "Date", timestamp));
-            if (getOptions().settings.isNotEmpty()) {
-                sb.append(String.format(pattern4String, "SettingsFile", getOptions().getOriginalSettingsFile()));
-            }
-            if (getOptions().profile.isNotEmpty()) {
-                sb.append(String.format(pattern4String, "Profile", getOptions().profile.getValue()));
-            }
+            sb.append(String.format(pattern4String, "SettingsFile", getOptions().getOriginalSettingsFile() == null ? "" : getOptions()
+                    .getOriginalSettingsFile()));
+            sb.append(String.format(pattern4String, "Profile", getOptions().profile.getValue()));
             sb.append(String.format(pattern4String, "Operation", getOptions().operation.getValue()));
             sb.append(String.format(pattern4Bool, "Transactional", getOptions().transactional.value()));
             if (getOptions().skipTransfer.isDirty()) {
