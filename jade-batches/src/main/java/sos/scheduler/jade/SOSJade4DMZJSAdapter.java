@@ -52,12 +52,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
     private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
     private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
-    private static final String SCHEDULER_ID_PARAM = "SCHEDULER_ID";
     private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    private static final String SCHEDULER_JOB_CHAIN_PATH_PARAM = "SCHEDULER_JOB_CHAIN_PATH";
     private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
-    private static final String SCHEDULER_ORDER_ID_PARAM = "SCHEDULER_ORDER_ID";
-    private static final String SCHEDULER_TASK_ID_PARAM = "SCHEDULER_TASK_ID";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private SOSFTPOptions jadeOptions = null;
@@ -132,27 +128,26 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
             
             history = new YadeHistory(this);
-            history.buildFactory(getHibernateConfigurationReporting());
+            Path hibernateConfigFile = null;
+            try {
+                hibernateConfigFile = getHibernateConfigurationReporting();
+            } catch (Throwable t) {
+                hibernateConfigFile = null;
+                logger.warn("No ./config/reporting.hibernate.cfg.xml found on file system! Transfer history won´t be processed.");
+            }
+            history.buildFactory(hibernateConfigFile);
             jade4DMZEngine.setHistory(history);
 
-            if (schedulerParams.get(SCHEDULER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ID_PARAM).isEmpty()) {
-                jade4DMZEngine.getOptions().setJobSchedulerId(schedulerParams.get(SCHEDULER_ID_PARAM));
-            }
+            jade4DMZEngine.getOptions().setJobSchedulerId(spooler.id());
             if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM).isEmpty()) {
-                jade4DMZEngine.getOptions().setJobChain(schedulerParams.get(SCHEDULER_JOB_CHAIN_PATH_PARAM));
-            }
+            jade4DMZEngine.getOptions().setJobChain(spooler_task.order().job_chain().path());
             if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
                 jade4DMZEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
             }
-            if (schedulerParams.get(SCHEDULER_ORDER_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_ORDER_ID_PARAM).isEmpty()) {
-                jade4DMZEngine.getOptions().setOrderId(schedulerParams.get(SCHEDULER_ORDER_ID_PARAM));
-            }
-            if (schedulerParams.get(SCHEDULER_TASK_ID_PARAM) != null && !schedulerParams.get(SCHEDULER_TASK_ID_PARAM).isEmpty()) {
-                jade4DMZEngine.getOptions().setTaskId(schedulerParams.get(SCHEDULER_TASK_ID_PARAM));
-            }
+            jade4DMZEngine.getOptions().setOrderId(spooler_task.order().id());
+            jade4DMZEngine.getOptions().setTaskId("" + spooler_task.id());
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
             }
