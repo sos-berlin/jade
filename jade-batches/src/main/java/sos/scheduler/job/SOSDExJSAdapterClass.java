@@ -12,6 +12,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.JSHelper.Options.SOSOptionTime;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -32,6 +35,7 @@ import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
 
+import sos.configuration.SOSConfiguration;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
@@ -140,11 +144,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
                 jadeEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
             }
-            jadeEngine.getOptions().setJobChain(spooler_task.order().job_chain().path());
+            jadeEngine.getOptions().setJobChain(getOrder().job_chain().path());
             if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
                 jadeEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
             }
-            jadeEngine.getOptions().setOrderId(spooler_task.order().id());
+            jadeEngine.getOptions().setOrderId(getOrder().id());
             jadeEngine.getOptions().setTaskId("" + spooler_task.id());
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
@@ -154,10 +158,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 history.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
                 LOGGER.debug(ORDER_PARAMETER_FILE_PATH_RESTRICTION + " was set to: " + schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
             }
-//            String[] args = new String[] {
-//                    "-settings=C:/sp/jobschedulers/approvals/jobscheduler_1.12-SNAPSHOT/sp_4012/config/live/06_YADEFileTransfer/yade_settings2.ini",
-//                    "-profile=CopyLocal2Local"};
-//            jadeOptions.commandLineArgs(args);
             try {
                 jadeEngine.execute();
             } catch (Exception e) {
@@ -174,14 +174,14 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 String pollErrorState = jadeOptions.pollErrorState.getValue();
                 LOGGER.info("set order-state to " + pollErrorState);
                 setNextNodeState(pollErrorState);
-                spooler_task.order().params().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
-                spooler_task.order().set_state_text("ended with no files found");
+                getOrderParams().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
+                getOrder().set_state_text("ended with no files found");
             }
             if (isJobchain()) {
                 String onEmptyResultSetState = jadeOptions.onEmptyResultSet.getValue();
                 if (isNotEmpty(onEmptyResultSetState) && resultSetSize <= 0) {
                     JSJ_I_0090.toLog(onEmptyResultSetState);
-                    spooler_task.order().set_state(onEmptyResultSetState);
+                    getOrder().set_state(onEmptyResultSetState);
                 }
             }
             String raiseErrorIfResultSetIs = jadeOptions.raiseErrorIfResultSetIs.getValue();
@@ -226,82 +226,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     }
 
-//    private void readSettings() {
-//        HashMap<String, String> map = new HashMap<String, String>();
-//        try {
-//            SOSConfiguration conf = new SOSConfiguration(jadeOptions.settings.getValue(), "globals");
-//            Properties properties = new Properties();
-//            Properties globalsProps = conf.getParameterAsProperties();
-//            Properties profileProps = conf.getParameterAsProperties();
-//            globalsProps = jadeOptions.resolveIncludes(globalsProps, sosLogger);
-//            properties.putAll(globalsProps);
-//            profileProps = jadeOptions.resolveIncludes(profileProps, sosLogger);
-//            properties.putAll(profileProps);
-//            // Additional Variables
-//            properties.put("uuid", UUID.randomUUID().toString());
-//            properties.put("date", SOSOptionTime.getCurrentDateAsString());
-//            properties.put("time", SOSOptionTime.getCurrentTimeAsString("hh:mm:ss"));
-//            properties.put("local_user", System.getProperty("user.name"));
-//            Properties props4Substitute = new Properties();
-//            props4Substitute.put("profile", jadeOptions.profile.getValue());
-//            props4Substitute.put("settings", jadeOptions.settings.getValue());
-//            try {
-//                java.net.InetAddress localMachine = java.net.InetAddress.getLocalHost();
-//                properties.put("localhost", localMachine.getHostName());
-//                properties.put("local_host_ip", localMachine.getHostAddress());
-//            } catch (Exception e) {
-//                LOGGER.debug(e.toString());
-//                properties.put("localhost", "localhost");
-//                properties.put("local_host_ip", "127.0.0.1");
-//            }
-//            for (Map.Entry<Object, Object> e : properties.entrySet()) {
-//                String key = (String) e.getKey();
-//                String value = (String) e.getValue();
-////            if (beatParams != null && beatParams.containsKey(key)) {
-////                value = beatParams.get(key);
-////            }
-////            if (hasVariableToSubstitute(value) == true && gflgSubsituteVariables == true) {
-////
-////                LOGGER.trace("ReadSettingsFile() - key = " + key + ", value = " + value);
-////                value = jadeOptions.substituteVariables(value, properties);
-//                value = jadeOptions.substituteVariables(value, props4Substitute);
-////                value = jadeOptions.substituteVariables(value, propSOSFtpEnvironmentVars);
-////                value = jadeOptions.substituteVariables(value, propAllEnvironmentVariables);
-////                value = jadeOptions.substituteVariables(value, schedulerParams);
-////                if (hasVariableToSubstitute(value)) {
-////                    switch (key) {
-////                    case "source_pre_command":
-////                    case "source_post_command":
-////                    case "source_tfn_post_command":
-////
-////                    case "target_pre_command":
-////                    case "target_post_command":
-////                    case "target_tfn_post_command":
-////
-////                    case "jump_post_transfer_commands_on_error":
-////                    case "jump_post_transfer_commands_final":
-////                    case "jump_post_transfer_commands_on_success":
-////                    case "jump_pre_transfer_commands":
-////
-////                    case "file_path":
-////                        break;
-////                    default:
-////                        if (!SOSKeePassPath.hasKeePassVariables(value)) {
-////                            LOGGER.warn(SOSVfsMessageCodes.SOSVfs_W_0070.params(value, key));
-////                        }
-////                    }
-////                }
-////                value = unescape(value);
-////            }
-//                map.put(key, value);
-//            }
-//            jadeOptions.setAllOptions(map);
-//            jadeOptions.setChildClasses(map);
-//        } catch (Exception e) {
-//            LOGGER.error(e.getMessage(), e);
-//        }
-//    }
-    
     protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
         String feedback;
         if (jadeOptions.orderJobschedulerHost.isNotEmpty()) {
@@ -354,7 +278,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private Variable_set buildOrderParams(SOSFileListEntry listItem) {
         Variable_set orderParams = spooler.create_variable_set();
         if (jadeOptions.mergeOrderParameter.isTrue()) {
-            orderParams.merge(spooler_task.order().params());
+            orderParams.merge(getOrderParams());
         }
         String[] targetFile = getFilenameParts(jadeOptions.targetDir.getValue(), listItem.getTargetFileName());
         if (jadeOptions.paramNameForPath.isDirty()) {
@@ -402,11 +326,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             String filePaths = "";
             Variable_set objParams = null;
             if (spooler_job.order_queue() != null) {
-                if (spooler_task.order() != null && spooler_task.order().params() != null) {
-                    objParams = spooler_task.order().params();
+                if (getOrder() != null && getOrderParams() != null) {
+                    objParams = getOrderParams();
                 }
             } else {
-                objParams = spooler_task.params();
+                objParams = getTaskParams();
             }
             if (objParams != null) {
                 long intNoOfHitsInResultSet = transfFiles.getList().size();
@@ -421,8 +345,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 }
                 setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT, String.valueOf(intNoOfHitsInResultSet));
                 Variable_set objP = null;
-                if (isNotNull(spooler_task.order())) {
-                    objP = spooler_task.order().params();
+                if (isNotNull(getOrder())) {
+                    objP = getOrderParams();
                 }
                 if (isNotNull(objP)) {
                     String strResultList2File = objR.getOptions().resultListFile.getValue();
@@ -481,9 +405,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         event.setVariables(variables);
         try {
-            LOGGER.info("calling spooler.execute_xml started");
+            LOGGER.trace("calling spooler.execute_xml started");
             spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
-            LOGGER.info("calling spooler.execute_xml finished");
+            LOGGER.trace("calling spooler.execute_xml finished");
         } catch (JsonProcessingException e) {
             LOGGER.error("unable to send event due to: " + e.getMessage(), e);
         }
