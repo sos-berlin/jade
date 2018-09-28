@@ -141,6 +141,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.proxyPort.setValue(objOptions.jumpProxyPort.getValue().trim());
         options.proxyUser.setValue(objOptions.jumpProxyUser.getValue().trim());
         options.proxyPassword.setValue(objOptions.jumpProxyPassword.getValue());
+        options.server_alive_interval.setValue(objOptions.jump_server_alive_interval.getValue());
+        options.server_alive_count_max.setValue(objOptions.jump_server_alive_count_max.getValue());
         if (objOptions.jump_use_credential_store.value()) {
             SOSCredentialStoreOptions csOptions = new SOSCredentialStoreOptions();
             csOptions.useCredentialStore.setValue(objOptions.jump_use_credential_store.getValue());
