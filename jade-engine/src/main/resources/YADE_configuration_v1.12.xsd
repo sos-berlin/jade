@@ -11953,7 +11953,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>Notes</strong>
                <p>Sets the interval in milliseconds to send a keep-alive message.</p>
                <p>If zero is specified, any keep-alive message must not be sent.</p>
-               <p>See <em>ServerAliveCountMax</em>.</p>
+               <p>Use <em>ServerAliveCountMax</em> parameter to specify the number of keep-alive messages which may be sent without receiving any messages back from the server.</p>
                <p> </p>
                <p>	Possible values:
 			<ul>
