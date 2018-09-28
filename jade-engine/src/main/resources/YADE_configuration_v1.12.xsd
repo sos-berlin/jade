@@ -11927,7 +11927,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="server_alive_interval"/>
-				        <Release starting="1.12.6" issue="YADE-526"/>
+				        <Release starting="1.12.6" issue="YADE-527"/>
         	</xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -11946,7 +11946,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Release:
             <ul>
                         <li>
-                           <a href="https://change.sos-berlin.com/browse/YADE-526">YADE-526</a> Availability starting with 1.12.6.</li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-527">YADE-527</a> Availability starting with 1.12.6.</li>
                      </ul>
                   </li>
                </ul>
@@ -11990,7 +11990,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="server_alive_count_max"/>
-				        <Release starting="1.12.6" issue="YADE-526"/>
+				        <Release starting="1.12.6" issue="YADE-527"/>
         	</xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -12009,7 +12009,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Release:
             <ul>
                         <li>
-                           <a href="https://change.sos-berlin.com/browse/YADE-526">YADE-526</a> Availability starting with 1.12.6.</li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-527">YADE-527</a> Availability starting with 1.12.6.</li>
                      </ul>
                   </li>
                </ul>
