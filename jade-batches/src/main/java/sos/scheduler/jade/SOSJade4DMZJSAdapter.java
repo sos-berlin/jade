@@ -336,7 +336,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     objParams = getOrderParams();
                 }
             } else {
-                objParams = getTaskParams();
+                objParams = spooler_task.params();
             }
             if (objParams != null) {
                 long intNoOfHitsInResultSet = transfFiles.getList().size();
