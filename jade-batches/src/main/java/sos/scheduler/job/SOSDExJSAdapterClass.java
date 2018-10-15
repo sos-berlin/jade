@@ -36,6 +36,8 @@ import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
 
 import sos.configuration.SOSConfiguration;
+import sos.spooler.Job_chain;
+import sos.spooler.Job_chain_node;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
@@ -141,14 +143,13 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setHistory(history);
 
             jadeEngine.getOptions().setJobSchedulerId(spooler.id());
-            if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
-                jadeEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
+            Order order = getOrder();
+            if (order != null) {
+                jadeEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
+                jadeEngine.getOptions().setJobChain(order.job_chain().path());
+                jadeEngine.getOptions().setJobChainNodeName(order.state());
+                jadeEngine.getOptions().setOrderId(order.id());
             }
-            jadeEngine.getOptions().setJobChain(getOrder().job_chain().path());
-            if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
-                jadeEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
-            }
-            jadeEngine.getOptions().setOrderId(getOrder().id());
             jadeEngine.getOptions().setTaskId("" + spooler_task.id());
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
