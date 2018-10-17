@@ -139,12 +139,12 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine.setHistory(history);
 
             jade4DMZEngine.getOptions().setJobSchedulerId(spooler.id());
-            if (schedulerParams.get(SCHEDULER_JOB_PATH_PARAM) != null && !schedulerParams.get(SCHEDULER_JOB_PATH_PARAM).isEmpty()) {
-                jade4DMZEngine.getOptions().setJob(schedulerParams.get(SCHEDULER_JOB_PATH_PARAM));
-            }
-            jade4DMZEngine.getOptions().setJobChain(spooler_task.order().job_chain().path());
-            if (schedulerParams.get(SCHEDULER_NODE_NAME_PARAM) != null && !schedulerParams.get(SCHEDULER_NODE_NAME_PARAM).isEmpty()) {
-                jade4DMZEngine.getOptions().setJobChainNodeName(schedulerParams.get(SCHEDULER_NODE_NAME_PARAM));
+            Order order = getOrder();
+            if (order != null) {
+                jade4DMZEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
+                jade4DMZEngine.getOptions().setJobChain(order.job_chain().path());
+                jade4DMZEngine.getOptions().setJobChainNodeName(order.state());
+                jade4DMZEngine.getOptions().setOrderId(order.id());
             }
             jade4DMZEngine.getOptions().setOrderId(spooler_task.order().id());
             jade4DMZEngine.getOptions().setTaskId("" + spooler_task.id());

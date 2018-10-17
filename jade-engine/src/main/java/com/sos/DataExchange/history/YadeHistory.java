@@ -87,8 +87,10 @@ public class YadeHistory {
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
-                    if (existingTransfer != null && existingTransfer.getJobChainNode().equals(options.getJobChainNodeName()) && existingTransfer
-                            .getOrderId().equals(options.getOrderId()) && existingTransfer.getState() == 3) {
+                    if (existingTransfer != null && (existingTransfer.getJobChainNode() != null 
+                            && existingTransfer.getJobChainNode().equals(options.getJobChainNodeName())) 
+                            && (existingTransfer.getOrderId() != null && existingTransfer.getOrderId().equals(options.getOrderId())) 
+                            && existingTransfer.getState() == 3) {
                         existingTransfer.setHasIntervention(true);
                         try {
                             dbSession.update(existingTransfer);
