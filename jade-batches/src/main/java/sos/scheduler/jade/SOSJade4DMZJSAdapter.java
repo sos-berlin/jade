@@ -139,8 +139,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine.setHistory(history);
 
             jade4DMZEngine.getOptions().setJobSchedulerId(spooler.id());
-            Order order = getOrder();
-            if (order != null) {
+            if (isOrderJob()) {
+                Order order = getOrder();
                 jade4DMZEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
                 jade4DMZEngine.getOptions().setJobChain(order.job_chain().path());
                 jade4DMZEngine.getOptions().setJobChainNodeName(order.state());

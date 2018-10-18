@@ -143,8 +143,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setHistory(history);
 
             jadeEngine.getOptions().setJobSchedulerId(spooler.id());
-            Order order = getOrder();
-            if (order != null) {
+            if (isOrderJob()) {
+                Order order = getOrder();
                 jadeEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
                 jadeEngine.getOptions().setJobChain(order.job_chain().path());
                 jadeEngine.getOptions().setJobChainNodeName(order.state());
