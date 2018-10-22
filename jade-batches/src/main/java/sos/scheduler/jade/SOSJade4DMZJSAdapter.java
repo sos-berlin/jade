@@ -90,7 +90,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
             if (schedulerParams != null) {
                 if (schedulerParams.containsKey("settings")) {
-                    File f = new File(schedulerParams.get("settings"));
+                    String paramSettings = schedulerParams.get("settings");
+                    File f = new File(paramSettings);
                     String settings = f.getCanonicalPath();
                     if (!f.exists()) {
                         throw new JobSchedulerException(String.format("[%s]settings file not found", settings));
@@ -101,7 +102,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
                     jadeOptions.setOriginalSettingsFile(settings);
                     logger.debug(String.format("settings=%s", settings));
-                    if (settings.toLowerCase().endsWith(".xml")) {
+                    // check both (in case of symlink the orig file can have any extension...)
+                    if (paramSettings.toLowerCase().endsWith(".xml") || settings.toLowerCase().endsWith(".xml")) {
                         JADEOptions jo = new JADEOptions();
                         xml2iniFile = jo.convertXml2Ini(settings);
                         schedulerParams.put("settings", xml2iniFile.toString());
@@ -126,7 +128,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
             jade4DMZEngine.setJSJobUtilites(this);
             jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
-            
+
             history = new YadeHistory(this);
             Path hibernateConfigFile = null;
             try {
@@ -187,7 +189,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 }
             }
             createOrderParameter(jade4DMZEngine);
-            
+
             if (resultSetSize > 0 && jadeOptions.createOrder.isTrue()) {
                 String jobChainName = jadeOptions.orderJobchainName.getValue();
                 if (jadeOptions.createOrdersForAllFiles.isTrue()) {
@@ -206,8 +208,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     }
                 }
             }
-            
-            
+
             logger.info(String.format("%1$s with operation %2$s ended.", "JADE4DMZ", jadeOptions.operation.getValue()));
         } finally {
             if (history != null) {
@@ -231,7 +232,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             }
         }
     }
-    
+
     protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
         String feedback;
         if (jadeOptions.orderJobschedulerHost.isNotEmpty()) {
