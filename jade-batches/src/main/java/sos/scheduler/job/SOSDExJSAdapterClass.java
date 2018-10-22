@@ -99,7 +99,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 if (schedulerParams.containsKey("settings")) {
                     String paramSettings = schedulerParams.get("settings");
                     File f = new File(paramSettings);
-                    // file path (in case of simlinks, path to the file - not to the link)
+                    // resolved file path (in case of simlinks: UNIX -path to the orig file, Windows - path to the symlink file)
                     String settings = f.getCanonicalPath();
                     if (!f.exists()) {
                         throw new JobSchedulerException(String.format("[%s]settings file not found", settings));
@@ -110,7 +110,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
                     jadeOptions.setOriginalSettingsFile(settings);
                     LOGGER.debug(String.format("settings=%s", settings));
-                    // check paramSettings instead of File object (in case of symlink this file can have any extension)
+                    // check both (in case of symlink the orig file can have any extension...)
                     if (paramSettings.toLowerCase().endsWith(".xml") || settings.toLowerCase().endsWith(".xml")) {
                         JADEOptions jo = new JADEOptions();
                         xml2iniFile = jo.convertXml2Ini(settings);

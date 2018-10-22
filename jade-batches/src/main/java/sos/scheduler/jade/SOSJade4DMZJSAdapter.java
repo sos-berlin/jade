@@ -92,6 +92,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 if (schedulerParams.containsKey("settings")) {
                     String paramSettings = schedulerParams.get("settings");
                     File f = new File(paramSettings);
+                    // resolved file path (in case of simlinks: UNIX -path to the orig file, Windows - path to the symlink file)
                     String settings = f.getCanonicalPath();
                     if (!f.exists()) {
                         throw new JobSchedulerException(String.format("[%s]settings file not found", settings));
