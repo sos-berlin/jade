@@ -149,7 +149,6 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 jade4DMZEngine.getOptions().setJobChainNodeName(order.state());
                 jade4DMZEngine.getOptions().setOrderId(order.id());
             }
-            jade4DMZEngine.getOptions().setOrderId(spooler_task.order().id());
             jade4DMZEngine.getOptions().setTaskId("" + spooler_task.id());
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
