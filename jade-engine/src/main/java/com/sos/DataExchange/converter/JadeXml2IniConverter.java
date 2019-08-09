@@ -20,7 +20,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,6 +38,7 @@ public class JadeXml2IniConverter {
     private static final String SCHEMA_ATTRIBUTE_VALUE = "value";
     private static final String SCHEMA_ATTRIBUTE_SUPPRESS_PREFIX = "suppress_prefix";
     private static final String SCHEMA_ATTRIBUTE_OPPOSITE_VALUE = "opposite_value";
+    private static final String SCHEMA_ATTRIBUTE_DEFAULT_VALUE = "default";
     private static final String SCHEMA_ATTRIBUTE_MAIL_NAME = "mail_name";
     private static final String SCHEMA_ATTRIBUTE_ALTERNATIVE_NAME = "alternative_name";
     private int _countNotificationMailFragments = 0;
@@ -938,7 +938,8 @@ public class JadeXml2IniConverter {
                                 String includeName = arr[1].trim().split(",")[0].trim();
                                 if (_jumpIncludes.containsKey(includeName)) {
                                     String jumpInclude = _jumpIncludes.get(includeName);
-                                    if ("copyfrominternet".equals(operation) || "copytointernet".equals(operation) || "remove".equals(operation)) {
+                                    if ("copyfrominternet".equals(operation) || "copytointernet".equals(operation) || "remove".equals(operation)
+                                            || "getlist".equals(operation)) {
                                         if (_profileJumpInclude == null) {
                                             String[] jumpArr = jumpInclude.split("=");
                                             String jumpName = jumpArr.length > 0 ? jumpArr[1].trim() : null;
@@ -1254,10 +1255,18 @@ public class JadeXml2IniConverter {
             if (flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null) {
                 Node attrName = attributeNode.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_NAME);
                 if (attrName != null) {
-                    value = node.getAttributes().getNamedItem(attrName.getNodeValue()).getNodeValue();
-                    Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
-                    if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
-                        value = "true".equalsIgnoreCase(value) ? "false" : "true";
+                    Node valueNode = node.getAttributes().getNamedItem(attrName.getNodeValue());
+                    if (valueNode != null) {
+                       value = valueNode.getNodeValue(); 
+                       Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
+                       if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
+                           value = "true".equalsIgnoreCase(value) ? "false" : "true";
+                       }
+                    } else {
+                       Node defaultValue = attributeNode.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_DEFAULT_VALUE);
+                       if (defaultValue != null) {
+                           value = defaultValue.getNodeValue();
+                       }
                     }
                 }
             } else {

@@ -71,6 +71,12 @@
         </dependency>
 
 		<dependency>
+            <groupId>com.sos-berlin.jitl</groupId>
+            <artifactId>jitl-jobs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>

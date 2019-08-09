@@ -36,7 +36,7 @@ public class DBItemYadeProtocols extends DbItem implements Serializable {
     /** Primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = YADE_PROTOCOLS_SEQUENCE)
-    @Column(name = "`ID`", nullable = false)
+    @Column(name = "[ID]", nullable = false)
     public Long getId() {
         return id;
     }
@@ -44,42 +44,42 @@ public class DBItemYadeProtocols extends DbItem implements Serializable {
     /** Primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = YADE_PROTOCOLS_SEQUENCE)
-    @Column(name = "`ID`", nullable = false)
+    @Column(name ="[ID]", nullable = false)
     public void setId(Long id) {
         this.id = id;
     }
     
-    @Column(name = "`HOSTNAME`", nullable = false)
+    @Column(name ="[HOSTNAME]", nullable = false)
     public String getHostname() {
         return hostname;
     }
     
-    @Column(name = "`HOSTNAME`", nullable = false)
+    @Column(name ="[HOSTNAME]", nullable = false)
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
     
-    @Column(name = "`PORT`", nullable = true)
+    @Column(name ="[PORT]", nullable = true)
     public Integer getPort() {
         return port;
     }
     
-    @Column(name = "`PORT`", nullable = true)
+    @Column(name ="[PORT]", nullable = true)
     public void setPort(Integer port) {
         this.port = port;
     }
     
-    @Column(name = "`PROTOCOL`", nullable = false)
+    @Column(name ="[PROTOCOL]", nullable = false)
     public Integer getProtocol() {
         return protocol;
     }
     
-    @Column(name = "`PROTOCOL`", nullable = false)
+    @Column(name ="[PROTOCOL]", nullable = false)
     public void setProtocol(Integer protocol) {
         this.protocol = protocol;
     }
     
-    @Column(name = "`ACCOUNT`", nullable = false)
+    @Column(name ="[ACCOUNT]", nullable = false)
     public String getAccount() {
         if(account == null) {
             return ".";
@@ -88,7 +88,7 @@ public class DBItemYadeProtocols extends DbItem implements Serializable {
         }
     }
     
-    @Column(name = "`ACCOUNT`", nullable = false)
+    @Column(name ="[ACCOUNT]", nullable = false)
     public void setAccount(String account) {
         if (account == null) {
             this.account = ".";

@@ -2,8 +2,6 @@ package com.sos.DataExchange;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -11,18 +9,11 @@ import org.apache.log4j.Logger;
 import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
-import com.sos.DataExchange.helpers.YadeDBOperationHelper;
+import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
-import com.sos.hibernate.classes.SOSHibernateFactory;
-import com.sos.hibernate.classes.SOSHibernateSession;
-import com.sos.hibernate.exceptions.SOSHibernateException;
-import com.sos.hibernate.exceptions.SOSHibernateOpenSessionException;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.keepass.SOSKeePassDatabase;
 
 import sos.util.SOSString;
@@ -31,22 +22,16 @@ import sos.util.SOSString;
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Jade4DMZ.class);
+    private static final String INTERNALLY_COMMAND_DELIMITER = "SOSJUMPCD";
     private SOSFileList fileList = null;
     private String uuid = null;
     private String sourceListFilename = null;
     private String historyFilename = null;
-    private SOSHibernateFactory dbFactory = null;
-    private SOSHibernateSession dbSession = null;
-    private YadeDBOperationHelper dbHelper = null;
-    private Long transferId;
-    private Long parentTransferId;
-    private IJobSchedulerEventHandler eventHandler = null;
-    private boolean isIntervention = false;
-    private String filePathRestriction = null;
     private String initialTargetDir = null;
+    private YadeHistory history = null;
 
-    private enum Operation {
-        copyToInternet, copyFromInternet, remove
+    protected enum Operation {
+        copyToInternet, copyFromInternet, remove, getlist
     }
 
     public void Execute() {
@@ -57,6 +42,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         String uuid = "jade-dmz-" + getUUID();
         String subDir = dir + uuid;
         Operation operation = null;
+        Jade4DMZEngineClientHandler clientHandler = null;
         try {
             if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
@@ -64,6 +50,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 operation = Operation.copyFromInternet;
             } else if (objOptions.operation.isOperationRemove()) {
                 operation = Operation.remove;
+            } else if (objOptions.operation.isOperationGetList()) {
+                operation = Operation.getlist;
             } else {
                 throw new JobSchedulerException(String.format("unsuported operation \"%s\"", objOptions.operation.getValue()));
             }
@@ -74,96 +62,51 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 objOptions = updateHelper.getOptions();
             }
             objOptions.checkMandatory();
-            if (dbFactory != null) {
-                dbSession = initStatelessSession();
-                dbHelper = new YadeDBOperationHelper(this, eventHandler);
-                if (parentTransferId != null) {
-                    dbHelper.setParentTransferId(parentTransferId);
-                    DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
-                    if (existingTransfer != null && existingTransfer.getJobChainNode().equals(objOptions.getJobChainNodeName()) && existingTransfer
-                            .getOrderId().equals(objOptions.getOrderId()) && existingTransfer.getState() == 3) {
-                        existingTransfer.setHasIntervention(true);
-                        dbSession.beginTransaction();
-                        dbSession.update(existingTransfer);
-                        dbSession.commit();
-                        transferId = dbHelper.storeInitialTransferInformations(dbSession, existingTransfer.getId());
-                    } else {
-                        transferId = dbHelper.storeInitialTransferInformations(dbSession);
-                    }
-                } else {
-                    transferId = dbHelper.storeInitialTransferInformations(dbSession);
-                }
-                if (eventHandler != null) {
-                    Map<String, String> values = new HashMap<String, String>();
-                    values.put("transferId", transferId.toString());
-                    eventHandler.sendEvent("YADETransferStarted", values);
-                }
+
+            if (history != null) {
+                history.beforeTransfer(objOptions, null);
             }
-            transfer(operation, subDir);
-            if (dbSession != null) {
-                dbHelper.updateSuccessfulTransfer(dbSession);
-            }
-            if (eventHandler != null) {
-                Map<String, String> values = new HashMap<String, String>();
-                values.put("transferId", transferId.toString());
-                eventHandler.sendEvent("YADETransferFinished", values);
+
+            clientHandler = new Jade4DMZEngineClientHandler(objOptions, operation, dir, uuid);
+            transfer(operation, subDir, clientHandler);
+
+            if (history != null) {
+                history.afterTransfer();
             }
         } catch (JobSchedulerException e) {
-            if (dbSession != null) {
-                try {
-                    dbHelper.updateFailedTransfer(dbSession, String.format("%1$s: %2$s", e.getClass().getSimpleName(), e.getMessage()));
-                    if (eventHandler != null) {
-                        Map<String, String> values = new HashMap<String, String>();
-                        values.put("transferId", transferId.toString());
-                        eventHandler.sendEvent("YADETransferFinished", values);
-                    }
-                } catch (SOSHibernateException she) {
-                    try {
-                        dbSession.rollback();
-                    } catch (SOSHibernateException shex) {
-                    }
-                }
+            if (history != null) {
+                history.onException(e);
             }
             throw e;
         } catch (Exception e) {
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
-            if (dbSession != null) {
-                dbSession.close();
-                dbFactory.close();
+            if (history != null) {
+                history.sendYadeEventOnEnd();
             }
         }
     }
 
-    private void transfer(Operation operation, String dir) {
+    private void transfer(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) {
         LOGGER.info(String.format("operation = %s, jump dir = %s", operation, dir));
         JadeEngine jade = null;
         fileList = null;
         try {
-            jade = new JadeEngine(getTransferOptions(operation, dir));
-            jade.setTransferId(transferId);
+            jade = new JadeEngine(getTransferOptions(operation, dir, clientHandler));
+            jade.setEngineClientHandler(clientHandler);
             jade.execute();
+
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
             }
             fileList = jade.getFileList();
-            if (dbSession != null) {
-                dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
-                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
-                }
+
+            if (history != null) {
+                history.afterDMZFileTransfer(fileList, initialTargetDir);
             }
         } catch (Exception e) {
-            if (dbSession != null) {
-                fileList = jade.getFileList();
-                try {
-                    dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
-                    for (SOSFileListEntry entry : fileList.getList()) {
-                        dbHelper.updateFileInformationToDB(dbSession, entry, true, initialTargetDir);
-                    }
-                } catch (SOSHibernateException e1) {
-                }
+            if (history != null) {
+                history.onDMZFileTransferException(fileList, initialTargetDir);
             }
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
@@ -193,13 +136,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.strictHostKeyChecking.value(objOptions.jumpStrictHostkeyChecking.value());
         options.directory.setValue(dir);
         options.configuration_files.setValue(objOptions.jumpConfigurationFiles.getValue());
-
         options.proxyProtocol.setValue(objOptions.jumpProxyProtocol.getValue());
         options.proxyHost.setValue(objOptions.jumpProxyHost.getValue().trim());
         options.proxyPort.setValue(objOptions.jumpProxyPort.getValue().trim());
         options.proxyUser.setValue(objOptions.jumpProxyUser.getValue().trim());
         options.proxyPassword.setValue(objOptions.jumpProxyPassword.getValue());
-
+        options.server_alive_interval.setValue(objOptions.jump_server_alive_interval.getValue());
+        options.server_alive_count_max.setValue(objOptions.jump_server_alive_count_max.getValue());
         if (objOptions.jump_use_credential_store.value()) {
             SOSCredentialStoreOptions csOptions = new SOSCredentialStoreOptions();
             csOptions.useCredentialStore.setValue(objOptions.jump_use_credential_store.getValue());
@@ -259,12 +202,14 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         targetOptions.postTransferCommands.setValue(objOptions.jumpPostTransferCommandsOnSuccess.getValue());
         targetOptions.postTransferCommandsOnError.setValue(objOptions.jumpPostTransferCommandsOnError.getValue());
         targetOptions.postTransferCommandsFinal.setValue(objOptions.jumpPostTransferCommandsFinal.getValue());
+        targetOptions.commandDelimiter.setValue(objOptions.jumpCommandDelimiter.getValue());
         targetOptions.preCommand.setPrefix(prefix);
         targetOptions.postCommand.setPrefix(prefix);
         targetOptions.preTransferCommands.setPrefix(prefix);
         targetOptions.postTransferCommands.setPrefix(prefix);
         targetOptions.postTransferCommandsOnError.setPrefix(prefix);
         targetOptions.postTransferCommandsFinal.setPrefix(prefix);
+        targetOptions.commandDelimiter.setPrefix(prefix);
         options.getConnectionOptions().setTarget(targetOptions);
         SOSConnection2OptionsAlternate sourceOptions = objOptions.getSource();
         options.getConnectionOptions().setSource(sourceOptions);
@@ -278,10 +223,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
     /** Transfer from Intranet/Internet to DMZ
      * 
-     * @param operation
-     * @param dir
      * @return */
-    private JADEOptions getTransferOptions(Operation operation, String dir) throws Exception {
+    private JADEOptions getTransferOptions(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) throws Exception {
         LOGGER.debug(String.format("operation = %s, jump dir = %s", operation, dir));
         JADEOptions options = null;
         JADEOptions jumpCommandOptions;
@@ -289,23 +232,37 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(operation, dir);
             jumpCommandOptions = createPostTransferOptions(operation, dir);
-            jumpOptions.preCommand.setValue(objOptions.jumpPreCommand.getValue());
-            jumpOptions.postCommand.setValue(objOptions.jumpPostCommandOnSuccess.getValue());
-            jumpOptions.preTransferCommands.setValue(objOptions.jumpPreTransferCommands.getValue());
-            String firstCommand = SOSString.isEmpty(objOptions.jumpPostTransferCommandsOnSuccess.getValue()) ? ""
-                    : (objOptions.jumpPostTransferCommandsOnSuccess.getValue().endsWith(";") ? objOptions.jumpPostTransferCommandsOnSuccess.getValue()
-                            : objOptions.jumpPostTransferCommandsOnSuccess.getValue() + ";");
+
+            jumpOptions.preCommand.setValue(getJumpCommand(objOptions.jumpPreCommand.getValue()));
+            jumpOptions.postCommand.setValue(getJumpCommand(objOptions.jumpPostCommandOnSuccess.getValue()));
+            jumpOptions.preTransferCommands.setValue(getJumpCommand(objOptions.jumpPreTransferCommands.getValue()));
+
+            String firstCommand = "";
+            String jumpPostTransferCommandsOnSuccess = getJumpCommand(objOptions.jumpPostTransferCommandsOnSuccess.getValue());
+            if (!SOSString.isEmpty(jumpPostTransferCommandsOnSuccess)) {
+                firstCommand = jumpPostTransferCommandsOnSuccess.endsWith(INTERNALLY_COMMAND_DELIMITER) ? jumpPostTransferCommandsOnSuccess
+                        : jumpPostTransferCommandsOnSuccess + INTERNALLY_COMMAND_DELIMITER;
+            }
             jumpOptions.postTransferCommands.setValue(firstCommand + getJadeOnDMZCommand(operation, jumpCommandOptions));
-            jumpOptions.postTransferCommandsOnError.setValue(objOptions.jumpPostTransferCommandsOnError.getValue());
-            jumpOptions.postTransferCommandsFinal.setValue(objOptions.jumpPostTransferCommandsFinal.getValue());
+            jumpOptions.postTransferCommandsOnError.setValue(getJumpCommand(objOptions.jumpPostTransferCommandsOnError.getValue()));
+            jumpOptions.postTransferCommandsFinal.setValue(getJumpCommand(objOptions.jumpPostTransferCommandsFinal.getValue()));
+            jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
+
             jumpOptions = setDestinationOptionsPrefix("target_", jumpOptions);
+
             options.getConnectionOptions().setSource(objOptions.getSource());
             options.getConnectionOptions().setTarget(jumpOptions);
         } else {
             options = createTransferFromDMZOptions(operation, dir);
             jumpCommandOptions = createPreTransferOptions(operation, dir);
+            if (clientHandler.isCopyFromInternetWithFileList()) {
+                jumpCommandOptions.setFileListName(clientHandler.getJumpFileListName());
+            }
             jumpOptions.preTransferCommands.setValue(getJadeOnDMZCommand(operation, jumpCommandOptions));
             jumpOptions = setDestinationOptionsPrefix("source_", jumpOptions);
+
+            jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
+
             options.getConnectionOptions().setSource(jumpOptions);
             options.getConnectionOptions().setTarget(objOptions.getTarget());
         }
@@ -313,6 +270,13 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.setDmzOption("history", getHistoryFilename());
         options.setDmzOption("resultfile", getSourceListFilename());
         return options;
+    }
+
+    private String getJumpCommand(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replaceAll(objOptions.jumpCommandDelimiter.getValue(), INTERNALLY_COMMAND_DELIMITER);
     }
 
     private SOSConnection2OptionsAlternate setDestinationOptionsPrefix(String prefix, SOSConnection2OptionsAlternate options) {
@@ -381,6 +345,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
     private JADEOptions addJADEOptionsForSource(Operation operation, JADEOptions options) {
         if (operation.equals(Operation.remove)) {
             options.operation.setValue("delete");
+        } else if (operation.equals(Operation.getlist)) {
+            options.operation.setValue("getlist");
         } else {
             options.operation.setValue("copy");
             options.transactional.value(true);
@@ -441,6 +407,29 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             options.zeroByteTransfer = objOptions.zeroByteTransfer;
             options.checkIntegrityHash.value(false);
             options.createIntegrityHashFile.value(false);
+            options.integrityHashType = objOptions.integrityHashType;
+        } else if (operation.equals(Operation.getlist)) {
+            options.operation.setValue("getlist");
+            options.transactional.value(true);
+            options.fileSpec.setValue(".*");
+            options.atomicPrefix = objOptions.atomicPrefix;
+            options.atomicSuffix = objOptions.atomicSuffix;
+            options.bufferSize = objOptions.bufferSize;
+            options.makeDirs = objOptions.makeDirs;
+            options.appendFiles = objOptions.appendFiles;
+            options.checkInterval = objOptions.checkInterval;
+            options.checkRetry = objOptions.checkRetry;
+            options.checkSize = objOptions.checkSize;
+            options.forceFiles = objOptions.forceFiles;
+            options.overwriteFiles = objOptions.overwriteFiles;
+            options.recursive = objOptions.recursive;
+            options.skipTransfer = objOptions.skipTransfer;
+            options.keepModificationDate = objOptions.keepModificationDate;
+            options.verbose = objOptions.verbose;
+            options.protocolCommandListener = objOptions.protocolCommandListener;
+            options.zeroByteTransfer = objOptions.zeroByteTransfer;
+            options.checkIntegrityHash = objOptions.checkIntegrityHash;
+            options.createIntegrityHashFile = objOptions.createIntegrityHashFile;
             options.integrityHashType = objOptions.integrityHashType;
         } else {
             options.operation.setValue("copy");
@@ -562,7 +551,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 }
             } else {
                 if (jade.getSourceClient() != null && jade.getSourceClient().getHandler() != null) {
-                    jade.executeTransferCommands("source remove dir", jade.getSourceClient(), command, null);
+                    jade.executeTransferCommands("source remove temp files", jade.getSourceClient(), command, null);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
                 }
@@ -630,42 +619,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         return historyFilename;
     }
 
-    public void setDBFactory(SOSHibernateFactory factory) {
-        this.dbFactory = factory;
+    public void setHistory(YadeHistory h) {
+        history = h;
     }
-
-    private SOSHibernateSession initStatelessSession() {
-        SOSHibernateSession dbSession = null;
-        try {
-            dbSession = dbFactory.openStatelessSession("Jade4DMZJob");
-        } catch (SOSHibernateOpenSessionException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return dbSession;
-    }
-
-    public void setEventHandler(IJobSchedulerEventHandler eventHandler) {
-        this.eventHandler = eventHandler;
-    }
-
-    public Long getTransferId() {
-        return transferId;
-    }
-
-    public Long getParentTransferId() {
-        return parentTransferId;
-    }
-
-    public void setParentTransferId(Long parentTransferId) {
-        this.parentTransferId = parentTransferId;
-    }
-
-    public void setIsIntervention(boolean isIntervention) {
-        this.isIntervention = isIntervention;
-    }
-
-    public void setFilePathRestriction(String filePathRestriction) {
-        this.filePathRestriction = filePathRestriction;
-    }
-
 }

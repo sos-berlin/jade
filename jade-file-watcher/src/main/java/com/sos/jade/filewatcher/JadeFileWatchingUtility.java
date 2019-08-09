@@ -37,13 +37,9 @@ public class JadeFileWatchingUtility implements Runnable {
     private boolean flgTraceIsActive = false;
     private Path strFolderName2Watch4 = null;
 
-    static <T> WatchEvent<T> cast(final WatchEvent<?> event) {
-        return (WatchEvent<T>) event;
-    }
-
     public JadeFileWatchingUtility(final Path pstrFolderName2Watch, final boolean pflgRecursive) throws IOException {
         objWatchService = FileSystems.getDefault().newWatchService();
-        mapWatchKeys = new HashMap<>();
+        mapWatchKeys = new HashMap<WatchKey, Path>();
         recursive = pflgRecursive;
         strFolderName2Watch4 = pstrFolderName2Watch;
         if (recursive) {
@@ -76,9 +72,7 @@ public class JadeFileWatchingUtility implements Runnable {
                     LOGGER.debug(String.format("Overflow occurred processing Folder %1$s", strFolderName2Watch4));
                     continue;
                 }
-                WatchEvent<Path> ev = cast(event);
-                Path name = ev.context();
-                Path child = dir.resolve(name);
+                Path child = dir.resolve((Path) event.context());
                 LOGGER.debug(String.format("%s: %s\n", event.kind().name(), child));
                 if (recursive && kind.equals(ENTRY_CREATE)) {
                     try {
@@ -149,17 +143,17 @@ public class JadeFileWatchingUtility implements Runnable {
         SOSThreadPoolExecutor mtpe = new SOSThreadPoolExecutor(intNoOfFolders2WatchFor);
         int cpus = Runtime.getRuntime().availableProcessors();
         LOGGER.debug("max avl cpus = " + cpus);
-        Future<Runnable>[] objRunningThreads = new Future[intNoOfFolders2WatchFor];
+        Future<?>[] objRunningThreads = new Future[intNoOfFolders2WatchFor];
         int intThread = 0;
         for (int i = dirArg; i < args.length; i++) {
             Path dir = Paths.get(args[i]);
-            Future<Runnable> objF = mtpe.runTask(new JadeFileWatchingUtility(dir, flgRecurseSubFolders));
+            Future<?> objF = mtpe.runTask(new JadeFileWatchingUtility(dir, flgRecurseSubFolders));
             objRunningThreads[intThread++] = objF;
         }
         try {
             Thread.sleep(20000);
             for (int i = 0; i < intNoOfFolders2WatchFor; i++) {
-                Future<Runnable> objF = objRunningThreads[i];
+                Future<?> objF = objRunningThreads[i];
                 objF.cancel(true);
             }
         } catch (InterruptedException e) {

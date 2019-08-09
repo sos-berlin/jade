@@ -68,12 +68,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sos-berlin.jitl</groupId>
-            <artifactId>jitl-jobs</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

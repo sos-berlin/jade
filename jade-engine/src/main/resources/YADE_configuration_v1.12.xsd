@@ -1659,6 +1659,8 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="ProxyForSFTP" minOccurs="0"/>
 				        <xs:element ref="StrictHostkeyChecking" minOccurs="0"/>
                 <xs:element ref="ConfigurationFiles" minOccurs="0"/>
+				        <xs:element ref="ServerAliveInterval" minOccurs="0"/>
+				        <xs:element ref="ServerAliveCountMax" minOccurs="0"/>
             </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
@@ -2114,10 +2116,31 @@ SSH, etc.) server to which a connection has to be made.</p>
                      <li>
                         <em>Account</em> for authentication. For Windows Systems an account could include the domain.</li>
                      <li>
-                        <em>Password</em> for authentication. Passwords are not displayed in the YADE log files.</li>
-                     <li>Public/private key authentiction with an 
-			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AuthenticationFile"
-                           shape="rect">AuthenticationFile</a>.</li>
+                        <em>PreferredAuthentications</em>. Specifies the order in which the client should try protocol 2 authentication methods.</li>
+                     <li>
+                        <em>RequiredAuthentications</em>. Specifies the authentication methods that must be successfully completed for a user to be granted access.</li>
+                     <li>
+                        <em>AuthenticationMethodPassword</em> for authentication.
+                <ul>
+                           <li>
+                              <em>Password</em> Passwords are not displayed in the YADE log files.</li>
+                        </ul>
+                     </li>
+                     <li>
+                        <em>AuthenticationMethodPublicKey</em> for authentication. Public/private key authentiction with an
+                <ul>
+                           <li>
+                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+AuthenticationFile"
+                                 shape="rect">AuthenticationFile</a>
+                           </li>
+                           <li>
+                              <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Passphrase"
+                                 shape="rect">Passphrase</a>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>
+                        <em>AuthenticationMethodKeyboardInteractive</em> for authentication.</li>
                   </ul>
 		             </p>
             </div>
@@ -2356,9 +2379,17 @@ SSH, etc.) server to which a connection has to be made.</p>
 		an authentication method using a
 		<em>Password</em> will be applied.
 		</p>
+               <p/>
                <p>
-		As an alternative to using passwords the authentication method
-		<em>AuthenticationMethodPublickey</em>
+		As an alternative to using passwords the authentication methods:
+		<ul>
+                     <li>
+                        <em>AuthenticationMethodPublickey</em>
+                     </li>
+                     <li>
+                        <em>AuthenticationMethodKeyboardInteractive</em>
+                     </li>
+                  </ul>
 		can be used.
 		</p>
             </div>
@@ -2403,10 +2434,18 @@ SSH, etc.) server to which a connection has to be made.</p>
                <p>
 		This is called public/private key authentication and helps to avoid the use of passwords for authentication.
 		</p>
+               <p/>
                <p>
-		As an alternative to public/private key authentication the authentication method
-		<em>AuthenticationMethodPassword</em>
-		can be used.
+		As an alternative to public/private key authentication the authentication methods:
+		<ul>
+                     <li>
+                        <em>AuthenticationMethodPassword</em>
+                     </li>
+                     <li>
+                        <em>AuthenticationMethodKeyboardInteractive</em>
+                     </li>
+                  </ul>
+	    can be used.
 		</p>
             </div>
          </xs:documentation>
@@ -2417,6 +2456,63 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="Passphrase" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
+	  </xs:element>
+    <xs:element name="AuthenticationMethodKeyboardInteractive">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="ssh_auth_method" value="keyboard-interactive"/>
+                <Release starting="1.12.2" issue="YADE-495"/>
+                <XmlEditor width="1" minWidth="1" maxWidth="1"/>
+			      </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_AuthenticationMethodKeyboardInteractive.html">AuthenticationMethodKeyboardInteractive</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+ssh_auth_method">ssh_auth_method</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-495">YADE-495</a> Availability starting with 1.12.2.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+                  <strong>Usage only with the YADE Client on the command shell.</strong>
+               </p>
+               <p/>
+               <p>
+		The use of this element specifies that for
+		<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+SSHAuthentication"
+                     shape="rect">SSHAuthentication</a> 
+		an authentication method for keyboard interactive authentication, 
+        which allows the YADE Client on the command shell to ask a password question and the user to input a response.
+		</p>
+               <p/>
+               <p>
+		As an alternative to keyboard interactive authentication the authentication methods:
+        <ul>
+                     <li>
+                        <em>AuthenticationMethodPassword</em>
+                     </li>
+                     <li>
+                        <em>AuthenticationMethodPublickey</em>
+                     </li>
+                  </ul>
+        can be used.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 	  </xs:element>
 	  <xs:element name="AuthenticationFile">
 		    <xs:annotation>
@@ -3033,6 +3129,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="LocalPostProcessing" minOccurs="0"/>
 				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
+                <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 				        <!--
 				<xs:element ref="Zip" minOccurs="0"/>
 				-->
@@ -3074,6 +3171,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="LocalPostProcessing" minOccurs="0"/>
 				        <xs:element ref="ProcessingCommandDelimiter" minOccurs="0"/>
 				        <xs:element ref="Rename" minOccurs="0"/>
+                <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -8334,7 +8432,8 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="JumpCommandAfterOperationOnSuccess" minOccurs="0"/>
 				        <xs:element ref="JumpCommandAfterOperationOnError" minOccurs="0"/>
 				        <xs:element ref="JumpCommandAfterOperationFinal" minOccurs="0"/>
-		          <xs:element ref="JumpDirectory" minOccurs="0"/>
+				        <xs:element ref="JumpCommandDelimiter" minOccurs="0"/>
+			         <xs:element ref="JumpDirectory" minOccurs="0"/>
 				        <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 				        <xs:element ref="ProxyForSFTP" minOccurs="0"/>
 				        <xs:element ref="StrictHostkeyChecking" minOccurs="0">
@@ -8380,6 +8479,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                </xs:annotation>
 				        </xs:element>
                 <xs:element ref="ConfigurationFiles" minOccurs="0"/>
+				        <xs:element ref="ServerAliveInterval" minOccurs="0"/>
+				        <xs:element ref="ServerAliveCountMax" minOccurs="0"/>
 			      </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
@@ -8404,16 +8505,19 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      <xs:choice>
                 <xs:element ref="PreferredAuthentications" minOccurs="0"/>
                 <xs:element ref="RequiredAuthentications" minOccurs="0"/>
-			      </xs:choice>
+          	</xs:choice>
 	        <xs:choice>
                 <xs:sequence>
                     <xs:element ref="AuthenticationMethodPassword"/>
 					          <xs:element ref="AuthenticationMethodPublickey" minOccurs="0"/>
-				        </xs:sequence>
+                </xs:sequence>
 				        <xs:sequence>
                     <xs:element ref="AuthenticationMethodPublickey"/>
-				        </xs:sequence>
-			      </xs:choice>
+             	</xs:sequence>
+                <xs:sequence>
+                    <xs:element ref="AuthenticationMethodKeyboardInteractive" minOccurs="0"/>
+             	</xs:sequence>
+     		  </xs:choice>
 		    </xs:sequence>
 	  </xs:complexType>
 	  <xs:complexType name="BasicAuthenticationType">
@@ -9351,7 +9455,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		</xs:complexType>
 	</xs:element>
 	-->
-	  <xs:element name="MergeOrderParameters" type="xs:boolean" default="false">
+	  <xs:element name="MergeOrderParameters" type="xs:boolean" default="true">
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="MergeOrderParameter"/>
@@ -9413,7 +9517,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
-	  <xs:element name="CreateOrderForAllFiles" type="xs:boolean" default="false">
+	  <xs:element name="CreateOrderForAllFiles" type="xs:boolean" default="true">
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="create_orders_for_all_files"/>
@@ -9435,19 +9539,101 @@ A fragment is referenced via this attribute value by a transfer profile.
                </ul>
                <strong>Notes</strong>
                <p>
-			With this parameter it is possible to specify a file order to be created and launched for 
-			execution by JobScheduler. 
-			A single file order is created for all files in the result list of a 
+			With this parameter it is possible to specify that a file order for all files in the result list of a 
 			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection"
-                     shape="rect">Selection</a>.
+                     shape="rect">Selection</a> will be created and launched for 
+			execution by JobScheduler. 
 		</p>
                <p>
-			To create file orders for each file found 
-			see <em>CreateOrder</em> parameter.
+			To create file orders only for each new file found 
+			see <em>CreateOrderForNewFiles</em> parameter.
 		</p>
             </div>
          </xs:documentation>
       </xs:annotation>
+	  </xs:element>
+	  <xs:element name="CreateOrderForNewFiles" type="xs:boolean" default="true">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="create_orders_for_new_files"/>
+				        <Release starting="1.12.5" issue="YADE-512"/>
+			      </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CreateOrderForNewFiles.html">CreateOrderForNewFiles</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+create_orders_for_new_files">create_orders_for_new_files</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-512">YADE-512</a> Availability starting with 1.12.5.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+			With this parameter it is possible to specify that a file order for all new files in the result list of a 
+			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection"
+                     shape="rect">Selection</a> will be created and launched for 
+			execution by JobScheduler. 
+		</p>
+               <p>
+			To create file orders for each file found 
+			see <em>CreateOrderForAllFiles</em> parameter.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+	  </xs:element>
+	  <xs:element name="ParamNameForPath">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="param_name_for_path"/>
+				        <Release starting="1.12.5" issue="YADE-512"/>
+			      </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ParamNameForPath.html">ParamNameForPath</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+param_name_for_path">param_name_for_path</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-512">YADE-512</a> Availability starting with 1.12.5.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>When YADE creates an order the parameter <em>scheduler_file_path</em> contains the name of the transfered file.</p>
+               <p>Therefore the order is handled as a file order and will be moved to the blacklist if the file will not be removed after the new order reaches the end of the job chain.</p>
+               <p>If the order should not be handled as an file order the name of the parameter that contains the file name can be change to another value e.g. <em>"filename"</em>.</p>
+               <p>If so the new order will not be moved to the blacklist if the file still exists after the execution of the order.</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
 	  </xs:element>
 	  <xs:element name="OrderJobChainName">
 		    <xs:annotation>
@@ -9512,26 +9698,27 @@ A fragment is referenced via this attribute value by a transfer profile.
                <p>
 			With this parameter it is possible to specify a file order to be created and launched for 
 			execution by JobScheduler. 
-			A file order is created for each filename in the result list of a 
+			A file order is created for the first filename in the result list of a 
 			<a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Selection"
                      shape="rect">Selection</a>.
 		</p>
-               <p>
-			To create a file order for the first file only
-			see <em>CreateOrderForAllFiles</em> parameter.
-		</p>
+               <p>To create a file order for all files see <em>CreateOrderForAllFiles</em> parameter.</p>
+               <p>To create a file order for new files see <em>CreateOrderForNewFiles</em> parameter.</p>
             </div>
          </xs:documentation>
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="OrderJobChainName"/>
-				        <xs:element ref="CreateOrderForAllFiles" minOccurs="0"/>
+				
+				        <xs:choice>
+					          <xs:element ref="CreateOrderForAllFiles" minOccurs="0"/>
+					          <xs:element ref="CreateOrderForNewFiles" minOccurs="0"/>
+				        </xs:choice>
+				
 				        <xs:element ref="NextState" minOccurs="0"/>
 				        <xs:element ref="MergeOrderParameters" minOccurs="0"/>
-				        <!-- ap 2015-11-12 feature out of scope
-				<xs:element ref="CreateOrderOnRemoteJobScheduler" minOccurs="0"/>
-				-->
+				        <xs:element ref="ParamNameForPath" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -10882,7 +11069,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandBeforeFile">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_pre_command"/>
+				        <FlatParameter name="pre_command"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -10897,7 +11084,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_pre_command">jump_pre_command</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+pre_command">pre_command</a>
                         </li>
                      </ul>
                   </li>
@@ -10924,7 +11111,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandAfterFileOnSuccess">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_command_on_success"/>
+				        <FlatParameter name="post_command_on_success"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -10939,7 +11126,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_command_on_success">jump_post_command_on_success</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_command_on_success">post_command_on_success</a>
                         </li>
                      </ul>
                   </li>
@@ -10966,7 +11153,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandBeforeOperation">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_pre_transfer_commands"/>
+				        <FlatParameter name="pre_transfer_commands"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -10981,7 +11168,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_pre_transfer_commands">jump_pre_transfer_commands</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+pre_transfer_commands">pre_transfer_commands</a>
                         </li>
                      </ul>
                   </li>
@@ -11008,7 +11195,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 	  <xs:element name="JumpCommandAfterOperationOnSuccess">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_transfer_commands_on_success"/>
+				        <FlatParameter name="post_transfer_commands_on_success"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11023,7 +11210,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_transfer_commands_on_success">jump_post_transfer_commands_on_success</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_transfer_commands_on_success">post_transfer_commands_on_success</a>
                         </li>
                      </ul>
                   </li>
@@ -11050,7 +11237,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandAfterOperationOnError">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_transfer_commands_on_error"/>
+				        <FlatParameter name="post_transfer_commands_on_error"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11065,7 +11252,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_transfer_commands_on_error">jump_post_transfer_commands_on_error</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_transfer_commands_on_error">post_transfer_commands_on_error</a>
                         </li>
                      </ul>
                   </li>
@@ -11092,7 +11279,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="JumpCommandAfterOperationFinal">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="jump_post_transfer_commands_final"/>
+				        <FlatParameter name="post_transfer_commands_final"/>
                 <Release starting="1.11" issue="YADE-406"/>
 			      </xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpFragment">
@@ -11107,7 +11294,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Mapping:
             <ul>
                         <li>
-                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+jump_post_transfer_commands_final">jump_post_transfer_commands_final</a>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+post_transfer_commands_final">post_transfer_commands_final</a>
                         </li>
                      </ul>
                   </li>
@@ -11130,6 +11317,63 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:minLength value="1"/>
 			      </xs:restriction>
 		    </xs:simpleType>
+	  </xs:element>
+	  <xs:element name="JumpCommandDelimiter" default=";">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="command_delimiter"/>
+                <Release starting="1.12.5" issue="YADE-516"/>
+			      </xs:appinfo>
+         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpCommandDelimiter">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JumpCommandDelimiter.html">JumpCommandDelimiter</a>
+                  </li>
+                  <li>Parameter: <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+JumpCommandDelimiter">JumpCommandDelimiter</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+command_delimiter">command_delimiter</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-516">YADE-516</a> Availability starting with 1.12.5.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>A command delimiter option for executing the jump pre- and postcommands:</p>
+               <p>
+		                <ul>
+                     <li>
+                        <em>JumpCommandBeforeFile</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterFileOnSuccess</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandBeforeOperation</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterOperationOnSuccess</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterOperationOnError</em>
+                     </li>
+                     <li>
+                        <em>JumpCommandAfterOperationFinal</em>
+                     </li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 	  </xs:element>
     <xs:complexType name="NotificationTriggerType">
 		    <xs:sequence>
@@ -11626,7 +11870,7 @@ A fragment is referenced via this attribute value by a transfer profile.
             <xs:restriction base="xs:string">
                 <xs:enumeration value="password,publickey"/>
 				        <xs:enumeration value="publickey,password"/>
-			      </xs:restriction>
+        	</xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
 	  <xs:element name="RequiredAuthentications">
@@ -11676,6 +11920,109 @@ A fragment is referenced via this attribute value by a transfer profile.
             <xs:restriction base="xs:string">
                 <xs:enumeration value="password,publickey"/>
 				        <xs:enumeration value="publickey,password"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+	  <xs:element name="ServerAliveInterval" default="30s">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="server_alive_interval"/>
+				        <Release starting="1.12.6" issue="YADE-527"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ServerAliveInterval.html">ServerAliveInterval</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+server_alive_interval">server_alive_interval</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-527">YADE-527</a> Availability starting with 1.12.6.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>Sets the interval in milliseconds to send a keep-alive message.</p>
+               <p>If zero is specified, any keep-alive message must not be sent.</p>
+               <p>Use <em>ServerAliveCountMax</em> parameter to specify the number of keep-alive messages which may be sent without receiving any messages back from the server.</p>
+               <p> </p>
+               <p>	Possible values:
+			<ul>
+                     <li>
+                        <em>&lt;n&gt;</em> - duration in milliseconds, e.g.: <em>60000</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;s</em> - duration in seconds, e.g.: <em>30s</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>30m</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;h</em> - duration in hours, e.g.: <em>24h</em>
+                     </li>
+                  </ul>
+               </p>
+               <p>Combined values (with blank as separator):
+            <ul>
+                     <li>e.g.: <em>1h 30m</em>
+                     </li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+	  <xs:element name="ServerAliveCountMax" default="1">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="server_alive_count_max"/>
+				        <Release starting="1.12.6" issue="YADE-527"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ServerAliveCountMax.html">ServerAliveCountMax</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Mapping+-+server_alive_count_max">server_alive_count_max</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a href="https://change.sos-berlin.com/browse/YADE-527">YADE-527</a> Availability starting with 1.12.6.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>Sets the number of keep-alive messages which may be sent without receiving any messages back from the server.</p>
+               <p>If this threshold is reached while keep-alive messages are being sent, the connection will be disconnected.</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:int">
+				        <xs:minInclusive value="0"/>
+				        <xs:maxInclusive value="100000000"/>
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
