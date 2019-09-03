@@ -656,7 +656,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         } catch (Exception e) {
             // nothing to do
         }
-        if (getOptions().getDeleteSettingsFileOnExit()) {
+        if (getOptions().getDeleteSettingsFileOnExit() && objOptions.settings.getValue() != null) {
             try {
                 String msg = "deleted";
                 if (!Files.deleteIfExists(Paths.get(objOptions.settings.getValue()))) {
