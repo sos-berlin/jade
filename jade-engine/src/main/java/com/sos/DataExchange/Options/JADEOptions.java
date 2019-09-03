@@ -42,9 +42,9 @@ public class JADEOptions extends SOSFTPOptions {
         this.setOriginalSettingsFile(config);
         this.setDeleteSettingsFileOnExit(false);
         if (config.toLowerCase().endsWith(".xml")) {
-            this.setDeleteSettingsFileOnExit(true);
             Path iniFile = convertXml2Ini(config);
             this.settings.setValue(iniFile.toString());
+            this.setDeleteSettingsFileOnExit(true);
         }
         return super.readSettingsFile();
     }
@@ -69,6 +69,12 @@ public class JADEOptions extends SOSFTPOptions {
             return tmpIniFile;
         } catch (Exception e) {
             LOGGER.error(String.format("%s: exception=%s", method, e.toString()), e);
+            if (tmpIniFile != null) {
+                try {
+                    Files.deleteIfExists(tmpIniFile);
+                } catch (IOException e1) {
+                }
+            }
             throw new JobSchedulerException(e);
         } finally {
             if (schemaStream != null) {

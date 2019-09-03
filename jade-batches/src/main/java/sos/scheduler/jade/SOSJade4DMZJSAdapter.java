@@ -223,12 +223,10 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             try {
                 // usually JadeEngine delete the ini settings file (created from xml) on logout
                 // execute delete settings file in job when JadeEngine can't be instantiated (wrong operation or profile for example)
-                if (Files.exists(xml2iniFile)) {
-                    logger.debug(String.format("[job]try do delete settings file %s", xml2iniFile));
-                    Files.delete(xml2iniFile);
-                }
+                logger.debug(String.format("[job]try do delete settings file %s", xml2iniFile.toString()));
+                Files.deleteIfExists(xml2iniFile);
             } catch (Throwable e) {
-                logger.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile, e.toString()), e);
+                logger.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile.toString(), e.toString()), e);
             }
         }
     }
