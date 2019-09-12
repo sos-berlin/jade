@@ -6014,18 +6014,35 @@ SSH, etc.) server to which a connection has to be made.</p>
                <strong>Notes</strong>
                <p>
 			This parameter specifies how long the YADE polling server should run.
-		</p>
+        </p>
                <p>
 		  It is required that the parameter <em>PollingServer</em> is "true". 
 		</p>
+               <p>
+                  <br/>Supported formats:
+            <ul>
+                     <li>
+                        <em>s(n)</em> - seconds, e.g. <em>30</em>,<em>180</em>...</li>
+                     <li>
+                        <em>m(n):s(n)</em> - minutes:seconds, e.g. <em>10:30</em>, <em>123:456</em> ...</li>
+                     <li>
+                        <em>h(n):m(n):s(n)</em> - hours:minutes:seconds, e.g. <em>12:30:30</em>, <em>123456:7:8</em> ...</li>
+                  </ul>
+		             </p>
             </div>
          </xs:documentation>
       </xs:annotation>
-		    <xs:simpleType>
-			      <xs:restriction base="xs:int">
-				        <xs:minInclusive value="0"/>
-			      </xs:restriction>
-		    </xs:simpleType>
+		    <!--xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minInclusive value="0"/>
+			</xs:restriction>
+		</xs:simpleType-->
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="NotEmptyType">
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
 	  </xs:element>
 	  <xs:element name="PollForever" type="xs:boolean" default="false">
 		    <xs:annotation>
