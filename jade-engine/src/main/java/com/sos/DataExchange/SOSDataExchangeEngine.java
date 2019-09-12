@@ -214,6 +214,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         }
     }
 
+    private String getPoolingServerDurationValue() {
+        String val = getOptions().pollingServerDuration.getValue();
+        boolean isNumeric = val.chars().allMatch(Character::isDigit);
+        return isNumeric ? val + "s" : val + " (" + getOptions().pollingServerDuration.getTimeAsSeconds() + "s)";
+    }
+
     private String[] doPollingForFiles(long startPollingServer, PollingMethod pollingMethod) {
         String[] fileList = null;
         if (objOptions.isFilePollingEnabled()) {
@@ -526,9 +532,21 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             if (getOptions().skipTransfer.isFalse()) {
                 sb.append(String.format(pattern4Bool, "Remove", getOptions().removeFiles.value()));
                 if (getOptions().pollInterval.isDirty() || getOptions().pollTimeout.isDirty() || getOptions().pollMinfiles.isDirty()) {
-                    sb.append(String.format(pattern4String, "PollingInterval", getOptions().pollInterval.getValue()));
-                    sb.append(String.format(pattern4String, "PollingTimeout", getOptions().pollTimeout.getValue()));
+                    sb.append(String.format(pattern4String, "PollingInterval", getOptions().pollInterval.getValue() + "s"));
+                    sb.append(String.format(pattern4String, "PollingTimeout", getOptions().pollTimeout.getValue() + "m"));
                     sb.append(String.format(pattern4String, "PollingMinFiles", getOptions().pollMinfiles.getValue()));
+                    if (getOptions().pollingWait4SourceFolder.isDirty()) {
+                        sb.append(String.format(pattern4String, "PollingWaitForSourceFolder", getOptions().pollingWait4SourceFolder.getValue()));
+                    }
+                    if (getOptions().pollingServer.isDirty()) {
+                        sb.append(String.format(pattern4String, "PollingServer", getOptions().pollingServer.getValue()));
+                    }
+                    if (getOptions().pollingServerDuration.isDirty()) {
+                        sb.append(String.format(pattern4String, "PollingServerDuration", getPoolingServerDurationValue()));
+                    }
+                    if (getOptions().pollingServerPollForever.isDirty()) {
+                        sb.append(String.format(pattern4String, "PollForever", getOptions().pollingServerPollForever.getValue()));
+                    }
                 }
                 if (getOptions().checkSteadyStateOfFiles.isTrue()) {
                     sb.append(String.format(pattern4String, "CheckSteadyInterval", getOptions().checkSteadyStateInterval.getValue()));
@@ -1151,6 +1169,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             LOGGER.debug(getOptions().dirtyString());
             LOGGER.debug("Source : " + getOptions().getSource().dirtyString());
             LOGGER.debug("Target : " + getOptions().getTarget().dirtyString());
+
             setSystemProperties();
             setTextProperties();
             sourceFileList = new SOSFileList(targetHandler);
@@ -1282,7 +1301,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             long currentTime = System.currentTimeMillis() / 1_000;
                             long duration = currentTime - startPollingServer;
                             if (duration >= objOptions.pollingServerDuration.getTimeAsSeconds()) {
-                                LOGGER.debug(String.format("[%s]time elapsed. terminate polling server", pollingMethod.name()));
+                                LOGGER.debug(String.format("[%s][PollingServerDuration=%s][duration=%ss]time elapsed. terminate polling server",
+                                        pollingMethod.name(), getPoolingServerDurationValue(), duration));
                                 break PollingServerLoop;
                             }
                             LOGGER.debug(String.format("[%s]start next polling cycle", pollingMethod.name()));
