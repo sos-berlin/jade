@@ -83,7 +83,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
 
     private enum PollingMethod {
-        PollTimeout, PollingServer, PollingServerDuration, PollForever
+        PollTimeout, PollingServerDuration, PollForever
     }
 
     private static final int POLLING_MAX_RERUNS_ON_CONNECTION_ERROR = 1_000;
@@ -432,7 +432,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         return ok;
     }
 
-    private void showResult() {
+    protected void showResult() {
         String msg = "";
         if (objOptions.bannerFooter.isDirty()) {
             msg = objOptions.bannerFooter.getJSFile().getContent();
@@ -1183,12 +1183,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 long startPollingServer = 0;
                 countPollingServerFiles = 0;
                 if (isFilePollingEnabled) {
-                    if (objOptions.pollingServerPollForever.isTrue()) {
-                        pollingMethod = PollingMethod.PollForever;
-                    } else if (objOptions.pollingServerDuration.isDirty()) {
-                        pollingMethod = PollingMethod.PollingServerDuration;
-                    } else if (objOptions.pollingServer.isTrue()) {
-                        pollingMethod = PollingMethod.PollingServer;
+                    if (objOptions.pollingServer.isTrue()) {
+                        if (objOptions.pollingServerDuration.isDirty() && objOptions.pollingServerPollForever.isFalse()) {
+                            pollingMethod = PollingMethod.PollingServerDuration;
+                        } else {
+                            pollingMethod = PollingMethod.PollForever;
+                        }
                     } else {
                         pollingMethod = PollingMethod.PollTimeout;
                     }
@@ -1278,7 +1278,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             }
                             sourceClient.close();
                             break PollingServerLoop;
-                        } else if (objOptions.pollingServerDuration.isDirty() && objOptions.pollingServerPollForever.isFalse()) {
+                        } else if (pollingMethod.equals(PollingMethod.PollingServerDuration)) {
                             long currentTime = System.currentTimeMillis() / 1_000;
                             long duration = currentTime - startPollingServer;
                             if (duration >= objOptions.pollingServerDuration.getTimeAsSeconds()) {
@@ -1295,8 +1295,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             sourceFileList.clearFileList();
                             sourceFileList.resetTransferCountersCounted();
                             sourceFileList.resetNoOfZeroByteSizeFiles();
-                        }// else if (objOptions.pollingServer.isTrue() && objOptions.pollingServerPollForever.isTrue()) {
-                        else {
+                        } else {
                             countPollingServerFiles += sourceFileList.size();
 
                             LOGGER.info(String.format("[%s][total=%s][current=%s]start next polling cycle ...", pollingMethod.name(),
