@@ -12,8 +12,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +22,6 @@ import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.Options.SOSOptionTime;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -35,9 +32,6 @@ import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
 
-import sos.configuration.SOSConfiguration;
-import sos.spooler.Job_chain;
-import sos.spooler.Job_chain_node;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
@@ -213,7 +207,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 } else {
                     if (jadeOptions.createOrdersForNewFiles.isTrue()) {
                         for (SOSFileListEntry listItem : transfFiles.getList()) {
-                            if (!listItem.isTargetFileAlreadyExists()) {
+                            if (!listItem.isTargetFileExists()) {
                                 createOrder(listItem, jobChainName);
                             }
                         }
@@ -372,7 +366,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
                 }
                 objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Integer.toString(transfFiles.getZeroByteCount()));
+                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
                 objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
                 objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }

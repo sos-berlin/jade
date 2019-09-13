@@ -1041,8 +1041,6 @@ public abstract class JadeTestBase extends JSToolBox {
         objJadeEngine.getFileList().getSuccessfulTransfers();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = makeFullPathName(objOptions.targetDir.getValue(), objListItem.getTargetFileName());
-            boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).fileExists();
-            Assert.assertTrue("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
     }
@@ -1062,8 +1060,6 @@ public abstract class JadeTestBase extends JSToolBox {
         long intNoOfFilesTransferred = objJadeEngine.getFileList().getSuccessfulTransfers();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = makeFullPathName(objOptions.targetDir.getValue(), objListItem.getTargetFileName());
-            boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).fileExists();
-            Assert.assertTrue("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
     }
@@ -1370,7 +1366,7 @@ public abstract class JadeTestBase extends JSToolBox {
         startTransfer(objOptions);
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = objListItem.getSourceFileName();
-            boolean flgResult = objListItem.getDataSourceClient().getFileHandle(strF).fileExists();
+            boolean flgResult = objListItem.geSourceFileTransfer().getFileHandle(strF).fileExists();
             Assert.assertFalse("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
