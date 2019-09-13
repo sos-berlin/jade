@@ -263,11 +263,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (!isSourceDirFounded) {
                     sourceFile = sourceClient.getFileHandle(sourceDir);
                     if (objOptions.pollingWait4SourceFolder.isFalse()) {
-                        // isSourceDirFounded = true;
                         if (sourceFile.notExists()) {
                             throw new JobSchedulerException(String.format(
                                     "[WaitForSourceFolder=false][%s]source directory not found. Polling terminated.", sourceDir));
                         }
+                        isSourceDirFounded = true;
                     } else {
                         try {
                             if (sourceFile.notExists()) {
