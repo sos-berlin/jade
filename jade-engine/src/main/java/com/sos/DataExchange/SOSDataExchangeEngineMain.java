@@ -50,7 +50,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
                     if (main.getEngine() != null) {
                         LOGGER.info("shutdown engine");
                         main.getEngine().logout();
-                        main.getEngine().showResult();
+                        main.getEngine().showSummary();
                     }
                 } catch (Throwable e) {
                     Thread.currentThread().interrupt();

@@ -1131,8 +1131,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         long intNoOfFilesTransferred = objJadeEngine.getFileList().getSuccessfulTransfers();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = makeFullPathName(objOptions.targetDir.getValue(), objListItem.getTargetFileName());
-            boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).fileExists();
-            assertTrue("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
     }
@@ -1173,7 +1171,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objJadeEngine.execute();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = objListItem.getSourceFileName();
-            boolean flgResult = objListItem.getDataSourceClient().getFileHandle(strF).fileExists();
+            boolean flgResult = objListItem.geSourceFileTransfer().getFileHandle(strF).fileExists();
             assertFalse("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
@@ -1195,8 +1193,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objJadeEngine.execute();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = makeFullPathName(objOptions.targetDir.getValue(), objListItem.getTargetFileName());
-            boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).fileExists();
-            assertTrue("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
     }

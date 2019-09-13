@@ -199,7 +199,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 } else {
                     if (jadeOptions.createOrdersForNewFiles.isTrue()) {
                         for (SOSFileListEntry listItem : transfFiles.getList()) {
-                            if (!listItem.isTargetFileAlreadyExists()) {
+                            if (!listItem.isTargetFileExists()) {
                                 createOrder(listItem, jobChainName);
                             }
                         }
@@ -373,7 +373,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
                 }
                 objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Integer.toString(transfFiles.getZeroByteCount()));
+                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
                 objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
                 objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }
