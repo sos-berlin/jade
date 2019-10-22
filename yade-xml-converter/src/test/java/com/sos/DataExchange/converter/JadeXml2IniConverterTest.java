@@ -35,14 +35,15 @@ public class JadeXml2IniConverterTest {
         inputXml.append("</Profile></Profiles>");
         inputXml.append("</Configurations>");
 
-        JadeXml2IniConverter converter = new JadeXml2IniConverter();
-        InputSource is = new InputSource();
-        is.setCharacterStream(new StringReader(inputXml.toString()));
-
         StringBuilder header = new StringBuilder("#######################").append(JadeXml2IniConverter.NEW_LINE);
         header.append("# Header").append(JadeXml2IniConverter.NEW_LINE);
         header.append("#######################").append(JadeXml2IniConverter.NEW_LINE);
-        byte[] result = converter.process(new InputSource(SCHEMA_PATH), is, header);
+
+        InputSource xmlInputSource = new InputSource();
+        xmlInputSource.setCharacterStream(new StringReader(inputXml.toString()));
+
+        JadeXml2IniConverter converter = new JadeXml2IniConverter();
+        byte[] result = converter.process(new InputSource(SCHEMA_PATH), xmlInputSource, header);
 
         LOGGER.info("result:" + new String(result));
     }
