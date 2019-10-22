@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -29,6 +31,8 @@ import sos.util.SOSString;
 
 public class JadeXml2IniConverter {
 
+    public static final String NEW_LINE = "\r\n";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JadeXml2IniConverter.class);
     private static final String CHARSET = "UTF-8";
     private static final String CLASSNAME = JadeXml2IniConverter.class.getSimpleName();
@@ -50,7 +54,7 @@ public class JadeXml2IniConverter {
     private int _countProfiles = 0;
     private int _countWarnings = 0;
     private boolean _hasGlobalSection = false;
-    private BufferedWriter _writer = null;
+    private Writer _writer = null;
     private HashMap<String, String> _jumpIncludes;
     private HashMap<String, String> _credentialStoreIncludes;
     private HashMap<String, LinkedHashMap<String, String>> _mailFragments;
@@ -126,14 +130,65 @@ public class JadeXml2IniConverter {
     }
 
     public void process(String schemaFilePath, String xmlFilePath, String iniFilePath) throws Exception {
-        this.process(new InputSource(schemaFilePath), xmlFilePath, iniFilePath);
+        process(new InputSource(schemaFilePath), new InputSource(xmlFilePath), xmlFilePath, iniFilePath, null);
     }
 
     public void process(InputSource schemaSource, String xmlFilePath, String iniFilePath) throws Exception {
-        String method = "process";
-        LOGGER.debug(String.format("%s: xmlFilePath=%s, iniFilePath=%s", method, xmlFilePath, iniFilePath));
+        process(schemaSource, new InputSource(xmlFilePath), xmlFilePath, iniFilePath, null);
+    }
 
-        InputSource xmlSource = new InputSource(xmlFilePath);
+    public byte[] process(InputSource schemaSource, InputSource xmlSource, StringBuilder header) throws Exception {
+        return process(schemaSource, xmlSource, null, null, header);
+    }
+
+    public byte[] process(InputSource schemaSource, InputSource xmlSource, String xmlFilePath, String iniFilePath, StringBuilder header)
+            throws Exception {
+        String method = "process";
+        boolean isUseStringWriter = (xmlFilePath == null && iniFilePath == null);
+        if (!isUseStringWriter) {
+            LOGGER.debug(String.format("%s: xmlFilePath=%s, iniFilePath=%s", method, xmlFilePath, iniFilePath));
+        }
+        init(schemaSource, xmlSource, xmlFilePath);
+        try {
+            if (isUseStringWriter) {
+                _writer = new StringWriter();
+            } else {
+                _writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFilePath), CHARSET));
+            }
+            _jumpIncludes = new HashMap<String, String>();
+            _credentialStoreIncludes = new HashMap<String, String>();
+            _mailFragments = new HashMap<String, LinkedHashMap<String, String>>();
+            _mailServerFragments = new HashMap<String, LinkedHashMap<String, String>>();
+
+            if (header != null) {
+                _writer.write(header.toString());
+            }
+            handleMailServerFragments();
+            handleGeneral();
+            handleProtocolFragments();
+            handleNotificationMailFragments();
+            handleNotificationBackgroundServiceFragments();
+            handleCredentialStoreFragments();
+            handleProfiles();
+
+            if (isUseStringWriter) {
+                return _writer.toString().getBytes(CHARSET);
+            } else {
+                return new byte[0];
+            }
+        } catch (Exception ex) {
+            throw new Exception(String.format("%s: exception=%s", method, ex.toString()), ex);
+        } finally {
+            if (_writer != null) {
+                _writer.close();
+                _writer = null;
+            }
+        }
+    }
+
+    private void init(InputSource schemaSource, InputSource xmlSource, String xmlFilePath) throws Exception {
+        String method = "init";
+        // InputSource xmlSource = new InputSource(xmlFilePath);
         _xpathSchema = XPathFactory.newInstance().newXPath();
         _xpathSchema.setNamespaceContext(getSchemaNamespaceContext());
         _xpathXml = XPathFactory.newInstance().newXPath();
@@ -150,28 +205,10 @@ public class JadeXml2IniConverter {
             throw new Exception(String.format("%s: \"xs:schema\" element not found in the schema file", method));
         }
         if (_rootXml == null) {
-            throw new Exception(String.format("%s: \"Configurations\" element not found in the xml file %s", method, xmlFilePath));
-        }
-        try {
-            _writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFilePath), CHARSET));
-            _jumpIncludes = new HashMap<String, String>();
-            _credentialStoreIncludes = new HashMap<String, String>();
-            _mailFragments = new HashMap<String, LinkedHashMap<String, String>>();
-            _mailServerFragments = new HashMap<String, LinkedHashMap<String, String>>();
-            handleMailServerFragments();
-            handleGeneral();
-            handleProtocolFragments();
-            handleNotificationMailFragments();
-            handleNotificationBackgroundServiceFragments();
-            handleCredentialStoreFragments();
-            handleProfiles();
-        } catch (Exception ex) {
-            throw new Exception(String.format("%s: exception=%s", method, ex.toString()), ex);
-        } finally {
-            if (_writer != null) {
-                _writer.close();
-                _writer = null;
+            if (xmlFilePath == null) {
+                throw new Exception(String.format("%s: \"Configurations\" element not found", method));
             }
+            throw new Exception(String.format("%s: \"Configurations\" element not found in the xml file %s", method, xmlFilePath));
         }
     }
 
@@ -1257,16 +1294,16 @@ public class JadeXml2IniConverter {
                 if (attrName != null) {
                     Node valueNode = node.getAttributes().getNamedItem(attrName.getNodeValue());
                     if (valueNode != null) {
-                       value = valueNode.getNodeValue(); 
-                       Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
-                       if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
-                           value = "true".equalsIgnoreCase(value) ? "false" : "true";
-                       }
+                        value = valueNode.getNodeValue();
+                        Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
+                        if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
+                            value = "true".equalsIgnoreCase(value) ? "false" : "true";
+                        }
                     } else {
-                       Node defaultValue = attributeNode.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_DEFAULT_VALUE);
-                       if (defaultValue != null) {
-                           value = defaultValue.getNodeValue();
-                       }
+                        Node defaultValue = attributeNode.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_DEFAULT_VALUE);
+                        if (defaultValue != null) {
+                            value = defaultValue.getNodeValue();
+                        }
                     }
                 }
             } else {
@@ -1284,11 +1321,12 @@ public class JadeXml2IniConverter {
 
     private void writeLine(String line) throws Exception {
         _writer.write(line);
-        _writer.newLine();
+        writeNewLine();
     }
 
     private void writeNewLine() throws Exception {
-        _writer.newLine();
+        // _writer.newLine();
+        _writer.write(NEW_LINE);
     }
 
     private static void setLogger(String path) throws Exception {
