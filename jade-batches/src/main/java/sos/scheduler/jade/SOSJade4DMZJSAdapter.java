@@ -11,8 +11,12 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +29,7 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
 import com.sos.jobscheduler.model.event.YadeEvent;
 import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
@@ -37,6 +42,8 @@ import sos.spooler.Variable_set;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSJade4DMZJSAdapter.class);
 
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PATH = "scheduler_file_path";
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PARENT = "scheduler_file_parent";
@@ -111,7 +118,15 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     }
                 } else {
                     if (schedulerParams.containsKey("profile")) {
-                        throw new JobSchedulerException(String.format("[%s]missing 'settings' parameter", schedulerParams.get("profile")));
+                        Path defaultConfiguration = Paths.get(spooler.configuration_directory()).resolve(JobSchedulerXmlEditor.getLivePathYadeIni());
+                        if (Files.exists(defaultConfiguration)) {
+                            schedulerParams.put("settings", defaultConfiguration.toString());
+                        } else {
+                            LOGGER.warn(String.format("[%s]default configuration file not found", defaultConfiguration));
+                            throw new JobSchedulerException(String.format(
+                                    "[%s][missing configuration]set 'settings' parameter or use a configuration created with the JOC XMLEditor",
+                                    schedulerParams.get("profile")));
+                        }
                     }
                 }
             }
