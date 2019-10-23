@@ -960,28 +960,31 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                 if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
                     body.append("\n[error]").append(JobSchedulerException.LastErrorMessage).append("\n");
                 }
-                body.append("\n").append("List of files:").append("\n");
 
-                boolean isOnEmptyFiles = mailClasses.equals(enuMailClasses.MailOnEmptyFiles);
-                boolean add = true;
-                for (SOSFileListEntry entry : sourceFileList.getList()) {
-                    Long fileSize = entry.getFileSize();
-                    String fileName = entry.getSourceFilename();
-                    TransferStatus transferStatus = entry.getTransferStatus();
-                    if (isOnEmptyFiles) {
-                        add = false;
-                        if (fileSize == 0) {
-                            add = true;
-                            if (transferStatus.equals(TransferStatus.ignoredDueToZerobyteConstraint)) {
-                                transferStatus = TransferStatus.transfer_skipped;
+                if (sourceFileList != null) {
+                    body.append("\n").append("List of files:").append("\n");
+
+                    boolean isOnEmptyFiles = mailClasses.equals(enuMailClasses.MailOnEmptyFiles);
+                    boolean add = true;
+                    for (SOSFileListEntry entry : sourceFileList.getList()) {
+                        Long fileSize = entry.getFileSize();
+                        String fileName = entry.getSourceFilename();
+                        TransferStatus transferStatus = entry.getTransferStatus();
+                        if (isOnEmptyFiles) {
+                            add = false;
+                            if (fileSize == 0) {
+                                add = true;
+                                if (transferStatus.equals(TransferStatus.ignoredDueToZerobyteConstraint)) {
+                                    transferStatus = TransferStatus.transfer_skipped;
+                                }
                             }
+                        } else {
+                            add = true;
                         }
-                    } else {
-                        add = true;
-                    }
-                    if (add) {
-                        body.append(fileName.replaceAll("\\\\", "/")).append("[").append(transferStatus.name()).append("]").append("[").append(
-                                fileSize).append(" bytes]").append("\n");
+                        if (add) {
+                            body.append(fileName.replaceAll("\\\\", "/")).append("[").append(transferStatus.name()).append("]").append("[").append(
+                                    fileSize).append(" bytes]").append("\n");
+                        }
                     }
                 }
                 mailOptions.body.setValue(body.toString());
@@ -1048,20 +1051,29 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         if (isDebugEnabled) {
             LOGGER.debug(String.format("[mailOnError=%s][mailOnSuccess=%s][mailOnEmptyFiles=%s]", objOptions.mailOnError.value(),
                     objOptions.mailOnSuccess.value(), objOptions.mailOnEmptyFiles.value()));
-
-            LOGGER.debug(String.format("[failedTransfers=%s][successfulTransfers=%s][successZeroByteFiles=%s][skippedZeroByteFiles=%s]",
-                    sourceFileList.getFailedTransfers(), sourceFileList.getSuccessfulTransfers(), sourceFileList.getCounterSuccessZeroByteFiles(),
-                    sourceFileList.getCounterSkippedZeroByteFiles()));
+            if (sourceFileList == null) {
+                LOGGER.debug("sourceFileList is NULL");
+            } else {
+                LOGGER.debug(String.format("[failedTransfers=%s][successfulTransfers=%s][successZeroByteFiles=%s][skippedZeroByteFiles=%s]",
+                        sourceFileList.getFailedTransfers(), sourceFileList.getSuccessfulTransfers(), sourceFileList.getCounterSuccessZeroByteFiles(),
+                        sourceFileList.getCounterSkippedZeroByteFiles()));
+            }
         }
 
-        if (objOptions.mailOnError.isTrue() && (sourceFileList.getFailedTransfers() > 0 || !JobSchedulerException.LastErrorMessage.isEmpty())) {
-            doProcessMail(enuMailClasses.MailOnError);
-        } else if (objOptions.mailOnSuccess.isTrue() && sourceFileList.getSuccessfulTransfers() > 0) {
-            doProcessMail(enuMailClasses.MailOnSuccess);
-        }
-        if (objOptions.mailOnEmptyFiles.isTrue() && (sourceFileList.getCounterSuccessZeroByteFiles() > 0 || sourceFileList
-                .getCounterAbortedZeroByteFiles() > 0 || sourceFileList.getCounterSkippedZeroByteFiles() > 0)) {
-            doProcessMail(enuMailClasses.MailOnEmptyFiles);
+        if (sourceFileList == null) {
+            if (objOptions.mailOnError.isTrue() && !JobSchedulerException.LastErrorMessage.isEmpty()) {
+                doProcessMail(enuMailClasses.MailOnError);
+            }
+        } else {
+            if (objOptions.mailOnError.isTrue() && (sourceFileList.getFailedTransfers() > 0 || !JobSchedulerException.LastErrorMessage.isEmpty())) {
+                doProcessMail(enuMailClasses.MailOnError);
+            } else if (objOptions.mailOnSuccess.isTrue() && sourceFileList.getSuccessfulTransfers() > 0) {
+                doProcessMail(enuMailClasses.MailOnSuccess);
+            }
+            if (objOptions.mailOnEmptyFiles.isTrue() && (sourceFileList.getCounterSuccessZeroByteFiles() > 0 || sourceFileList
+                    .getCounterAbortedZeroByteFiles() > 0 || sourceFileList.getCounterSkippedZeroByteFiles() > 0)) {
+                doProcessMail(enuMailClasses.MailOnEmptyFiles);
+            }
         }
     }
 
