@@ -38,7 +38,7 @@ import sos.spooler.Variable_set;
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSDExJSAdapterClass.class);
 
     private static final String CLASSNAME = "SOSDExJSAdapterClass";
     private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
@@ -54,8 +54,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
-    private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    // private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
+    // private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private JADEOptions jadeOptions = null;

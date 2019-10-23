@@ -52,8 +52,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
     private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
     private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
-    private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    // private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
+    // private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private SOSFTPOptions jadeOptions = null;
