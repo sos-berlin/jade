@@ -162,6 +162,7 @@ public class JadeXml2IniConverter {
 
             if (header != null) {
                 _writer.write(header.toString());
+                writeNewLine();
             }
             handleMailServerFragments();
             handleGeneral();
@@ -327,7 +328,7 @@ public class JadeXml2IniConverter {
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                String val = child.getFirstChild() == null ? child.getNodeValue() : child.getFirstChild().getNodeValue();
+                String val = child.getFirstChild() == null ? child.getNodeValue() : getCdata(child);
                 if (!SOSString.isEmpty(val)) {
                     if (sb.length() > 0) {
                         sb.append(";");
@@ -1274,7 +1275,7 @@ public class JadeXml2IniConverter {
         String value = "";
         if (flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE) == null) {
             if (node.getFirstChild() != null) {
-                value = node.getFirstChild().getNodeValue();
+                value = getCdata(node);
                 Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
                 if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
                     value = "true".equalsIgnoreCase(value) ? "false" : "true";
@@ -1284,6 +1285,19 @@ public class JadeXml2IniConverter {
             value = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_VALUE).getNodeValue();
         }
         return value;
+    }
+
+    private String getCdata(Node node) {
+        NodeList childs = node.getChildNodes();
+        if (childs != null) {
+            for (int i = 0; i < childs.getLength(); i++) {
+                Node child = childs.item(i);
+                if (child.getNodeType() == Node.CDATA_SECTION_NODE) {
+                    return child.getTextContent();
+                }
+            }
+        }
+        return "";
     }
 
     private String getAttributeValue(Node flatParameter, Node node, Node attributeNode) {
