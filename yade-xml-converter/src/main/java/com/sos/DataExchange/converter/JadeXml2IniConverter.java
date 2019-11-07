@@ -32,6 +32,7 @@ import sos.util.SOSString;
 public class JadeXml2IniConverter {
 
     public static final String NEW_LINE = "\r\n";
+    public static final String ELEMENT_NAME_ROOT = "Configurations";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JadeXml2IniConverter.class);
     private static final String CHARSET = "UTF-8";
@@ -144,16 +145,16 @@ public class JadeXml2IniConverter {
     public byte[] process(InputSource schemaSource, InputSource xmlSource, String xmlFilePath, String iniFilePath, StringBuilder header)
             throws Exception {
         String method = "process";
-        boolean isUseStringWriter = (xmlFilePath == null && iniFilePath == null);
-        if (!isUseStringWriter) {
-            LOGGER.debug(String.format("%s: xmlFilePath=%s, iniFilePath=%s", method, xmlFilePath, iniFilePath));
+        boolean write2file = (xmlFilePath != null && iniFilePath != null);
+        if (write2file) {
+            LOGGER.debug(String.format("[%s]xmlFilePath=%s, iniFilePath=%s", method, xmlFilePath, iniFilePath));
         }
         init(schemaSource, xmlSource, xmlFilePath);
         try {
-            if (isUseStringWriter) {
-                _writer = new StringWriter();
-            } else {
+            if (write2file) {
                 _writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFilePath), CHARSET));
+            } else {
+                _writer = new StringWriter();
             }
             _jumpIncludes = new HashMap<String, String>();
             _credentialStoreIncludes = new HashMap<String, String>();
@@ -172,13 +173,13 @@ public class JadeXml2IniConverter {
             handleCredentialStoreFragments();
             handleProfiles();
 
-            if (isUseStringWriter) {
-                return _writer.toString().getBytes(CHARSET);
-            } else {
+            if (write2file) {
                 return new byte[0];
+            } else {
+                return _writer.toString().getBytes(CHARSET);
             }
         } catch (Exception ex) {
-            throw new Exception(String.format("%s: exception=%s", method, ex.toString()), ex);
+            throw new Exception(String.format("[%s]%s", method, ex.toString()), ex);
         } finally {
             if (_writer != null) {
                 _writer.close();
@@ -189,38 +190,36 @@ public class JadeXml2IniConverter {
 
     private void init(InputSource schemaSource, InputSource xmlSource, String xmlFilePath) throws Exception {
         String method = "init";
-        // InputSource xmlSource = new InputSource(xmlFilePath);
         _xpathSchema = XPathFactory.newInstance().newXPath();
         _xpathSchema.setNamespaceContext(getSchemaNamespaceContext());
         _xpathXml = XPathFactory.newInstance().newXPath();
         XPathExpression schemaExpression = _xpathSchema.compile("/xs:schema");
-        XPathExpression xmlExpression = _xpathXml.compile("/Configurations");
+        XPathExpression xmlExpression = _xpathXml.compile("/" + ELEMENT_NAME_ROOT);
 
         Document schemaDoc = getXmlFileDocument(schemaSource);
         _rootSchema = (Node) schemaExpression.evaluate(schemaDoc, XPathConstants.NODE);
-        // _rootSchema = (Node) schemaExpression.evaluate(schemaSource, XPathConstants.NODE);
 
         Document xmlDoc = getXmlFileDocument(xmlSource, xmlFilePath);
         _rootXml = (Node) xmlExpression.evaluate(xmlDoc, XPathConstants.NODE);
         if (_rootSchema == null) {
-            throw new Exception(String.format("%s: \"xs:schema\" element not found in the schema file", method));
+            throw new Exception(String.format("[%s]\"xs:schema\" element not found in the schema file", method));
         }
         if (_rootXml == null) {
             if (xmlFilePath == null) {
-                throw new Exception(String.format("%s: \"Configurations\" element not found", method));
+                throw new Exception(String.format("[%s]\"%s\" element not found", method, ELEMENT_NAME_ROOT));
             }
-            throw new Exception(String.format("%s: \"Configurations\" element not found in the xml file %s", method, xmlFilePath));
+            throw new Exception(String.format("[%s][%s]\"%s\" element not found", method, xmlFilePath, ELEMENT_NAME_ROOT));
         }
     }
 
     private Document getXmlFileDocument(InputSource xmlSource) throws Exception {
-        return this.getXmlFileDocument(xmlSource, null);
+        return getXmlFileDocument(xmlSource, null);
     }
 
     private Document getXmlFileDocument(InputSource xmlSource, String xmlFile) throws Exception {
         if (xmlFile != null) {
             String normalized = xmlFile.toLowerCase();
-            if (this._mainMethodCalled && !normalized.startsWith("http://") && !normalized.startsWith("https://")) {
+            if (_mainMethodCalled && !normalized.startsWith("http://") && !normalized.startsWith("https://")) {
                 System.setProperty("user.dir", new File(xmlFile).getParent());
             }
         }
@@ -321,7 +320,7 @@ public class JadeXml2IniConverter {
 
     private String getMergedChildsEntry(Node parent, String defaultParamName) {
         String method = "getMergedChildsEntry";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         StringBuilder sb = new StringBuilder();
         NodeList childs = parent.getChildNodes();
@@ -357,7 +356,7 @@ public class JadeXml2IniConverter {
 
     private void handleProtocolFragments() throws Exception {
         String method = "handleProtocolFragments";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         XPathExpression expression = _xpathXml.compile("./Fragments/ProtocolFragments");
         Node fragments = (Node) expression.evaluate(_rootXml, XPathConstants.NODE);
@@ -418,7 +417,7 @@ public class JadeXml2IniConverter {
 
     private void handleCredentialStoreFragments() throws Exception {
         String method = "handleCredentialStoreFragments";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         XPathExpression expression = _xpathXml.compile("./Fragments/CredentialStoreFragments");
         Node fragments = (Node) expression.evaluate(_rootXml, XPathConstants.NODE);
@@ -467,7 +466,7 @@ public class JadeXml2IniConverter {
 
     private void handleNotificationBackgroundServiceFragments() throws Exception {
         String method = "handleNotificationBackgroundServiceFragments";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         XPathExpression expression = _xpathXml.compile("./Fragments/NotificationFragments/BackgroundServiceFragment");
         NodeList fragments = (NodeList) expression.evaluate(_rootXml, XPathConstants.NODESET);
@@ -519,7 +518,7 @@ public class JadeXml2IniConverter {
 
     private void handleNotificationMailFragments() throws Exception {
         String method = "handleNotificationMailFragments";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         XPathExpression expression = _xpathXml.compile("./Fragments/NotificationFragments/MailFragment");
         NodeList fragments = (NodeList) expression.evaluate(_rootXml, XPathConstants.NODESET);
@@ -563,7 +562,7 @@ public class JadeXml2IniConverter {
 
     private void handleMailServerFragments() throws Exception {
         String method = "handleMailServerFragments";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         XPathExpression expression = _xpathXml.compile("./Fragments/MailServerFragments");
         Node fragments = (Node) expression.evaluate(_rootXml, XPathConstants.NODE);
@@ -607,7 +606,7 @@ public class JadeXml2IniConverter {
 
     private void handleProfiles() throws Exception {
         String method = "handleProfiles";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         XPathExpression expression = _xpathXml.compile("./Profiles/Profile");
         NodeList profiles = (NodeList) expression.evaluate(_rootXml, XPathConstants.NODESET);
@@ -795,7 +794,7 @@ public class JadeXml2IniConverter {
     private void handleAlternativeProtocolFragments(Node xmlNode, int level, int prefixLevel, String parentPrefix, String childPrefix)
             throws Exception {
         String method = "handleAlternativeProtocolFragments";
-        LOGGER.debug(String.format("%s", method));
+        LOGGER.debug(method);
 
         if (level == 0) {
             String xpathP = String.format("./xs:element[@name='%s']/xs:annotation/xs:appinfo/FlatParameter", xmlNode.getNodeName());
@@ -1339,7 +1338,6 @@ public class JadeXml2IniConverter {
     }
 
     private void writeNewLine() throws Exception {
-        // _writer.newLine();
         _writer.write(NEW_LINE);
     }
 
@@ -1350,7 +1348,6 @@ public class JadeXml2IniConverter {
                 PropertyConfigurator.configure(file.getCanonicalPath());
             }
         }
-        /** if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) { BasicConfigurator.configure(); } */
     }
 
     private void log(String msg) {
@@ -1366,7 +1363,7 @@ public class JadeXml2IniConverter {
     }
 
     protected void setMainMethodCalled(boolean val) {
-        this._mainMethodCalled = val;
+        _mainMethodCalled = val;
     }
 
     private NamespaceContext getSchemaNamespaceContext() {
