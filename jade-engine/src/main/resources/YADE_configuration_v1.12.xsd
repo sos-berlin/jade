@@ -30,18 +30,28 @@
                   </li>
                </ul>
                <strong>Notes</strong>
+               <p>The root element of a YADE configuration.</p>
                <p>
-			The root element of a YADE configuration file.
-		</p>
-               <p>
-			This element can be assigned the location of the XSD schema, e.g. <a target="_blank"
-                     href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12.xsd"
-                     shape="rect">https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12.xsd</a>
-		             </p>
-               <p>
-			We recommend to assign the XSD schema version for which the YADE configuration has been created. This allows to validate 
-			a YADE configuration file with the XSD schema version that is was designed for.
-		</p>
+                  <ul>
+                     <li>
+                        <strong>JobScheduler releases before 1.13.1</strong>
+                        <ul>
+                           <li>A configuration file is assigned to the YADE jobs by use the parameter <em>settings</em>.</li>
+                        </ul>
+                     </li>
+                     <li>
+                        <strong>JobScheduler releases starting from 1.13.1</strong>
+                        <ul>
+                           <li>The use of the parameter <em>settings</em> for the jobs executed on a JobScheduler Master is deprecated.</li>
+                           <li>The functionality to manage the YADE configuration is directly available from JOC Cockpit.
+                            <ul>
+                                 <li>The <em>YADE</em> configuration is forwarded by the Joc Cockpit to the respective JobScheduler Master.</li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+               </p>
             </div>
          </xs:documentation>
       </xs:annotation>
