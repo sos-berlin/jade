@@ -1209,6 +1209,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
             LOGGER.debug("Source : " + getOptions().getSource().dirtyString());
             LOGGER.debug("Target : " + getOptions().getTarget().dirtyString());
 
+            if (history != null) {
+                if (objOptions.pollingServer.isTrue() || objOptions.pollingServerPollForever.isTrue() || objOptions.pollingServerDuration
+                        .getTimeAsSeconds() > 0) {
+                    throw new Exception("PollingServer setting should be \"false\" if YADE is executed by JobScheduler.");
+                }
+            }
+
             setSystemProperties();
             setTextProperties();
             sourceFileList = new SOSFileList(targetHandler);
@@ -1339,16 +1346,30 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
                             sourceClient.close();
                             break PollingServerLoop;
                         } else {
-                            if (pollingMethod.equals(PollingMethod.PollingServerDuration)) {
-                                if (isPollingServerDurationElapsed(pollingMethod, pollingServerStartTime)) {
-                                    break PollingServerLoop;
+                            if (isFilePollingEnabled) {
+                                if (pollingMethod.equals(PollingMethod.PollingServerDuration)) {
+                                    if (isPollingServerDurationElapsed(pollingMethod, pollingServerStartTime)) {
+                                        break PollingServerLoop;
+                                    }
                                 }
+
+                                showSummary();
+                                sendNotifications();
+
+                                startNextPollingCycle(pollingMethod, !executeOperation);
+                            } else {
+                                if (!objOptions.pollTimeout.isDirty()) {
+                                    LOGGER.info("Polling settings ignored due PollTimeout=" + objOptions.pollTimeout.getValue() + "m");
+                                }
+
+                                if (objOptions.isNeedTargetClient() && targetClient != null) {
+                                    targetClient.close();
+                                }
+                                if (sourceClient != null) {
+                                    sourceClient.close();
+                                }
+                                break PollingServerLoop;
                             }
-
-                            showSummary();
-                            sendNotifications();
-
-                            startNextPollingCycle(pollingMethod, !executeOperation);
                         }
                     } catch (JobSchedulerException e) {
                         String msg = null;
