@@ -1295,6 +1295,7 @@ public class JadeXml2IniConverter {
                     return child.getTextContent();
                 }
             }
+            return node.getFirstChild().getNodeValue();
         }
         return "";
     }
