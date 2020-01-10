@@ -33,12 +33,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- these are dependencies for third party libraries -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>

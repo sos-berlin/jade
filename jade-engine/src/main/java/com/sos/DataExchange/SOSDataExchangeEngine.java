@@ -32,7 +32,8 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
@@ -77,9 +78,9 @@ import sos.util.SOSString;
 public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, IJadeEngine {
 
     protected static final String JADE_LOGGER_NAME = "JadeReportLog";
-    private static final Logger JADE_REPORT_LOGGER = Logger.getLogger(JADE_LOGGER_NAME);
+    private static final Logger JADE_REPORT_LOGGER = LogManager.getLogger(JADE_LOGGER_NAME);
 
-    private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngine.class);
+    private static final Logger LOGGER = LogManager.getLogger(SOSDataExchangeEngine.class);
     private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
 
     private enum PollingMethod {
