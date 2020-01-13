@@ -4,14 +4,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.hibernate.classes.DbItem;
 
 /** @author Uwe Risse */
 public class JadeHistoryFilter implements com.sos.hibernate.interfaces.ISOSHibernateFilter {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeHistoryFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeHistoryFilter.class);
     private String dateFormat = "yyyy-MM-dd HH:mm:ss";
     private Date plannedFrom;
     private Date plannedTo;

@@ -17,7 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -1295,7 +1295,7 @@ public class JadeXml2IniConverter {
         if (!SOSString.isEmpty(path)) {
             File file = new File(path);
             if (file.isFile() && file.canRead()) {
-                PropertyConfigurator.configure(file.getCanonicalPath());
+//                PropertyConfigurator.configure(file.getCanonicalPath());
             }
         }
         /** if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) { BasicConfigurator.configure(); } */

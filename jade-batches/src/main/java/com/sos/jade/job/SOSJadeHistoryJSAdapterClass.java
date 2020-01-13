@@ -2,7 +2,8 @@ package com.sos.jade.job;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Spooler;
@@ -31,8 +32,7 @@ import com.sos.JSHelper.Basics.IJSCommands;
 public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter implements IJSCommands {
 
     private final String conClassName = "SOSJadeHistoryJSAdapterClass";  //$NON-NLS-1$
-    @SuppressWarnings("hiding")
-    private static Logger logger = Logger.getLogger(SOSJadeHistoryJSAdapterClass.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSJadeHistoryJSAdapterClass.class);
 
     public void init() {
         @SuppressWarnings("unused")
@@ -90,10 +90,10 @@ public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter impleme
 
         String configuration_file = "";
         if (objO.getItem("configuration_file") != null) {
-            logger.debug("configuration_file from param");
+            LOGGER.debug("configuration_file from param");
             configuration_file = objO.configuration_file.getValue();
         } else {
-            logger.debug("configuration_file from scheduler");
+            LOGGER.debug("configuration_file from scheduler");
             File f = new File(new File(objSpooler.configuration_directory()).getParent(), "hibernate.cfg.xml");
             configuration_file = f.getAbsolutePath();
         }

@@ -4,7 +4,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.Options.JADEOptions;
@@ -21,7 +22,7 @@ import sos.util.SOSString;
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class Jade4DMZ extends JadeBaseEngine implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(Jade4DMZ.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Jade4DMZ.class);
     private static final String INTERNALLY_COMMAND_DELIMITER = "SOSJUMPCD";
     private SOSFileList fileList = null;
     private String uuid = null;

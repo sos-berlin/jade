@@ -1,7 +1,5 @@
 package com.sos.DataExchange;
 
-import org.apache.log4j.Logger;
-
 import com.sos.localization.Messages;
 import com.sos.localization.SOSMsg;
 
@@ -11,8 +9,6 @@ public class SOSMsgJade extends SOSMsg {
     private final String conClassName = this.getClass().getSimpleName();
     @SuppressWarnings("unused")
     private static final String conSVNVersion = "$Id$";
-    @SuppressWarnings("unused")
-    private final Logger logger = Logger.getLogger(this.getClass());
 
     public static final Messages SOSMsgJadeProperties = null;
 

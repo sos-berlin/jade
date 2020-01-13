@@ -6,7 +6,6 @@ import com.sos.JSHelper.Annotations.JSOptionClass;
 
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
 import com.sos.JSHelper.Listener.JSListener;
-import org.apache.log4j.Logger;
 
 /** \class SOSJadeHistoryOptions - Import from order or file to JadeHistoryTable
  *
@@ -28,8 +27,6 @@ public class SOSJadeHistoryOptions extends SOSJadeHistoryOptionsSuperClass {
 
     @SuppressWarnings("unused")//$NON-NLS-1$
     private final String conClassName = "SOSJadeHistoryOptions";  //$NON-NLS-1$
-    @SuppressWarnings("unused")
-    private static Logger logger = Logger.getLogger(SOSJadeHistoryOptions.class);
 
     /** constructors */
 

@@ -2,7 +2,6 @@ package sos.scheduler.jade;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 
@@ -32,8 +31,6 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
 
     @SuppressWarnings("unused")
     private final String conClassName = this.getClass().getSimpleName();
-    @SuppressWarnings("unused")
-    private final Logger logger = Logger.getLogger(this.getClass());
     @SuppressWarnings("unused")
     private final String conSVNVersion = "$Id: Jade4JessyBaseClass.java 23709 2014-04-11 06:33:04Z sp $";
     protected SOSFTPOptions objO = null;

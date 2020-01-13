@@ -5,7 +5,8 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
@@ -23,7 +24,7 @@ import sos.util.SOSString;
 
 public class YadeHistory {
 
-    private static final Logger LOGGER = Logger.getLogger(YadeHistory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(YadeHistory.class);
 
     private static final String IDENTIFIER = YadeHistory.class.getSimpleName();
     private SOSHibernateFactory dbFactory;

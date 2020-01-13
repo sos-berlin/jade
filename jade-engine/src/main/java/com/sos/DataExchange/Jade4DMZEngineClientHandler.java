@@ -2,7 +2,8 @@ package com.sos.DataExchange;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Jade4DMZ.Operation;
 import com.sos.DataExchange.Options.JADEOptions;
@@ -13,7 +14,7 @@ import sos.util.SOSString;
 
 public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(Jade4DMZEngineClientHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Jade4DMZEngineClientHandler.class);
     private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
     private boolean copyFromInternetWithFileList = false;
     private String clientFileListName = null;

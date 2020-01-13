@@ -6,16 +6,17 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** @author Uwe Risse */
 public class JadeTransferDBLayerTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeTransferDBLayerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTransferDBLayerTest.class);
     private JadeTransferDBLayer jadeTransferDBLayer;
     private String configurationFilename = "c:/temp/hibernate.cfg.xml";
 

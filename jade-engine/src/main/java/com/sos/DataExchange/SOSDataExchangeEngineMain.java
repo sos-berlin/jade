@@ -2,9 +2,12 @@ package com.sos.DataExchange;
 
 import java.io.File;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.PropertyConfigurator;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
@@ -16,7 +19,7 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
 
-    private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngineMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngineMain.class);
     protected JADEOptions jadeOptions = null;
     @I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."),
             @I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", explanation = "JADE client - Main"),
@@ -79,7 +82,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
                 if (options.log4jPropertyFileName.isDirty()) {
                     File log4jPropFile = new File(options.log4jPropertyFileName.getValue());
                     if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
-                        PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
+//                        PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
                     }
                 }
             } catch (Exception e) {
@@ -87,9 +90,9 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             }
             // if rootLogger gets basis configuration if it doesn't have already
             // an appender
-            if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
-                BasicConfigurator.configure();
-            }
+//            if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
+//                BasicConfigurator.configure();
+//            }
             LOGGER.info(getMsg(SOSDX_Intro));
             engine.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
