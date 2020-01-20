@@ -2,6 +2,8 @@ package com.sos.DataExchange;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,19 +82,15 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             options.commandLineArgs(args);
             try {
                 if (options.log4jPropertyFileName.isDirty()) {
-                    File log4jPropFile = new File(options.log4jPropertyFileName.getValue());
-                    if (log4jPropFile.isFile() && log4jPropFile.canRead()) {
-//                        PropertyConfigurator.configure(log4jPropFile.getAbsolutePath());
+                    File log4j = new File(options.log4jPropertyFileName.getValue());
+                    if (log4j.isFile() && log4j.canRead()) {
+                        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                        context.setConfigLocation(log4j.toURI());
                     }
                 }
             } catch (Exception e) {
                 //
             }
-            // if rootLogger gets basis configuration if it doesn't have already
-            // an appender
-//            if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
-//                BasicConfigurator.configure();
-//            }
             LOGGER.info(getMsg(SOSDX_Intro));
             engine.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
