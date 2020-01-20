@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,7 +18,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-//import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -72,14 +74,14 @@ public class JadeXml2IniConverter {
             LOGGER.info("     1 - required - XSD Schema location");
             LOGGER.info("     2 - required - XML file path");
             LOGGER.info("     3 - required - INI file path");
-            LOGGER.info("     4 - optional - log4j.properties file path");
+            LOGGER.info("     4 - optional - log4j2.xml file path");
             LOGGER.info("e.g.:");
             LOGGER.info(String.format(
                     "%s \"http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd\" \"C:/Temp/jade_settings.xml\" \"C:/Temp/jade_settings.ini\"",
                     CLASSNAME));
             LOGGER.info(String.format(
                     "%s \"http://www.sos-berlin.com/schema/jade/JADE_configuration_v1.0.xsd\" \"C:/Temp/jade_settings.xml\" \"C:/Temp/jade_settings.ini\" "
-                            + "\"C:/Temp/log4j.properties\"", CLASSNAME));
+                            + "\"C:/Temp/log4j2.xml\"", CLASSNAME));
             System.exit(EXIT_CODE_ON_ERROR);
         }
         String log4j = null;
@@ -183,7 +185,10 @@ public class JadeXml2IniConverter {
         if (xmlFile != null) {
             String normalized = xmlFile.toLowerCase();
             if (this._mainMethodCalled && !normalized.startsWith("http://") && !normalized.startsWith("https://")) {
-                System.setProperty("user.dir", new File(xmlFile).getParent());
+                String ud = System.getProperty("user.dir");
+                if (!SOSString.isEmpty(ud)) {
+                    xmlFile = (Paths.get(ud).resolve(xmlFile)).toString();
+                }
             }
         }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -1257,16 +1262,16 @@ public class JadeXml2IniConverter {
                 if (attrName != null) {
                     Node valueNode = node.getAttributes().getNamedItem(attrName.getNodeValue());
                     if (valueNode != null) {
-                       value = valueNode.getNodeValue(); 
-                       Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
-                       if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
-                           value = "true".equalsIgnoreCase(value) ? "false" : "true";
-                       }
+                        value = valueNode.getNodeValue();
+                        Node oppositeValue = flatParameter.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_OPPOSITE_VALUE);
+                        if (oppositeValue != null && "true".equals(oppositeValue.getNodeValue())) {
+                            value = "true".equalsIgnoreCase(value) ? "false" : "true";
+                        }
                     } else {
-                       Node defaultValue = attributeNode.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_DEFAULT_VALUE);
-                       if (defaultValue != null) {
-                           value = defaultValue.getNodeValue();
-                       }
+                        Node defaultValue = attributeNode.getAttributes().getNamedItem(SCHEMA_ATTRIBUTE_DEFAULT_VALUE);
+                        if (defaultValue != null) {
+                            value = defaultValue.getNodeValue();
+                        }
                     }
                 }
             } else {
@@ -1295,10 +1300,10 @@ public class JadeXml2IniConverter {
         if (!SOSString.isEmpty(path)) {
             File file = new File(path);
             if (file.isFile() && file.canRead()) {
-//                PropertyConfigurator.configure(file.getCanonicalPath());
+                LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                context.setConfigLocation(file.toURI());
             }
         }
-        /** if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) { BasicConfigurator.configure(); } */
     }
 
     private void log(String msg) {
