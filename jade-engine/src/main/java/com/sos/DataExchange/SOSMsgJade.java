@@ -1,6 +1,5 @@
 package com.sos.DataExchange;
 
-
 import com.sos.localization.Messages;
 import com.sos.localization.SOSMsg;
 

@@ -7,6 +7,10 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.PropertyConfigurator;
+
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
@@ -17,7 +21,7 @@ import com.sos.i18n.annotation.I18NResourceBundle;
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtilities {
 
-    private static Logger logger = LoggerFactory.getLogger(SOSDataExchangeEngine4DMZMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngine4DMZMain.class);
     @I18NMessages(value = { @I18NMessage("JADE4DMZ client - Main routine started ..."),
             @I18NMessage(value = "JADE4DMZ client", locale = "en_UK", explanation = "JADE4DMZ client"),
             @I18NMessage(value = "JADE4DMZ client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE4DMZ client") }, msgnum = "SOSJADE_I_9999", msgurl = "")
@@ -63,14 +67,12 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
                     }
                 }
             } catch (Exception e) {}
-            // rootLogger gets basis configuration if it doesn't have already
-            // an appender
-            logger.info(getMsg(SOSDX_Intro));
+            LOGGER.info(getMsg(SOSDX_Intro));
             jade4dmz.Execute();
-            logger.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
+            LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
         } catch (Exception e) {
             exitCode = 99;
-            logger.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode));
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode));
         }
         System.exit(exitCode);
     }

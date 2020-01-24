@@ -166,7 +166,7 @@ public class JADEOptionsTest {
     @Test(expected = com.sos.JSHelper.Exceptions.JobSchedulerException.class)
     public void testOperationIsIllegal() {
         objO.operation.setValue("xyzddd");
-        LOGGER.info(objO.operation.value());
+        LOGGER.info("" + objO.operation.value());
     }
 
 }

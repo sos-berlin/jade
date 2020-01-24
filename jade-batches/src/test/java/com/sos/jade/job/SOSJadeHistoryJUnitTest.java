@@ -1,9 +1,14 @@
 package com.sos.jade.job;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-
-import org.junit.*;
 
 /** \class SOSJadeHistoryJUnitTest - JUnit-Test for
  * "Import from order or file to JadeHistoryTable"

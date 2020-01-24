@@ -1,5 +1,9 @@
 package com.sos.jade.job;
 
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
 
@@ -34,38 +38,21 @@ public class JadeDeleteHistoryJUnitTest extends JSToolBox {
         //
     }
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
-
     @Before
     public void setUp() throws Exception {
         objE = new JadeDeleteHistory();
         objE.registerMessageListener(this);
         objOptions = objE.getOptions();
         objOptions.registerMessageListener(this);
-
         JSListenerClass.bolLogDebugInformation = true;
         JSListenerClass.intMaxDebugLevel = 9;
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test
     @Ignore("Test set to Ignore for later examination")
     public void testExecute() throws Exception {
-
         objE.Execute();
-
         //		assertEquals ("auth_file", objOptions.auth_file.Value(),"test"); //$NON-NLS-1$
         //		assertEquals ("user", objOptions.user.Value(),"test"); //$NON-NLS-1$
-
     }
-}  // class JadeDeleteHistoryJUnitTest
+}

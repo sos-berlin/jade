@@ -8,13 +8,10 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** @author Uwe Risse */
 public class JadeTransferDetailDBItemTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTransferDetailDBItemTest.class);
     private JadeTransferDetailDBItem jadeTransferDetailDBItem;
     private String configurationFilename = "c:/temp/hibernate.cfg.xml";
     private File configurationFile;

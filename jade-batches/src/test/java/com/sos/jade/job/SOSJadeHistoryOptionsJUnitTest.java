@@ -1,10 +1,15 @@
 package com.sos.jade.job;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-import org.junit.*;
-
-import static org.junit.Assert.assertEquals;
 
 /** \class SOSJadeHistoryOptionsJUnitTest - Import from order or file to
  * JadeHistoryTable

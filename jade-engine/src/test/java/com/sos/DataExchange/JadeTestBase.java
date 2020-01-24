@@ -146,7 +146,7 @@ public abstract class JadeTestBase extends JSToolBox {
         public void run() {
             JSFile objFile = null;
             for (int i = 0; i < 15; i++) {
-                LOGGER.debug(i);
+                LOGGER.debug("" + i);
                 String strT = objTestOptions.sourceDir.getValue();
                 new File(strT).mkdirs();
                 objFile = new JSFile(objTestOptions.sourceDir.getValue() + "/test-" + i + ".poll");

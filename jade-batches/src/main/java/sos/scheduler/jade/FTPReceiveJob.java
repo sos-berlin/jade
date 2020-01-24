@@ -28,7 +28,7 @@ public class FTPReceiveJob extends Jade4JessyBaseClass {
     @SuppressWarnings("unused")
     private final String conClassName = "FTPReceiveJob";
     private final String conSVNVersion = "$Id: FTPReceiveJob.java 22360 2014-02-05 09:19:04Z oh $";
-    private static final Logger logger = LoggerFactory.getLogger(FTPReceiveJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FTPReceiveJob.class);
 
     @Override
     protected void setSpecialOptions() {
@@ -40,7 +40,7 @@ public class FTPReceiveJob extends Jade4JessyBaseClass {
 
     @Override
     protected void showVersionInfo() {
-        logger.debug(VersionInfo.VERSION_STRING);
-        logger.debug(conSVNVersion);
+        LOGGER.debug(VersionInfo.VERSION_STRING);
+        LOGGER.debug(conSVNVersion);
     }
 }

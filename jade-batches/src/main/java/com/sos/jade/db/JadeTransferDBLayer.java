@@ -7,8 +7,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.hibernate.layer.SOSHibernateDBLayer;
@@ -26,7 +24,6 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     protected String whereStartTimeIso;
     protected String whereEndTimeIso;
     protected String dateFormat;
-    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTransferDBLayer.class);
     private JadeHistoryFilter filter;
     private int age;
 
