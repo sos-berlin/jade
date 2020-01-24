@@ -2,7 +2,6 @@ package com.sos.jade.job;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Spooler;
@@ -31,8 +30,6 @@ import com.sos.JSHelper.Basics.IJSCommands;
 public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter implements IJSCommands {
 
     private final String conClassName = "SOSJadeHistoryJSAdapterClass";  //$NON-NLS-1$
-    @SuppressWarnings("hiding")
-    private static Logger logger = Logger.getLogger(SOSJadeHistoryJSAdapterClass.class);
 
     public void init() {
         @SuppressWarnings("unused")

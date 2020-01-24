@@ -1,6 +1,8 @@
 package com.sos.jade.job;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.JSJobUtilitiesClass;
 import com.sos.jade.db.JadeTransferDBLayer;
@@ -8,7 +10,7 @@ import com.sos.jade.db.JadeTransferDetailDBLayer;
 
 public class JadeDeleteHistory extends JSJobUtilitiesClass<JadeDeleteHistoryOptions> {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeDeleteHistory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeDeleteHistory.class);
 
     public JadeDeleteHistory() {
         super(new JadeDeleteHistoryOptions());

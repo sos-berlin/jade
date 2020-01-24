@@ -2,10 +2,11 @@ package com.sos.DataExchange;
 
 import static org.junit.Assert.assertTrue;
 
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.DataElements.JSDataElementDate;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
@@ -13,7 +14,7 @@ import com.sos.JSHelper.io.Files.JSFile;
 
 public class JadeTestLocal extends JadeTestBase {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeTestLocal.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTestLocal.class);
 
     @Override
     @Test

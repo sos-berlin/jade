@@ -18,9 +18,10 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.io.Util;
 import org.apache.commons.net.util.TrustManagerUtils;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.configuration.SOSConfiguration;
 import sos.util.SOSLogger;
@@ -32,7 +33,7 @@ import com.sos.VirtualFileSystem.FTPS.SOSVfsFtpSProxySelector;
 
 public class JadeTestsFTPS extends JadeTestBase {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeTestsFTPS.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTestsFTPS.class);
     private static final String BASE_PATH = "R://backup//sos//java//development//SOSDataExchange//examples//";
     private JADEOptions options;
 

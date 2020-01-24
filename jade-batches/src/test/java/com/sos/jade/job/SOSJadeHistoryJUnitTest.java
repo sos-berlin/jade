@@ -3,7 +3,6 @@ package com.sos.jade.job;
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
 
-import org.apache.log4j.Logger;
 import org.junit.*;
 
 /** \class SOSJadeHistoryJUnitTest - JUnit-Test for
@@ -27,8 +26,6 @@ public class SOSJadeHistoryJUnitTest extends JSToolBox {
 
     @SuppressWarnings("unused")//$NON-NLS-1$
     private final static String conClassName = "SOSJadeHistoryJUnitTest"; //$NON-NLS-1$
-    @SuppressWarnings("unused")//$NON-NLS-1$
-    private static Logger logger = Logger.getLogger(SOSJadeHistoryJUnitTest.class);
 
     protected SOSJadeHistoryOptions objOptions = null;
     private SOSJadeHistory objE = null;

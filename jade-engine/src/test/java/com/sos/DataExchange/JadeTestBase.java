@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSToolBox;
@@ -63,7 +64,7 @@ public abstract class JadeTestBase extends JSToolBox {
     protected String strSettingsFile = "R:/backup/sos/java/development/SOSDataExchange/examples/jade_settings.ini";
     protected String dynamicClassNameSource = null;
     protected String gstrFilePath = "";
-    private static final Logger LOGGER = Logger.getLogger(JadeTestBase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTestBase.class);
     private String constrSettingsTestFile = strTestPathName + "/SOSDEx-test.ini";
     private boolean flgUseFilePath = false;
 

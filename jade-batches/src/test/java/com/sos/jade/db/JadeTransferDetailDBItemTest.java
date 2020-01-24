@@ -1,25 +1,20 @@
 package com.sos.jade.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.StatelessSession;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** @author Uwe Risse */
 public class JadeTransferDetailDBItemTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeTransferDetailDBItemTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeTransferDetailDBItemTest.class);
     private JadeTransferDetailDBItem jadeTransferDetailDBItem;
     private String configurationFilename = "c:/temp/hibernate.cfg.xml";
     private File configurationFile;

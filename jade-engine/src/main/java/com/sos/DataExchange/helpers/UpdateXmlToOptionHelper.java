@@ -3,7 +3,8 @@ package com.sos.DataExchange.helpers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -13,7 +14,7 @@ import com.sos.DataExchange.Options.JADEOptions;
 
 public class UpdateXmlToOptionHelper {
 
-    private static final Logger LOGGER = Logger.getLogger(UpdateXmlToOptionHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateXmlToOptionHelper.class);
     private JADEOptions options;
 
     /**

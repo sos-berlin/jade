@@ -3,7 +3,8 @@ package com.sos.jade.TransferHistoryImport;
 import java.io.File;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -18,7 +19,7 @@ import com.sos.jade.db.JadeTransferDetailDBItem;
 /** @author KB, Uwe Risse */
 public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
 
-    private static final Logger LOGGER = Logger.getLogger(SOSJadeImport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSJadeImport.class);
     private JadeTransferDBLayer jadeTransferDBLayer;
     private IJadeTransferHistoryData jadeTransferExportData = null;
     private IJadeTransferDetailHistoryData jadeTransferDetailImportData = null;

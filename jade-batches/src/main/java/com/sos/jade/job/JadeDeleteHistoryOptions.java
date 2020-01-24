@@ -6,7 +6,6 @@ import com.sos.JSHelper.Annotations.JSOptionClass;
 
 import com.sos.JSHelper.Exceptions.JSExceptionMandatoryOptionMissing;
 import com.sos.JSHelper.Listener.JSListener;
-import org.apache.log4j.Logger;
 
 /** \class JadeDeleteHistoryOptions - Delete entries in Jade history table
  *
@@ -28,8 +27,6 @@ public class JadeDeleteHistoryOptions extends JadeDeleteHistoryOptionsSuperClass
 
     @SuppressWarnings("unused")//$NON-NLS-1$
     private final String conClassName = "JadeDeleteHistoryOptions";  //$NON-NLS-1$
-    @SuppressWarnings("unused")
-    private static Logger logger = Logger.getLogger(JadeDeleteHistoryOptions.class);
 
     /** constructors */
 

@@ -6,10 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
@@ -17,7 +18,7 @@ import com.sos.JSHelper.io.Files.JSFile;
 
 public class JADEOptionsTest {
 
-    private final static Logger LOGGER = Logger.getLogger(JADEOptionsTest.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(JADEOptionsTest.class);
     private JADEOptions objO = null;
     private String constrSettingsTestFile = "";
 

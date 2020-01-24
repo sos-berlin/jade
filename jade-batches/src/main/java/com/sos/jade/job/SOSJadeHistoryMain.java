@@ -1,13 +1,15 @@
 package com.sos.jade.job;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sos.JSHelper.Basics.JSToolBox;
-import org.apache.log4j.Logger;
 
 /** @author Uwe Risse */
 public class SOSJadeHistoryMain extends JSToolBox {
 
     protected SOSJadeHistoryOptions objOptions = null;
-    private static final Logger LOGGER = Logger.getLogger(SOSJadeHistoryMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSJadeHistoryMain.class);
 
     public final static void main(String[] pstrArgs) {
         final String methodName = "SOSJadeHistory::Main";

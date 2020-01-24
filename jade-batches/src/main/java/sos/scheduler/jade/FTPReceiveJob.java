@@ -1,12 +1,14 @@
 package sos.scheduler.jade;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionPortNumber;
 import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
 import com.sos.i18n.annotation.I18NResourceBundle;
-import org.apache.log4j.Logger;
 
 /** \file FTPReceiveJob.java \class FTPReceiveJob
  *
@@ -26,7 +28,7 @@ public class FTPReceiveJob extends Jade4JessyBaseClass {
     @SuppressWarnings("unused")
     private final String conClassName = "FTPReceiveJob";
     private final String conSVNVersion = "$Id: FTPReceiveJob.java 22360 2014-02-05 09:19:04Z oh $";
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(FTPReceiveJob.class);
 
     @Override
     protected void setSpecialOptions() {

@@ -380,7 +380,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                             }
                         } catch (Exception e) {
                             String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().resultListFile.getShortKey());
-                            logger.fatal(strM);
+                            logger.error(strM);
                             throw new JobSchedulerException(strM, e);
                         }
                     }
