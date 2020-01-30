@@ -1,6 +1,8 @@
 package com.sos.DataExchange;
 
-//import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +28,19 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<JADEOptions> {
             return;
         }
         VFSFactory.setParentLogger(SOSDataExchangeEngine.JADE_LOGGER_NAME);
+
         int verbose = objOptions.verbose.value();
-//        if (verbose <= 1) {
-//            Logger.getRootLogger().setLevel(Level.INFO);
-//        } else {
-//            if (verbose > 8) {
-//                Logger.getRootLogger().setLevel(Level.TRACE);
-//                LOGGER.setLevel(Level.TRACE);
-//                LOGGER.debug("set loglevel to TRACE due to option verbose = " + verbose);
-//            } else {
-//                Logger.getRootLogger().setLevel(Level.DEBUG);
-//                LOGGER.debug("set loglevel to DEBUG due to option verbose = " + verbose);
-//            }
-//        }
+        if (verbose <= 1) {
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);
+        } else {
+            if (verbose > 8) {
+                Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.TRACE);
+                LOGGER.debug("set loglevel to TRACE due to option verbose = " + verbose);
+            } else {
+                Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
+                LOGGER.debug("set loglevel to DEBUG due to option verbose = " + verbose);
+            }
+        }
         IS_LOGGER_CONFIGURED = true;
     }
 }
