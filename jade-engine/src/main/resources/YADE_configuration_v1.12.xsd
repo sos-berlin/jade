@@ -7610,7 +7610,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			where the output of the <em>reportLogger</em> is more compact than the <em>rootLogger</em> output.
     	</p>
                <p>
-			These loggers are configured by a <em>log4j.properties</em> file which determines that the
+			These loggers are configured by a <em>log4j</em> configuration file which determines that the
 			<ul>
                      <li>
                         <em>rootLogger</em> logs to stdout.</li>
@@ -7618,8 +7618,9 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <em>reportLogger</em> optionally logs to a file.</li>
                   </ul> 
 		             </p>
+               <p/>
                <p>
-			If the log4j.properties file is not found then a log4j base configuration is used which logs to stdout.
+			If the log4j configuration file is not found then a log4j base configuration is used which logs to stdout.
 		</p>
             </div>
          </xs:documentation>
@@ -7656,11 +7657,52 @@ SSH, etc.) server to which a connection has to be made.</p>
                         <em>reportLogger</em> which logs to a file</li>
                   </ul>
 		             </p>
+               <p/>
                <p>
 			This parameter specifies the location of the file to which the log output of the <em>reportLogger</em> will be written.
 			Should the file not exist then it will be created. If the file already exists then all log output will be appended.
-			Without specifying this parameter all log output of the <em>reportLogger</em> will be written to <em>${java.io.tmpdir}/Jade-client.log</em>.
-		</p>
+        </p>
+               <p/>
+               <p>
+			Without specifying this parameter all log output of the <em>reportLogger</em> will be written to 
+            <ul>
+                     <li>
+                        <em>
+                           <b>JobScheduler releases starting from 1.13.3</b>
+                        </em>
+                        <ul>
+                           <li>
+                              <em>JobScheduler Master / Agent</em>
+                              <ul>
+                                 <li>
+                                    <em>${scheduler_data}/logs/YADE.log</em>
+                                 </li>
+                              </ul>
+                           </li>
+                           <li>
+                              <em>YADE Client</em>
+                              <ul>
+                                 <li>Windows - <em>${java.io.tmpdir}/YADE.log</em>
+                                 </li>
+                                 <li>Unix - <em>${java.io.tmpdir}/${user.name}/YADE.log</em>
+                                 </li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>
+                        <em>
+                           <b>JobScheduler releases before 1.13.3</b>
+                        </em>
+                        <ul>
+                           <li>Windows - <em>${java.io.tmpdir}/Jade-client.log</em>
+                           </li>
+                           <li>Unix - <em>${java.io.tmpdir}/${user.name}/Jade-client.log</em>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+		             </p>
             </div>
          </xs:documentation>
       </xs:annotation>
@@ -7670,7 +7712,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
-	  <xs:element name="Log4JPropertyFile" default="./log4j.properties">
+	  <xs:element name="Log4JPropertyFile">
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="log4jPropertyFileName"/>
@@ -7696,7 +7738,36 @@ SSH, etc.) server to which a connection has to be made.</p>
 		This parameter specifies the location of a log4j configuration file. 
 		Without this parameter the following configuration is used: 
 		</p>
-               <p>log4j.rootLogger=info, stdout
+               <p>
+                  <ul>
+                     <li>
+                        <em>
+                           <b>JobScheduler releases starting from 1.13.3</b> (Log4j 2)</em>
+                        <ul>
+                           <li>
+                              <em>JobScheduler Master / Agent</em>
+                              <ul>
+                                 <li>
+                                    <em>JadeReportLog</em> logger in the <em>${scheduler_install}/lib/log4j2.xml</em> configuration file.</li>
+                              </ul>
+                           </li>
+                           <li>
+                              <em>YADE Client</em>
+                              <ul>
+                                 <li>
+                                    <em>JadeReportLog</em> logger in the <em>&lt;yade client&gt;/bin/log4j2.xml</em> configuration file.</li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+                  <ul>
+                     <li>
+                        <em>
+                           <b>JobScheduler releases before 1.13.3</b> (Log4j)</em>
+                        <ul>
+                           <li>
+log4j.rootLogger=info, stdout
 <br/>log4j.logger.JadeReportLog=info, JadeReportLog
 <br/>log4j.logger.JadeReportLog.SOSVfsReportLog=info, JadeReportLog
 <br/>#log4j.logger.JadeReportLog=info, JadeReportLog, JadeReportLogHTML
@@ -7704,25 +7775,29 @@ SSH, etc.) server to which a connection has to be made.</p>
 <br/>log4j.additivity.JadeReportLog = false
 <br/>log4j.additivity.JadeReportLog.SOSVfsReportLog = false
 <br/>
-                  <br/>log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+                              <br/>log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 <br/>log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 <br/>log4j.appender.stdout.layout.ConversionPattern=%t %-5p %-14d{HH:mm:ss,SSS} (%F:%L) ::%M %m %n
 <br/>
-                  <br/># Configuration of JadeHTMLReportLog
+                              <br/># Configuration of JadeHTMLReportLog
 <br/>log4j.appender.JadeReportLogHTML=org.apache.log4j.FileAppender
 <br/>log4j.appender.JadeReportLogHTML.layout=com.sos.JSHelper.Logging.SOSHtmlLayout
 <br/>log4j.appender.JadeReportLogHTML.File=${java.io.tmpdir}/Jade-client.html
 <br/>log4j.appender.JadeReportLogHTML.Append=false
 <br/>log4j.appender.JadeReportLogHTML.layout.Title=YADE Report Log
 <br/>
-                  <br/># Configuration of JadeReportLog
+                              <br/># Configuration of JadeReportLog
 <br/>log4j.appender.JadeReportLog=org.apache.log4j.RollingFileAppender
 <br/>log4j.appender.JadeReportLog.File=${java.io.tmpdir}/Jade-client.log
 <br/>log4j.appender.JadeReportLog.MaxFileSize=5000KB
 <br/>log4j.appender.JadeReportLog.MaxBackupIndex=30
 <br/>log4j.appender.JadeReportLog.layout=org.apache.log4j.PatternLayout
 <br/>log4j.appender.JadeReportLog.layout.ConversionPattern=%-21d{HH:mm:ss,SSS}%m %n
-		</p>
+            </li>
+                        </ul>
+                     </li>
+                  </ul>
+		             </p>
             </div>
          </xs:documentation>
       </xs:annotation>
