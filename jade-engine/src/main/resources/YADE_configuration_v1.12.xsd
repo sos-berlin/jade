@@ -7626,7 +7626,7 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
 	  </xs:element>
-	  <xs:element name="LogFile" default="stdout">
+	  <xs:element name="LogFile">
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="log_filename"/>
