@@ -1,7 +1,10 @@
 package com.sos.DataExchange;
 
+import java.io.File;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,14 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<JADEOptions> {
         }
         VFSFactory.setParentLogger(SOSDataExchangeEngine.JADE_LOGGER_NAME);
 
+        if (getOptions().log4jPropertyFileName.isDirty()) {
+            File log4j = new File(getOptions().log4jPropertyFileName.getValue());
+            if (log4j.isFile() && log4j.canRead()) {
+                LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                context.setConfigLocation(log4j.toURI());
+            }
+        }
+        
         int verbose = objOptions.verbose.value();
         if (verbose <= 1) {
             Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);

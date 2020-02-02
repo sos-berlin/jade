@@ -1,9 +1,5 @@
 package com.sos.DataExchange;
 
-import java.io.File;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,15 +54,6 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             JADEOptions options = jade4dmz.getOptions();
             jade4dmz.setJSJobUtilites(this);
             options.commandLineArgs(args);
-            try {
-                if (options.log4jPropertyFileName.isDirty()) {
-                    File log4j = new File(options.log4jPropertyFileName.getValue());
-                    if (log4j.isFile() && log4j.canRead()) {
-                        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-                        context.setConfigLocation(log4j.toURI());
-                    }
-                }
-            } catch (Exception e) {}
             LOGGER.info(getMsg(SOSDX_Intro));
             jade4dmz.Execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
