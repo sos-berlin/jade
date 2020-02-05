@@ -133,8 +133,8 @@ public class YadeDBOperationHelper {
                         jumpProtocolDBItem.setAccount(".");
                     }
                     DBItemYadeProtocols jumpProtocolFromDb = null;
-                    jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(), jumpProtocolDBItem.getPort(),
-                            jumpProtocolDBItem.getProtocol(), jumpProtocolDBItem.getAccount());
+                    jumpProtocolFromDb = dbLayer.getProtocolFromDb(jumpProtocolDBItem.getHostname(), jumpProtocolDBItem.getPort(), jumpProtocolDBItem
+                            .getProtocol(), jumpProtocolDBItem.getAccount());
                     if (jumpProtocolFromDb != null) {
                         jumpProtocolDBItem = jumpProtocolFromDb;
                     } else {
@@ -241,7 +241,7 @@ public class YadeDBOperationHelper {
                             fileFromDb.setErrorMessage(null);
                         }
                         fileFromDb.setIntegrityHash(fileEntry.getMd5());
-                        fileFromDb.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
+                        fileFromDb.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getSourceFileModificationDateTime()));
                         fileFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                         dbSession.update(fileFromDb);
                     } else {
@@ -261,14 +261,14 @@ public class YadeDBOperationHelper {
                             file.setErrorMessage(null);
                         }
                         file.setIntegrityHash(fileEntry.getMd5());
-                        file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
+                        file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getSourceFileModificationDateTime()));
                         file.setModified(getUTCDateFromInstant(Instant.now()));
                         dbSession.save(file);
                     }
                 }
             }
         }
-        files.setSumOfFileSizes(fileSizeSum);
+        files.setSumFileSizes(fileSizeSum);
     }
 
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) throws Exception {
@@ -307,7 +307,7 @@ public class YadeDBOperationHelper {
                         fileFromDb.setErrorMessage(null);
                     }
                     fileFromDb.setIntegrityHash(fileEntry.getMd5());
-                    fileFromDb.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
+                    fileFromDb.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getSourceFileModificationDateTime()));
                     fileFromDb.setModified(getUTCDateFromInstant(Instant.now()));
                     dbSession.update(fileFromDb);
                     Map<String, String> values = new HashMap<String, String>();
@@ -343,7 +343,7 @@ public class YadeDBOperationHelper {
                         file.setTargetPath(null);
                     }
                     file.setSize(fileEntry.getFileSize());
-                    file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
+                    file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getSourceFileModificationDateTime()));
                     String lastErrorMessage = fileEntry.getLastErrorMessage();
                     if (lastErrorMessage != null && !lastErrorMessage.isEmpty()) {
                         file.setErrorCode("ERRORCODE");
@@ -353,7 +353,7 @@ public class YadeDBOperationHelper {
                         file.setErrorMessage(null);
                     }
                     file.setIntegrityHash(fileEntry.getMd5());
-                    file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getModificationTimestamp()));
+                    file.setModificationDate(getUTCDateFromTimeStamp(fileEntry.getSourceFileModificationDateTime()));
                     file.setModified(getUTCDateFromInstant(Instant.now()));
                     dbSession.save(file);
                     Map<String, String> values = new HashMap<String, String>();

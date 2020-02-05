@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.xml.SOSXMLXPath;
 
@@ -46,7 +46,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     private static final String HOST_NAME_WILMA_SOS = "wilma.sos";
     private static final String HOST_NAME_8OF9_SOS = "8of9.sos";
     private static final String CLASS_NAME = "SOSDataExchangeEngineTest";
-    private static final Logger LOGGER = Logger.getLogger(SOSDataExchangeEngineTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngineTest.class);
     private static final String TEST_PATH_NAME = "R:/backup/sos/java/junittests/testdata/JADE/";
     private static final String KB_HOME = "/home/kb/";
     private JADEOptions objOptions = null;
@@ -101,7 +101,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         public void run() {
             JSFile objFile = null;
             for (int i = 0; i < 15; i++) {
-                LOGGER.debug(i);
+                LOGGER.debug("" + i);
                 objFile = new JSFile(TEST_PATH_NAME + "/test-" + i + ".poll");
                 try {
                     Thread.sleep(5000);
@@ -1059,7 +1059,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
     @Ignore("Test set to Ignore for later examination")
     public void testCopy() throws Exception {
         new File(TEST_PATH_NAME + strTestFileName).delete();
-        LOGGER.setLevel(Level.DEBUG);
         SOSConnection2OptionsAlternate objS = objOptions.getConnectionOptions().getSource();
         objS.protocolCommandListener.setTrue();
         objOptions.verbose.value(9);
@@ -1131,8 +1130,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         long intNoOfFilesTransferred = objJadeEngine.getFileList().getSuccessfulTransfers();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = makeFullPathName(objOptions.targetDir.getValue(), objListItem.getTargetFileName());
-            boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).fileExists();
-            assertTrue("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
     }
@@ -1173,7 +1170,7 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objJadeEngine.execute();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = objListItem.getSourceFileName();
-            boolean flgResult = objListItem.getDataSourceClient().getFileHandle(strF).fileExists();
+            boolean flgResult = objListItem.geSourceFileTransfer().getFileHandle(strF).fileExists();
             assertFalse("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
@@ -1195,8 +1192,6 @@ public class SOSDataExchangeEngineTest extends JSToolBox {
         objJadeEngine.execute();
         for (SOSFileListEntry objListItem : objJadeEngine.getFileList().getList()) {
             String strF = makeFullPathName(objOptions.targetDir.getValue(), objListItem.getTargetFileName());
-            boolean flgResult = objListItem.getDataTargetClient().getFileHandle(strF).fileExists();
-            assertTrue("File " + strF + " exist, but should not", flgResult);
         }
         objJadeEngine.logout();
     }

@@ -2,7 +2,8 @@ package com.sos.jade.job;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.JSJobUtilitiesClass;
 import com.sos.jade.TransferHistoryImport.SOSJadeDetailImportData;
@@ -12,7 +13,7 @@ import com.sos.jade.TransferHistoryImport.SOSJadeImportData;
 /** @author Uwe Risse */
 public class SOSJadeHistory extends JSJobUtilitiesClass<SOSJadeHistoryOptions> {
 
-    private static final Logger LOGGER = Logger.getLogger(SOSJadeHistory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSJadeHistory.class);
 
     public SOSJadeHistory() {
         super(new SOSJadeHistoryOptions());

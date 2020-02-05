@@ -2,7 +2,8 @@ package sos.scheduler.jade;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 
@@ -32,8 +33,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
 
     @SuppressWarnings("unused")
     private final String conClassName = this.getClass().getSimpleName();
-    @SuppressWarnings("unused")
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Jade4JessyBaseClass.class);
     @SuppressWarnings("unused")
     private final String conSVNVersion = "$Id: Jade4JessyBaseClass.java 23709 2014-04-11 06:33:04Z sp $";
     protected SOSFTPOptions objO = null;
@@ -61,8 +61,8 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            logger.error(String.format("%1$s ended abnormal.", conClassName));
-            logger.error(stackTrace2String(e));
+            LOGGER.error(String.format("%1$s ended abnormal.", conClassName));
+            LOGGER.error(stackTrace2String(e));
             return signalFailure();
         } finally {
         } // finally
@@ -89,13 +89,13 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
         int intLogLevel = spooler_log.level();
         if (intLogLevel < 0) {
             objO.verbose.value(-1 * intLogLevel);
-            logger.debug(objO.toString());
+            LOGGER.debug(objO.toString());
         }
-        logger.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.getValue()));
+        LOGGER.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.getValue()));
         objR.setJSJobUtilites(this);
         objR.execute();
         objR.logout();
-        logger.info(String.format("%1$s with operation %2$s ended.", conMethodName, objO.operation.getValue()));
+        LOGGER.info(String.format("%1$s with operation %2$s ended.", conMethodName, objO.operation.getValue()));
     } // doProcessing
 
     abstract protected void setSpecialOptions();

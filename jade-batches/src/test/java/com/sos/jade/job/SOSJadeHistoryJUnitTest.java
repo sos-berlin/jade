@@ -1,10 +1,14 @@
 package com.sos.jade.job;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-
-import org.apache.log4j.Logger;
-import org.junit.*;
 
 /** \class SOSJadeHistoryJUnitTest - JUnit-Test for
  * "Import from order or file to JadeHistoryTable"
@@ -27,8 +31,6 @@ public class SOSJadeHistoryJUnitTest extends JSToolBox {
 
     @SuppressWarnings("unused")//$NON-NLS-1$
     private final static String conClassName = "SOSJadeHistoryJUnitTest"; //$NON-NLS-1$
-    @SuppressWarnings("unused")//$NON-NLS-1$
-    private static Logger logger = Logger.getLogger(SOSJadeHistoryJUnitTest.class);
 
     protected SOSJadeHistoryOptions objOptions = null;
     private SOSJadeHistory objE = null;

@@ -9,11 +9,11 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0019;
 import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,27 +24,24 @@ import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.Options.SOSOptionTime;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
 import com.sos.jobscheduler.model.event.YadeEvent;
 import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
 
-import sos.configuration.SOSConfiguration;
-import sos.spooler.Job_chain;
-import sos.spooler.Job_chain_node;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSDExJSAdapterClass.class);
 
     private static final String CLASSNAME = "SOSDExJSAdapterClass";
     private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
@@ -60,8 +57,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
-    private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    // private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
+    // private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private JADEOptions jadeOptions = null;
@@ -118,7 +115,15 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     }
                 } else {
                     if (schedulerParams.containsKey("profile")) {
-                        throw new JobSchedulerException(String.format("[%s]missing 'settings' parameter", schedulerParams.get("profile")));
+                        Path defaultConfiguration = Paths.get(spooler.configuration_directory()).resolve(JobSchedulerXmlEditor.getLivePathYadeIni());
+                        if (Files.exists(defaultConfiguration)) {
+                            schedulerParams.put("settings", defaultConfiguration.toString());
+                        } else {
+                            LOGGER.warn(String.format("[%s]default configuration file not found", defaultConfiguration));
+                            throw new JobSchedulerException(String.format(
+                                    "[%s][missing configuration]set 'settings' parameter or use a configuration created with the JOC XMLEditor",
+                                    schedulerParams.get("profile")));
+                        }
                     }
                 }
             }
@@ -213,7 +218,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 } else {
                     if (jadeOptions.createOrdersForNewFiles.isTrue()) {
                         for (SOSFileListEntry listItem : transfFiles.getList()) {
-                            if (!listItem.isTargetFileAlreadyExists()) {
+                            if (!listItem.isTargetFileExists()) {
                                 createOrder(listItem, jobChainName);
                             }
                         }
@@ -372,7 +377,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
                 }
                 objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Integer.toString(transfFiles.getZeroByteCount()));
+                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
                 objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
                 objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }

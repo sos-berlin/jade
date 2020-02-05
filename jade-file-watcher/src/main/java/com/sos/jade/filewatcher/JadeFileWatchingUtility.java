@@ -22,7 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
@@ -30,7 +31,7 @@ import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 /** @author KB */
 public class JadeFileWatchingUtility implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(JadeFileWatchingUtility.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JadeFileWatchingUtility.class);
     private final WatchService objWatchService;
     private final Map<WatchKey, Path> mapWatchKeys;
     private boolean recursive = false;

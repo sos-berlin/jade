@@ -2,7 +2,6 @@ package com.sos.jade.job;
 
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Listener.JSListenerClass;
-import org.apache.log4j.Logger;
 import org.junit.*;
 
 import static org.junit.Assert.assertEquals;
@@ -38,8 +37,6 @@ import static org.junit.Assert.assertEquals;
 public class JadeDeleteHistoryOptionsJUnitTest extends JSToolBox {
 
     private final String conClassName = "JadeDeleteHistoryOptionsJUnitTest"; //$NON-NLS-1$
-    @SuppressWarnings("unused")//$NON-NLS-1$
-    private static Logger logger = Logger.getLogger(JadeDeleteHistoryOptionsJUnitTest.class);
     @SuppressWarnings("unused")
     private JadeDeleteHistory objE = null;
 

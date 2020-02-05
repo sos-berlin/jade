@@ -11,8 +11,12 @@ import static com.sos.scheduler.messages.JSMessages.JSJ_I_0090;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +29,7 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
 import com.sos.jobscheduler.model.event.YadeEvent;
 import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
@@ -37,6 +42,8 @@ import sos.spooler.Variable_set;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SOSJade4DMZJSAdapter.class);
 
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PATH = "scheduler_file_path";
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PARENT = "scheduler_file_parent";
@@ -52,8 +59,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
     private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
     private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
-    private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    // private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
+    // private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
     private SOSFileList transfFiles = null;
     private SOSFTPOptions jadeOptions = null;
@@ -111,7 +118,15 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     }
                 } else {
                     if (schedulerParams.containsKey("profile")) {
-                        throw new JobSchedulerException(String.format("[%s]missing 'settings' parameter", schedulerParams.get("profile")));
+                        Path defaultConfiguration = Paths.get(spooler.configuration_directory()).resolve(JobSchedulerXmlEditor.getLivePathYadeIni());
+                        if (Files.exists(defaultConfiguration)) {
+                            schedulerParams.put("settings", defaultConfiguration.toString());
+                        } else {
+                            LOGGER.warn(String.format("[%s]default configuration file not found", defaultConfiguration));
+                            throw new JobSchedulerException(String.format(
+                                    "[%s][missing configuration]set 'settings' parameter or use a configuration created with the JOC XMLEditor",
+                                    schedulerParams.get("profile")));
+                        }
                     }
                 }
             }
@@ -199,7 +214,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 } else {
                     if (jadeOptions.createOrdersForNewFiles.isTrue()) {
                         for (SOSFileListEntry listItem : transfFiles.getList()) {
-                            if (!listItem.isTargetFileAlreadyExists()) {
+                            if (!listItem.isTargetFileExists()) {
                                 createOrder(listItem, jobChainName);
                             }
                         }
@@ -223,12 +238,10 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             try {
                 // usually JadeEngine delete the ini settings file (created from xml) on logout
                 // execute delete settings file in job when JadeEngine can't be instantiated (wrong operation or profile for example)
-                if (Files.exists(xml2iniFile)) {
-                    logger.debug(String.format("[job]try do delete settings file %s", xml2iniFile));
-                    Files.delete(xml2iniFile);
-                }
+                logger.debug(String.format("[job]try do delete settings file %s", xml2iniFile.toString()));
+                Files.deleteIfExists(xml2iniFile);
             } catch (Throwable e) {
-                logger.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile, e.toString()), e);
+                logger.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile.toString(), e.toString()), e);
             }
         }
     }
@@ -367,7 +380,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                             }
                         } catch (Exception e) {
                             String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().resultListFile.getShortKey());
-                            logger.fatal(strM);
+                            logger.error(strM);
                             throw new JobSchedulerException(strM, e);
                         }
                     }
@@ -375,7 +388,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
                 }
                 objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Integer.toString(transfFiles.getZeroByteCount()));
+                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
                 objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
                 objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }

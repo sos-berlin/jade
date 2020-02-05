@@ -1,14 +1,11 @@
 package com.sos.jade.db;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -27,7 +24,6 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
     protected String whereStartTimeIso;
     protected String whereEndTimeIso;
     protected String dateFormat;
-    private static final Logger LOGGER = Logger.getLogger(JadeTransferDBLayer.class);
     private JadeHistoryFilter filter;
     private int age;
 
