@@ -144,6 +144,8 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.proxyPassword.setValue(objOptions.jumpProxyPassword.getValue());
         options.server_alive_interval.setValue(objOptions.jump_server_alive_interval.getValue());
         options.server_alive_count_max.setValue(objOptions.jump_server_alive_count_max.getValue());
+        options.session_connect_timeout.setValue(objOptions.jump_session_connect_timeout.getValue());
+        options.channel_connect_timeout.setValue(objOptions.jump_channel_connect_timeout.getValue());
         if (objOptions.jump_use_credential_store.value()) {
             SOSCredentialStoreOptions csOptions = new SOSCredentialStoreOptions();
             csOptions.useCredentialStore.setValue(objOptions.jump_use_credential_store.getValue());
@@ -306,6 +308,10 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         options.passphrase.setPrefix(prefix);
         options.preferred_authentications.setPrefix(prefix);
         options.required_authentications.setPrefix(prefix);
+        options.server_alive_interval.setPrefix(prefix);
+        options.server_alive_count_max.setPrefix(prefix);
+        options.session_connect_timeout.setPrefix(prefix);
+        options.channel_connect_timeout.setPrefix(prefix);
         return options;
     }
 
