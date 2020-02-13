@@ -138,7 +138,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setJSJobUtilites(this);
             jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
             jadeEngine.setJobSchedulerEventHandler(this);
-
+            
             history = new YadeHistory(this);
             Path hibernateConfigFile = null;
             try {

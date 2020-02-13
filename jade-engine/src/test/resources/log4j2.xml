@@ -3,7 +3,7 @@
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS}[%5p][%t](%F:%L) - %m%n" />
+				pattern="%d{HH:mm:ss.SSS}[%5p][%t](%F:%L) - [%M] %m%n" />
 		</Console>
 
 		<RollingFile name="JadeReportLogAppender"
@@ -36,7 +36,7 @@
 		<Logger name="org.hibernate" level="fatal" />
 		<Logger name="com.mchange.v2" level="fatal" />
 		<Logger name="com.sos" level="debug" />
-		<Logger name="JadeReportLog" level="debug" additivity="false">
+		<Logger name="JadeReportLog" level="info" additivity="false">
 			<AppenderRef ref="JadeReportLogAppender" />
 			<AppenderRef ref="JadeReportLogHTMLAppender" />
 		</Logger>

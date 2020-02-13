@@ -34,7 +34,6 @@ public class YadeDBOperationHelperTest {
         jadeOptions.settings.setValue("C:/sp/jobschedulers/approvals/jobscheduler_1.12-SNAPSHOT/sp_4012/config/live/YADE-463/YADE-463.ini");
         jadeOptions.profile.setValue("homer");
         JadeEngine engine = new JadeEngine(jadeOptions);
-        engine.setJobSchedulerEventHandler(new JobSchedulerJobAdapter());
         jadeOptions.setJobSchedulerId("sp_4012");
         jadeOptions.setJobChain("yade_job_chain");
         jadeOptions.setJob("YADEJob");
@@ -83,7 +82,6 @@ public class YadeDBOperationHelperTest {
         jadeOptions.getTarget().protocol.setValue(SOSOptionTransferType.enuTransferTypes.local);
         
         JadeEngine engine = new JadeEngine(jadeOptions);
-        engine.setJobSchedulerEventHandler(new JobSchedulerJobAdapter());
         jadeOptions.setJobSchedulerId("sp_4012");
         jadeOptions.setJobChain("yade_job_chain");
         jadeOptions.setJob("YADEJob");

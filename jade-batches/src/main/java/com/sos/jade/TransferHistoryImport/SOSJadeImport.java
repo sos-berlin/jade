@@ -41,8 +41,10 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
         transferDetailItem.setCommand(jadeTransferDetailImportData.getCommand());
         transferDetailItem.setLastErrorMessage(jadeTransferDetailImportData.getLastErrorMessage());
         transferDetailItem.setFileSize(jadeTransferDetailImportData.getFileSize());
-        transferDetailItem.setStartTime(jadeTransferDetailImportData.getStartTime());
-        transferDetailItem.setEndTime(jadeTransferDetailImportData.getEndTime());
+        Date startTime = jadeTransferDetailImportData.getStartTime() == null ? null : Date.from(jadeTransferDetailImportData.getStartTime()); 
+        transferDetailItem.setStartTime(startTime);
+        Date endTime = jadeTransferDetailImportData.getEndTime() == null ? null : Date.from(jadeTransferDetailImportData.getEndTime()); 
+        transferDetailItem.setEndTime(endTime);
         transferDetailItem.setCreated(new Date());
         transferDetailItem.setCreatedBy(jadeTransferDetailImportData.getCreatedBy());
         transferDetailItem.setModified(new Date());
