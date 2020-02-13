@@ -77,15 +77,8 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
         } catch (Exception e) {
             exitCode = 99;
-            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode));
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode), e);
         } finally {
-            try {
-                if (engine != null) {
-                    engine.logout();
-                }
-            } catch (Exception ex) {
-                LOGGER.warn(String.format("exception on logout: %s", ex.toString()));
-            }
             engine = null;
         }
         return exitCode;
