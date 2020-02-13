@@ -12638,7 +12638,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
-    <xs:element name="SessionConnectTimeout">
+    <xs:element name="SessionConnectTimeout" default="0s">
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="session_connect_timeout"/>
@@ -12673,22 +12673,16 @@ A fragment is referenced via this attribute value by a transfer profile.
                <p>	Possible values:
 			<ul>
                      <li>
-                        <em>&lt;n&gt;</em> - duration in milliseconds, e.g.: <em>60000</em>
-                     </li>
-                     <li>
                         <em>&lt;n&gt;s</em> - duration in seconds, e.g.: <em>30s</em>
                      </li>
                      <li>
-                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>30m</em>
-                     </li>
-                     <li>
-                        <em>&lt;n&gt;h</em> - duration in hours, e.g.: <em>24h</em>
+                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>1m</em>
                      </li>
                   </ul>
                </p>
                <p>Combined values (with blank as separator):
             <ul>
-                     <li>e.g.: <em>1h 30m</em>
+                     <li>e.g.: <em>1m 30s</em>
                      </li>
                   </ul>
 		             </p>
@@ -12701,7 +12695,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
-    <xs:element name="ChannelConnectTimeout">
+    <xs:element name="ChannelConnectTimeout" default="0s">
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="channel_connect_timeout"/>
@@ -12736,22 +12730,16 @@ A fragment is referenced via this attribute value by a transfer profile.
                <p>	Possible values:
 			<ul>
                      <li>
-                        <em>&lt;n&gt;</em> - duration in milliseconds, e.g.: <em>60000</em>
-                     </li>
-                     <li>
                         <em>&lt;n&gt;s</em> - duration in seconds, e.g.: <em>30s</em>
                      </li>
                      <li>
-                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>30m</em>
-                     </li>
-                     <li>
-                        <em>&lt;n&gt;h</em> - duration in hours, e.g.: <em>24h</em>
+                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>1m</em>
                      </li>
                   </ul>
                </p>
                <p>Combined values (with blank as separator):
             <ul>
-                     <li>e.g.: <em>1h 30m</em>
+                     <li>e.g.: <em>1m 30s</em>
                      </li>
                   </ul>
 		             </p>
