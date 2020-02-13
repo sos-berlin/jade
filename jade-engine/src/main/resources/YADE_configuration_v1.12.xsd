@@ -1688,6 +1688,8 @@ SSH, etc.) server to which a connection has to be made.</p>
                 <xs:element ref="ConfigurationFiles" minOccurs="0"/>
 				        <xs:element ref="ServerAliveInterval" minOccurs="0"/>
 				        <xs:element ref="ServerAliveCountMax" minOccurs="0"/>
+                <xs:element ref="SessionConnectTimeout" minOccurs="0"/>
+				        <xs:element ref="ChannelConnectTimeout" minOccurs="0"/>
             </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
@@ -3890,6 +3892,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                 <xs:element ref="Notifications" minOccurs="0"/>
 				        <xs:element ref="Assertions" minOccurs="0"/>
 				        <xs:element ref="Documentation" minOccurs="0"/>
+                <xs:element ref="RetryOnConnectionError" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -5442,6 +5445,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				-->
 				        <xs:element ref="MaxFiles" minOccurs="0"/>
 				        <xs:element ref="CheckIntegrityHash" minOccurs="0"/>
+                <xs:element ref="RetryOnConnectionError" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -6727,6 +6731,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="KeepModificationDate" minOccurs="0"/>
 				        <xs:element ref="DisableMakeDirectories" minOccurs="0"/>
 				        <xs:element ref="DisableOverwriteFiles" minOccurs="0"/>
+                <xs:element ref="RetryOnConnectionError" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -8875,6 +8880,8 @@ log4j.rootLogger=info, stdout
                 <xs:element ref="ConfigurationFiles" minOccurs="0"/>
 				        <xs:element ref="ServerAliveInterval" minOccurs="0"/>
 				        <xs:element ref="ServerAliveCountMax" minOccurs="0"/>
+                <xs:element ref="SessionConnectTimeout" minOccurs="0"/>
+				        <xs:element ref="ChannelConnectTimeout" minOccurs="0"/>
 			      </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
@@ -12628,6 +12635,272 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      <xs:restriction base="xs:int">
 				        <xs:minInclusive value="0"/>
 				        <xs:maxInclusive value="100000000"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+    <xs:element name="SessionConnectTimeout">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="session_connect_timeout"/>
+				        <Release starting="1.12.13, 1.13.4" issue="YADE-555"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_SessionConnectTimeout.html">SessionConnectTimeout</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">session_connect_timeout</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-555">YADE-555</a> Availability starting with 1.12.13, 1.13.4.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>This value is used as the socket timeout parameter, and also as the default connection timeout.</p>
+               <p>A value of <em>0</em> (the default value) indicates <em>no timeout</em>.</p>
+               <p> </p>
+               <p>	Possible values:
+			<ul>
+                     <li>
+                        <em>&lt;n&gt;</em> - duration in milliseconds, e.g.: <em>60000</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;s</em> - duration in seconds, e.g.: <em>30s</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>30m</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;h</em> - duration in hours, e.g.: <em>24h</em>
+                     </li>
+                  </ul>
+               </p>
+               <p>Combined values (with blank as separator):
+            <ul>
+                     <li>e.g.: <em>1h 30m</em>
+                     </li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+    <xs:element name="ChannelConnectTimeout">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="channel_connect_timeout"/>
+				        <Release starting="1.12.13, 1.13.4" issue="YADE-555"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ChannelConnectTimeout.html">ChannelConnectTimeout</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">channel_connect_timeout</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-555">YADE-555</a> Availability starting with 1.12.13, 1.13.4.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>The maximum time to wait for the channel to be established.</p>
+               <p>If <em>0</em>, we wait as long as needed (but at most <em>2000</em> times <em>10</em> milliseconds each).</p>
+               <p> </p>
+               <p>	Possible values:
+			<ul>
+                     <li>
+                        <em>&lt;n&gt;</em> - duration in milliseconds, e.g.: <em>60000</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;s</em> - duration in seconds, e.g.: <em>30s</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>30m</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;h</em> - duration in hours, e.g.: <em>24h</em>
+                     </li>
+                  </ul>
+               </p>
+               <p>Combined values (with blank as separator):
+            <ul>
+                     <li>e.g.: <em>1h 30m</em>
+                     </li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+    <xs:element name="RetryOnConnectionError">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <Release starting="1.12.13, 1.13.4" issue="YADE-556"/>
+        	</xs:appinfo>
+         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+RetryOnConnectionError">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RetryOnConnectionError.html">RetryOnConnectionError</a>, <a xmlns=""
+                        target="_blank"
+                        href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+RetryOnConnectionError">RetryOnConnectionError</a>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-556">YADE-556</a> Availability starting with 1.12.13, 1.13.4.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+            To control reconnect behavior, the YADE has two options:
+            <ul>
+                     <li>
+                        <em>RetryCountMax</em> - number of reconnection attempts (for each single file transfer) if there is a connection failure</li>
+                     <li>
+                        <em>RetryInterval</em> - the wait interval between attempts</li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:complexType>
+			      <xs:sequence>
+				        <xs:element ref="RetryCountMax" minOccurs="1"/>
+				        <xs:element ref="RetryInterval" minOccurs="0"/>
+			      </xs:sequence>
+		    </xs:complexType>
+	  </xs:element>
+    <xs:element name="RetryCountMax" default="3">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="connection_error_retry_count_max"/>
+				        <Release starting="1.12.13, 1.13.4" issue="YADE-556"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RetryCountMax.html">RetryCountMax</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">connection_error_retry_count_max</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-556">YADE-556</a> Availability starting with 1.12.13, 1.13.4.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>Sets for each single file transfer the number of reconnection attempts if there is a connection failure.</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:int">
+				        <xs:minInclusive value="0"/>
+				        <xs:maxInclusive value="100000000"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+    <xs:element name="RetryInterval" default="0s">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="connection_error_retry_interval"/>
+				        <Release starting="1.12.13, 1.13.4" issue="YADE-556"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_RetryInterval.html">RetryInterval</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">connection_error_retry_interval</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-556">YADE-556</a> Availability starting with 1.12.13, 1.13.4.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>This option specifies the wait interval between attempts.</p>
+               <p> </p>
+               <p>	Possible values:
+			<ul>
+                     <li>
+                        <em>&lt;n&gt;</em> - duration in seconds, e.g.: <em>3s</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;m</em> - duration in minutes, e.g.: <em>2m</em>
+                     </li>
+                     <li>
+                        <em>&lt;n&gt;h</em> - duration in hours, e.g.: <em>1h</em>
+                     </li>
+                  </ul>
+               </p>
+               <p>Combined values (with blank as separator):
+            <ul>
+                     <li>e.g.: <em>1m 30s</em>
+                     </li>
+                  </ul>
+		             </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
