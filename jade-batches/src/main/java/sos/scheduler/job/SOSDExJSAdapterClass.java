@@ -13,13 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
@@ -29,8 +26,6 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
-import com.sos.jobscheduler.model.event.YadeEvent;
-import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
@@ -67,8 +62,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
-    private YadeHistory history;
-
+    
     public SOSDExJSAdapterClass() {
         super();
     }
@@ -86,6 +80,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     }
 
     private void doProcessing() throws Exception {
+        YadeHistory history = null;
         try {
             jadeOptions = new JADEOptions();
             jadeOptions.setCurrentNodeName(getCurrentNodeName());
@@ -137,9 +132,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             }
             jadeEngine.setJSJobUtilites(this);
             jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
-            jadeEngine.setJobSchedulerEventHandler(this);
             
-            history = new YadeHistory(this);
+            history = new YadeHistory(spooler);
             Path hibernateConfigFile = null;
             try {
                 hibernateConfigFile = getHibernateConfigurationReporting();
@@ -148,7 +142,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 LOGGER.warn("No ./config/reporting.hibernate.cfg.xml found on file system! Transfer history won´t be processed.");
             }
             history.buildFactory(hibernateConfigFile);
-            jadeEngine.setHistory(history);
+            jadeEngine.setJobSchedulerEventHandler(history);
 
             jadeEngine.getOptions().setJobSchedulerId(spooler.id());
             if (isOrderJob()) {
@@ -386,39 +380,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             throw e;
         } catch (Exception e) {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);
-        }
-    }
-
-    @Override
-    public void updateDb(Long id, String type, Map<String, String> values) {
-        if (history != null && type.equals("YADE_FILE")) {
-            history.updateFileInDB(values);
-        }
-    }
-
-    @Override
-    public void sendEvent(String key, Map<String, String> values) {
-        if (history == null) {
-            return;
-        }
-        YadeEvent event = new YadeEvent();
-        event.setKey(key);
-        YadeVariables variables = new YadeVariables();
-        if (values != null && values.containsKey("transferId")) {
-            variables.setTransferId(values.get("transferId"));
-        } else {
-            variables.setTransferId(history.getTransferId().toString());
-        }
-        if (values != null && values.get("fileId") != null && !values.get("fileId").isEmpty()) {
-            variables.setFileId(values.get("fileId"));
-        }
-        event.setVariables(variables);
-        try {
-            LOGGER.trace("calling spooler.execute_xml started");
-            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
-            LOGGER.trace("calling spooler.execute_xml finished");
-        } catch (JsonProcessingException e) {
-            LOGGER.error("unable to send event due to: " + e.getMessage(), e);
         }
     }
 

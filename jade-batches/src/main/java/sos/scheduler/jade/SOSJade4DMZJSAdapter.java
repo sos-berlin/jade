@@ -145,7 +145,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine.setJSJobUtilites(this);
             jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
 
-            history = new YadeHistory(this);
+            history = new YadeHistory(spooler);
             Path hibernateConfigFile = null;
             try {
                 hibernateConfigFile = getHibernateConfigurationReporting();

@@ -41,7 +41,7 @@ public class YadeDBOperationHelperTest {
         jadeOptions.setOrderId("dummyOrderIdForTesting");
         jadeOptions.setTaskId("32885");
         YadeHistory history = new YadeHistory(null);
-        engine.setHistory(history);
+        engine.setJobSchedulerEventHandler(history);
         history.buildFactory(Paths.get("C:/sp/jobschedulers/approvals/jobscheduler_1.12-SNAPSHOT/sp_4012/config/reporting.hibernate.cfg.xml"));
         try {
             engine.execute();

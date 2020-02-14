@@ -92,9 +92,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     private static final String KEYWORD_STATUS = "status";
 
     private SOSVfsConnectionFactory factory = null;
-    private IJobSchedulerEventHandler eventHandler = null;
-    private IJadeEngineClientHandler engineClientHandler = null;
-    private YadeHistory history;
+    private IJobSchedulerEventHandler historyHandler = null;
+    private IJadeEngineClientHandler engineClientHandler = null;// for DMZ
 
     private ISOSVfsFileTransfer sourceClient = null;
     private ISOSVfsFileTransfer targetClient = null;
@@ -412,6 +411,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         setLogger();
         objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
         objOptions.logFilename.setLogger(JADE_REPORT_LOGGER);
+        YadeHistory history = null;
+        if (historyHandler != null) {
+            history = (YadeHistory) historyHandler;
+        }
         try {
             startTime = Instant.now();
             JobSchedulerException.LastErrorMessage = "";
@@ -1198,6 +1201,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
     public void transfer() throws Exception {
         Exception exception = null;
         boolean isFilePollingEnabled = objOptions.isFilePollingEnabled();
+        YadeHistory history = null;
+        if (historyHandler != null) {
+            history = (YadeHistory) historyHandler;
+        }
         try {
             getOptions().checkMandatory();
             LOGGER.debug(getOptions().dirtyString());
@@ -1213,7 +1220,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
 
             setSystemProperties();
             setTextProperties();
-            sourceFileList = new SOSFileList(objOptions, eventHandler);
+            sourceFileList = new SOSFileList(objOptions, historyHandler);
             factory = new SOSVfsConnectionFactory(objOptions);
             factory.createConnectionPool();
             if (objOptions.lazyConnectionMode.isFalse() && objOptions.isNeedTargetClient()) {
@@ -1646,11 +1653,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements Runnable, I
         return sourceFileList.size();
     }
 
-    public void setHistory(YadeHistory val) {
-        history = val;
-    }
-
     public void setJobSchedulerEventHandler(IJobSchedulerEventHandler val) {
-        eventHandler = val;
+        historyHandler = val;
     }
 }
