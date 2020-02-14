@@ -584,6 +584,9 @@ public class YadeHistory implements IJobSchedulerEventHandler {
 
     @Override
     public void sendEvent(String key, Map<String, String> values) {
+        if (spooler == null) {
+            return;
+        }
         YadeEvent event = new YadeEvent();
         event.setKey(key);
         YadeVariables variables = new YadeVariables();
