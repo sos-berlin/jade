@@ -157,7 +157,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     .isEmpty()) {
                 history.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
             }
-            jade4DMZEngine.Execute();
+            jade4DMZEngine.execute();
             transfFiles = jade4DMZEngine.getFileList();
             int resultSetSize = 0;
             if (isNotNull(transfFiles)) {

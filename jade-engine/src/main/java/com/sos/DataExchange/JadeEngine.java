@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.sos.DataExchange;
 
 import java.util.HashMap;
@@ -8,29 +5,21 @@ import java.util.Properties;
 
 import com.sos.DataExchange.Options.JADEOptions;
 
-/** @author KB */
 public class JadeEngine extends SOSDataExchangeEngine {
 
-    /** @throws Exception */
     public JadeEngine() throws Exception {
     }
 
-    /** @param pobjProperties
-     * @throws Exception */
-    public JadeEngine(final Properties pobjProperties) throws Exception {
-        super(pobjProperties);
+    public JadeEngine(final Properties properties) throws Exception {
+        super(properties);
     }
 
-    /** @param pobjOptions
-     * @throws Exception */
-    public JadeEngine(final JADEOptions pobjOptions) throws Exception {
-        super(pobjOptions);
+    public JadeEngine(final JADEOptions options) throws Exception {
+        super(options);
     }
 
-    /** @param pobjJSSettings
-     * @throws Exception */
-    public JadeEngine(final HashMap<String, String> pobjJSSettings) throws Exception {
-        super(pobjJSSettings);
+    public JadeEngine(final HashMap<String, String> map) throws Exception {
+        super(map);
     }
 
 }

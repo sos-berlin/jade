@@ -20,7 +20,7 @@ import com.sos.keepass.SOSKeePassDatabase;
 import sos.util.SOSString;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
-public class Jade4DMZ extends JadeBaseEngine implements Runnable {
+public class Jade4DMZ extends JadeBaseEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Jade4DMZ.class);
     private static final String INTERNALLY_COMMAND_DELIMITER = "SOSJUMPCD";
@@ -35,15 +35,12 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         copyToInternet, copyFromInternet, remove, getlist
     }
 
-    public void Execute() {
+    public void execute() {
 
         setLogger();
         initialTargetDir = getOptions().targetDir.getValue();
-        String dir = normalizeDirectoryPath(getOptions().jumpDir.getValue());
-        String uuid = "jade-dmz-" + getUUID();
-        String subDir = dir + uuid;
+
         Operation operation = null;
-        Jade4DMZEngineClientHandler clientHandler = null;
         try {
             if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
@@ -68,8 +65,7 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 history.beforeTransfer(objOptions, null);
             }
 
-            clientHandler = new Jade4DMZEngineClientHandler(objOptions, operation, dir, uuid);
-            transfer(operation, subDir, clientHandler);
+            transfer(operation);
 
             if (history != null) {
                 history.afterTransfer();
@@ -88,11 +84,17 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         }
     }
 
-    private void transfer(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) {
+    private void transfer(Operation operation) {
+        String jumpDir = normalizeDirectoryPath(getOptions().jumpDir.getValue());
+        String uuid = "jade-dmz-" + getUUID();
+        String dir = jumpDir + uuid;
+
         LOGGER.info(String.format("operation = %s, jump dir = %s", operation, dir));
         JadeEngine jade = null;
         fileList = null;
         try {
+            Jade4DMZEngineClientHandler clientHandler = new Jade4DMZEngineClientHandler(getOptions(), operation, jumpDir, uuid, dir);
+
             jade = new JadeEngine(getTransferOptions(operation, dir, clientHandler));
             jade.setEngineClientHandler(clientHandler);
             jade.execute();
@@ -110,15 +112,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
                 history.onDMZFileTransferException(fileList, initialTargetDir);
             }
             throw new JobSchedulerException("Transfer failed", e);
-        } finally {
-            removeDirOnDMZ(jade, operation, dir);
-            try {
-                if (jade != null) {
-                    jade.logout();
-                }
-            } catch (Exception e) {
-                LOGGER.warn(String.format("Logout failed: %s", e.toString()));
-            }
         }
     }
 
@@ -544,39 +537,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
         return command.toString();
     }
 
-    private void removeDirOnDMZ(JadeEngine jade, Operation operation, String dir) {
-        try {
-            if (jade == null || operation.equals(Operation.remove)) {
-                return;
-            }
-            String command = getRemoveDirCommand(dir);
-            if (operation.equals(Operation.copyToInternet)) {
-                if (jade.getTargetClient() != null && jade.getTargetClient().getHandler() != null) {
-                    jade.executeTransferCommands("target remove dir", jade.getTargetClient(), command, null);
-                } else {
-                    LOGGER.warn(String.format("[skip][%s]targetClient or targetClient.Handler is null", command));
-                }
-            } else {
-                if (jade.getSourceClient() != null && jade.getSourceClient().getHandler() != null) {
-                    jade.executeTransferCommands("source remove temp files", jade.getSourceClient(), command, null);
-                } else {
-                    LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.warn(String.format("%s", ex.toString()));
-        }
-    }
-
-    private String getRemoveDirCommand(String dir) {
-        if (objOptions.jumpPlatform.isWindows()) {
-            dir = dir.replace('/', '\\');
-            return "rmdir \"" + dir + "\" /s /q;del /F /Q " + dir + "* 2>nul";
-        } else {
-            return "rm -f -R " + dir + "*";
-        }
-    }
-
     public SOSFileList getFileList() {
         return fileList;
     }
@@ -587,17 +547,6 @@ public class Jade4DMZ extends JadeBaseEngine implements Runnable {
             objOptions = new JADEOptions();
         }
         return objOptions;
-    }
-
-    @Override
-    public void run() {
-        try {
-            Execute();
-        } catch (JobSchedulerException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new JobSchedulerException("abort", e);
-        }
     }
 
     private String normalizeDirectoryPath(String path) {

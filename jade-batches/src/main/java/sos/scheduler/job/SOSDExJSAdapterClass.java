@@ -59,7 +59,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
     public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
-    
+
     public SOSDExJSAdapterClass() {
         super();
     }
@@ -121,7 +121,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             }
             jadeEngine.setJSJobUtilites(this);
             jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
-            
+
             history = new YadeHistory(spooler);
             Path hibernateConfigFile = null;
             try {
@@ -158,7 +158,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 if (isOrderJob() && history != null && history.getTransferId() != null) {
                     setOrderParameter(YADE_TRANSFER_ID, history.getTransferId().toString());
                 }
-                jadeEngine.logout();
             }
             transfFiles = jadeEngine.getFileList();
             int resultSetSize = transfFiles.getList().size();
