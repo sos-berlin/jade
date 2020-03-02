@@ -1042,7 +1042,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("files to transfer %s", size));
             }
+            long count = 0;
             for (SOSFileListEntry entry : fileList.getList()) {
+                count++;
+                entry.setTransferNumber(count);
                 entry.run();
             }
         } else {
