@@ -211,7 +211,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 } else {
                     if (jadeOptions.createOrdersForNewFiles.isTrue()) {
                         for (SOSFileListEntry listItem : transfFiles.getList()) {
-                            if (!listItem.isTargetFileExists()) {
+                            if (!listItem.isTargetFileExistsBeforeTransfer()) {
                                 createOrder(listItem, jobChainName);
                             }
                         }

@@ -7,11 +7,8 @@ public class SOSMsgJade extends SOSMsg {
     public SOSMsgJade(final String messageCode) {
         super(messageCode);
 
-        if (Messages == null) {
+        if (getMessages() == null) {
             super.setMessageResource("SOSDataExchange");
-            Messages = super.Messages;
-        } else {
-            super.Messages = Messages;
         }
     }
 }
