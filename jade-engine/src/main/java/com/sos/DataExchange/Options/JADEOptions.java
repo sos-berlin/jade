@@ -13,7 +13,7 @@ import org.xml.sax.InputSource;
 
 import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
+import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
@@ -32,7 +32,7 @@ public class JADEOptions extends SOSFTPOptions {
         super(settings);
     }
 
-    public JADEOptions(final enuTransferTypes source, final enuTransferTypes target) {
+    public JADEOptions(final TransferTypes source, final TransferTypes target) {
         super(source, target);
     }
 

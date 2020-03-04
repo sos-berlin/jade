@@ -45,7 +45,7 @@ import com.sos.JSHelper.Options.SOSOptionBoolean;
 import com.sos.JSHelper.Options.SOSOptionFolderName;
 import com.sos.JSHelper.Options.SOSOptionRegExp;
 import com.sos.JSHelper.Options.SOSOptionTime;
-import com.sos.JSHelper.Options.SOSOptionTransferType;
+import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
@@ -510,13 +510,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             sb.append(String.format(pattern4String, "IP", "could not be resolved!"));
         }
         if (!options.protocol.isLocal()) {
+            TransferTypes transferType = options.protocol.getEnum();
+
             sb.append(String.format(pattern4String, "User", options.user.getValue()));
-            if (options.protocol.getEnum() != SOSOptionTransferType.enuTransferTypes.sftp && options.protocol
-                    .getEnum() != SOSOptionTransferType.enuTransferTypes.ftp && options.protocol
-                            .getEnum() != SOSOptionTransferType.enuTransferTypes.zip) {
+            if (!transferType.equals(TransferTypes.sftp) && !transferType.equals(TransferTypes.ftp)) {
                 sb.append(String.format(pattern4String, "AuthMethod", options.sshAuthMethod.getValue()));
             }
-            if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.sftp) {
+
+            if (transferType.equals(TransferTypes.sftp)) {
                 if (options.required_authentications.isNotEmpty()) {
                     sb.append(String.format(pattern4String, "RequiredAuths", options.required_authentications.getValue()));
                     sb.append(String.format(pattern4String, "Password", "***"));
@@ -554,7 +555,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                 sb.append(String.format(pattern4String, "Password", "***"));
             }
 
-            if (options.protocol.getEnum() == SOSOptionTransferType.enuTransferTypes.ftp) {
+            if (transferType.equals(TransferTypes.ftp)) {
                 sb.append(String.format(pattern4Bool, "Passive", options.passiveMode.value()));
                 sb.append(String.format(pattern4String, "TransferMode", options.transferMode.getValue()));
             }

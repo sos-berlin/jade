@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
-import com.sos.JSHelper.Options.SOSOptionTransferType;
-import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
+import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
@@ -62,11 +61,14 @@ public class YadeDBOperationHelper {
                 sourceProtocolDBItem = new DBItemYadeProtocols();
                 sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
                 sourceProtocolDBItem.setPort(sourceOptions.port.value());
-                Integer sourceProtocol = getProtocolFromTransferType(sourceOptions.protocol.getEnum());
-                if (sourceOptions.protocol.getEnum() == enuTransferTypes.local) {
+                
+                TransferTypes p = sourceOptions.protocol.getEnum();
+                
+                Integer sourceProtocol = getProtocolFromTransferType(p);
+                if (p.equals(TransferTypes.local)) {
                     sourceProtocolDBItem.setPort(0);
                 }
-                if (sourceOptions.protocol.getEnum() == enuTransferTypes.webdav) {
+                else if (sourceOptions.protocol.getEnum().equals(TransferTypes.webdav)) {
                     URL url = sourceOptions.url.getUrl();
                     if (url.getProtocol().toLowerCase().equals("webdavs")) {
                         sourceProtocolDBItem.setProtocol(8);
@@ -94,10 +96,12 @@ public class YadeDBOperationHelper {
                     targetProtocolDBItem.setHostname(targetOptions.host.getValue());
                     targetProtocolDBItem.setPort(targetOptions.port.value());
                     Integer targetProtocol = getProtocolFromTransferType(targetOptions.protocol.getEnum());
-                    if (targetOptions.protocol.getEnum() == enuTransferTypes.local) {
+                    
+                    p = targetOptions.protocol.getEnum();
+                    if (p.equals(TransferTypes.local)) {
                         targetProtocolDBItem.setPort(0);
                     }
-                    if (targetOptions.protocol.getEnum() == enuTransferTypes.webdav) {
+                    else if (p.equals(TransferTypes.webdav)) {
                         URL url = targetOptions.url.getUrl();
                         if (url.getProtocol().toLowerCase().equals("webdavs")) {
                             targetProtocolDBItem.setProtocol(8);
@@ -480,7 +484,7 @@ public class YadeDBOperationHelper {
         }
     }
 
-    private Integer getProtocolFromTransferType(SOSOptionTransferType.enuTransferTypes transferType) {
+    private Integer getProtocolFromTransferType(TransferTypes transferType) {
         switch (transferType) {
         case local:
             return 1;
