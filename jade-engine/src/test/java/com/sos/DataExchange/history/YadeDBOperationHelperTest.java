@@ -7,13 +7,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sos.scheduler.job.JobSchedulerJobAdapter;
-
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod;
-import com.sos.JSHelper.Options.SOSOptionTransferType;
+import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.exception.SOSYadeSourceConnectionException;
 import com.sos.hibernate.classes.ClassList;
 import com.sos.hibernate.classes.SOSHibernateFactory;
@@ -76,10 +74,10 @@ public class YadeDBOperationHelperTest {
         jadeOptions.getSource().password.setValue("12345");
         jadeOptions.getSource().host.setValue("galadriel.sos");
         jadeOptions.getSource().directory.setValue("/home/test/tmp/test");
-        jadeOptions.getSource().protocol.setValue(SOSOptionTransferType.enuTransferTypes.sftp);
+        jadeOptions.getSource().protocol.setValue(TransferTypes.sftp);
         jadeOptions.fileSpec.setValue(".*");
         jadeOptions.getTarget().directory.setValue("C:/sp/testing/yade/in/477");
-        jadeOptions.getTarget().protocol.setValue(SOSOptionTransferType.enuTransferTypes.local);
+        jadeOptions.getTarget().protocol.setValue(TransferTypes.local);
         
         JadeEngine engine = new JadeEngine(jadeOptions);
         jadeOptions.setJobSchedulerId("sp_4012");
