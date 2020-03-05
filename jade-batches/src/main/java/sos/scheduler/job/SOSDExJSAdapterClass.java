@@ -233,7 +233,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         LOGGER.info(feedback);
     }
 
-    protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName, Variable_set currentOrderParams) {
+    protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName, Variable_set orderParams) {
         if (jobSchedulerFactory == null) {
             jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
@@ -245,7 +245,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         String targetFilename = listItem.getTargetFileName().replace('\\', '/');
         order.setId(targetFilename);
         order.setJobChain(jobChainName);
-        order.setParams(jobSchedulerFactory.setParams(buildOrderParams(listItem, currentOrderParams)));
+        order.setParams(jobSchedulerFactory.setParams(buildOrderParams(listItem, orderParams)));
         String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
         if (changeOrderState()) {
             String strNextState = jadeOptions.nextState.getValue();
