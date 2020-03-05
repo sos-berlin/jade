@@ -35,12 +35,14 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSDExJSAdapterClass.class);
 
-    private static final String CLASSNAME = "SOSDExJSAdapterClass";
+    private static final String CLASSNAME = SOSDExJSAdapterClass.class.getSimpleName();
+
     private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
     private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
     private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
     private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
     private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
+
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PATH = "scheduler_file_path";
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PARENT = "scheduler_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_NAME = "scheduler_file_name";
@@ -49,16 +51,15 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
-    // private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    // private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
+
     private SOSFileList transfFiles = null;
     private JADEOptions jadeOptions = null;
     private JadeEngine jadeEngine = null;
     private SchedulerObjectFactory jobSchedulerFactory = null;
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
 
     public SOSDExJSAdapterClass() {
         super();
@@ -134,8 +135,11 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.setJobSchedulerEventHandler(history);
 
             jadeEngine.getOptions().setJobSchedulerId(spooler.id());
-            if (isOrderJob()) {
-                Order order = getOrder();
+
+            boolean isOrderJob = spooler_task.job().order_queue() != null;
+            Order order = null;
+            if (isOrderJob) {
+                order = spooler_task.order();
                 jadeEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
                 jadeEngine.getOptions().setJobChain(order.job_chain().path());
                 jadeEngine.getOptions().setJobChainNodeName(order.state());
@@ -155,24 +159,24 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             } catch (Exception e) {
                 throw e;
             } finally {
-                if (isOrderJob() && history != null && history.getTransferId() != null) {
+                if (isOrderJob && history != null && history.getTransferId() != null) {
                     setOrderParameter(YADE_TRANSFER_ID, history.getTransferId().toString());
                 }
             }
             transfFiles = jadeEngine.getFileList();
             int resultSetSize = transfFiles.getList().size();
-            if (resultSetSize <= 0 && isOrderJob() && jadeOptions.pollErrorState.isDirty()) {
+            if (resultSetSize <= 0 && isOrderJob && jadeOptions.pollErrorState.isDirty()) {
                 String pollErrorState = jadeOptions.pollErrorState.getValue();
                 LOGGER.info("set order-state to " + pollErrorState);
                 setNextNodeState(pollErrorState);
                 getOrderParams().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
-                getOrder().set_state_text("ended with no files found");
+                order.set_state_text("ended with no files found");
             }
-            if (isJobchain()) {
+            if (isOrderJob) {
                 String onEmptyResultSetState = jadeOptions.onEmptyResultSet.getValue();
                 if (isNotEmpty(onEmptyResultSetState) && resultSetSize <= 0) {
                     JSJ_I_0090.toLog(onEmptyResultSetState);
-                    getOrder().set_state(onEmptyResultSetState);
+                    order.set_state(onEmptyResultSetState);
                 }
             }
             String raiseErrorIfResultSetIs = jadeOptions.raiseErrorIfResultSetIs.getValue();
@@ -184,7 +188,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                     throw new JobSchedulerException(strM);
                 }
             }
-            createOrderParameter(jadeEngine);
+            createOrderParameter(jadeEngine, isOrderJob, order);
 
             if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles
                     .isTrue())) {
@@ -287,6 +291,65 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return orderParams;
     }
 
+    private void createOrderParameter(final JadeEngine jadeEngine, boolean isOrderJob, Order order) throws Exception {
+        try {
+            String fileNames = "";
+            String filePaths = "";
+            Variable_set params = null;
+            if (isOrderJob) {
+                if (order != null && getOrderParams() != null) {
+                    params = getOrderParams();
+                }
+            } else {
+                params = spooler_task.params();
+            }
+            if (params != null) {
+                long size = transfFiles.getList().size();
+                if (size > 0) {
+                    for (SOSFileListEntry entry : transfFiles.getList()) {
+                        String name = entry.getFileName4ResultList();
+                        filePaths += name + ";";
+                        fileNames += name + ";";
+                    }
+                    filePaths = filePaths.substring(0, filePaths.length() - 1);
+                    fileNames = fileNames.substring(0, fileNames.length() - 1);
+                }
+                setOrderParameter(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT, String.valueOf(size));
+                Variable_set vs = null;
+                if (isNotNull(order)) {
+                    vs = getOrderParams();
+                }
+                if (isNotNull(vs)) {
+                    String resultList2File = jadeEngine.getOptions().resultListFile.getValue();
+                    if (isNotEmpty(resultList2File) && isNotEmpty(fileNames)) {
+                        JSTextFile file = new JSTextFile(resultList2File);
+                        try {
+                            if (file.canWrite()) {
+                                file.write(fileNames);
+                                file.close();
+                            } else {
+                                JSJ_F_0090.toLog(jadeEngine.getOptions().resultListFile.getShortKey(), resultList2File);
+                            }
+                        } catch (Exception e) {
+                            throw new JobSchedulerException(JSJ_F_0080.get(resultList2File, jadeEngine.getOptions().resultListFile.getShortKey()), e);
+                        }
+                    }
+                    setOrderParameter(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, fileNames);
+                    setOrderParameter(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(size));
+                }
+                params.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) size));
+                params.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
+                params.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
+                params.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
+            }
+        } catch (JobSchedulerException e) {
+            LOGGER.error("error occurred creating order Parameter: " + e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            throw new JobSchedulerException("error occurred creating order Parameter: ", e);
+        }
+    }
+
     private String[] getFilenameParts(String folder, String filename) {
         String[] file = { "", "", "" };
         if (folder == null) {
@@ -309,66 +372,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private boolean changeOrderState() {
         return isNotEmpty(jadeOptions.nextState.getValue());
-    }
-
-    private void createOrderParameter(final JadeEngine objR) throws Exception {
-        try {
-            String fileNames = "";
-            String filePaths = "";
-            Variable_set objParams = null;
-            if (spooler_job.order_queue() != null) {
-                if (getOrder() != null && getOrderParams() != null) {
-                    objParams = getOrderParams();
-                }
-            } else {
-                objParams = spooler_task.params();
-            }
-            if (objParams != null) {
-                long intNoOfHitsInResultSet = transfFiles.getList().size();
-                if (intNoOfHitsInResultSet > 0) {
-                    for (SOSFileListEntry objListItem : transfFiles.getList()) {
-                        String strT = objListItem.getFileName4ResultList();
-                        filePaths += strT + ";";
-                        fileNames += strT + ";";
-                    }
-                    filePaths = filePaths.substring(0, filePaths.length() - 1);
-                    fileNames = fileNames.substring(0, fileNames.length() - 1);
-                }
-                setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT, String.valueOf(intNoOfHitsInResultSet));
-                Variable_set objP = null;
-                if (isNotNull(getOrder())) {
-                    objP = getOrderParams();
-                }
-                if (isNotNull(objP)) {
-                    String strResultList2File = objR.getOptions().resultListFile.getValue();
-                    if (isNotEmpty(strResultList2File) && isNotEmpty(fileNames)) {
-                        JSTextFile objResultListFile = new JSTextFile(strResultList2File);
-                        try {
-                            if (objResultListFile.canWrite()) {
-                                objResultListFile.write(fileNames);
-                                objResultListFile.close();
-                            } else {
-                                JSJ_F_0090.toLog(objR.getOptions().resultListFile.getShortKey(), strResultList2File);
-                            }
-                        } catch (Exception e) {
-                            String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().resultListFile.getShortKey());
-                            throw new JobSchedulerException(strM, e);
-                        }
-                    }
-                    setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, fileNames);
-                    setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
-                }
-                objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
-                objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
-                objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
-            }
-        } catch (JobSchedulerException e) {
-            LOGGER.error("error occurred creating order Parameter: " + e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            throw new JobSchedulerException("error occurred creating order Parameter: ", e);
-        }
     }
 
 }
