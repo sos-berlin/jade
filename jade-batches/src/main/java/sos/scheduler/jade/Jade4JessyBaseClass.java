@@ -2,7 +2,6 @@ package sos.scheduler.jade;
 
 import java.util.HashMap;
 
-
 import sos.scheduler.job.JobSchedulerJobAdapter;
 
 import com.sos.DataExchange.JadeEngine;
@@ -14,18 +13,14 @@ import com.sos.i18n.annotation.I18NResourceBundle;
  *
  * \brief AdapterClass of SOSDEx for the SOSJobScheduler
  *
- * This Class Jade4JessyBaseClass works as an adapter-class between the SOS
- * JobScheduler and the worker-class SOSDEx.
+ * This Class Jade4JessyBaseClass works as an adapter-class between the SOS JobScheduler and the worker-class SOSDEx.
  *
  * 
  *
- * see \see
- * J:\E\java\development\com.sos.scheduler\src\sos\scheduler\jobdoc\SOSDEx.xml
- * for more details.
+ * see \see J:\E\java\development\com.sos.scheduler\src\sos\scheduler\jobdoc\SOSDEx.xml for more details.
  *
- * \verbatim ; mechanicaly created by
- * C:\Users\KB\eclipse\sos.scheduler.xsl\JSJobDoc2JSAdapterClass.xsl from
- * http://www.sos-berlin.com at 20100930175652 \endverbatim */
+ * \verbatim ; mechanicaly created by C:\Users\KB\eclipse\sos.scheduler.xsl\JSJobDoc2JSAdapterClass.xsl from http://www.sos-berlin.com at 20100930175652
+ * \endverbatim */
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
 
@@ -38,7 +33,9 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
     protected HashMap<String, String> hsmParameters = null;
 
     public void init() {
-        @SuppressWarnings("unused") final String conMethodName = conClassName + "::init"; //$NON-NLS-1$
+        @SuppressWarnings("unused")
+//$NON-NLS-0$
+        final String conMethodName = conClassName + "::init";
         doInitialize();
     }
 
@@ -47,19 +44,22 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
 
     @Override
     public boolean spooler_init() {
-        @SuppressWarnings("unused") final String conMethodName = conClassName + "::spooler_init"; //$NON-NLS-1$
+        @SuppressWarnings("unused")
+//$NON-NLS-0$
+        final String conMethodName = conClassName + "::spooler_init";
         return super.spooler_init();
     }
 
     @Override
     public boolean spooler_process() throws Exception {
-        @SuppressWarnings("unused") final String conMethodName = conClassName + "::spooler_process"; //$NON-NLS-1$
+        @SuppressWarnings("unused")
+//$NON-NLS-0$
+        final String conMethodName = conClassName + "::spooler_process";
         try {
             super.spooler_process();
             doProcessing();
         } catch (Exception e) {
-            logger.error(String.format("%1$s ended abnormal.", conClassName));
-            logger.error(stackTrace2String(e));
+            logger.error(e.toString(), e);
             return signalFailure();
         } finally {
         } // finally
@@ -69,7 +69,9 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
 
     @Override
     public void spooler_exit() {
-        @SuppressWarnings("unused") final String conMethodName = conClassName + "::spooler_exit"; //$NON-NLS-1$
+        @SuppressWarnings("unused")
+//$NON-NLS-0$
+        final String conMethodName = conClassName + "::spooler_exit";
         super.spooler_exit();
     }
 
