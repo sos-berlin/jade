@@ -600,9 +600,11 @@ public class YadeHistory implements IJobSchedulerEventHandler {
         }
         event.setVariables(variables);
         try {
-            LOGGER.trace("calling spooler.execute_xml started");
-            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", new ObjectMapper().writeValueAsString(event)));
-            LOGGER.trace("calling spooler.execute_xml finished");
+            String value = new ObjectMapper().writeValueAsString(event);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("[sendEvent][%s]%s", key, value));
+            }
+            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", value));
         } catch (JsonProcessingException e) {
             LOGGER.error("unable to send event due to: " + e.getMessage(), e);
         }

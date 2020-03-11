@@ -58,25 +58,23 @@ public class YadeDBOperationHelper {
             SOSConnection2OptionsAlternate sourceOptions = options.getSource();
             SOSConnection2OptionsAlternate targetOptions = options.getTarget();
             if (sourceProtocolDBItem == null && options.sourceDir.isDirty()) {
+                TransferTypes transferType = sourceOptions.protocol.getEnum();
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace(String.format("[source]%s=%s", transferType.name(), transferType.numeric()));
+                }
+
                 sourceProtocolDBItem = new DBItemYadeProtocols();
                 sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
                 sourceProtocolDBItem.setPort(sourceOptions.port.value());
-                
-                TransferTypes p = sourceOptions.protocol.getEnum();
-                
-                Integer sourceProtocol = getProtocolFromTransferType(p);
-                if (p.equals(TransferTypes.local)) {
+                sourceProtocolDBItem.setProtocol(transferType.numeric());
+
+                if (transferType.equals(TransferTypes.local)) {
                     sourceProtocolDBItem.setPort(0);
-                }
-                else if (sourceOptions.protocol.getEnum().equals(TransferTypes.webdav)) {
+                } else if (transferType.equals(TransferTypes.webdav)) {
                     URL url = sourceOptions.url.getUrl();
-                    if (url.getProtocol().toLowerCase().equals("webdavs")) {
-                        sourceProtocolDBItem.setProtocol(8);
-                    } else {
-                        sourceProtocolDBItem.setProtocol(sourceProtocol);
+                    if (url.getProtocol().toLowerCase().equals(TransferTypes.webdavs.name())) {
+                        sourceProtocolDBItem.setProtocol(TransferTypes.webdavs.numeric());
                     }
-                } else {
-                    sourceProtocolDBItem.setProtocol(sourceProtocol);
                 }
                 if (sourceOptions.user.isDirty() && sourceOptions.user.getValue() != null && sourceOptions.user.isNotEmpty()) {
                     sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
@@ -92,24 +90,23 @@ public class YadeDBOperationHelper {
                     dbSession.save(sourceProtocolDBItem);
                 }
                 if (targetProtocolDBItem == null && options.targetDir.isDirty()) {
+                    transferType = targetOptions.protocol.getEnum();
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace(String.format("[target]%s=%s", transferType.name(), transferType.numeric()));
+                    }
+
                     targetProtocolDBItem = new DBItemYadeProtocols();
                     targetProtocolDBItem.setHostname(targetOptions.host.getValue());
                     targetProtocolDBItem.setPort(targetOptions.port.value());
-                    Integer targetProtocol = getProtocolFromTransferType(targetOptions.protocol.getEnum());
-                    
-                    p = targetOptions.protocol.getEnum();
-                    if (p.equals(TransferTypes.local)) {
+                    targetProtocolDBItem.setProtocol(transferType.numeric());
+
+                    if (transferType.equals(TransferTypes.local)) {
                         targetProtocolDBItem.setPort(0);
-                    }
-                    else if (p.equals(TransferTypes.webdav)) {
+                    } else if (transferType.equals(TransferTypes.webdav)) {
                         URL url = targetOptions.url.getUrl();
-                        if (url.getProtocol().toLowerCase().equals("webdavs")) {
-                            targetProtocolDBItem.setProtocol(8);
-                        } else {
-                            targetProtocolDBItem.setProtocol(targetProtocol);
+                        if (url.getProtocol().toLowerCase().equals(TransferTypes.webdavs.name())) {
+                            targetProtocolDBItem.setProtocol(TransferTypes.webdavs.numeric());
                         }
-                    } else {
-                        targetProtocolDBItem.setProtocol(targetProtocol);
                     }
                     if (targetOptions.user.isDirty() && targetOptions.user.getValue() != null && targetOptions.user.isNotEmpty()) {
                         targetProtocolDBItem.setAccount(targetOptions.user.getValue());
@@ -127,10 +124,15 @@ public class YadeDBOperationHelper {
                 }
 
                 if (jumpProtocolDBItem == null && options.jumpHost.isDirty()) {
+                    transferType = TransferTypes.valueOf(options.jumpProtocol.getValue().toLowerCase());
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace(String.format("[jump]%s=%s", transferType.name(), transferType.numeric()));
+                    }
+
                     jumpProtocolDBItem = new DBItemYadeProtocols();
                     jumpProtocolDBItem.setHostname(options.jumpHost.getValue());
                     jumpProtocolDBItem.setPort(options.jumpPort.value());
-                    jumpProtocolDBItem.setProtocol(getProtocolFromString(options.jumpProtocol.getValue()));
+                    jumpProtocolDBItem.setProtocol(transferType.numeric());
                     if (options.jumpUser.isDirty() && options.jumpUser.getValue() != null && options.jumpUser.isNotEmpty()) {
                         jumpProtocolDBItem.setAccount(options.jumpUser.getValue());
                     } else {
@@ -281,6 +283,11 @@ public class YadeDBOperationHelper {
 
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry, boolean finalUpdate, String targetPath)
             throws Exception {
+
+        if (transferDBItem == null) {
+            return;
+        }
+
         YadeDBLayer dbLayer = null;
         if (dbSession != null) {
             dbLayer = new YadeDBLayer(dbSession);
@@ -481,54 +488,6 @@ public class YadeDBOperationHelper {
             return 6;
         default:
             return 0;
-        }
-    }
-
-    private Integer getProtocolFromTransferType(TransferTypes transferType) {
-        switch (transferType) {
-        case local:
-            return 1;
-        case ftp:
-            return 2;
-        case ftps:
-            return 3;
-        case sftp:
-            return 4;
-        case http:
-            return 5;
-        case https:
-            return 6;
-        case webdav:
-            return 7;
-        case smb:
-            return 9;
-        default:
-            return null;
-        }
-    }
-
-    private Integer getProtocolFromString(String protocolName) {
-        switch (protocolName.toLowerCase()) {
-        case "local":
-            return 1;
-        case "ftp":
-            return 2;
-        case "ftps":
-            return 3;
-        case "sftp":
-            return 4;
-        case "http":
-            return 5;
-        case "https":
-            return 6;
-        case "webdav":
-            return 7;
-        case "webdavs":
-            return 8;
-        case "smb":
-            return 9;
-        default:
-            return null;
         }
     }
 
