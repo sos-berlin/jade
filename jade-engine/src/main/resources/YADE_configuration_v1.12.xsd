@@ -5445,8 +5445,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				-->
 				        <xs:element ref="MaxFiles" minOccurs="0"/>
 				        <xs:element ref="CheckIntegrityHash" minOccurs="0"/>
-                <xs:element ref="RetryOnConnectionError" minOccurs="0"/>
-			      </xs:sequence>
+        	</xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="Selection">
@@ -6731,8 +6730,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="KeepModificationDate" minOccurs="0"/>
 				        <xs:element ref="DisableMakeDirectories" minOccurs="0"/>
 				        <xs:element ref="DisableOverwriteFiles" minOccurs="0"/>
-                <xs:element ref="RetryOnConnectionError" minOccurs="0"/>
-			      </xs:sequence>
+           </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
 	  <xs:element name="DisableOverwriteFiles" type="xs:boolean" default="false">
@@ -6874,8 +6872,9 @@ SSH, etc.) server to which a connection has to be made.</p>
 		    <xs:complexType>
 			      <xs:sequence>
 				        <xs:element ref="BufferSize" minOccurs="0"/>
-				        <xs:element ref="ConcurrentTransfer" minOccurs="0"/>
+				        <!--xs:element ref="ConcurrentTransfer" minOccurs="0"/-->
 				        <xs:element ref="Transactional" minOccurs="0"/>
+                <xs:element ref="RetryOnConnectionError" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
