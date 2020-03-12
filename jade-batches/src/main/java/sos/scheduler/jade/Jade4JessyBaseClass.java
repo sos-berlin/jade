@@ -18,7 +18,6 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
     private static final Logger LOGGER = LogManager.getLogger(Jade4JessyBaseClass.class);
 
     private final String conClassName = this.getClass().getSimpleName();
-    private static final Logger LOGGER = LoggerFactory.getLogger(Jade4JessyBaseClass.class);
     @SuppressWarnings("unused")
     private final String conSVNVersion = "$Id: Jade4JessyBaseClass.java 23709 2014-04-11 06:33:04Z sp $";
     protected SOSFTPOptions objO = null;
