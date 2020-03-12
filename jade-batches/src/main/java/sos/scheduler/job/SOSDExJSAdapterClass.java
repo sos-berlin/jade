@@ -70,21 +70,21 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         try {
             super.spooler_process();
             doProcessing();
+            return getSpoolerProcess().getSuccess();
         } catch (Exception e) {
             LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
             throw e;
         }
-        return signalSuccess();
     }
 
     private void doProcessing() throws Exception {
         YadeHistory history = null;
         try {
             jadeOptions = new JADEOptions();
-            jadeOptions.setCurrentNodeName(getCurrentNodeName());
+            jadeOptions.setCurrentNodeName(getCurrentNodeName(getSpoolerProcess().getOrder(), true));
             jadeEngine = new JadeEngine(jadeOptions);
             Path xml2iniFile = null;
-            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
+            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters(getSpoolerProcess().getOrder()));
             if (schedulerParams != null) {
                 if (schedulerParams.containsKey("settings")) {
                     String paramSettings = schedulerParams.get("settings");
@@ -140,7 +140,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             Order order = null;
             Variable_set orderParams = null;
             if (isOrderJob) {
-                order = spooler_task.order();
+                order = getSpoolerProcess().getOrder();
                 orderParams = order.params();
                 jadeEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
                 jadeEngine.getOptions().setJobChain(order.job_chain().path());
@@ -170,7 +170,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             if (resultSetSize <= 0 && isOrderJob && orderParams != null && jadeOptions.pollErrorState.isDirty()) {
                 String pollErrorState = jadeOptions.pollErrorState.getValue();
                 LOGGER.info("set order-state to " + pollErrorState);
-                setNextNodeState(pollErrorState);
+                order.set_state(pollErrorState);
                 orderParams.set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
                 order.set_state_text("ended with no files found");
             }
@@ -185,12 +185,12 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             if (isNotEmpty(raiseErrorIfResultSetIs)) {
                 boolean flgR = jadeOptions.expectedSizeOfResultSet.compare(raiseErrorIfResultSetIs, resultSetSize);
                 if (flgR) {
-                    String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expectedSizeOfResultSet.value());
-                    LOGGER.error(strM);
-                    throw new JobSchedulerException(strM);
+                    String msg = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expectedSizeOfResultSet.value());
+                    LOGGER.error(msg);
+                    throw new JobSchedulerException(msg);
                 }
             }
-            createOrderParameter(jadeEngine, isOrderJob, order, orderParams);
+            createOrderParameter(isOrderJob, order, orderParams);
 
             if (jadeOptions.createOrder.isNotDirty() && (jadeOptions.createOrdersForNewFiles.isTrue() || jadeOptions.createOrdersForAllFiles
                     .isTrue())) {
@@ -293,7 +293,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return orderParams;
     }
 
-    private void createOrderParameter(final JadeEngine jadeEngine, boolean isOrderJob, Order order, Variable_set orderParams) throws Exception {
+    private void createOrderParameter(boolean isOrderJob, Order order, Variable_set orderParams) throws Exception {
         try {
             String fileNames = "";
             String filePaths = "";
