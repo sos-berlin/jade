@@ -75,12 +75,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
     @Override
     public void setJSParam(final String pstrKey, final StringBuffer pstrValue) {
     }
-
-    @Override
-    public String getCurrentNodeName() {
-        return "";
-    }
-
+    
     @Override
     public void setJSJobUtilites(final JSJobUtilities pobjJSJobUtilities) {
 
