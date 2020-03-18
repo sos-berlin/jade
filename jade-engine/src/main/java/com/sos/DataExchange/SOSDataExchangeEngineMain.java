@@ -104,11 +104,6 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
     }
 
     @Override
-    public String getCurrentNodeName() {
-        return "";
-    }
-
-    @Override
     public void setJSJobUtilites(final JSJobUtilities pobjJSJobUtilities) {
         //
     }
