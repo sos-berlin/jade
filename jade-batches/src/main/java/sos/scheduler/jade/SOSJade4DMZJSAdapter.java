@@ -96,7 +96,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine = new Jade4DMZ();
             jadeOptions = jade4DMZEngine.getOptions();
             jadeOptions.setCurrentNodeName(getCurrentNodeName(getSpoolerProcess().getOrder(),true));
-            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters(getSpoolerProcess().getOrder()));
+            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getSpoolerProcess().getOrder());
             if (schedulerParams != null) {
                 if (schedulerParams.containsKey("settings")) {
                     String paramSettings = schedulerParams.get("settings");

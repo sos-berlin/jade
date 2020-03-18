@@ -34,7 +34,7 @@ public class SOSJadeHistoryJSAdapterClass extends JobSchedulerJobAdapter impleme
         SOSJadeHistoryOptions objO = objR.getOptions();
         objO.setCurrentNodeName(getCurrentNodeName(getSpoolerProcess().getOrder(), true));
 
-        objO.setAllOptions(getSchedulerParameterAsProperties(getJobOrOrderParameters(getSpoolerProcess().getOrder())));
+        objO.setAllOptions(getSchedulerParameterAsProperties(getSpoolerProcess().getOrder()));
 
         String configuration_file = "";
         if (objO.getItem("configuration_file") != null) {
