@@ -36,6 +36,7 @@
 		<Logger name="org.hibernate" level="fatal" />
 		<Logger name="com.mchange.v2" level="fatal" />
 		<Logger name="com.sos" level="trace" />
+		<Logger name="sos" level="trace" />
 		<Logger name="JadeReportLog" level="info" additivity="false">
 			<AppenderRef ref="JadeReportLogAppender" />
 			<AppenderRef ref="JadeReportLogHTMLAppender" />
