@@ -97,7 +97,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         try {
             super.spooler_process();
             doProcessing();
-            return getSpoolerProcess().getSuccess();
+            return getSpoolerProcess().isOrderJob();
         } catch (Exception e) {
             LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
             throw e;
@@ -152,18 +152,18 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         jadeEngine.setJobSchedulerEventHandler(history);
         jadeEngine.getOptions().setJobSchedulerId(spooler.id());
 
-        boolean isOrderJob = spooler_task.job().order_queue() != null;
         Order order = null;
         Variable_set orderParams = null;
+        boolean isOrderJob = getSpoolerProcess().isOrderJob();
         if (isOrderJob) {
             order = getSpoolerProcess().getOrder();
             orderParams = order.params();
-            jadeEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
+            jadeEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
             jadeEngine.getOptions().setJobChain(order.job_chain().path());
             jadeEngine.getOptions().setJobChainNodeName(order.state());
             jadeEngine.getOptions().setOrderId(order.id());
         }
-        jadeEngine.getOptions().setTaskId("" + spooler_task.id());
+        jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));
         if (history != null) {
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
