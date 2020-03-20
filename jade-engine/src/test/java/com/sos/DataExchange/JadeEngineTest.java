@@ -28,6 +28,13 @@ public class JadeEngineTest {
         this.execute(options);
     }
 
+    @Ignore
+    @Test
+    public void test2() throws Exception {
+        options.profile.setValue(PROFILE);
+        options.readSettingsFile();
+    }
+
     private void execute(JADEOptions options) throws Exception {
         JadeEngine engine = new JadeEngine(options);
         engine.execute();
