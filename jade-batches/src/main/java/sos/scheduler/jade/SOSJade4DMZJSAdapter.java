@@ -82,7 +82,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         try {
             super.spooler_process();
             doProcessing();
-            return getSpoolerProcess().getSuccess();
+            return getSpoolerProcess().isOrderJob();
         } catch (Exception e) {
             LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
             throw e;
