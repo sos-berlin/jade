@@ -73,7 +73,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
     }
 
     @Override
-    public void setJSParam(final String pstrKey, final StringBuffer pstrValue) {
+    public void setJSParam(final String pstrKey, final StringBuilder pstrValue) {
     }
     
     @Override
