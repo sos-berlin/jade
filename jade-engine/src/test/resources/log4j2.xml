@@ -7,8 +7,8 @@
 		</Console>
 
 		<RollingFile name="JadeReportLogAppender"
-			fileName="${java.io.tmpdir}/Jade-client.log"
-			filePattern="${java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.log">
+			fileName="${sys:java.io.tmpdir}/Jade-client.log"
+			filePattern="${sys:java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.log">
 			<PatternLayout
 				pattern="%d{yyyy-MM-dd HH:mm:ss,SSSZ}[%c][%-5p]-%m%n"
 				charset="UTF-8" />
@@ -18,8 +18,8 @@
 		</RollingFile>
 
 		<RollingFile name="JadeReportLogHTMLAppender"
-			fileName="${java.io.tmpdir}/Jade-client.html"
-			filePattern="${java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.html"
+			fileName="${sys:java.io.tmpdir}/Jade-client.html"
+			filePattern="${sys:java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.html"
 			append="false"><!-- only current transfer -->
 			<HTMLLayout charset="UTF-8" title="YADE"
 				locationInfo="false" fontSize="XXSMALL" />

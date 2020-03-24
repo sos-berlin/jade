@@ -46,6 +46,9 @@ public class JADEOptions extends SOSFTPOptions {
             this.settings.setValue(iniFile.toString());
             this.setDeleteSettingsFileOnExit(true);
         }
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("[readSettingsFile]settings=%s", settings.getValue()));
+        }
         return super.readSettingsFile();
     }
 
