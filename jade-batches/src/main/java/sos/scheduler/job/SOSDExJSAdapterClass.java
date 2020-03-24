@@ -107,7 +107,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private void doProcessing() throws Exception {
 
         JADEOptions jadeOptions = new JADEOptions();
-        jadeOptions.setCurrentNodeName(getCurrentNodeName(getSpoolerProcess().getOrder(), true));
+        String currentNode = getCurrentNodeName(getSpoolerProcess().getOrder(), true);
+        jadeOptions.setCurrentNodeName(currentNode);
         JadeEngine jadeEngine = new JadeEngine(jadeOptions);
         Path xml2iniFile = null;
         HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getSpoolerProcess().getOrder());
@@ -150,6 +151,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
 
         jadeEngine.setJobSchedulerEventHandler(history);
+
         jadeEngine.getOptions().setJobSchedulerId(spooler.id());
 
         Order order = null;
@@ -160,7 +162,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             orderParams = order.params();
             jadeEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
             jadeEngine.getOptions().setJobChain(order.job_chain().path());
-            jadeEngine.getOptions().setJobChainNodeName(order.state());
+            jadeEngine.getOptions().setJobChainNodeName(currentNode);
             jadeEngine.getOptions().setOrderId(order.id());
         }
         jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));

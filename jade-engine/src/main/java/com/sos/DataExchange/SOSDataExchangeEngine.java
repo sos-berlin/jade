@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -36,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -104,15 +102,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     private Instant endTime;
 
     public SOSDataExchangeEngine() throws Exception {
-        getOptions();
-    }
-
-    public SOSDataExchangeEngine(final HashMap<String, String> settings) throws Exception {
-        getOptions();
-        objOptions.setAllOptions(settings);
-    }
-
-    public SOSDataExchangeEngine(final Properties properties) throws Exception {
         getOptions();
     }
 
@@ -424,14 +413,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                 if (history != null) {
                     history.beforeTransfer(objOptions, null);
                 }
+            } catch (Throwable e) {
+                if (isDebugEnabled) {
+                    LOGGER.debug(getOptions().dirtyString());
+
+                    debugOptions(getOptions().getSource());
+                    debugOptions(getOptions().getTarget());
+                }
+                throw e;
             } finally {
                 showBanner();
             }
-            UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(objOptions);
-            if (updateHelper.checkBefore()) {
-                updateHelper.executeBefore();
-                objOptions = updateHelper.getOptions();
-            }
+            // UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(objOptions);
+            // if (updateHelper.checkBefore()) {
+            // updateHelper.executeBefore();
+            // objOptions = updateHelper.getOptions();
+            // }
 
             transfer();
             transferAfterCheck();
@@ -1220,8 +1217,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             getOptions().checkMandatory();
             if (isDebugEnabled) {
                 LOGGER.debug(getOptions().dirtyString());
-                LOGGER.debug("[source]" + getOptions().getSource().dirtyString());
-                LOGGER.debug("[target]" + getOptions().getTarget().dirtyString());
+
+                debugOptions(getOptions().getSource());
+                debugOptions(getOptions().getTarget());
             }
             if (history != null) {
                 if (objOptions.pollingServer.isTrue() || objOptions.pollingServerPollForever.isTrue() || objOptions.pollingServerDuration
@@ -1432,6 +1430,20 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                 executePostTransferCommandsFinal(exception);
             } catch (Exception e) {
                 LOGGER.error(e.toString());
+            }
+        }
+    }
+
+    private void debugOptions(SOSConnection2OptionsAlternate opt) {
+        String range = opt.isSource ? "source" : "target";
+        LOGGER.debug(String.format("[%s]%s", range, opt.dirtyString()));
+        if (opt.getCredentialStore().useCredentialStore.value()) {
+            LOGGER.debug(String.format("[%s][credential store]%s", range, opt.getCredentialStore().dirtyString()));
+        }
+        if (opt.alternateOptionsUsed.value()) {
+            LOGGER.debug(String.format("[alternative_%s]%s", range, opt.getAlternatives().dirtyString()));
+            if (opt.getAlternatives().getCredentialStore().useCredentialStore.value()) {
+                LOGGER.debug(String.format("[alternative_%s][credential store]%s", range, opt.getAlternatives().getCredentialStore().dirtyString()));
             }
         }
     }
