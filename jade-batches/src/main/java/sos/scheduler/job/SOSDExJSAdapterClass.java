@@ -139,7 +139,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 }
             }
         }
-        jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
+        jadeOptions.setAllOptionsOnJob(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
         if (xml2iniFile != null) {// !!! setAllOptions2 override the jadeOptions.settings
             jadeOptions.settings.setValue(xml2iniFile.toString());
         }

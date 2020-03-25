@@ -40,9 +40,8 @@ public class SOSJadeHistoryOptionsSuperClass extends JSOptionsClass {
     }
 
     @Override
-    public void setAllOptions(final HashMap<String, String> pobjJSSettings) {
-        objSettings = pobjJSSettings;
-        super.setAllOptions(pobjJSSettings);
+    public void setAllOptions(HashMap<String, String> settings) {
+        super.setAllOptions(settings);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class SOSJadeHistoryOptionsSuperClass extends JSOptionsClass {
     @Override
     public void commandLineArgs(final String[] pstrArgs) {
         super.commandLineArgs(pstrArgs);
-        this.setAllOptions(super.objSettings);
+        this.setAllOptions(super.getSettings());
     }
 
 }

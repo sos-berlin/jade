@@ -7,7 +7,7 @@ import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionPortNumber;
 import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
-import com.sos.VirtualFileSystem.Options.SOSDestinationMainOptions;
+import com.sos.VirtualFileSystem.Options.SOSTransferOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
@@ -20,7 +20,7 @@ public class SFTPSendJob extends Jade4JessyBaseClass {
         objO.operation.setValue(SOSOptionJadeOperation.enuJadeOperations.send);
         objO.protocol.setValue(TransferTypes.sftp);
         objO.port.value(SOSOptionPortNumber.getStandardSFTPPort());
-        SOSDestinationMainOptions objConn = objO.getConnectionOptions();
+        SOSTransferOptions objConn = objO.getTransferOptions();
         if (objConn != null) {
             objConn.getTarget().protocol.setValue(TransferTypes.sftp);
         }

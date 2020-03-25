@@ -72,7 +72,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
         objO = objR.getOptions();
         objO.setCurrentNodeName(getCurrentNodeName(getSpoolerProcess().getOrder(), true));
         hsmParameters = getSchedulerParameterAsProperties(getSpoolerProcess().getOrder());
-        objO.setAllOptions2(objO.deletePrefix(hsmParameters, "ftp_"));
+        objO.setAllOptions(objO.deletePrefix(hsmParameters, "ftp_"));
         objO.checkMandatory();
         setSpecialOptions();
         int intLogLevel = spooler_log.level();
