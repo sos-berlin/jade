@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.SOSDataExchangeEngine;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
@@ -20,7 +20,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
     private final String conClassName = this.getClass().getSimpleName();
     @SuppressWarnings("unused")
     private final String conSVNVersion = "$Id: Jade4JessyBaseClass.java 23709 2014-04-11 06:33:04Z sp $";
-    protected SOSFTPOptions objO = null;
+    protected SOSBaseOptions objO = null;
     protected SOSDataExchangeEngine objR = null;
     protected HashMap<String, String> hsmParameters = null;
 

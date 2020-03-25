@@ -11,7 +11,7 @@ import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.VirtualFileSystem.Interfaces.IJadeTransferDetailHistoryData;
 import com.sos.VirtualFileSystem.Interfaces.IJadeTransferHistoryData;
 import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHistory;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
 import com.sos.jade.db.JadeTransferDBItem;
 import com.sos.jade.db.JadeTransferDBLayer;
 import com.sos.jade.db.JadeTransferDetailDBItem;
@@ -129,7 +129,7 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
     }
 
     @Override
-    public void setData(final SOSFTPOptions pobjOptions) {
+    public void setData(final SOSBaseOptions pobjOptions) {
         return;
     }
 

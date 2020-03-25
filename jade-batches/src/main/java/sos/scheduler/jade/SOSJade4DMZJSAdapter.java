@@ -26,7 +26,7 @@ import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jobscheduler.model.event.YadeEvent;
 import com.sos.jobscheduler.model.event.YadeVariables;
@@ -67,7 +67,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private SOSFileList transfFiles = null;
-    private SOSFTPOptions jadeOptions = null;
+    private SOSBaseOptions jadeOptions = null;
     private YadeHistory history;
     private Jade4DMZ jade4DMZEngine;
 

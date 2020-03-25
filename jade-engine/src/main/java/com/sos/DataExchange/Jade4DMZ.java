@@ -13,7 +13,7 @@ import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.VirtualFileSystem.Options.SOSDestinationOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.keepass.SOSKeePassDatabase;
 
@@ -115,8 +115,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         }
     }
 
-    private SOSConnection2OptionsAlternate createJumpOptions(String dir) {
-        SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
+    private SOSDestinationOptions createJumpOptions(String dir) {
+        SOSDestinationOptions options = new SOSDestinationOptions();
         options.protocol.setValue("sftp");
         options.host.setValue(objOptions.jumpHost.getValue());
         options.port.setValue(objOptions.jumpPort.getValue());
@@ -179,8 +179,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         // From DMZ to Internet as PostTransferCommands
         JADEOptions options = new JADEOptions();
         options = addJADEOptionsForTarget(operation, options);
-        SOSConnection2OptionsAlternate sourceOptions = setLocalOptionsPrefixed("source_", dir);
-        SOSConnection2OptionsAlternate targetOptions = objOptions.getTarget();
+        SOSDestinationOptions sourceOptions = setLocalOptionsPrefixed("source_", dir);
+        SOSDestinationOptions targetOptions = objOptions.getTarget();
         options.getConnectionOptions().setSource(sourceOptions);
         options.getConnectionOptions().setTarget(targetOptions);
         return options;
@@ -191,7 +191,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         String prefix = "target_";
         JADEOptions options = new JADEOptions();
         options = addJADEOptionsForSource(operation, options);
-        SOSConnection2OptionsAlternate targetOptions = setLocalOptionsPrefixed(prefix, dir);
+        SOSDestinationOptions targetOptions = setLocalOptionsPrefixed(prefix, dir);
         targetOptions.preCommand.setValue(objOptions.jumpPreCommand.getValue());
         targetOptions.postCommand.setValue(objOptions.jumpPostCommandOnSuccess.getValue());
         targetOptions.preTransferCommands.setValue(objOptions.jumpPreTransferCommands.getValue());
@@ -207,7 +207,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         targetOptions.postTransferCommandsFinal.setPrefix(prefix);
         targetOptions.commandDelimiter.setPrefix(prefix);
         options.getConnectionOptions().setTarget(targetOptions);
-        SOSConnection2OptionsAlternate sourceOptions = objOptions.getSource();
+        SOSDestinationOptions sourceOptions = objOptions.getSource();
         options.getConnectionOptions().setSource(sourceOptions);
         // Remove source files at Internet as PostTransferCommands
         options.removeFiles.value(false);
@@ -224,7 +224,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         LOGGER.debug(String.format("operation = %s, jump dir = %s", operation, dir));
         JADEOptions options = null;
         JADEOptions jumpCommandOptions;
-        SOSConnection2OptionsAlternate jumpOptions = createJumpOptions(dir);
+        SOSDestinationOptions jumpOptions = createJumpOptions(dir);
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(operation, dir);
             jumpCommandOptions = createPostTransferOptions(operation, dir);
@@ -275,7 +275,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         return value.replaceAll(objOptions.jumpCommandDelimiter.getValue(), INTERNALLY_COMMAND_DELIMITER);
     }
 
-    private SOSConnection2OptionsAlternate setDestinationOptionsPrefix(String prefix, SOSConnection2OptionsAlternate options) {
+    private SOSDestinationOptions setDestinationOptionsPrefix(String prefix, SOSDestinationOptions options) {
         options.protocol.setPrefix(prefix);
         options.host.setPrefix(prefix);
         options.port.setPrefix(prefix);
@@ -308,8 +308,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private SOSConnection2OptionsAlternate setLocalOptionsPrefixed(String prefix, String dir) {
-        SOSConnection2OptionsAlternate options = new SOSConnection2OptionsAlternate();
+    private SOSDestinationOptions setLocalOptionsPrefixed(String prefix, String dir) {
+        SOSDestinationOptions options = new SOSDestinationOptions();
         options.protocol.setValue("local");
         options.host.setValue(objOptions.jumpHost.getValue());
         options.directory.setValue(dir);
