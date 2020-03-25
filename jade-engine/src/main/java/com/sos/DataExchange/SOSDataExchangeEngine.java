@@ -199,7 +199,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         if (client != null) {
             client.logout();
             client.disconnect();
-            client.close();
             client = null;
         }
     }
@@ -1349,10 +1348,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                         }
 
                         if (objOptions.pollingServer.isFalse() || objOptions.skipTransfer.isTrue()) {
-                            if (objOptions.isNeedTargetClient()) {
-                                targetClient.close();
-                            }
-                            sourceClient.close();
                             break PollingServerLoop;
                         } else {
                             if (isFilePollingEnabled) {
@@ -1369,13 +1364,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                             } else {
                                 if (!objOptions.pollTimeout.isDirty()) {
                                     LOGGER.info("Polling settings ignored due PollTimeout=" + objOptions.pollTimeout.getValue() + "m");
-                                }
-
-                                if (objOptions.isNeedTargetClient() && targetClient != null) {
-                                    targetClient.close();
-                                }
-                                if (sourceClient != null) {
-                                    sourceClient.close();
                                 }
                                 break PollingServerLoop;
                             }
