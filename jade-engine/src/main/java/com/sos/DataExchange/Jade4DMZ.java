@@ -181,8 +181,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         options = addJADEOptionsForTarget(operation, options);
         SOSDestinationOptions sourceOptions = setLocalOptionsPrefixed("source_", dir);
         SOSDestinationOptions targetOptions = objOptions.getTarget();
-        options.getConnectionOptions().setSource(sourceOptions);
-        options.getConnectionOptions().setTarget(targetOptions);
+        options.getTransferOptions().setSource(sourceOptions);
+        options.getTransferOptions().setTarget(targetOptions);
         return options;
     }
 
@@ -206,9 +206,9 @@ public class Jade4DMZ extends JadeBaseEngine {
         targetOptions.postTransferCommandsOnError.setPrefix(prefix);
         targetOptions.postTransferCommandsFinal.setPrefix(prefix);
         targetOptions.commandDelimiter.setPrefix(prefix);
-        options.getConnectionOptions().setTarget(targetOptions);
+        options.getTransferOptions().setTarget(targetOptions);
         SOSDestinationOptions sourceOptions = objOptions.getSource();
-        options.getConnectionOptions().setSource(sourceOptions);
+        options.getTransferOptions().setSource(sourceOptions);
         // Remove source files at Internet as PostTransferCommands
         options.removeFiles.value(false);
         if (objOptions.removeFiles.value() || objOptions.resultSetFileName.isDirty()) {
@@ -246,8 +246,8 @@ public class Jade4DMZ extends JadeBaseEngine {
 
             jumpOptions = setDestinationOptionsPrefix("target_", jumpOptions);
 
-            options.getConnectionOptions().setSource(objOptions.getSource());
-            options.getConnectionOptions().setTarget(jumpOptions);
+            options.getTransferOptions().setSource(objOptions.getSource());
+            options.getTransferOptions().setTarget(jumpOptions);
         } else {
             options = createTransferFromDMZOptions(operation, dir);
             jumpCommandOptions = createPreTransferOptions(operation, dir);
@@ -259,8 +259,8 @@ public class Jade4DMZ extends JadeBaseEngine {
 
             jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
 
-            options.getConnectionOptions().setSource(jumpOptions);
-            options.getConnectionOptions().setTarget(objOptions.getTarget());
+            options.getTransferOptions().setSource(jumpOptions);
+            options.getTransferOptions().setTarget(objOptions.getTarget());
         }
         options.setDmzOption("operation", operation.name());
         options.setDmzOption("history", getHistoryFilename());

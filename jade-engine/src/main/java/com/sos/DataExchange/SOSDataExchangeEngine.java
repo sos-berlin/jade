@@ -1435,7 +1435,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     }
 
     private void debugOptions(SOSDestinationOptions opt) {
-        String range = opt.isSource ? "source" : "target";
+        String range = opt.isSource() ? "source" : "target";
         LOGGER.debug(String.format("[%s]%s", range, opt.dirtyString()));
         if (opt.getCredentialStore().useCredentialStore.value()) {
             LOGGER.debug(String.format("[%s][credential store]%s", range, opt.getCredentialStore().dirtyString()));
