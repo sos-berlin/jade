@@ -312,8 +312,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     private void createOrderParameter(JadeEngine jadeEngine, SOSFileList transfFiles, boolean isOrderJob, Order order, Variable_set orderParams)
             throws Exception {
         try {
-            String fileNames = "";
-            String filePaths = "";
             Variable_set params = null;
             if (isOrderJob) {
                 if (order != null && orderParams != null) {
@@ -323,25 +321,25 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 params = spooler_task.params();
             }
             if (params != null) {
+                String filePaths = "";
                 long size = transfFiles.getList().size();
                 if (size > 0) {
+                    StringBuilder sb = new StringBuilder();
                     for (SOSFileListEntry entry : transfFiles.getList()) {
-                        String name = entry.getFileName4ResultList();
-                        filePaths += name + ";";
-                        fileNames += name + ";";
+                        sb.append(entry.getFileName4ResultList()).append(";");
                     }
+                    filePaths = sb.toString();
                     filePaths = filePaths.substring(0, filePaths.length() - 1);
-                    fileNames = fileNames.substring(0, fileNames.length() - 1);
                 }
                 if (orderParams != null) {
                     orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT, String.valueOf(size));
 
                     String resultList2File = jadeEngine.getOptions().resultListFile.getValue();
-                    if (isNotEmpty(resultList2File) && isNotEmpty(fileNames)) {
+                    if (isNotEmpty(resultList2File) && isNotEmpty(filePaths)) {
                         JSTextFile file = new JSTextFile(resultList2File);
                         try {
                             if (file.canWrite()) {
-                                file.write(fileNames);
+                                file.write(filePaths);
                                 file.close();
                             } else {
                                 JSJ_F_0090.toLog(jadeEngine.getOptions().resultListFile.getShortKey(), resultList2File);
@@ -350,12 +348,12 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                             throw new JobSchedulerException(JSJ_F_0080.get(resultList2File, jadeEngine.getOptions().resultListFile.getShortKey()), e);
                         }
                     }
-                    orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, fileNames);
+                    orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, filePaths);
                     orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(size));
                 }
                 params.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) size));
                 params.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
-                params.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
+                params.set_var(VARNAME_FTP_RESULT_FILENAMES, filePaths);
                 params.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }
         } catch (JobSchedulerException e) {

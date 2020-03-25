@@ -54,7 +54,7 @@ import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.TransferStatus;
 import com.sos.VirtualFileSystem.DataElements.SOSTransferStateCounts;
 import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
 import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
-import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
+import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHandler;
 import com.sos.VirtualFileSystem.Interfaces.ISOSVirtualFile;
 import com.sos.VirtualFileSystem.Options.SOSDestinationOptions;
 import com.sos.VirtualFileSystem.common.SOSFileEntry;
@@ -92,8 +92,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     private IJobSchedulerEventHandler historyHandler = null;
     private IJadeEngineClientHandler engineClientHandler = null;// for DMZ
 
-    private ISOSVfsFileTransfer sourceClient = null;
-    private ISOSVfsFileTransfer targetClient = null;
+    private ISOSTransferHandler sourceClient = null;
+    private ISOSTransferHandler targetClient = null;
     private SOSFileList sourceFileList = null;
 
     private long countPollingServerFiles = 0;
@@ -195,7 +195,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         return steady;
     }
 
-    private void doLogout(ISOSVfsFileTransfer client) throws Exception {
+    private void doLogout(ISOSTransferHandler client) throws Exception {
         if (client != null) {
             client.logout();
             client.disconnect();
@@ -333,7 +333,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     }
 
     private void tryReconnectClientByPolling(long pollingServerStartTime, long currentPollingTime, PollingMethod pollingMethod, String range,
-            ISOSVfsFileTransfer client) {
+            ISOSTransferHandler client) {
         if (!client.isConnected()) {
             LOGGER.warn(String.format("[%s]is not connected. try to reconnect...", range));
             try {
@@ -1190,11 +1190,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         return counter;
     }
 
-    public ISOSVfsFileTransfer getTargetClient() {
+    public ISOSTransferHandler getTargetClient() {
         return targetClient;
     }
 
-    public ISOSVfsFileTransfer getSourceClient() {
+    public ISOSTransferHandler getSourceClient() {
         return sourceClient;
     }
 
@@ -1234,12 +1234,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             factory = new SOSVfsConnectionFactory(objOptions);
             factory.createConnectionPool();
             if (objOptions.lazyConnectionMode.isFalse() && objOptions.isNeedTargetClient()) {
-                targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();
+                targetClient = factory.getTargetPool().getUnused();
                 sourceFileList.setTargetClient(targetClient);
                 makeDirs();
             }
             try {
-                sourceClient = (ISOSVfsFileTransfer) factory.getSourcePool().getUnused();
+                sourceClient = factory.getSourcePool().getUnused();
                 sourceFileList.setSourceClient(sourceClient);
                 String sourceDir = objOptions.sourceDir.getValue();
                 String targetDir = objOptions.targetDir.getValue();
@@ -1330,7 +1330,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                                 sourceFileList.createResultSetFile();
                                 if (!sourceFileList.isEmpty() && objOptions.skipTransfer.isFalse()) {
                                     if (objOptions.lazyConnectionMode.isTrue()) {
-                                        targetClient = (ISOSVfsFileTransfer) factory.getTargetPool().getUnused();
+                                        targetClient = factory.getTargetPool().getUnused();
                                         sourceFileList.setTargetClient(targetClient);
                                         makeDirs();
                                     }
@@ -1625,12 +1625,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         }
     }
 
-    protected void executeTransferCommands(String commandOptionName, final ISOSVfsFileTransfer fileTransfer, final String commands,
+    protected void executeTransferCommands(String commandOptionName, final ISOSTransferHandler fileTransfer, final String commands,
             final String delimiter) throws Exception {
         if (commands != null && commands.trim().length() > 0) {
             if (SOSString.isEmpty(delimiter)) {
                 LOGGER.info(String.format("[%s]%s", commandOptionName, commands.trim()));
-                fileTransfer.getHandler().executeCommand(commands);
+                fileTransfer.executeCommand(commands);
             } else {
                 String[] values = commands.split(delimiter);
                 if (values.length > 1) {
@@ -1639,7 +1639,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                 for (String command : values) {
                     if (!SOSString.isEmpty(command.trim())) {
                         LOGGER.info(String.format("[%s]%s", commandOptionName, command.trim()));
-                        fileTransfer.getHandler().executeCommand(command);
+                        fileTransfer.executeCommand(command);
                     }
                 }
             }
