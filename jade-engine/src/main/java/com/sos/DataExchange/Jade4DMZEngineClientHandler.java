@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Jade4DMZ.Operation;
 import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.VirtualFileSystem.Interfaces.ISOSVfsFileTransfer;
+import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHandler;
 import com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft;
 
 import sos.util.SOSString;
@@ -50,13 +50,13 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
             }
             String command = getRemoveDirCommand(engine.getOptions(), jumpWorkingDir);
             if (operation.equals(Operation.copyToInternet)) {
-                if (engine.getTargetClient() != null && engine.getTargetClient().getHandler() != null) {
+                if (engine.getTargetClient() != null) {
                     engine.executeTransferCommands("target remove dir", engine.getTargetClient(), command, null);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]targetClient or targetClient.Handler is null", command));
                 }
             } else {
-                if (engine.getSourceClient() != null && engine.getSourceClient().getHandler() != null) {
+                if (engine.getSourceClient() != null) {
                     engine.executeTransferCommands("source remove temp files", engine.getSourceClient(), command, null);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
@@ -76,7 +76,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
         }
     }
 
-    private void copyFileListToJump(ISOSVfsFileTransfer sourceClient) throws Exception {
+    private void copyFileListToJump(ISOSTransferHandler sourceClient) throws Exception {
         if (sourceClient instanceof SOSVfsSFtpJCraft) {
             if (isDebugEnabled) {
                 LOGGER.debug(String.format("[source][copyFileListToJump][%s]%s", clientFileListName, jumpFileListName));
