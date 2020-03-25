@@ -17,7 +17,7 @@ import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.VirtualFileSystem.DataElements.SOSFileList;
 import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
+import com.sos.VirtualFileSystem.Options.SOSDestinationOptions;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.jade.db.DBItemYadeFiles;
@@ -55,8 +55,8 @@ public class YadeDBOperationHelper {
         YadeDBLayer dbLayer = null;
         if (dbSession != null) {
             dbLayer = new YadeDBLayer(dbSession);
-            SOSConnection2OptionsAlternate sourceOptions = options.getSource();
-            SOSConnection2OptionsAlternate targetOptions = options.getTarget();
+            SOSDestinationOptions sourceOptions = options.getSource();
+            SOSDestinationOptions targetOptions = options.getTarget();
             if (sourceProtocolDBItem == null && options.sourceDir.isDirty()) {
                 TransferTypes transferType = sourceOptions.protocol.getEnum();
                 if (LOGGER.isTraceEnabled()) {

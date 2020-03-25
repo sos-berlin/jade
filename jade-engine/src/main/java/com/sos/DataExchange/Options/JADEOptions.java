@@ -14,11 +14,11 @@ import org.xml.sax.InputSource;
 import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 @I18NResourceBundle(baseName = "SOSVirtualFileSystem", defaultLocale = "en")
-public class JADEOptions extends SOSFTPOptions {
+public class JADEOptions extends SOSBaseOptions {
 
     private static final long serialVersionUID = -5788970501747521212L;
     private static final Logger LOGGER = LoggerFactory.getLogger(JADEOptions.class);
