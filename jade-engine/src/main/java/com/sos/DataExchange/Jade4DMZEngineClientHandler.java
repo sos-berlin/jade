@@ -86,7 +86,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
             if (!f.exists()) {
                 throw new Exception(String.format("[source][copyFileListToJump][%s]not found local FileList file", f.getCanonicalPath()));
             }
-            h.put(f.getCanonicalPath(), jumpFileListName);
+            h.putFile(f.getCanonicalPath(), jumpFileListName);
         }
     }
 
