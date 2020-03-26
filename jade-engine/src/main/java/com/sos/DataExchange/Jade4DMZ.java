@@ -252,7 +252,7 @@ public class Jade4DMZ extends JadeBaseEngine {
             options = createTransferFromDMZOptions(operation, dir);
             jumpCommandOptions = createPreTransferOptions(operation, dir);
             if (clientHandler.isCopyFromInternetWithFileList()) {
-                jumpCommandOptions.setFileListName(clientHandler.getJumpFileListName());
+                jumpCommandOptions.fileListName.setValue(clientHandler.getJumpFileListName());
             }
             jumpOptions.preTransferCommands.setValue(getJadeOnDMZCommand(operation, jumpCommandOptions));
             jumpOptions = setDestinationOptionsPrefix("source_", jumpOptions);
@@ -472,8 +472,6 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.schedulerTransferMethod = objOptions.schedulerTransferMethod;
         options.history = objOptions.history;
         options.historyFileName = objOptions.historyFileName;
-        options.historyRepeat = objOptions.historyRepeat;
-        options.historyRepeatInterval = objOptions.historyRepeatInterval;
         options.historyFileAppendMode = objOptions.historyFileAppendMode;
         options.mandator = objOptions.mandator;
         options.compressFiles = objOptions.compressFiles;
@@ -492,8 +490,6 @@ public class Jade4DMZ extends JadeBaseEngine {
     }
 
     private String getJadeOnDMZCommand(Operation operation, JADEOptions options) {
-        options.file.setNotDirty();
-        options.user.setDefaultValue("");
         // options.history.setValue(getHistoryFilename());
         options.history.setValue("");
         options.getSource().user.setDefaultValue("");
@@ -518,8 +514,6 @@ public class Jade4DMZ extends JadeBaseEngine {
         opts.verbose = objOptions.verbose;
         opts.fileListName.setValue(getSourceListFilename());
         opts.forceFiles.value(false);
-        opts.user.setDefaultValue("");
-        objOptions.user.setDefaultValue("");
         objOptions.getSource().user.setDefaultValue("");
         objOptions.getSource().directory.setNotDirty();
         objOptions.getSource().postCommand.setNotDirty();

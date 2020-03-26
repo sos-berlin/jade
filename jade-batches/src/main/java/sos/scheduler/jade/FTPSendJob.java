@@ -33,9 +33,9 @@ public class FTPSendJob extends Jade4JessyBaseClass {
     @Override
     protected void setSpecialOptions() {
         objO.protocol.setValue(TransferTypes.ftp);
-        objO.port.value(SOSOptionPortNumber.getStandardFTPPort());
+        //objO.port.value(SOSOptionPortNumber.getStandardFTPPort());
         objO.operation.setValue(SOSOptionJadeOperation.enuJadeOperations.send);
-        objO.sshAuthMethod.setValue(enuAuthenticationMethods.password);
+        //objO.sshAuthMethod.setValue(enuAuthenticationMethods.password);
     }
 
     @Override

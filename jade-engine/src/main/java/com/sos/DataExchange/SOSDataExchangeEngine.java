@@ -1481,8 +1481,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             executeTransferCommands("alternative_target_pre_transfer_commands", targetClient, target.preTransferCommands.getValue(),
                     target.commandDelimiter.getValue());
         } else {
-            executeTransferCommands("pre_transfer_commands", targetClient, objOptions.preTransferCommands.getValue(), target.commandDelimiter
-                    .getValue());
             executeTransferCommands("target_pre_transfer_commands", targetClient, target.preTransferCommands.getValue(), target.commandDelimiter
                     .getValue());
         }
@@ -1505,8 +1503,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             executeTransferCommands("alternative_target_post_transfer_commands", targetClient, target.postTransferCommands.getValue(),
                     target.commandDelimiter.getValue());
         } else {
-            executeTransferCommands("post_transfer_commands", targetClient, objOptions.postTransferCommands.getValue(), target.commandDelimiter
-                    .getValue());
             executeTransferCommands("target_post_transfer_commands", targetClient, target.postTransferCommands.getValue(), target.commandDelimiter
                     .getValue());
         }

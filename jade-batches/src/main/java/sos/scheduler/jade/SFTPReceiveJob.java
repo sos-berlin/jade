@@ -18,7 +18,7 @@ public class SFTPReceiveJob extends Jade4JessyBaseClass {
     protected void setSpecialOptions() {
         objO.operation.setValue(SOSOptionJadeOperation.enuJadeOperations.receive);
         objO.protocol.setValue(TransferTypes.sftp);
-        objO.port.value(SOSOptionPortNumber.getStandardSFTPPort());
+        //objO.port.value(SOSOptionPortNumber.getStandardSFTPPort());
     }
 
     @Override
