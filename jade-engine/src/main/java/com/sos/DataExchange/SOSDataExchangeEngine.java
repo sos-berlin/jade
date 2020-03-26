@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
@@ -244,14 +245,20 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                 if (!isSourceDirFounded) {
                     sourceFile = sourceClient.getFileHandle(sourceDir);
                     if (objOptions.pollingWait4SourceFolder.isFalse()) {
-                        if (sourceFile.notExists()) {
+                        boolean directoryExists = false;
+                        try {
+                            directoryExists = sourceFile.fileExists();
+                        } catch (Throwable e) {
+                            throw new JobSchedulerException(e.toString(), e);
+                        }
+                        if (!directoryExists) {
                             throw new JobSchedulerException(String.format(
                                     "[WaitForSourceFolder=false][%s]source directory not found. Polling terminated.", sourceDir));
                         }
                         isSourceDirFounded = true;
                     } else {
                         try {
-                            if (sourceFile.notExists()) {
+                            if (!sourceFile.fileExists()) {
                                 LOGGER.info(String.format("[%s]directory not found. Wait for the directory due to polling mode...", sourceDir));
                             } else {
                                 isSourceDirFounded = true;
@@ -414,7 +421,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                 }
             } catch (Throwable e) {
                 if (isDebugEnabled) {
-                    LOGGER.debug(getOptions().dirtyString());
+                    LOGGER.debug(String.format("[baseOptions]%s", getOptions().dirtyString()));
 
                     debugOptions(getOptions().getSource());
                     debugOptions(getOptions().getTarget());
@@ -423,11 +430,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             } finally {
                 showBanner();
             }
-            // UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(objOptions);
-            // if (updateHelper.checkBefore()) {
-            // updateHelper.executeBefore();
-            // objOptions = updateHelper.getOptions();
-            // }
+            UpdateXmlToOptionHelper updateHelper = new UpdateXmlToOptionHelper(objOptions);
+            if (updateHelper.checkBefore()) {
+                updateHelper.executeBefore();
+                objOptions = updateHelper.getOptions();
+            }
 
             transfer();
             transferAfterCheck();
@@ -1215,7 +1222,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         try {
             getOptions().checkMandatory();
             if (isDebugEnabled) {
-                LOGGER.debug(getOptions().dirtyString());
+                LOGGER.debug(String.format("[baseOptions]%s", getOptions().dirtyString()));
 
                 debugOptions(getOptions().getSource());
                 debugOptions(getOptions().getTarget());
