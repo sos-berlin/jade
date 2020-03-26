@@ -209,7 +209,7 @@ public class YadeDBOperationHelper {
                     } else {
                         newTransfer.setNumOfFiles(0L);
                     }
-                    if (options.getProfile() != null) {
+                    if (options.profile != null) {
                         newTransfer.setProfileName(options.profile.getValue());
                     }
                     if (parentTransferId != null) {
