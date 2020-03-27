@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.SOSDataExchangeEngine;
-import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;

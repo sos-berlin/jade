@@ -49,16 +49,16 @@ import com.sos.JSHelper.concurrent.SOSThreadPoolExecutor;
 import com.sos.JSHelper.interfaces.IJadeEngine;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.JSHelper.io.Files.JSFile;
-import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry.TransferStatus;
-import com.sos.VirtualFileSystem.DataElements.SOSTransferStateCounts;
-import com.sos.VirtualFileSystem.DataElements.SOSVfsConnectionFactory;
-import com.sos.VirtualFileSystem.HTTP.SOSVfsHTTP;
-import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHandler;
-import com.sos.VirtualFileSystem.Interfaces.ISOSVirtualFile;
-import com.sos.VirtualFileSystem.Options.SOSDestinationOptions;
-import com.sos.VirtualFileSystem.common.SOSFileEntry;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.SOSFileListEntry.TransferStatus;
+import com.sos.vfs.common.SOSTransferStateCounts;
+import com.sos.vfs.common.SOSVFSFactory;
+import com.sos.vfs.http.SOSHTTP;
+import com.sos.vfs.common.interfaces.ISOSTransferHandler;
+import com.sos.vfs.common.interfaces.ISOSVirtualFile;
+import com.sos.vfs.common.options.SOSDestinationOptions;
+import com.sos.vfs.common.SOSFileEntry;
 import com.sos.exception.SOSYadeSourceConnectionException;
 import com.sos.exception.SOSYadeTargetConnectionException;
 
@@ -89,7 +89,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     private static final String KEYWORD_SKIPPED_TRANSFERS = "skipped_transfers";
     private static final String KEYWORD_STATUS = "status";
 
-    private SOSVfsConnectionFactory factory = null;
+    private SOSVFSFactory factory = null;
     private IJobSchedulerEventHandler historyHandler = null;
     private IJadeEngineClientHandler engineClientHandler = null;// for DMZ
 
@@ -198,7 +198,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
 
     private void doLogout(ISOSTransferHandler client) throws Exception {
         if (client != null) {
-            client.logout();
             client.disconnect();
             client = null;
         }
@@ -1237,15 +1236,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             setSystemProperties();
             setTextProperties();
             sourceFileList = new SOSFileList(objOptions, historyHandler);
-            factory = new SOSVfsConnectionFactory(objOptions);
-            factory.createConnectionPool();
+            factory = new SOSVFSFactory(objOptions);
             if (objOptions.lazyConnectionMode.isFalse() && objOptions.isNeedTargetClient()) {
-                targetClient = factory.getTargetPool().getUnused();
+                targetClient = factory.getConnectedHandler(false);
                 sourceFileList.setTargetClient(targetClient);
                 makeDirs();
             }
             try {
-                sourceClient = factory.getSourcePool().getUnused();
+                sourceClient = factory.getConnectedHandler(true);
                 sourceFileList.setSourceClient(sourceClient);
                 String sourceDir = objOptions.sourceDir.getValue();
                 String targetDir = objOptions.targetDir.getValue();
@@ -1336,7 +1334,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
                                 sourceFileList.createResultSetFile();
                                 if (!sourceFileList.isEmpty() && objOptions.skipTransfer.isFalse()) {
                                     if (objOptions.lazyConnectionMode.isTrue()) {
-                                        targetClient = factory.getTargetPool().getUnused();
+                                        targetClient = factory.getConnectedHandler(false);
                                         sourceFileList.setTargetClient(targetClient);
                                         makeDirs();
                                     }
@@ -1639,7 +1637,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
 
     private boolean selectFilesOnSource(boolean isFilePollingEnabled, final ISOSVirtualFile sourceFile, final SOSOptionFolderName sourceDir,
             final SOSOptionRegExp regExp, final SOSOptionBoolean recursive, final String integrityHashFileExtention) throws Exception {
-        if (sourceClient instanceof SOSVfsHTTP) {
+        if (sourceClient instanceof SOSHTTP) {
             throw new JobSchedulerException("a file spec selection is not supported with http(s) protocol");
         }
         if (sourceFile.isDirectory()) {

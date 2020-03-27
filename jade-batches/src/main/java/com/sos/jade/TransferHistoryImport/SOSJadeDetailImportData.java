@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.sos.VirtualFileSystem.Interfaces.IJadeTransferDetailHistoryData;
+import com.sos.vfs.common.interfaces.IJadeTransferDetailHistoryData;
 
 public class SOSJadeDetailImportData implements IJadeTransferDetailHistoryData {
 
