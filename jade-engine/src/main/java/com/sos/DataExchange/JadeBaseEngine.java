@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilitiesClass;
-import com.sos.VirtualFileSystem.Factory.VFSFactory;
+import com.sos.vfs.common.SOSVFSFactory;
 
 public class JadeBaseEngine extends JSJobUtilitiesClass<JADEOptions> {
 
@@ -30,7 +30,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<JADEOptions> {
         if (isLoggerConfigured) {
             return;
         }
-        VFSFactory.setParentLogger(SOSDataExchangeEngine.JADE_LOGGER_NAME);
+        SOSVFSFactory.setParentLogger(SOSDataExchangeEngine.JADE_LOGGER_NAME);
         LoggerContext context = getLoggerContext();
         Level level = checkLevel();
         if (level == null) {

@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Jade4DMZ.Operation;
 import com.sos.DataExchange.Options.JADEOptions;
-import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHandler;
-import com.sos.VirtualFileSystem.SFTP.SOSVfsSFtpJCraft;
+import com.sos.vfs.sftp.SOSSFTP;
+import com.sos.vfs.common.interfaces.ISOSTransferHandler;
 
 import sos.util.SOSString;
 
@@ -77,11 +77,11 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
     }
 
     private void copyFileListToJump(ISOSTransferHandler sourceClient) throws Exception {
-        if (sourceClient instanceof SOSVfsSFtpJCraft) {
+        if (sourceClient instanceof SOSSFTP) {
             if (isDebugEnabled) {
                 LOGGER.debug(String.format("[source][copyFileListToJump][%s]%s", clientFileListName, jumpFileListName));
             }
-            SOSVfsSFtpJCraft h = (SOSVfsSFtpJCraft) sourceClient;
+            SOSSFTP h = (SOSSFTP) sourceClient;
             File f = new File(clientFileListName);
             if (!f.exists()) {
                 throw new Exception(String.format("[source][copyFileListToJump][%s]not found local FileList file", f.getCanonicalPath()));

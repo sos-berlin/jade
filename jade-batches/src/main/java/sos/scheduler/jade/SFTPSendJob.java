@@ -5,10 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
-import com.sos.JSHelper.Options.SOSOptionPortNumber;
 import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
-import com.sos.VirtualFileSystem.Options.SOSTransferOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.vfs.common.options.SOSTransferOptions;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SFTPSendJob extends Jade4JessyBaseClass {

@@ -3,7 +3,7 @@ package com.sos.jade.TransferHistoryImport;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.sos.VirtualFileSystem.Interfaces.IJadeTransferHistoryData;
+import com.sos.vfs.common.interfaces.IJadeTransferHistoryData;
 
 /** \class JadeTransferHistoryExportDataTest
  * 

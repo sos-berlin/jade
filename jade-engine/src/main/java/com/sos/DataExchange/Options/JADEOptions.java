@@ -14,7 +14,7 @@ import org.xml.sax.InputSource;
 import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
-import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 @I18NResourceBundle(baseName = "SOSVirtualFileSystem", defaultLocale = "en")

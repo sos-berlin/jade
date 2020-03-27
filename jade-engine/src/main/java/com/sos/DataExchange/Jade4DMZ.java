@@ -12,8 +12,8 @@ import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.Options.SOSDestinationOptions;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.options.SOSDestinationOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.keepass.SOSKeePassDatabase;
 

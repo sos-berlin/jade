@@ -8,16 +8,16 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.VirtualFileSystem.Interfaces.IJadeTransferDetailHistoryData;
-import com.sos.VirtualFileSystem.Interfaces.IJadeTransferHistoryData;
-import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHistory;
-import com.sos.VirtualFileSystem.Options.SOSBaseOptions;
+import com.sos.vfs.common.interfaces.IJadeTransferDetailHistoryData;
+import com.sos.vfs.common.interfaces.IJadeTransferHistoryData;
+import com.sos.vfs.common.interfaces.IJadeTransferHistoryImportOld;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.jade.db.JadeTransferDBItem;
 import com.sos.jade.db.JadeTransferDBLayer;
 import com.sos.jade.db.JadeTransferDetailDBItem;
 
 /** @author KB, Uwe Risse */
-public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
+public class SOSJadeImport extends JSToolBox implements IJadeTransferHistoryImportOld {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSJadeImport.class);
     private JadeTransferDBLayer jadeTransferDBLayer;
