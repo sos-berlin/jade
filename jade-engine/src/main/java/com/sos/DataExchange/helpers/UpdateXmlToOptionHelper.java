@@ -30,7 +30,7 @@ public class UpdateXmlToOptionHelper {
         return options.updateConfiguration.value();
     }
 
-    public void executeBefore() {
+    public void executeBefore() throws Exception {
         LOGGER.debug(options.xmlUpdate.getValue());
         extractOptionsFromXmlSnippet(options.xmlUpdate.getValue());
     }
@@ -158,7 +158,7 @@ public class UpdateXmlToOptionHelper {
      * 
      * @param xml A {@link String} representation of the given YADE-XML snippet. 
      */
-    private void extractOptionsFromXmlSnippet(String xml) {
+    private void extractOptionsFromXmlSnippet(String xml) throws Exception{
         String operation = null;
         String sourceFragmentInUse = null;
         String targetFragmentInUse = null;

@@ -57,7 +57,7 @@ import com.sos.vfs.common.SOSVFSFactory;
 import com.sos.vfs.http.SOSHTTP;
 import com.sos.vfs.common.interfaces.ISOSTransferHandler;
 import com.sos.vfs.common.interfaces.ISOSVirtualFile;
-import com.sos.vfs.common.options.SOSDestinationOptions;
+import com.sos.vfs.common.options.SOSProviderOptions;
 import com.sos.vfs.common.SOSFileEntry;
 import com.sos.exception.SOSYadeSourceConnectionException;
 import com.sos.exception.SOSYadeTargetConnectionException;
@@ -498,7 +498,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         LOGGER.info(msg);
     }
 
-    private String showBannerHeaderSource(SOSDestinationOptions options, boolean isSource) {
+    private String showBannerHeaderSource(SOSProviderOptions options, boolean isSource) {
         StringBuilder sb = new StringBuilder();
         String pattern4String = "  | %-22s= %s%n";
         String pattern4Bool = "  | %-22s= %b%n";
@@ -635,7 +635,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         return sb.toString();
     }
 
-    private void showBanner() {
+    private void showBanner() throws Exception {
         StringBuilder sb = new StringBuilder();
         if (objOptions.bannerHeader.isDirty()) {
             // this parameter should deprecated
@@ -1427,7 +1427,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         }
     }
 
-    private void debugOptions(SOSDestinationOptions opt) {
+    private void debugOptions(SOSProviderOptions opt) {
         String range = opt.isSource() ? "source" : "target";
         LOGGER.debug(String.format("[%s]%s", range, opt.dirtyString()));
         if (opt.getCredentialStore().useCredentialStore.value()) {
@@ -1473,7 +1473,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     }
 
     private void executePreTransferCommands() throws Exception {
-        SOSDestinationOptions target = objOptions.getTarget();
+        SOSProviderOptions target = objOptions.getTarget();
         if (target.alternateOptionsUsed.isTrue()) {
             target = target.getAlternatives();
             executeTransferCommands("alternative_target_pre_transfer_commands", targetClient, target.preTransferCommands.getValue(),
@@ -1482,7 +1482,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             executeTransferCommands("target_pre_transfer_commands", targetClient, target.preTransferCommands.getValue(), target.commandDelimiter
                     .getValue());
         }
-        SOSDestinationOptions source = objOptions.getSource();
+        SOSProviderOptions source = objOptions.getSource();
         String caller = "source_pre_transfer_commands";
         if (source.alternateOptionsUsed.isTrue()) {
             source = source.getAlternatives();
@@ -1495,7 +1495,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
     }
 
     private void executePostTransferCommands() throws Exception {
-        SOSDestinationOptions target = objOptions.getTarget();
+        SOSProviderOptions target = objOptions.getTarget();
         if (target.alternateOptionsUsed.isTrue()) {
             target = target.getAlternatives();
             executeTransferCommands("alternative_target_post_transfer_commands", targetClient, target.postTransferCommands.getValue(),
@@ -1504,7 +1504,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             executeTransferCommands("target_post_transfer_commands", targetClient, target.postTransferCommands.getValue(), target.commandDelimiter
                     .getValue());
         }
-        SOSDestinationOptions source = objOptions.getSource();
+        SOSProviderOptions source = objOptions.getSource();
         String caller = "source_post_transfer_commands";
         if (source.alternateOptionsUsed.isTrue()) {
             source = source.getAlternatives();
@@ -1523,7 +1523,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         StringBuilder exception = new StringBuilder();
         String caller = "";
         if (!(e instanceof SOSYadeTargetConnectionException)) {
-            SOSDestinationOptions target = objOptions.getTarget();
+            SOSProviderOptions target = objOptions.getTarget();
             caller = "target_post_transfer_commands_on_error";
             if (target.alternateOptionsUsed.isTrue()) {
                 target = target.getAlternatives();
@@ -1536,7 +1536,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
             }
         }
         if (!(e instanceof SOSYadeSourceConnectionException)) {
-            SOSDestinationOptions source = objOptions.getSource();
+            SOSProviderOptions source = objOptions.getSource();
             caller = "source_post_transfer_commands_on_error";
             if (source.alternateOptionsUsed.isTrue()) {
                 source = source.getAlternatives();
@@ -1570,7 +1570,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         StringBuilder exception = new StringBuilder();
         String caller = "";
         if (e == null || !(e instanceof SOSYadeTargetConnectionException)) {
-            SOSDestinationOptions target = objOptions.getTarget();
+            SOSProviderOptions target = objOptions.getTarget();
             caller = "target_post_transfer_commands_final";
             if (target.alternateOptionsUsed.isTrue()) {
                 target = target.getAlternatives();
@@ -1584,7 +1584,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
         }
 
         if (e == null || !(e instanceof SOSYadeSourceConnectionException)) {
-            SOSDestinationOptions source = objOptions.getSource();
+            SOSProviderOptions source = objOptions.getSource();
             caller = "source_post_transfer_commands_final";
             if (source.alternateOptionsUsed.isTrue()) {
                 source = source.getAlternatives();

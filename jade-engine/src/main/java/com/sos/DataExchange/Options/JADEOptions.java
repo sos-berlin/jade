@@ -32,7 +32,7 @@ public class JADEOptions extends SOSBaseOptions {
         super(settings);
     }
 
-    public JADEOptions(final TransferTypes source, final TransferTypes target) {
+    public JADEOptions(final TransferTypes source, final TransferTypes target) throws Exception {
         super(source, target);
     }
 
@@ -46,7 +46,7 @@ public class JADEOptions extends SOSBaseOptions {
             this.settings.setValue(iniFile.toString());
             this.setDeleteSettingsFileOnExit(true);
         }
-        if(LOGGER.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("[readSettingsFile]settings=%s", settings.getValue()));
         }
         return super.readSettingsFile();
