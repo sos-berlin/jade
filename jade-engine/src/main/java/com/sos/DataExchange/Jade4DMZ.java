@@ -137,7 +137,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.proxyPassword.setValue(objOptions.jumpProxyPassword.getValue());
         options.server_alive_interval.setValue(objOptions.jump_server_alive_interval.getValue());
         options.server_alive_count_max.setValue(objOptions.jump_server_alive_count_max.getValue());
-        options.session_connect_timeout.setValue(objOptions.jump_session_connect_timeout.getValue());
+        options.connect_timeout.setValue(objOptions.jump_connect_timeout.getValue());
         options.channel_connect_timeout.setValue(objOptions.jump_channel_connect_timeout.getValue());
         if (objOptions.jump_use_credential_store.value()) {
             SOSCredentialStoreOptions csOptions = new SOSCredentialStoreOptions();
@@ -244,7 +244,7 @@ public class Jade4DMZ extends JadeBaseEngine {
             jumpOptions.postTransferCommandsFinal.setValue(getJumpCommand(objOptions.jumpPostTransferCommandsFinal.getValue()));
             jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
 
-            jumpOptions = setDestinationOptionsPrefix("target_", jumpOptions);
+            jumpOptions = setProviderOptionsPrefix(jumpOptions, "target_");
 
             options.getTransfer().setSource(objOptions.getSource());
             options.getTransfer().setTarget(jumpOptions);
@@ -255,7 +255,7 @@ public class Jade4DMZ extends JadeBaseEngine {
                 jumpCommandOptions.fileListName.setValue(clientHandler.getJumpFileListName());
             }
             jumpOptions.preTransferCommands.setValue(getJadeOnDMZCommand(operation, jumpCommandOptions));
-            jumpOptions = setDestinationOptionsPrefix("source_", jumpOptions);
+            jumpOptions = setProviderOptionsPrefix(jumpOptions, "source_");
 
             jumpOptions.commandDelimiter.setValue(INTERNALLY_COMMAND_DELIMITER);
 
@@ -275,7 +275,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         return value.replaceAll(objOptions.jumpCommandDelimiter.getValue(), INTERNALLY_COMMAND_DELIMITER);
     }
 
-    private SOSProviderOptions setDestinationOptionsPrefix(String prefix, SOSProviderOptions options) {
+    private SOSProviderOptions setProviderOptionsPrefix(SOSProviderOptions options, String prefix) {
         options.protocol.setPrefix(prefix);
         options.host.setPrefix(prefix);
         options.port.setPrefix(prefix);
@@ -303,7 +303,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.required_authentications.setPrefix(prefix);
         options.server_alive_interval.setPrefix(prefix);
         options.server_alive_count_max.setPrefix(prefix);
-        options.session_connect_timeout.setPrefix(prefix);
+        options.connect_timeout.setPrefix(prefix);
         options.channel_connect_timeout.setPrefix(prefix);
         return options;
     }
