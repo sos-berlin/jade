@@ -36,7 +36,6 @@ public class JADEOptions extends SOSBaseOptions {
         super(source, target);
     }
 
-    @Override
     public HashMap<String, String> readSettingsFile() {
         String config = settings.getValue();
         this.setOriginalSettingsFile(config);
@@ -49,7 +48,7 @@ public class JADEOptions extends SOSBaseOptions {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("[readSettingsFile]settings=%s", settings.getValue()));
         }
-        return super.readSettingsFile();
+        return super.readSettingsFile(null);
     }
 
     public Path convertXml2Ini(String xmlFile) {
