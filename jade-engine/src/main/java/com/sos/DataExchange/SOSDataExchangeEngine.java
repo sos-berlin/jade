@@ -108,9 +108,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine implements IJadeEngine
 
     public SOSDataExchangeEngine(final JADEOptions jadeOptions) throws Exception {
         super(jadeOptions);
-        objOptions = jadeOptions;
         if (objOptions.settings.isDirty()) {
-            objOptions.readSettingsFile();
+            objOptions.setOptions(objOptions.readSettingsFile());
         }
     }
 
