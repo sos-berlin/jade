@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.JadeEngine;
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;

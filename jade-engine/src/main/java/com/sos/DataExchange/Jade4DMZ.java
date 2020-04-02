@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.CredentialStore.Options.SOSCredentialStoreOptions;
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.credentialstore.options.SOSCredentialStoreOptions;
+import com.sos.DataExchange.options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;

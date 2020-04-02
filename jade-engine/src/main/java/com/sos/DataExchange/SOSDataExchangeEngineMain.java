@@ -3,7 +3,7 @@ package com.sos.DataExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;

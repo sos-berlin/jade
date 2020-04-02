@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 
 public class JadeEngineTest {
 
