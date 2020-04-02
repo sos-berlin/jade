@@ -1,6 +1,6 @@
 package com.sos.DataExchange;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 
 public class JadeEngine extends SOSDataExchangeEngine {
 

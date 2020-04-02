@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 // import org.apache.log4j.Logger;
 // import org.apache.log4j.PropertyConfigurator;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilitiesClass;
 import com.sos.vfs.common.SOSVFSFactory;
 

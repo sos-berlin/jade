@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Jade4DMZ.Operation;
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 import com.sos.vfs.sftp.SOSSFTP;
 import com.sos.vfs.common.interfaces.ISOSTransferHandler;
 

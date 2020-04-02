@@ -10,7 +10,7 @@ import org.w3c.dom.NodeList;
 
 import sos.xml.SOSXMLXPath;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.sos.DataExchange.options.JADEOptions;
 
 public class UpdateXmlToOptionHelper {
 

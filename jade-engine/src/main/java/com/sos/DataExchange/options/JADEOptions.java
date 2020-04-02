@@ -1,4 +1,4 @@
-package com.sos.DataExchange.Options;
+package com.sos.DataExchange.options;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import org.xml.sax.InputSource;
 import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
-import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 @I18NResourceBundle(baseName = "SOSVirtualFileSystem", defaultLocale = "en")
 public class JADEOptions extends SOSBaseOptions {
