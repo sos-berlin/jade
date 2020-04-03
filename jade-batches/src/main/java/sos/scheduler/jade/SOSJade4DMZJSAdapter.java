@@ -20,19 +20,18 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.Jade4DMZ;
-import com.sos.DataExchange.options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
-import com.sos.vfs.common.SOSFileList;
-import com.sos.vfs.common.SOSFileListEntry;
-import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jobscheduler.model.event.YadeEvent;
 import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
@@ -137,8 +136,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     LOGGER.debug(String.format("settings=%s", settings));
                     // check both (in case of symlink the orig file can have any extension...)
                     if (paramSettings.toLowerCase().endsWith(".xml") || settings.toLowerCase().endsWith(".xml")) {
-                        JADEOptions jo = new JADEOptions();
-                        xml2iniFile = jo.convertXml2Ini(settings);
+                        xml2iniFile = jade4DMZEngine.convertXml2Ini(settings);
                         schedulerParams.put("settings", xml2iniFile.toString());
                     }
                 } else {

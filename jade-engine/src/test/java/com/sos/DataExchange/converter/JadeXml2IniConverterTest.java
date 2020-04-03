@@ -3,11 +3,11 @@ package com.sos.DataExchange.converter;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sos.DataExchange.options.JADEOptions;
+import com.sos.DataExchange.JadeBaseEngine;
 
 public class JadeXml2IniConverterTest {
 
-    private static final String SCHEMA_PATH = "src/main/resources/" + JADEOptions.SCHEMA_RESSOURCE_NAME;
+    private static final String SCHEMA_PATH = "src/main/resources/" + JadeBaseEngine.SCHEMA_RESSOURCE_NAME;
 
     @Ignore
     @Test

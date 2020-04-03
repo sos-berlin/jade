@@ -8,21 +8,22 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.sos.vfs.common.options.SOSBaseOptions;
+
 import sos.xml.SOSXMLXPath;
 
-import com.sos.DataExchange.options.JADEOptions;
 
 public class UpdateXmlToOptionHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateXmlToOptionHelper.class);
-    private JADEOptions options;
+    private SOSBaseOptions options;
 
     /**
      * Constructor to instantiate class with the related Options
      * 
      * @param jadeOptions
      */
-    public UpdateXmlToOptionHelper(JADEOptions jadeOptions) {
+    public UpdateXmlToOptionHelper(SOSBaseOptions jadeOptions) {
         this.options = jadeOptions;
     }
 
@@ -364,11 +365,11 @@ public class UpdateXmlToOptionHelper {
         }
     }
 
-    public JADEOptions getOptions() {
+    public SOSBaseOptions getOptions() {
         return options;
     }
 
-    public void setOptions(JADEOptions options) {
+    public void setOptions(SOSBaseOptions options) {
         this.options = options;
     }
 

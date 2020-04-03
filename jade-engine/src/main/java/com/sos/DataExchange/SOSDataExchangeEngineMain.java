@@ -3,18 +3,18 @@ package com.sos.DataExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngineMain.class);
-    protected JADEOptions jadeOptions = null;
+    protected SOSBaseOptions jadeOptions = null;
     @I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."),
             @I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", explanation = "JADE client - Main"),
             @I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE Client - Main") }, msgnum = "SOSJADE_I_9999", msgurl = "")
@@ -46,7 +46,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
                 try {
                     if (main.getEngine() != null) {
                         LOGGER.info("shutdown engine");
-                        main.getEngine().logout();
+                        main.getEngine().disconnect();
                         main.getEngine().showSummary();
                     }
                 } catch (Throwable e) {
@@ -68,7 +68,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
         int exitCode = 0;
         try {
             engine = new SOSDataExchangeEngine();
-            JADEOptions options = engine.getOptions();
+            SOSBaseOptions options = engine.getOptions();
             engine.setJSJobUtilites(this);
             options.sendTransferHistory.value(true);
             options.commandLineArgs(args);

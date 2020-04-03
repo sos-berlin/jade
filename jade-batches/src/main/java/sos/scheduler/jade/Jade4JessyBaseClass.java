@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.sos.DataExchange.JadeEngine;
 import com.sos.DataExchange.SOSDataExchangeEngine;
 import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
@@ -68,7 +67,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
     private void doProcessing() throws Exception {
         final String conMethodName = conClassName + "::doProcessing"; //$NON-NLS-1$
         showVersionInfo();
-        objR = new JadeEngine();
+        objR = new SOSDataExchangeEngine();
         objO = objR.getOptions();
         objO.setCurrentNodeName(getCurrentNodeName(getSpoolerProcess().getOrder(), true));
         hsmParameters = getSchedulerParameterAsProperties(getSpoolerProcess().getOrder());
@@ -83,7 +82,7 @@ abstract public class Jade4JessyBaseClass extends JobSchedulerJobAdapter {
         LOGGER.info(String.format("%1$s with operation %2$s started.", conMethodName, objO.operation.getValue()));
         objR.setJSJobUtilites(this);
         objR.execute();
-        objR.logout();
+        objR.disconnect();
         LOGGER.info(String.format("%1$s with operation %2$s ended.", conMethodName, objO.operation.getValue()));
     } // doProcessing
 
