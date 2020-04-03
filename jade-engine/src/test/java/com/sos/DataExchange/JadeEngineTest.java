@@ -4,20 +4,20 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sos.DataExchange.options.JADEOptions;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 public class JadeEngineTest {
 
     private static final String SETTINGS_FILE = "R:/backup/sos/java/development/SOSDataExchange/examples/jade_sftp_settings.xml";
     private static final String PROFILE = "local_2_sftp";
-    private JADEOptions options;
+    private SOSBaseOptions options;
 
     public JadeEngineTest() {
     }
 
     @Before
     public void setUp() throws Exception {
-        options = new JADEOptions();
+        options = new SOSBaseOptions();
         options.settings.setValue(SETTINGS_FILE);
     }
 
@@ -28,15 +28,8 @@ public class JadeEngineTest {
         this.execute(options);
     }
 
-    @Ignore
-    @Test
-    public void test2() throws Exception {
-        options.profile.setValue(PROFILE);
-        options.readSettingsFile();
-    }
-
-    private void execute(JADEOptions options) throws Exception {
-        JadeEngine engine = new JadeEngine(options);
+    private void execute(SOSBaseOptions options) throws Exception {
+        SOSDataExchangeEngine engine = new SOSDataExchangeEngine(options);
         engine.execute();
     }
 

@@ -17,13 +17,13 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.JadeEngine;
-import com.sos.DataExchange.options.JADEOptions;
+import com.sos.DataExchange.SOSDataExchangeEngine;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.vfs.common.SOSFileList;
 import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
 import com.sos.scheduler.model.SchedulerObjectFactory;
@@ -109,10 +109,10 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private void doProcessing() throws Exception {
 
-        JADEOptions jadeOptions = new JADEOptions();
+        SOSBaseOptions jadeOptions = new SOSBaseOptions();
         String currentNode = getCurrentNodeName(getSpoolerProcess().getOrder(), true);
         jadeOptions.setCurrentNodeName(currentNode);
-        JadeEngine jadeEngine = new JadeEngine(jadeOptions);
+        SOSDataExchangeEngine jadeEngine = new SOSDataExchangeEngine(jadeOptions);
         Path xml2iniFile = null;
         HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getSpoolerProcess().getOrder());
         if (schedulerParams != null) {
@@ -132,8 +132,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 LOGGER.debug(String.format("settings=%s", settings));
                 // check both (in case of symlink the orig file can have any extension...)
                 if (paramSettings.toLowerCase().endsWith(".xml") || settings.toLowerCase().endsWith(".xml")) {
-                    JADEOptions jo = new JADEOptions();
-                    xml2iniFile = jo.convertXml2Ini(settings);
+                    xml2iniFile = jadeEngine.convertXml2Ini(settings);
                     schedulerParams.put("settings", xml2iniFile.toString());
                 }
             } else {
@@ -248,7 +247,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     }
 
-    protected void createOrder(JADEOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName, Variable_set orderParams) {
+    protected void createOrder(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName, Variable_set orderParams) {
         String feedback;
         if (jadeOptions.orderJobschedulerHost.isNotEmpty()) {
             feedback = createOrderOnRemoteJobScheduler(jadeOptions, listItem, jobChainName, orderParams);
@@ -258,7 +257,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         LOGGER.info(feedback);
     }
 
-    protected String createOrderOnRemoteJobScheduler(JADEOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName,
+    protected String createOrderOnRemoteJobScheduler(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName,
             Variable_set orderParams) {
         if (jobSchedulerFactory == null) {
             jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
@@ -282,7 +281,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return feedback;
     }
 
-    protected String createOrderOnLocalJobScheduler(JADEOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName,
+    protected String createOrderOnLocalJobScheduler(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName,
             Variable_set currentOrderParams) {
         Order order = spooler.create_order();
         String targetFilename = listItem.getTargetFileName().replace('\\', '/');
@@ -299,7 +298,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return feedback;
     }
 
-    private Variable_set buildOrderParams(JADEOptions jadeOptions, SOSFileListEntry listItem, Variable_set currentOrderParams) {
+    private Variable_set buildOrderParams(SOSBaseOptions jadeOptions, SOSFileListEntry listItem, Variable_set currentOrderParams) {
         Variable_set orderParams = spooler.create_variable_set();
         if (jadeOptions.mergeOrderParameter.isTrue()) {
             orderParams.merge(currentOrderParams);
@@ -320,8 +319,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return orderParams;
     }
 
-    private void createOrderParameter(JadeEngine jadeEngine, SOSFileList transfFiles, boolean isOrderJob, Order order, Variable_set orderParams)
-            throws Exception {
+    private void createOrderParameter(SOSDataExchangeEngine jadeEngine, SOSFileList transfFiles, boolean isOrderJob, Order order,
+            Variable_set orderParams) throws Exception {
         try {
             Variable_set params = null;
             if (isOrderJob) {
@@ -395,7 +394,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         return file;
     }
 
-    private boolean changeOrderState(JADEOptions jadeOptions) {
+    private boolean changeOrderState(SOSBaseOptions jadeOptions) {
         return isNotEmpty(jadeOptions.nextState.getValue());
     }
 

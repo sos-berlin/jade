@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.Jade4DMZ.Operation;
-import com.sos.DataExchange.options.JADEOptions;
 import com.sos.vfs.sftp.SOSSFTP;
-import com.sos.vfs.common.interfaces.ISOSTransferHandler;
+import com.sos.vfs.common.interfaces.ISOSProvider;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 import sos.util.SOSString;
 
@@ -23,7 +23,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
     private String jumpFileListName = null;
     private String jumpWorkingDir = null;
 
-    public Jade4DMZEngineClientHandler(JADEOptions options, Operation dmzOperation, String jumpDir, String jumpUuid, String jumpSubDir) {
+    public Jade4DMZEngineClientHandler(SOSBaseOptions options, Operation dmzOperation, String jumpDir, String jumpUuid, String jumpSubDir) {
         operation = dmzOperation;
         jumpWorkingDir = jumpSubDir;
         String fileListName = options.fileListName.getValue();
@@ -37,7 +37,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
     @Override
     public void onBeforeOperation(SOSDataExchangeEngine engine) throws Exception {
         if (copyFromInternetWithFileList) {
-            copyFileListToJump(engine.getSourceClient());
+            copyFileListToJump(engine.getSourceProvider());
         }
     }
 
@@ -50,14 +50,14 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
             }
             String command = getRemoveDirCommand(engine.getOptions(), jumpWorkingDir);
             if (operation.equals(Operation.copyToInternet)) {
-                if (engine.getTargetClient() != null) {
-                    engine.executeTransferCommands("target remove dir", engine.getTargetClient(), command, null);
+                if (engine.getTargetProvider() != null) {
+                    engine.executeTransferCommands("target remove dir", engine.getTargetProvider(), command, null);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]targetClient or targetClient.Handler is null", command));
                 }
             } else {
-                if (engine.getSourceClient() != null) {
-                    engine.executeTransferCommands("source remove temp files", engine.getSourceClient(), command, null);
+                if (engine.getSourceProvider() != null) {
+                    engine.executeTransferCommands("source remove temp files", engine.getSourceProvider(), command, null);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
                 }
@@ -67,7 +67,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
         }
     }
 
-    private String getRemoveDirCommand(JADEOptions options, String dir) {
+    private String getRemoveDirCommand(SOSBaseOptions options, String dir) {
         if (options.jumpPlatform.isWindows()) {
             dir = dir.replace('/', '\\');
             return "rmdir \"" + dir + "\" /s /q;del /F /Q " + dir + "* 2>nul";
@@ -76,7 +76,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
         }
     }
 
-    private void copyFileListToJump(ISOSTransferHandler sourceClient) throws Exception {
+    private void copyFileListToJump(ISOSProvider sourceClient) throws Exception {
         if (sourceClient instanceof SOSSFTP) {
             if (isDebugEnabled) {
                 LOGGER.debug(String.format("[source][copyFileListToJump][%s]%s", clientFileListName, jumpFileListName));

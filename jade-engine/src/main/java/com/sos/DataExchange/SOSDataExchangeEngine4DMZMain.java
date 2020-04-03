@@ -3,16 +3,12 @@ package com.sos.DataExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// import org.apache.log4j.BasicConfigurator;
-// import org.apache.log4j.Logger;
-// import org.apache.log4j.PropertyConfigurator;
-
-import com.sos.DataExchange.options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtilities {
@@ -50,7 +46,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
         Jade4DMZ jade4dmz = null;
         try {
             jade4dmz = new Jade4DMZ();
-            JADEOptions options = jade4dmz.getOptions();
+            SOSBaseOptions options = jade4dmz.getOptions();
             jade4dmz.setJSJobUtilites(this);
             options.commandLineArgs(args);
             LOGGER.info(getMsg(SOSDX_Intro));
@@ -75,7 +71,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
     @Override
     public void setJSParam(final String pstrKey, final StringBuilder pstrValue) {
     }
-    
+
     @Override
     public void setJSJobUtilites(final JSJobUtilities pobjJSJobUtilities) {
 

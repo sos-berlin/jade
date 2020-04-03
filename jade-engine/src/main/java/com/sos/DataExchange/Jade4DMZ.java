@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.credentialstore.options.SOSCredentialStoreOptions;
-import com.sos.DataExchange.options.JADEOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.vfs.common.options.SOSProviderOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.keepass.SOSKeePassDatabase;
@@ -90,17 +90,17 @@ public class Jade4DMZ extends JadeBaseEngine {
         String dir = jumpDir + uuid;
 
         LOGGER.info(String.format("operation = %s, jump dir = %s", operation, dir));
-        JadeEngine jade = null;
+        SOSDataExchangeEngine jade = null;
         fileList = null;
         try {
             Jade4DMZEngineClientHandler clientHandler = new Jade4DMZEngineClientHandler(getOptions(), operation, jumpDir, uuid, dir);
 
-            jade = new JadeEngine(getTransferOptions(operation, dir, clientHandler));
+            jade = new SOSDataExchangeEngine(getTransferOptions(operation, dir, clientHandler));
             jade.setEngineClientHandler(clientHandler);
             jade.execute();
 
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
-                jade.executeTransferCommands("source remove files", jade.getSourceClient(), getJadeOnDMZCommand4RemoveSource(), null);
+                jade.executeTransferCommands("source remove files", jade.getSourceProvider(), getJadeOnDMZCommand4RemoveSource(), null);
             }
             fileList = jade.getFileList();
 
@@ -175,9 +175,9 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private JADEOptions createPostTransferOptions(Operation operation, String dir) throws Exception {
+    private SOSBaseOptions createPostTransferOptions(Operation operation, String dir) throws Exception {
         // From DMZ to Internet as PostTransferCommands
-        JADEOptions options = new JADEOptions();
+        SOSBaseOptions options = new SOSBaseOptions();
         options = addJADEOptionsForTarget(operation, options);
         SOSProviderOptions sourceOptions = setLocalOptionsPrefixed("source_", dir);
         SOSProviderOptions targetOptions = objOptions.getTarget();
@@ -186,10 +186,10 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private JADEOptions createPreTransferOptions(Operation operation, String dir) throws Exception {
+    private SOSBaseOptions createPreTransferOptions(Operation operation, String dir) throws Exception {
         // From Internet to DMZ as PreTransferCommands
         String prefix = "target_";
-        JADEOptions options = new JADEOptions();
+        SOSBaseOptions options = new SOSBaseOptions();
         options = addJADEOptionsForSource(operation, options);
         SOSProviderOptions targetOptions = setLocalOptionsPrefixed(prefix, dir);
         targetOptions.preCommand.setValue(objOptions.jumpPreCommand.getValue());
@@ -220,10 +220,10 @@ public class Jade4DMZ extends JadeBaseEngine {
     /** Transfer from Intranet/Internet to DMZ
      * 
      * @return */
-    private JADEOptions getTransferOptions(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) throws Exception {
+    private SOSBaseOptions getTransferOptions(Operation operation, String dir, Jade4DMZEngineClientHandler clientHandler) throws Exception {
         LOGGER.debug(String.format("operation = %s, jump dir = %s", operation, dir));
-        JADEOptions options = null;
-        JADEOptions jumpCommandOptions;
+        SOSBaseOptions options = null;
+        SOSBaseOptions jumpCommandOptions;
         SOSProviderOptions jumpOptions = createJumpOptions(dir);
         if (operation.equals(Operation.copyToInternet)) {
             options = createTransferToDMZOptions(operation, dir);
@@ -319,8 +319,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private JADEOptions createTransferFromDMZOptions(Operation operation, String dir) throws Exception {
-        JADEOptions options = new JADEOptions();
+    private SOSBaseOptions createTransferFromDMZOptions(Operation operation, String dir) throws Exception {
+        SOSBaseOptions options = new SOSBaseOptions();
         options = addJADEOptionsOnClient(options);
         options = addJADEOptionsForTarget(operation, options);
         options.sourceDir.setValue(dir);
@@ -332,8 +332,8 @@ public class Jade4DMZ extends JadeBaseEngine {
      * 
      * @param targetDir
      * @return */
-    private JADEOptions createTransferToDMZOptions(Operation operation, String dir) throws Exception {
-        JADEOptions options = new JADEOptions();
+    private SOSBaseOptions createTransferToDMZOptions(Operation operation, String dir) throws Exception {
+        SOSBaseOptions options = new SOSBaseOptions();
         options = addJADEOptionsOnClient(options);
         options = addJADEOptionsForSource(operation, options);
         options.sourceDir.setValue(objOptions.getSource().directory.getValue());
@@ -342,7 +342,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private JADEOptions addJADEOptionsForSource(Operation operation, JADEOptions options) {
+    private SOSBaseOptions addJADEOptionsForSource(Operation operation, SOSBaseOptions options) {
         if (operation.equals(Operation.remove)) {
             options.operation.setValue("delete");
         } else if (operation.equals(Operation.getlist)) {
@@ -384,7 +384,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private JADEOptions addJADEOptionsForTarget(Operation operation, JADEOptions options) {
+    private SOSBaseOptions addJADEOptionsForTarget(Operation operation, SOSBaseOptions options) {
         if (operation.equals(Operation.remove)) {
             options.operation.setValue("delete");
             options.transactional.value(false);
@@ -458,7 +458,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private JADEOptions addJADEOptionsOnClient(JADEOptions options) {
+    private SOSBaseOptions addJADEOptionsOnClient(SOSBaseOptions options) {
         options.mailOnSuccess = objOptions.mailOnSuccess;
         options.mailOnError = objOptions.mailOnError;
         options.mailOnEmptyFiles = objOptions.mailOnEmptyFiles;
@@ -489,7 +489,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         return options;
     }
 
-    private String getJadeOnDMZCommand(Operation operation, JADEOptions options) throws Exception {
+    private String getJadeOnDMZCommand(Operation operation, SOSBaseOptions options) throws Exception {
         // options.history.setValue(getHistoryFilename());
         options.history.setValue("");
         options.getSource().user.setDefaultValue("");
@@ -509,7 +509,7 @@ public class Jade4DMZ extends JadeBaseEngine {
     }
 
     private String getJadeOnDMZCommand4RemoveSource() throws Exception {
-        JADEOptions opts = new JADEOptions();
+        SOSBaseOptions opts = new SOSBaseOptions();
         opts.operation.setValue("delete");
         opts.verbose = objOptions.verbose;
         opts.fileListName.setValue(getSourceListFilename());
@@ -536,9 +536,9 @@ public class Jade4DMZ extends JadeBaseEngine {
     }
 
     @Override
-    public JADEOptions getOptions() {
+    public SOSBaseOptions getOptions() {
         if (objOptions == null) {
-            objOptions = new JADEOptions();
+            objOptions = new SOSBaseOptions();
         }
         return objOptions;
     }

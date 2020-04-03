@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sos.DataExchange.options.JADEOptions;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
 import com.sos.vfs.common.SOSFileList;
 import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateException;
@@ -75,7 +75,7 @@ public class YadeHistory implements IJobSchedulerEventHandler {
         }
     }
 
-    public void beforeTransfer(JADEOptions options, SOSFileList fileList) {
+    public void beforeTransfer(SOSBaseOptions options, SOSFileList fileList) {
         if (hasException) {
             return;
         }
@@ -412,7 +412,7 @@ public class YadeHistory implements IJobSchedulerEventHandler {
         }
     }
 
-    public void setFileRestriction(JADEOptions options) {
+    public void setFileRestriction(SOSBaseOptions options) {
         if (hasException) {
             return;
         }
