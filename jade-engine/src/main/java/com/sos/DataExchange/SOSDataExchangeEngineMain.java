@@ -114,7 +114,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
     }
 
     @Override
-    public void setCC(final int pintCC) {
+    public void setExitCode(final int pintCC) {
         //
     }
 
