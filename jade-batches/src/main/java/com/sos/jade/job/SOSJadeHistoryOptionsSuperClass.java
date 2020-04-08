@@ -26,7 +26,7 @@ public class SOSJadeHistoryOptionsSuperClass extends JSOptionsClass {
     }
 
     public SOSJadeHistoryOptionsSuperClass() {
-        objParentClass = this.getClass();
+        currentClass = this.getClass();
     }
 
     public SOSJadeHistoryOptionsSuperClass(final JSListener pobjListener) {
