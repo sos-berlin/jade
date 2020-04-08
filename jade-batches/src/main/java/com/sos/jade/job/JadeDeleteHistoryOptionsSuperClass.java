@@ -38,7 +38,7 @@ public class JadeDeleteHistoryOptionsSuperClass extends JSOptionsClass {
     }
 
     public JadeDeleteHistoryOptionsSuperClass() {
-        objParentClass = this.getClass();
+        currentClass = this.getClass();
     }
 
     public JadeDeleteHistoryOptionsSuperClass(final JSListener pobjListener) {

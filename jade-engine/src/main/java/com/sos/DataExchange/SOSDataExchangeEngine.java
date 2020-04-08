@@ -344,15 +344,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     }
 
     private void tryReconnectByPolling(long pollingServerStartTime, long currentPollingTime, PollingMethod pollingMethod) {
-        tryReconnectClientByPolling(pollingServerStartTime, currentPollingTime, pollingMethod, "source", sourceProvider);
+        tryReconnectClientByPolling(sourceProvider, pollingServerStartTime, currentPollingTime, pollingMethod);
         if (objOptions.isNeedTargetClient()) {
-            tryReconnectClientByPolling(pollingServerStartTime, currentPollingTime, pollingMethod, "target", targetProvider);
+            tryReconnectClientByPolling(targetProvider, pollingServerStartTime, currentPollingTime, pollingMethod);
         }
     }
 
-    private void tryReconnectClientByPolling(long pollingServerStartTime, long currentPollingTime, PollingMethod pollingMethod, String range,
-            ISOSProvider provider) {
+    private void tryReconnectClientByPolling(ISOSProvider provider, long pollingServerStartTime, long currentPollingTime,
+            PollingMethod pollingMethod) {
         if (!provider.isConnected()) {
+            String range = provider.getProviderOptions().getRange();
+
             LOGGER.warn(String.format("[%s]is not connected. try to reconnect...", range));
             try {
                 doDisconnect(provider);
@@ -365,7 +367,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             while (run) {
                 count++;
                 try {
-                    provider.reconnect(range.equalsIgnoreCase("source") ? objOptions.getSource() : objOptions.getTarget());
+                    provider.reconnect();
                     LOGGER.info(String.format("[%s]reconnected. continue polling after error ...", range));
                     run = false;
                 } catch (Throwable e) {
@@ -510,7 +512,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         LOGGER.info(msg);
     }
 
-    private String showBannerHeaderSource(SOSProviderOptions options, boolean isSource) {
+    private String showBannerProvider(SOSProviderOptions options) {
         StringBuilder sb = new StringBuilder();
         String pattern4String = "  | %-22s= %s%n";
         String pattern4Bool = "  | %-22s= %b%n";
@@ -574,7 +576,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 sb.append(String.format(pattern4String, "TransferMode", options.transferMode.getValue()));
             }
         }
-        if (isSource) {
+        if (options.isSource()) {
             if (options.directory.isDirty()) {
                 sb.append(String.format(pattern4String, "Directory", options.directory.getValue()));
             }
@@ -686,10 +688,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 sb.append(String.format(pattern4String, "LogFile", getOptions().logFilename.getValue()));
             }
             sb.append(String.format(pattern4SourceTarget, "Source"));
-            sb.append(showBannerHeaderSource(getOptions().getSource(), true));
+            sb.append(showBannerProvider(getOptions().getSource()));
             if (objOptions.isNeedTargetClient()) {
                 sb.append(String.format(pattern4SourceTarget, "Target"));
-                sb.append(showBannerHeaderSource(getOptions().getTarget(), false));
+                sb.append(showBannerProvider(getOptions().getTarget()));
             }
             sb.append("\n");
         }
@@ -1229,12 +1231,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             sourceFileList = new SOSFileList(objOptions, historyHandler);
             factory = new SOSVFSFactory(objOptions);
             if (objOptions.lazyConnectionMode.isFalse() && objOptions.isNeedTargetClient()) {
-                targetProvider = factory.getConnectedProvider(false);
+                targetProvider = factory.getConnectedProvider(getOptions().getTarget());
                 sourceFileList.setTargetProvider(targetProvider);
                 makeDirs();
             }
             try {
-                sourceProvider = factory.getConnectedProvider(true);
+                sourceProvider = factory.getConnectedProvider(getOptions().getSource());
                 sourceFileList.setSourceProvider(sourceProvider);
                 String sourceDir = objOptions.sourceDir.getValue();
                 String targetDir = objOptions.targetDir.getValue();
@@ -1325,7 +1327,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                                 sourceFileList.createResultSetFile();
                                 if (!sourceFileList.isEmpty() && objOptions.skipTransfer.isFalse()) {
                                     if (objOptions.lazyConnectionMode.isTrue()) {
-                                        targetProvider = factory.getConnectedProvider(false);
+                                        targetProvider = factory.getConnectedProvider(getOptions().getTarget());
                                         sourceFileList.setTargetProvider(targetProvider);
                                         makeDirs();
                                     }
@@ -1419,15 +1421,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     }
 
     private void debugOptions(SOSProviderOptions opt) {
-        String range = opt.isSource() ? "source" : "target";
-        LOGGER.debug(String.format("[%s]%s", range, opt.dirtyString()));
+        LOGGER.debug(String.format("[%s]%s", opt.getRange(), opt.dirtyString()));
         if (opt.getCredentialStore().useCredentialStore.value()) {
-            LOGGER.debug(String.format("[%s][credential store]%s", range, opt.getCredentialStore().dirtyString()));
+            LOGGER.debug(String.format("[%s][credential store]%s", opt.getRange(), opt.getCredentialStore().dirtyString()));
         }
         if (opt.alternateOptionsUsed.value()) {
-            LOGGER.debug(String.format("[alternative_%s]%s", range, opt.getAlternative().dirtyString()));
+            LOGGER.debug(String.format("[alternative_%s]%s", opt.getRange(), opt.getAlternative().dirtyString()));
             if (opt.getAlternative().getCredentialStore().useCredentialStore.value()) {
-                LOGGER.debug(String.format("[alternative_%s][credential store]%s", range, opt.getAlternative().getCredentialStore().dirtyString()));
+                LOGGER.debug(String.format("[alternative_%s][credential store]%s", opt.getRange(), opt.getAlternative().getCredentialStore()
+                        .dirtyString()));
             }
         }
     }
@@ -1481,7 +1483,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
         executeTransferCommands(caller, sourceProvider, source.preTransferCommands.getValue(), source.commandDelimiter.getValue());
         if (objOptions.isNeedTargetClient()) {
-            targetProvider.reconnect(target);
+            targetProvider.reconnect();
         }
     }
 
@@ -1505,7 +1507,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (sourceProvider == null) {
                 throw new Exception("sourceClient is NULL");
             }
-            sourceProvider.reconnect(source);
+            sourceProvider.reconnect();
             executeTransferCommands(caller, sourceProvider, source.postTransferCommands.getValue(), source.commandDelimiter.getValue());
         }
     }
@@ -1542,7 +1544,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     if (sourceProvider == null) {
                         throw new Exception("sourceClient is NULL");
                     }
-                    sourceProvider.reconnect(source);
+                    sourceProvider.reconnect();
                     executeTransferCommands(caller, sourceProvider, source.postTransferCommandsOnError.getValue(), source.commandDelimiter
                             .getValue());
                 } catch (Exception ex) {
@@ -1591,7 +1593,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     if (sourceProvider == null) {
                         throw new Exception("objDataSourceClient is NULL");
                     }
-                    sourceProvider.reconnect(source);
+                    sourceProvider.reconnect();
                     executeTransferCommands(caller, sourceProvider, source.postTransferCommandsFinal.getValue(), source.commandDelimiter.getValue());
                 } catch (Exception ex) {
                     if (exception.length() > 0) {
