@@ -1321,7 +1321,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                                 JADE_REPORT_LOGGER.info(msg);
                                 objOptions.removeFiles.setFalse();
                                 objOptions.forceFiles.setFalse();
-                                sourceFileList.logFileList();
+                                sourceFileList.logGetListOperation();
                                 sourceFileList.createResultSetFile();
                             } else {
                                 sourceFileList.createResultSetFile();
