@@ -259,7 +259,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     if (objOptions.pollingWait4SourceFolder.isFalse()) {
                         boolean directoryExists = false;
                         try {
-                            directoryExists = sourceFile.fileExists();
+                            directoryExists = sourceFile.directoryExists();
                         } catch (Throwable e) {
                             throw new JobSchedulerException(e.toString(), e);
                         }
@@ -270,7 +270,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         isSourceDirFounded = true;
                     } else {
                         try {
-                            if (!sourceFile.fileExists()) {
+                            if (!sourceFile.directoryExists()) {
                                 LOGGER.info(String.format("[%s]directory not found. Wait for the directory due to polling mode...", sourceDir));
                             } else {
                                 isSourceDirFounded = true;
