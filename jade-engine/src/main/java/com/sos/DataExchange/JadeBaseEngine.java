@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,9 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
 
     public JadeBaseEngine(final SOSBaseOptions opt) {
         super(opt);
+        if (objOptions.settings.isDirty()) {
+            objOptions.setOptions(setOptionsFromFile());
+        }
     }
 
     public void setLogger() {
@@ -104,6 +108,21 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             }
         }
         return level;
+    }
+
+    private HashMap<String, String> setOptionsFromFile() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("[setOptionsFromFile]settings=%s", objOptions.settings.getValue()));
+        }
+        String config = objOptions.settings.getValue();
+        objOptions.setOriginalSettingsFile(config);
+        objOptions.setDeleteSettingsFileOnExit(false);
+        if (config.toLowerCase().endsWith(".xml")) {
+            Path iniFile = convertXml2Ini(config);
+            objOptions.settings.setValue(iniFile.toString());
+            objOptions.setDeleteSettingsFileOnExit(true);
+        }
+        return objOptions.readSettingsFile(null);
     }
 
     public Path convertXml2Ini(String xmlFile) {

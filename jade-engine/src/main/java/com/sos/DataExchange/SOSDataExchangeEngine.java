@@ -22,11 +22,9 @@ import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -107,24 +105,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
     public SOSDataExchangeEngine(final SOSBaseOptions jadeOptions) throws Exception {
         super(jadeOptions);
-        if (objOptions.settings.isDirty()) {
-            objOptions.setOptions(setOptionsFromFile());
-        }
-    }
-
-    private HashMap<String, String> setOptionsFromFile() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("[setOptionsFromFile]settings=%s", objOptions.settings.getValue()));
-        }
-        String config = objOptions.settings.getValue();
-        objOptions.setOriginalSettingsFile(config);
-        objOptions.setDeleteSettingsFileOnExit(false);
-        if (config.toLowerCase().endsWith(".xml")) {
-            Path iniFile = convertXml2Ini(config);
-            objOptions.settings.setValue(iniFile.toString());
-            objOptions.setDeleteSettingsFileOnExit(true);
-        }
-        return objOptions.readSettingsFile(null);
     }
 
     public boolean checkSourceFilesSteady() {

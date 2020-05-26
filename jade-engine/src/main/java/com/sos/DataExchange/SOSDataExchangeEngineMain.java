@@ -55,7 +55,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             }
         });
 
-        int exitCode = main.Execute(args);
+        int exitCode = main.execute(args);
         System.exit(exitCode);
     }
 
@@ -63,15 +63,15 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
         super("SOSDataExchange");
     }
 
-    private int Execute(final String[] args) {
-        final String method = "Execute";
+    private int execute(final String[] args) {
+        final String method = "execute";
         int exitCode = 0;
         try {
-            engine = new SOSDataExchangeEngine();
-            SOSBaseOptions options = engine.getOptions();
+            SOSBaseOptions options = new SOSBaseOptions();
+            options.commandLineArgs(args);
+            engine = new SOSDataExchangeEngine(options);
             engine.setJSJobUtilites(this);
             options.sendTransferHistory.value(true);
-            options.commandLineArgs(args);
             LOGGER.info(getMsg(SOSDX_Intro));
             engine.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
