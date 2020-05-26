@@ -35,6 +35,14 @@ public class Jade4DMZ extends JadeBaseEngine {
         copyToInternet, copyFromInternet, remove, getlist
     }
 
+    public Jade4DMZ() throws Exception {
+        super();
+    }
+
+    public Jade4DMZ(final SOSBaseOptions jadeOptions) throws Exception {
+        super(jadeOptions);
+    }
+
     public void execute() {
 
         setLogger();
