@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -500,11 +501,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         String pattern4Rename = "  | %-22s= %s -> %s%n";
         sb.append(String.format(pattern4String, "Protocol", options.protocol.getValue()));
         sb.append(String.format(pattern4String, "Host", options.host.getValue()));
-        try {
-            sb.append(String.format(pattern4String, "IP", InetAddress.getByName(options.host.getValue()).getHostAddress()));
-        } catch (UnknownHostException e) {
-            sb.append(String.format(pattern4String, "IP", "could not be resolved!"));
-        }
+        sb.append(String.format(pattern4String, "IP", getHostAddress(options.host.getValue())));
         if (!options.protocol.isLocal()) {
             TransferTypes transferType = options.protocol.getEnum();
 
@@ -627,6 +624,22 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             sb.append(String.format(pattern4Rename, "Rename", options.replacing.getValue(), options.replacement.getValue()));
         }
         return sb.toString();
+    }
+
+    private String getHostAddress(String host) {
+        String result = null;
+        try {
+            result = InetAddress.getByName(host).getHostAddress();
+        } catch (UnknownHostException e) {
+            try {
+                result = InetAddress.getByName(new URL(host).getHost()).getHostAddress();
+            } catch (Throwable t) {
+            }
+        }
+        if (result == null) {
+            result = "could not be resolved!";
+        }
+        return result;
     }
 
     private void showBanner() throws Exception {

@@ -97,7 +97,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         String uuid = "jade-dmz-" + getUUID();
         String dir = jumpDir + uuid;
 
-        LOGGER.info(String.format("operation = %s, jump dir = %s", operation, dir));
+        LOGGER.info(String.format("operation=%s, jump dir=%s, jump platform=%s", operation, dir, objOptions.jump_platform.getValue()));
         SOSDataExchangeEngine jade = null;
         fileList = null;
         try {
@@ -273,6 +273,11 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.setDmzOption("operation", operation.name());
         options.setDmzOption("history", getHistoryFilename());
         options.setDmzOption("resultfile", getSourceListFilename());
+
+        options.settings = objOptions.settings;
+        options.profile = objOptions.profile;
+        options.setOriginalSettingsFile(objOptions.getOriginalSettingsFile());
+        options.setDeleteSettingsFileOnExit(objOptions.getDeleteSettingsFileOnExit());
         return options;
     }
 
@@ -333,6 +338,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         options = addJADEOptionsForTarget(operation, options);
         options.sourceDir.setValue(dir);
         options.targetDir.setValue(objOptions.getTarget().directory.getValue());
+        options.jump_platform.setValue(objOptions.jump_platform.getValue());
         return options;
     }
 
@@ -347,6 +353,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.sourceDir.setValue(objOptions.getSource().directory.getValue());
         options.targetDir.setValue(dir);
         options.removeFiles = objOptions.removeFiles;
+        options.jump_platform.setValue(objOptions.jump_platform.getValue());
         return options;
     }
 
