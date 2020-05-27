@@ -68,7 +68,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
     }
 
     private String getRemoveDirCommand(SOSBaseOptions options, String dir) {
-        if (options.jumpPlatform.isWindows()) {
+        if (options.jump_platform.isWindows()) {
             dir = dir.replace('/', '\\');
             return "rmdir \"" + dir + "\" /s /q;del /F /Q " + dir + "* 2>nul";
         } else {

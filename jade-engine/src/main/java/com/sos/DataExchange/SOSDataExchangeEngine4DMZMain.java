@@ -48,10 +48,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             SOSBaseOptions options = new SOSBaseOptions();
             options.commandLineArgs(args);
             jade4dmz = new Jade4DMZ(options);
-            // jade4dmz = new Jade4DMZ();
-            // SOSBaseOptions options = jade4dmz.getOptions();
             jade4dmz.setJSJobUtilites(this);
-            options.commandLineArgs(args);
             LOGGER.info(getMsg(SOSDX_Intro));
             jade4dmz.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));

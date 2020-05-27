@@ -8883,6 +8883,7 @@ log4j.rootLogger=info, stdout
 				        <xs:element ref="ServerAliveCountMax" minOccurs="0"/>
                 <xs:element ref="ConnectTimeout" minOccurs="0"/>
 				        <xs:element ref="ChannelConnectTimeout" minOccurs="0"/>
+                <xs:element ref="Platform" minOccurs="0"/>
 			      </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
@@ -12890,6 +12891,46 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:simpleType>
 			      <xs:restriction base="xs:string">
 				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
+    <xs:element name="Platform" default="unix">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="platform"/>
+				        <Release starting="1.12.13, 1.13.4" issue="YADE-557"/>
+        	</xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_Platform.html">Platform</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">platform</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-557">YADE-557</a> Availability starting with 1.12.13, 1.13.4.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>Platform / Operating system</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:enumeration value="unix"/>
+				        <xs:enumeration value="windows"/>
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
