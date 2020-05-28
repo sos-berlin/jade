@@ -686,10 +686,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 sb.append(String.format(pattern4SourceTarget, "Target"));
                 sb.append(showBannerProvider(getOptions().getTarget()));
             }
-            sb.append("\n");
         }
-        JADE_REPORT_LOGGER.info(sb.toString());
-        LOGGER.info(sb.toString());
+        String result = sb.toString();
+        JADE_REPORT_LOGGER.info(result);
+        LOGGER.info(result);
     }
 
     public SOSFileList getFileList() {
