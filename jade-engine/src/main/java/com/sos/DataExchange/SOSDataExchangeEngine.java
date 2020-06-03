@@ -1634,7 +1634,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (objOptions.maxFiles.isDirty()) {
                 objOptions.maxFiles.value();
             }
-            sourceFileList.create(sourceProvider.getFilelist(sourceDir.getValue(), regExp.getValue(), 0, recursive.value(), false,
+            sourceFileList.create(sourceProvider.getFilelist(sourceFile.getName(), regExp.getValue(), 0, recursive.value(), false,
                     integrityHashFileExtention), maxFiles);
 
             String msg = String.format("[source][%s][recursive=%s][%s]%s files found", sourceDir.getValue(), recursive.value(), regExp.getValue(),
