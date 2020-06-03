@@ -432,7 +432,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
             transfer();
             transferAfterCheck();
-
+            
             if (history != null) {
                 history.afterTransfer();
             }
@@ -456,16 +456,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             }
             throw new JobSchedulerException(e.toString(), e);
         } finally {
-            if (engineClientHandler != null) {
-                engineClientHandler.onEnd(this);
-            } else {
-
+            if (engineClientHandler == null) {
+                //engineClientHandler itself takes care for disconnecting
                 try {
                     disconnect();
                 } catch (Exception ex) {
                     LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
                 }
-
             }
 
             if (endTime == null) {

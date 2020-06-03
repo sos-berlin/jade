@@ -99,22 +99,25 @@ public class Jade4DMZ extends JadeBaseEngine {
 
         LOGGER.info(String.format("operation=%s, jump dir=%s, jump platform=%s", operation, dir, objOptions.jump_platform.getValue()));
         SOSDataExchangeEngine jade = null;
+        Jade4DMZEngineClientHandler clientHandler = null;
         fileList = null;
         try {
-            Jade4DMZEngineClientHandler clientHandler = new Jade4DMZEngineClientHandler(getOptions(), operation, jumpDir, uuid, dir);
+            clientHandler = new Jade4DMZEngineClientHandler(getOptions(), operation, jumpDir, uuid, dir);
 
             jade = new SOSDataExchangeEngine(getTransferOptions(operation, dir, clientHandler));
             jade.setEngineClientHandler(clientHandler);
             jade.execute();
             
             fileList = jade.getFileList();
-
+            
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 try {
                     jade.executeTransferCommands("source remove files", jade.getSourceProvider(), getJadeOnDMZCommand4RemoveSource(), null);
-                } catch (Exception e) {
+                } catch (Exception ex) {
                     if (fileList.count() > 0L) { //JADE-375
-                        throw e;
+                        throw ex;
+                    } else {
+                        LOGGER.info(ex.toString());
                     }
                 }
             }
@@ -128,10 +131,15 @@ public class Jade4DMZ extends JadeBaseEngine {
             }
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
-            try {
-                jade.disconnect();
-            } catch (Exception ex) {
-                LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+            if (jade != null) {
+                if (clientHandler != null) {
+                    clientHandler.onEnd(jade);
+                }
+                try {
+                    jade.disconnect();
+                } catch (Exception ex) {
+                    LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+                }
             }
         }
     }
