@@ -106,11 +106,18 @@ public class Jade4DMZ extends JadeBaseEngine {
             jade = new SOSDataExchangeEngine(getTransferOptions(operation, dir, clientHandler));
             jade.setEngineClientHandler(clientHandler);
             jade.execute();
+            
+            fileList = jade.getFileList();
 
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
-                jade.executeTransferCommands("source remove files", jade.getSourceProvider(), getJadeOnDMZCommand4RemoveSource(), null);
+                try {
+                    jade.executeTransferCommands("source remove files", jade.getSourceProvider(), getJadeOnDMZCommand4RemoveSource(), null);
+                } catch (Exception e) {
+                    if (fileList.count() > 0L) { //JADE-375
+                        throw e;
+                    }
+                }
             }
-            fileList = jade.getFileList();
 
             if (history != null) {
                 history.afterDMZFileTransfer(fileList, initialTargetDir);
@@ -120,6 +127,12 @@ public class Jade4DMZ extends JadeBaseEngine {
                 history.onDMZFileTransferException(fileList, initialTargetDir);
             }
             throw new JobSchedulerException("Transfer failed", e);
+        } finally {
+            try {
+                jade.disconnect();
+            } catch (Exception ex) {
+                LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+            }
         }
     }
 

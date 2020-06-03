@@ -458,12 +458,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         } finally {
             if (engineClientHandler != null) {
                 engineClientHandler.onEnd(this);
-            }
+            } else {
 
-            try {
-                disconnect();
-            } catch (Exception ex) {
-                LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+                try {
+                    disconnect();
+                } catch (Exception ex) {
+                    LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+                }
+
             }
 
             if (endTime == null) {
