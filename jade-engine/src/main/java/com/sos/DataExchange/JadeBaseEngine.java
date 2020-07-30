@@ -39,6 +39,8 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         if (objOptions.settings.isDirty()) {
             objOptions.setOptions(setOptionsFromFile());
             objOptions.settings.setNotDirty();
+        } else {
+            objOptions.setChildClasses(objOptions.getSettings());
         }
     }
 
