@@ -69,6 +69,9 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             LOGGER.debug(String.format("set loglevel to DEBUG due to option verbose = %s", objOptions.verbose.value()));
         } else if (level.equals(Level.TRACE)) {
             // Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.TRACE);
+            configuration.getLoggerConfig("com.mchange").setLevel(Level.DEBUG);
+            configuration.getLoggerConfig("org.hibernate").setLevel(Level.DEBUG);
+            configuration.getLoggerConfig("org.hibernate.type.descriptor.sql").setLevel(Level.TRACE);
             configuration.getRootLogger().setLevel(Level.TRACE);
             context.updateLoggers();
 
