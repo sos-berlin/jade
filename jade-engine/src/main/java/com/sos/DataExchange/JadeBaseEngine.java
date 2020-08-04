@@ -11,7 +11,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -51,31 +51,32 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             return;
         }
         SOSVFSFactory.setParentLogger(SOSDataExchangeEngine.JADE_LOGGER_NAME);
-        LoggerContext context = getLoggerContext();
+        getLoggerContext();
         Level level = checkLevel();
         if (level == null) {
             isLoggerConfigured = true;
             return;
         }
 
-        Configuration configuration = context.getConfiguration();
         if (level.equals(Level.INFO)) {
-            // Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);
-            configuration.getRootLogger().setLevel(Level.INFO);
-            context.updateLoggers();
+            Configurator.setRootLevel(Level.INFO);
         } else if (level.equals(Level.DEBUG)) {
-            // Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
-            configuration.getRootLogger().setLevel(Level.DEBUG);
-            context.updateLoggers();
+            Configurator.setRootLevel(Level.DEBUG);
+            Configurator.setLevel("com.mchange", Level.INFO);
+            Configurator.setLevel("org.hibernate", Level.INFO);
+            Configurator.setLevel("org.hibernate.persister.entity.AbstractEntityPersister", Level.DEBUG);
+            Configurator.setLevel("org.hibernate.SQL", Level.DEBUG);
+            Configurator.setLevel("org.hibernate.loader.entity.plan.EntityLoader", Level.DEBUG);
 
             LOGGER.debug(String.format("set loglevel to DEBUG due to option verbose = %s", objOptions.verbose.value()));
         } else if (level.equals(Level.TRACE)) {
-            // Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.TRACE);
-            configuration.getLoggerConfig("com.mchange").setLevel(Level.DEBUG);
-            configuration.getLoggerConfig("org.hibernate").setLevel(Level.DEBUG);
-            configuration.getLoggerConfig("org.hibernate.type.descriptor.sql").setLevel(Level.TRACE);
-            configuration.getRootLogger().setLevel(Level.TRACE);
-            context.updateLoggers();
+            Configurator.setRootLevel(Level.TRACE);
+            Configurator.setLevel("com.mchange", Level.INFO);
+            Configurator.setLevel("org.hibernate", Level.INFO);
+            Configurator.setLevel("org.hibernate.persister.entity.AbstractEntityPersister", Level.DEBUG);
+            Configurator.setLevel("org.hibernate.type.descriptor.sql", Level.TRACE);
+            Configurator.setLevel("org.hibernate.SQL", Level.DEBUG);
+            Configurator.setLevel("org.hibernate.loader.entity.plan.EntityLoader", Level.DEBUG);
 
             LOGGER.debug(String.format("set loglevel to TRACE due to option verbose = %s", objOptions.verbose.value()));
         }
@@ -90,6 +91,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             if (log4j.isFile() && log4j.canRead()) {
                 LOGGER.info(String.format("use log4j configuration file %s", getOptions().log4jPropertyFileName.getValue()));
                 context.setConfigLocation(log4j.toURI());
+                context.updateLoggers();
             } else {
                 LOGGER.warn(String.format("log4j configuration file %s not found or is not readable", getOptions().log4jPropertyFileName.getValue()));
             }
