@@ -456,14 +456,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             }
             throw new JobSchedulerException(e.toString(), e);
         } finally {
-            if (engineClientHandler != null) {
-                engineClientHandler.onEnd(this);
-            }
-
-            try {
-                disconnect();
-            } catch (Exception ex) {
-                LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+            if (engineClientHandler == null) {
+                //engineClientHandler itself takes care for disconnecting
+                try {
+                    disconnect();
+                } catch (Exception ex) {
+                    LOGGER.warn(String.format("exception on disconnect: %s", ex.toString()), ex);
+                }
             }
 
             if (endTime == null) {
@@ -1634,7 +1633,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (objOptions.maxFiles.isDirty()) {
                 objOptions.maxFiles.value();
             }
-            sourceFileList.create(sourceProvider.getFilelist(sourceDir.getValue(), regExp.getValue(), 0, recursive.value(), false,
+            sourceFileList.create(sourceProvider.getFilelist(sourceFile.getName(), regExp.getValue(), 0, recursive.value(), false,
                     integrityHashFileExtention), maxFiles);
 
             String msg = String.format("[source][%s][recursive=%s][%s]%s files found", sourceDir.getValue(), recursive.value(), regExp.getValue(),
