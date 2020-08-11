@@ -113,7 +113,9 @@ public class JadeTransferDBLayer extends SOSHibernateDBLayer {
         if (whereEndTime != null && !"".equals(whereEndTime)) {
             query.setDate("endTime", whereEndTime);
         }
-        query.setMaxResults(limit);
+        if (limit > 0){
+            query.setMaxResults(limit);
+        }
         transferList = query.list();
         return transferList;
     }

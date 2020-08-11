@@ -34,7 +34,9 @@ public class JadeTransferDetailDBLayer extends JadeTransferDBLayer {
         if (whereEndTime != null && !whereEndTime.equals("")) {
             query.setDate("endTime", whereEndTime);
         }
-        query.setMaxResults(limit);
+        if (limit > 0){
+            query.setMaxResults(limit);
+        }
         List<JadeTransferDetailDBItem> transferDetailsList = query.list();
         return transferDetailsList;
     }
