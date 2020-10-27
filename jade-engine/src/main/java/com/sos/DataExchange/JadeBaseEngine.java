@@ -19,7 +19,6 @@ import org.xml.sax.InputSource;
 import com.sos.DataExchange.converter.JadeXml2IniConverter;
 import com.sos.JSHelper.Basics.JSJobUtilitiesClass;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.vfs.common.SOSVFSFactory;
 import com.sos.vfs.common.options.SOSBaseOptions;
 
 public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
@@ -50,7 +49,6 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         if (isLoggerConfigured) {
             return;
         }
-        SOSVFSFactory.setParentLogger(SOSDataExchangeEngine.JADE_LOGGER_NAME);
         getLoggerContext();
         Level level = checkLevel();
         if (level == null) {
