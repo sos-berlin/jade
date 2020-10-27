@@ -67,8 +67,7 @@ import sos.util.SOSString;
 
 public class SOSDataExchangeEngine extends JadeBaseEngine {
 
-    protected static final String JADE_LOGGER_NAME = "JadeReportLog";
-    private static final Logger JADE_REPORT_LOGGER = LoggerFactory.getLogger(JADE_LOGGER_NAME);
+    private static final Logger JADE_REPORT_LOGGER = LoggerFactory.getLogger(SOSVFSFactory.REPORT_LOGGER_NAME);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngine.class);
     private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
@@ -457,7 +456,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             throw new JobSchedulerException(e.toString(), e);
         } finally {
             if (engineClientHandler == null) {
-                //engineClientHandler itself takes care for disconnecting
+                // engineClientHandler itself takes care for disconnecting
                 try {
                     disconnect();
                 } catch (Exception ex) {
