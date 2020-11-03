@@ -70,7 +70,6 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     private static final Logger JADE_REPORT_LOGGER = LoggerFactory.getLogger(SOSVFSFactory.REPORT_LOGGER_NAME);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngine.class);
-    private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
 
     private enum PollingMethod {
         PollTimeout, PollingServerDuration, PollForever
@@ -172,7 +171,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             entry.setSourceFileSteadyProperties(sourceProvider.getFile(entry.getSourceFileName()));
             if (entry.getSourceFileLastCheckedFileSize().equals(entry.getFileSize())) {
                 entry.setSourceFileSteady(true);
-                if (isDebugEnabled) {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(String.format("[%s][%s][%s bytes]not changed", position, entry.getSourceFileName(), entry
                             .getSourceFileLastCheckedFileSize()));
                 }
@@ -222,15 +221,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
             PollingLoop: while (true) {
                 if (currentPollingTime == 0) {
-                    if (isDebugEnabled) {
+                    if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(String.format("[start]%s minutes...", getPollTimeoutText()));
                     }
                 }
                 if (currentPollingTime > pollTimeout) {
                     String msg = String.format("[end]%s minutes", getPollTimeoutText());
-                    if (isDebugEnabled) {
-                        LOGGER.debug(msg);
-                    }
+                    LOGGER.debug(msg);
                     objJSJobUtilities.setStateText(msg);
                     break PollingLoop;
                 }
@@ -256,14 +253,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                                 isSourceDirFounded = true;
                             }
                         } catch (Exception e) {
-                            if (isDebugEnabled) {
+                            if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug(String.format("[%s][directory not found. Wait for the directory due to polling mode...]%s", sourceDir, e
                                         .toString()), e);
                             }
                             isSourceDirFounded = false;
                         }
                     }
-                    if (isDebugEnabled) {
+                    if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(String.format("isSourceDirFounded=%s", isSourceDirFounded));
                     }
                 }
@@ -289,16 +286,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         LOGGER.error(e.getMessage(), e);
                     }
 
-                    if (isDebugEnabled) {
+                    if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug(String.format("[pollMinfiles=%s][currentFilesCount=%s]", objOptions.pollMinfiles.value(), currentFilesCount));
                     }
 
                     if ((objOptions.pollMinfiles.value() == 0 && currentFilesCount > 0) || (objOptions.pollMinfiles.value() > 0
                             && currentFilesCount >= objOptions.pollMinfiles.value())) {
 
-                        if (isDebugEnabled) {
-                            LOGGER.debug("break");
-                        }
+                        LOGGER.debug("break");
+
                         break PollingLoop;
                     }
                 }
@@ -413,7 +409,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     history.beforeTransfer(objOptions, null);
                 }
             } catch (Throwable e) {
-                if (isDebugEnabled) {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(String.format("[baseOptions]%s", getOptions().dirtyString()));
 
                     debugOptions(getOptions().getSource());
@@ -708,7 +704,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
         if (objOptions.filePath.isNotEmpty()) {
             String filePath = objOptions.filePath.getValue();
-            if (isDebugEnabled) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("single file(s) specified : '%1$s'", filePath));
             }
             try {
@@ -723,7 +719,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         if (entry == null) {
                             LOGGER.info(String.format("[%s]not found", filename));
                         } else {
-                            if (isDebugEnabled) {
+                            if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug(String.format("[%s]found", filename));
                             }
                             entries.add(entry);
@@ -753,7 +749,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                             if (entry == null) {
                                 LOGGER.info(String.format("[%s]not found", filename));
                             } else {
-                                if (isDebugEnabled) {
+                                if (LOGGER.isDebugEnabled()) {
                                     LOGGER.debug(String.format("[%s]found", filename));
                                 }
                                 entries.add(entry);
@@ -812,11 +808,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 if (!Files.deleteIfExists(Paths.get(objOptions.settings.getValue()))) {
                     msg = "cant'be deleted";
                 }
-                if (isDebugEnabled) {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(String.format("[%s]settings file %s", objOptions.settings.getValue(), msg));
                 }
             } catch (IOException e) {
-                if (isDebugEnabled) {
+                if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(String.format("[%s]settings file can't be deleted, exception %s", objOptions.settings.getValue(), e.toString()), e);
                 }
             }
@@ -847,7 +843,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     cd = targetProvider.isDirectory(path);
                 }
             }
-            if (isDebugEnabled) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("[target][%s]isDirectory=%s", path, cd));
             }
         } catch (Exception e) {
@@ -1050,7 +1046,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     }
 
     private void sendNotifications() {
-        if (isDebugEnabled) {
+        if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("[mailOnError=%s][mailOnSuccess=%s][mailOnEmptyFiles=%s]", objOptions.mailOnError.value(),
                     objOptions.mailOnSuccess.value(), objOptions.mailOnEmptyFiles.value()));
             if (sourceFileList == null) {
@@ -1204,7 +1200,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
         try {
             getOptions().checkMandatory();
-            if (isDebugEnabled) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("[baseOptions]%s", getOptions().dirtyString()));
 
                 debugOptions(getOptions().getSource());
@@ -1272,7 +1268,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                             oneOrMoreSingleFilesSpecified(sourceDir);
                         } else {
                             ISOSProviderFile fileHandle = sourceProvider.getFile(sourceDir);
-                            if (isDebugEnabled) {
+                            if (LOGGER.isDebugEnabled()) {
                                 String msg = "";
                                 if (objOptions.isNeedTargetClient()) {
                                     msg = "[source directory/file=" + sourceDir + "][target directory=" + targetDir + "][file regexp="
@@ -1449,7 +1445,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         sourceFileList.resetNoOfZeroByteSizeFiles();
 
         if (hasError) {
-            if (isDebugEnabled) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.info(String.format("[wait]%ss", POLLING_WAIT_INTERVAL_ON_TRANSFER_ERROR));
             }
             doSleep(POLLING_WAIT_INTERVAL_ON_TRANSFER_ERROR);
