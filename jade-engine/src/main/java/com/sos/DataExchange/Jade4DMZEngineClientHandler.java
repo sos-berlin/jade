@@ -15,7 +15,6 @@ import sos.util.SOSString;
 public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Jade4DMZEngineClientHandler.class);
-    private static final boolean isDebugEnabled = LOGGER.isDebugEnabled();
 
     private Operation operation;
     private boolean copyFromInternetWithFileList = false;
@@ -78,7 +77,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
 
     private void copyFileListToJump(ISOSProvider sourceClient) throws Exception {
         if (sourceClient instanceof SOSSFTP) {
-            if (isDebugEnabled) {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("[source][copyFileListToJump][%s]%s", clientFileListName, jumpFileListName));
             }
             SOSSFTP h = (SOSSFTP) sourceClient;
