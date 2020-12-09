@@ -36,7 +36,11 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
     public JadeBaseEngine(final SOSBaseOptions opt) {
         super(opt);
         if (objOptions.settings.isDirty()) {
+            String filePath = objOptions.filePath.isDirty() ? objOptions.filePath.getValue() : null;
             objOptions.setOptions(setOptionsFromFile());
+            if (filePath != null) {
+                objOptions.filePath.setValue(filePath);
+            }
             objOptions.settings.setNotDirty();
         } else {
             if (objOptions.operation.isDirty()) {
