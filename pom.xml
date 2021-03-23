@@ -24,6 +24,7 @@
 		<module>jade-engine</module>
         <module>jade-file-watcher</module>
         <module>yade-xml-converter</module>
-	</modules> 
+        <module>yade-commons</module>
+  </modules> 
 
 </project>

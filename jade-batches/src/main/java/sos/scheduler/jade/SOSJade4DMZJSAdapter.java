@@ -38,6 +38,7 @@ import com.sos.vfs.common.options.SOSBaseOptions;
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
+import sos.util.SOSString;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
@@ -67,6 +68,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private YadeHistory history;
+    private boolean setHistoryProcessed = false;
 
     public SOSJade4DMZJSAdapter() {
         super();
@@ -76,15 +78,6 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     public boolean spooler_init() {
         try {
             super.spooler_init();
-
-            history = new YadeHistory(spooler);
-            try {
-                history.buildFactory(getHibernateConfigurationReporting());
-            } catch (Throwable e) {
-                LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
-                history = null;
-            }
-
             return true;
         } catch (Exception e) {
             LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
@@ -170,6 +163,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine.setJSJobUtilites(this);
             jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
 
+            setHistory(jade4DMZEngine.getOptions());
+
             jade4DMZEngine.setHistory(history);
             jade4DMZEngine.getOptions().setJobSchedulerId(spooler.id());
 
@@ -251,6 +246,37 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         } finally {
             deleteXml2IniSettingsFile(xml2iniFile);
         }
+    }
+
+    private void setHistory(SOSBaseOptions options) {
+        if (setHistoryProcessed) {
+            return;
+        }
+
+        history = null;
+        if (!SOSString.isEmpty(options.return_values.getValue())) {
+            LOGGER.debug(String.format("[skip history]return_values=%s", options.return_values.getValue()));
+            setHistoryProcessed = true;
+            return;
+        }
+
+        Path hibernateFile = null;
+        try {
+            hibernateFile = getHibernateConfigurationReporting();
+        } catch (Throwable e) {
+            LOGGER.info("Transfer history won´t be processed: " + e.toString(), e);
+            setHistoryProcessed = true;
+            return;
+        }
+
+        history = new YadeHistory(spooler);
+        try {
+            history.buildFactory(hibernateFile);
+        } catch (Throwable e) {
+            LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
+            history = null;
+        }
+        setHistoryProcessed = true;
     }
 
     private void deleteXml2IniSettingsFile(Path xml2iniFile) {

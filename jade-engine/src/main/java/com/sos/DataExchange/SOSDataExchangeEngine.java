@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
+import com.sos.DataExchange.history.YadeTransferResultHelper;
 import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.JSOptionsClass;
@@ -397,6 +398,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         objOptions.getTextProperties().put("version", VersionInfo.VERSION_STRING);
         objOptions.logFilename.setLogger(JADE_REPORT_LOGGER);
         YadeHistory history = null;
+        Throwable exception = null;
         if (historyHandler != null) {
             history = (YadeHistory) historyHandler;
         }
@@ -427,7 +429,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
             transfer();
             transferAfterCheck();
-            
+
             if (history != null) {
                 history.afterTransfer();
             }
@@ -439,20 +441,23 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (history != null) {
                 history.onException(e);
             }
+            exception = e;
             throw new JobSchedulerException(e.getCause());
         } catch (JobSchedulerException e) {
             if (history != null) {
                 history.onException(e);
             }
+            exception = e;
             throw e;
         } catch (Exception e) {
             if (history != null) {
                 history.onException(e);
             }
+            exception = e;
             throw new JobSchedulerException(e.toString(), e);
         } finally {
             if (engineClientHandler == null) {
-                //engineClientHandler itself takes care for disconnecting
+                // engineClientHandler itself takes care for disconnecting
                 try {
                     disconnect();
                 } catch (Exception ex) {
@@ -467,10 +472,34 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 history.sendYadeEventOnEnd();
             }
 
+            setReturnValues(exception);
             printState();
             showResult();
             sendNotifications();
 
+        }
+    }
+
+    private void setReturnValues(Throwable exception) {
+        if (!SOSString.isEmpty(getOptions().return_values.getValue())) {
+            LOGGER.debug("[return-values]process " + getOptions().return_values.getValue());
+            // String file = System.getenv(getOptions().return_values.getValue());
+            String file = getOptions().return_values.getValue();
+            if (SOSString.isEmpty(file)) {
+                LOGGER.warn(String.format("[Transfer history won´t be processed]return-values is empty", getOptions().return_values.getValue()));
+                return;
+            }
+
+            try {
+                YadeTransferResultHelper helper = new YadeTransferResultHelper(objOptions, startTime, endTime, exception);
+                helper.setEntries(sourceFileList);
+                helper.serialize2File(file);
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace(String.format("[%s]%s", file, new String(Files.readAllBytes(Paths.get(file)), "UTF-8")));
+                }
+            } catch (Exception e) {
+                LOGGER.error(e.toString(), e);
+            }
         }
     }
 

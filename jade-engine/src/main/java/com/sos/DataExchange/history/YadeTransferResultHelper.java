@@ -1,0 +1,155 @@
+package com.sos.DataExchange.history;
+
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
+import com.sos.vfs.common.options.SOSProviderOptions;
+import com.sos.yade.commons.Yade;
+import com.sos.yade.commons.Yade.TransferEntryState;
+import com.sos.yade.commons.Yade.TransferProtocol;
+import com.sos.yade.commons.result.YadeTransferResult;
+import com.sos.yade.commons.result.YadeTransferResultEntry;
+import com.sos.yade.commons.result.YadeTransferResultProvider;
+import com.sos.yade.commons.result.YadeTransferResultSerializer;
+
+import sos.util.SOSString;
+
+public class YadeTransferResultHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(YadeTransferResultHelper.class);
+    private final YadeTransferResult result;
+
+    public YadeTransferResultHelper(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception) throws Exception {
+        result = new YadeTransferResult();
+        result.setSource(getProvider(options.getSource()));
+        result.setTarget(getProvider(options.getTarget()));
+        result.setJump(getJumpProvider(options));
+
+        result.setSettings(SOSString.isEmpty(options.settings.getValue()) ? null : options.settings.getValue());
+        result.setProfile(SOSString.isEmpty(options.profile.getValue()) ? null : options.profile.getValue());
+        result.setOperation(options.operation.getValue());
+
+        result.setStart(startTime);
+        result.setEnd(endTime);
+
+        if (exception != null) {
+            result.setErrorMessage(exception.getMessage());
+        }
+        if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
+            result.setErrorMessage(JobSchedulerException.LastErrorMessage);
+        }
+    }
+
+    public void setEntries(SOSFileList list) {
+        if (list == null || list.getList() == null || list.getList().size() == 0) {
+            return;
+        }
+        List<YadeTransferResultEntry> entries = new ArrayList<>();
+        for (SOSFileListEntry le : list.getList()) {
+            YadeTransferResultEntry entry = new YadeTransferResultEntry();
+            entry.setSource(le.getSourceFilename());
+            entry.setTarget(le.getTargetFilename());
+            entry.setSize(le.getFileSize());
+            entry.setModificationDate(le.getSourceFileModificationDateTime());
+            entry.setIntegrityHash(le.getMd5());
+            entry.setErrorMessage(SOSString.isEmpty(le.getLastErrorMessage()) ? null : le.getLastErrorMessage());
+            try {
+                entry.setState(TransferEntryState.fromValue(le.getStatus()).value());
+            } catch (Throwable e) {
+                entry.setState(le.getStatusText());
+            }
+            entries.add(entry);
+        }
+        result.setEntries(entries);
+    }
+
+    private YadeTransferResultProvider getProvider(SOSProviderOptions options) {
+        YadeTransferResultProvider p = new YadeTransferResultProvider();
+        p.setHost(options.host.getValue());
+        setPortAndProtocol(p, options);
+        p.setAccount(options.user.isDirty() && !SOSString.isEmpty(options.user.getValue()) ? options.user.getValue() : Yade.DEFAULT_ACCOUNT);
+        return p;
+    }
+
+    private YadeTransferResultProvider getJumpProvider(SOSBaseOptions options) {
+        YadeTransferResultProvider p = null;
+        if (options.jumpHost.isDirty()) {
+            p = new YadeTransferResultProvider();
+            p.setHost(options.jumpHost.getValue());
+            p.setPort(options.jumpPort.value());
+            p.setProtocol(options.jumpProtocol.getValue());
+            p.setAccount(options.jumpUser.isDirty() && !SOSString.isEmpty(options.jumpUser.getValue()) ? options.jumpUser.getValue()
+                    : Yade.DEFAULT_ACCOUNT);
+        }
+        return p;
+    }
+
+    private void setPortAndProtocol(YadeTransferResultProvider p, SOSProviderOptions options) {
+        p.setPort(options.port.value());
+        p.setProtocol(options.protocol.getValue());
+
+        TransferProtocol tp = null;
+        try {
+            tp = TransferProtocol.fromValue(p.getProtocol());
+        } catch (Throwable e) {
+            LOGGER.error(String.format("[protocol=%s]%s", p.getProtocol(), e.toString()), e);
+            tp = TransferProtocol.LOCAL;
+            p.setProtocol(tp.value());
+        }
+
+        URL url;
+        switch (tp) {
+        case LOCAL:
+            p.setPort(0);
+            break;
+
+        case WEBDAV:
+            url = getURL(options.url.getUrl(), p.getHost());
+            if (url != null && url.getProtocol().equalsIgnoreCase(TransferProtocol.WEBDAVS.value()) || url.getProtocol().toLowerCase().equals(
+                    TransferProtocol.HTTPS.value())) {
+                p.setProtocol(TransferProtocol.WEBDAVS.value());
+            }
+            break;
+        case HTTP:
+            url = getURL(options.url.getUrl(), p.getHost());
+            if (url != null && url.getProtocol().toLowerCase().equals(TransferProtocol.HTTPS.value())) {
+                p.setProtocol(TransferProtocol.HTTPS.value());
+            }
+            break;
+        default:
+            break;
+        }
+
+    }
+
+    private URL getURL(URL url, String host) {
+        if (url == null) {
+            try {
+                url = new URL(host);
+            } catch (Throwable e) {
+                LOGGER.error(e.toString(), e);
+            }
+        }
+        return url;
+    }
+
+    public void serialize2File(String file) throws Exception {
+        YadeTransferResultSerializer<YadeTransferResult> serializer = new YadeTransferResultSerializer<YadeTransferResult>();
+
+        Files.write(Paths.get(file), new StringBuilder(Yade.JOB_ARGUMENT_NAME_RETURN_VALUES).append("=").append(serializer.serialize(result))
+                .toString().getBytes());
+
+    }
+
+}

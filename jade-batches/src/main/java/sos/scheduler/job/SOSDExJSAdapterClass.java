@@ -32,6 +32,7 @@ import com.sos.scheduler.model.objects.Spooler;
 
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
+import sos.util.SOSString;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
@@ -61,6 +62,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private YadeHistory history = null;
+    private boolean setHistoryProcessed = false;
 
     public SOSDExJSAdapterClass() {
         super();
@@ -70,14 +72,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     public boolean spooler_init() {
         try {
             super.spooler_init();
-
-            history = new YadeHistory(spooler);
-            try {
-                history.buildFactory(getHibernateConfigurationReporting());
-            } catch (Throwable e) {
-                LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
-                history = null;
-            }
 
             return true;
         } catch (Exception e) {
@@ -137,15 +131,15 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 }
             } else {
                 if (schedulerParams.containsKey("profile")) {
-                        Path defaultConfiguration = Paths.get(spooler.configuration_directory()).resolve(JobSchedulerXmlEditor.getLivePathYadeIni());
-                        if (Files.exists(defaultConfiguration)) {
-                            schedulerParams.put("settings", defaultConfiguration.toString());
-                        } else {
-                            LOGGER.warn(String.format("[%s]default configuration file not found", defaultConfiguration));
-                            throw new JobSchedulerException(String.format(
-                                    "[%s][missing configuration]set 'settings' parameter or use a configuration created with the JOC XMLEditor",
-                                    schedulerParams.get("profile")));
-                        }
+                    Path defaultConfiguration = Paths.get(spooler.configuration_directory()).resolve(JobSchedulerXmlEditor.getLivePathYadeIni());
+                    if (Files.exists(defaultConfiguration)) {
+                        schedulerParams.put("settings", defaultConfiguration.toString());
+                    } else {
+                        LOGGER.warn(String.format("[%s]default configuration file not found", defaultConfiguration));
+                        throw new JobSchedulerException(String.format(
+                                "[%s][missing configuration]set 'settings' parameter or use a configuration created with the JOC XMLEditor",
+                                schedulerParams.get("profile")));
+                    }
                 }
             }
         }
@@ -176,6 +170,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             jadeEngine.getOptions().setOrderId(order.id());
         }
         jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));
+
+        setHistory(jadeEngine.getOptions());
         if (history != null) {
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
@@ -245,6 +241,37 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             }
         }
 
+    }
+
+    private void setHistory(SOSBaseOptions options) {
+        if (setHistoryProcessed) {
+            return;
+        }
+
+        history = null;
+        if (!SOSString.isEmpty(options.return_values.getValue())) {
+            LOGGER.debug(String.format("[skip history]return_values=%s", options.return_values.getValue()));
+            setHistoryProcessed = true;
+            return;
+        }
+
+        Path hibernateFile = null;
+        try {
+            hibernateFile = getHibernateConfigurationReporting();
+        } catch (Throwable e) {
+            LOGGER.info("Transfer history won´t be processed: " + e.toString(), e);
+            setHistoryProcessed = true;
+            return;
+        }
+
+        history = new YadeHistory(spooler);
+        try {
+            history.buildFactory(hibernateFile);
+        } catch (Throwable e) {
+            LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
+            history = null;
+        }
+        setHistoryProcessed = true;
     }
 
     protected void createOrder(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName, Variable_set orderParams) {
