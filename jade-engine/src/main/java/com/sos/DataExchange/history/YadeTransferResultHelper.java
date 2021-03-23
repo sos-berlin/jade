@@ -20,7 +20,7 @@ import com.sos.yade.commons.Yade.TransferEntryState;
 import com.sos.yade.commons.Yade.TransferProtocol;
 import com.sos.yade.commons.result.YadeTransferResult;
 import com.sos.yade.commons.result.YadeTransferResultEntry;
-import com.sos.yade.commons.result.YadeTransferResultProvider;
+import com.sos.yade.commons.result.YadeTransferResultProtocol;
 import com.sos.yade.commons.result.YadeTransferResultSerializer;
 
 import sos.util.SOSString;
@@ -32,9 +32,9 @@ public class YadeTransferResultHelper {
 
     public YadeTransferResultHelper(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception) throws Exception {
         result = new YadeTransferResult();
-        result.setSource(getProvider(options.getSource()));
-        result.setTarget(getProvider(options.getTarget()));
-        result.setJump(getJumpProvider(options));
+        result.setSource(getProtocol(options.getSource()));
+        result.setTarget(getProtocol(options.getTarget()));
+        result.setJump(getJumpProtocol(options));
 
         result.setSettings(SOSString.isEmpty(options.settings.getValue()) ? null : options.settings.getValue());
         result.setProfile(SOSString.isEmpty(options.profile.getValue()) ? null : options.profile.getValue());
@@ -74,18 +74,18 @@ public class YadeTransferResultHelper {
         result.setEntries(entries);
     }
 
-    private YadeTransferResultProvider getProvider(SOSProviderOptions options) {
-        YadeTransferResultProvider p = new YadeTransferResultProvider();
+    private YadeTransferResultProtocol getProtocol(SOSProviderOptions options) {
+        YadeTransferResultProtocol p = new YadeTransferResultProtocol();
         p.setHost(options.host.getValue());
         setPortAndProtocol(p, options);
         p.setAccount(options.user.isDirty() && !SOSString.isEmpty(options.user.getValue()) ? options.user.getValue() : Yade.DEFAULT_ACCOUNT);
         return p;
     }
 
-    private YadeTransferResultProvider getJumpProvider(SOSBaseOptions options) {
-        YadeTransferResultProvider p = null;
+    private YadeTransferResultProtocol getJumpProtocol(SOSBaseOptions options) {
+        YadeTransferResultProtocol p = null;
         if (options.jumpHost.isDirty()) {
-            p = new YadeTransferResultProvider();
+            p = new YadeTransferResultProtocol();
             p.setHost(options.jumpHost.getValue());
             p.setPort(options.jumpPort.value());
             p.setProtocol(options.jumpProtocol.getValue());
@@ -95,7 +95,7 @@ public class YadeTransferResultHelper {
         return p;
     }
 
-    private void setPortAndProtocol(YadeTransferResultProvider p, SOSProviderOptions options) {
+    private void setPortAndProtocol(YadeTransferResultProtocol p, SOSProviderOptions options) {
         p.setPort(options.port.value());
         p.setProtocol(options.protocol.getValue());
 

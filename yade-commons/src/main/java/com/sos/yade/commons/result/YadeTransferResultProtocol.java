@@ -2,7 +2,7 @@ package com.sos.yade.commons.result;
 
 import java.io.Serializable;
 
-public class YadeTransferResultProvider implements Serializable {
+public class YadeTransferResultProtocol implements Serializable {
 
     private static final long serialVersionUID = -8877189880331791745L;
 

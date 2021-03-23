@@ -8,9 +8,9 @@ public class YadeTransferResult implements Serializable {
 
     private static final long serialVersionUID = -8877189880331791745L;
 
-    private YadeTransferResultProvider source;
-    private YadeTransferResultProvider target;
-    private YadeTransferResultProvider jump;
+    private YadeTransferResultProtocol source;
+    private YadeTransferResultProtocol target;
+    private YadeTransferResultProtocol jump;
 
     private String settings;
     private String profile;
@@ -39,27 +39,27 @@ public class YadeTransferResult implements Serializable {
         profile = val;
     }
 
-    public YadeTransferResultProvider getSource() {
+    public YadeTransferResultProtocol getSource() {
         return source;
     }
 
-    public void setSource(YadeTransferResultProvider val) {
+    public void setSource(YadeTransferResultProtocol val) {
         source = val;
     }
 
-    public YadeTransferResultProvider getTarget() {
+    public YadeTransferResultProtocol getTarget() {
         return target;
     }
 
-    public void setTarget(YadeTransferResultProvider val) {
+    public void setTarget(YadeTransferResultProtocol val) {
         target = val;
     }
 
-    public YadeTransferResultProvider getJump() {
+    public YadeTransferResultProtocol getJump() {
         return jump;
     }
 
-    public void setJump(YadeTransferResultProvider val) {
+    public void setJump(YadeTransferResultProtocol val) {
         jump = val;
     }
 
