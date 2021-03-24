@@ -16,7 +16,6 @@ import com.sos.vfs.common.SOSFileListEntry;
 import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.vfs.common.options.SOSProviderOptions;
 import com.sos.yade.commons.Yade;
-import com.sos.yade.commons.Yade.TransferEntryState;
 import com.sos.yade.commons.Yade.TransferProtocol;
 import com.sos.yade.commons.result.YadeTransferResult;
 import com.sos.yade.commons.result.YadeTransferResultEntry;
@@ -64,11 +63,8 @@ public class YadeTransferResultHelper {
             entry.setModificationDate(le.getSourceFileModificationDateTime());
             entry.setIntegrityHash(le.getMd5());
             entry.setErrorMessage(SOSString.isEmpty(le.getLastErrorMessage()) ? null : le.getLastErrorMessage());
-            try {
-                entry.setState(TransferEntryState.fromValue(le.getStatus()).value());
-            } catch (Throwable e) {
-                entry.setState(le.getStatusText());
-            }
+            entry.setState(le.getStatusText());
+
             entries.add(entry);
         }
         result.setEntries(entries);
@@ -99,15 +95,11 @@ public class YadeTransferResultHelper {
         p.setPort(options.port.value());
         p.setProtocol(options.protocol.getValue());
 
-        TransferProtocol tp = null;
-        try {
-            tp = TransferProtocol.fromValue(p.getProtocol());
-        } catch (Throwable e) {
-            LOGGER.error(String.format("[protocol=%s]%s", p.getProtocol(), e.toString()), e);
+        TransferProtocol tp = TransferProtocol.fromValue(p.getProtocol());
+        if (TransferProtocol.UNKNOWN.equals(tp)) {
             tp = TransferProtocol.LOCAL;
             p.setProtocol(tp.value());
         }
-
         URL url;
         switch (tp) {
         case LOCAL:
