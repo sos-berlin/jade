@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.vfs.common.SOSFileList;
 import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.SOSFileListEntry.TransferStatus;
 import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.vfs.common.options.SOSProviderOptions;
 import com.sos.yade.commons.Yade;
+import com.sos.yade.commons.Yade.TransferEntryState;
 import com.sos.yade.commons.Yade.TransferProtocol;
 import com.sos.yade.commons.result.YadeTransferResult;
 import com.sos.yade.commons.result.YadeTransferResultEntry;
@@ -63,11 +65,53 @@ public class YadeTransferResultHelper {
             entry.setModificationDate(le.getSourceFileModificationDateTime());
             entry.setIntegrityHash(le.getMd5());
             entry.setErrorMessage(SOSString.isEmpty(le.getLastErrorMessage()) ? null : le.getLastErrorMessage());
-            entry.setState(le.getStatusText());
+            entry.setState(getEntryStatus(le.getStatusText()));
 
             entries.add(entry);
         }
         result.setEntries(entries);
+    }
+
+    private String getEntryStatus(String status) {
+        try {
+            TransferStatus ts = TransferStatus.valueOf(status);
+            switch (ts) {
+            case transferUndefined:
+                return TransferEntryState.UNKNOWN.value();
+            case waiting4transfer:
+                return TransferEntryState.WAITING.value();
+            case transferring:
+                return TransferEntryState.TRANSFERRING.value();
+            case transferInProgress:
+                return TransferEntryState.IN_PROGRESS.value();
+            case transferred:
+                return TransferEntryState.TRANSFERRED.value();
+            case transfer_skipped:
+                return TransferEntryState.SKIPPED.value();
+            case transfer_has_errors:
+                return TransferEntryState.FAILED.value();
+            case transfer_aborted:
+                return TransferEntryState.ABORTED.value();
+            case compressed:
+                return TransferEntryState.COMPRESSED.value();
+            case notOverwritten:
+                return TransferEntryState.NOT_OVERWRITTEN.value();
+            case deleted:
+                return TransferEntryState.DELETED.value();
+            case renamed:
+                return TransferEntryState.RENAMED.value();
+            case ignoredDueToZerobyteConstraint:
+                return TransferEntryState.IGNORED_DUE_TO_ZEROBYTE_CONSTRAINT.value();
+            case setBack:
+                return TransferEntryState.ROLLED_BACK.value();
+            case polling:
+                return TransferEntryState.POLLING.value();
+            case moved:
+                return TransferEntryState.MOVED.value();
+            }
+        } catch (Throwable e) {
+        }
+        return TransferEntryState.UNKNOWN.value();
     }
 
     private YadeTransferResultProtocol getProtocol(SOSProviderOptions options) {
