@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.vfs.common.SOSCommonProvider;
 import com.sos.vfs.common.SOSFileList;
 import com.sos.vfs.common.SOSFileListEntry;
 import com.sos.vfs.common.SOSFileListEntry.TransferStatus;
@@ -30,6 +31,29 @@ public class YadeTransferResultHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YadeTransferResultHelper.class);
     private final YadeTransferResult result;
+
+    public static void process(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries) {
+        process(options, startTime, endTime, exception, entries, null, null, null);
+    }
+
+    public static void process(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries, String sourceDir,
+            String targetDir, String jumpDir) {
+        if (!SOSString.isEmpty(options.return_values.getValue())) {
+            String file = options.return_values.getValue();
+            LOGGER.debug("[return-values]process " + file);
+
+            try {
+                YadeTransferResultHelper helper = new YadeTransferResultHelper(options, startTime, endTime, exception);
+                helper.setEntries(entries, sourceDir, targetDir, jumpDir);
+                helper.serialize2File(file);
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace(String.format("[%s]%s", file, new String(Files.readAllBytes(Paths.get(file)), "UTF-8")));
+                }
+            } catch (Exception e) {
+                LOGGER.error(e.toString(), e);
+            }
+        }
+    }
 
     public YadeTransferResultHelper(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception) throws Exception {
         result = new YadeTransferResult();
@@ -52,15 +76,16 @@ public class YadeTransferResultHelper {
         }
     }
 
-    public void setEntries(SOSFileList list) {
+    public void setEntries(SOSFileList list, String sourceDir, String targetDir, String jumpDir) {
         if (list == null || list.getList() == null || list.getList().size() == 0) {
             return;
         }
         List<YadeTransferResultEntry> entries = new ArrayList<>();
         for (SOSFileListEntry le : list.getList()) {
             YadeTransferResultEntry entry = new YadeTransferResultEntry();
-            entry.setSource(le.getSourceFilename());
-            entry.setTarget(le.getTargetFilename());
+            entry.setSource(sourceDir == null ? SOSCommonProvider.normalizePath(le.getSourceFilename()) : getSourcePath(sourceDir, jumpDir, le
+                    .getSourceFilename()));
+            entry.setTarget(targetDir == null ? le.getTargetFileNameAndPath() : SOSCommonProvider.normalizePath(targetDir, le.getTargetFilename()));
             entry.setSize(le.getFileSize());
             entry.setModificationDate(le.getSourceFileModificationDateTime());
             entry.setIntegrityHash(le.getMd5());
@@ -70,6 +95,14 @@ public class YadeTransferResultHelper {
             entries.add(entry);
         }
         result.setEntries(entries);
+    }
+
+    private String getSourcePath(String sourceDir, String jumpDir, String sourceFileName) {
+        if (SOSString.isEmpty(jumpDir) || sourceFileName.length() <= jumpDir.length()) {
+            return SOSCommonProvider.normalizePath(sourceFileName);
+        }
+        String relative = SOSCommonProvider.normalizePath(sourceFileName).substring(jumpDir.length());
+        return SOSCommonProvider.normalizePath(sourceDir, relative);
     }
 
     private String getEntryStatus(String status) {

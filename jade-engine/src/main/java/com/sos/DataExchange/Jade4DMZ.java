@@ -2,20 +2,22 @@ package com.sos.DataExchange;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.credentialstore.options.SOSCredentialStoreOptions;
 import com.sos.DataExchange.helpers.UpdateXmlToOptionHelper;
 import com.sos.DataExchange.history.YadeHistory;
+import com.sos.DataExchange.history.YadeTransferResultHelper;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.credentialstore.options.SOSCredentialStoreOptions;
+import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.keepass.SOSKeePassDatabase;
 import com.sos.vfs.common.SOSFileList;
 import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.vfs.common.options.SOSProviderOptions;
-import com.sos.i18n.annotation.I18NResourceBundle;
-import com.sos.keepass.SOSKeePassDatabase;
 
 import sos.util.SOSString;
 
@@ -30,6 +32,8 @@ public class Jade4DMZ extends JadeBaseEngine {
     private String historyFilename = null;
     private String initialTargetDir = null;
     private YadeHistory history = null;
+    private Instant startTime;
+    private Instant endTime;
 
     protected enum Operation {
         copyToInternet, copyFromInternet, remove, getlist
@@ -44,11 +48,13 @@ public class Jade4DMZ extends JadeBaseEngine {
     }
 
     public void execute() {
-
+        startTime = Instant.now();
         setLogger();
         initialTargetDir = getOptions().targetDir.getValue();
 
+        Throwable exception = null;
         Operation operation = null;
+        String jumpDir = null;
         try {
             if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
@@ -73,7 +79,7 @@ public class Jade4DMZ extends JadeBaseEngine {
                 history.beforeTransfer(objOptions, null);
             }
 
-            transfer(operation);
+            jumpDir = transfer(operation);
 
             if (history != null) {
                 history.afterTransfer();
@@ -82,17 +88,22 @@ public class Jade4DMZ extends JadeBaseEngine {
             if (history != null) {
                 history.onException(e);
             }
+            exception = e;
             throw e;
         } catch (Exception e) {
+            exception = e;
             throw new JobSchedulerException("Transfer failed", e);
         } finally {
+            endTime = Instant.now();
             if (history != null) {
                 history.sendYadeEventOnEnd();
             }
+            YadeTransferResultHelper.process(objOptions, startTime, endTime, exception, fileList, getOptions().sourceDir.getValue(),
+                    getOptions().targetDir.getValue(), jumpDir);
         }
     }
 
-    private void transfer(Operation operation) {
+    private String transfer(Operation operation) {
         String jumpDir = normalizeDirectoryPath(getOptions().jumpDir.getValue());
         String uuid = "jade-dmz-" + getUUID();
         String dir = jumpDir + uuid;
@@ -107,14 +118,14 @@ public class Jade4DMZ extends JadeBaseEngine {
             jade = new SOSDataExchangeEngine(getTransferOptions(operation, dir, clientHandler));
             jade.setEngineClientHandler(clientHandler);
             jade.execute();
-            
+
             fileList = jade.getFileList();
-            
+
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 try {
                     jade.executeTransferCommands("source remove files", jade.getSourceProvider(), getJadeOnDMZCommand4RemoveSource(), null);
                 } catch (Exception ex) {
-                    if (fileList.count() > 0L) { //JADE-375
+                    if (fileList.count() > 0L) { // JADE-375
                         throw ex;
                     } else {
                         LOGGER.info(ex.toString());
@@ -142,6 +153,7 @@ public class Jade4DMZ extends JadeBaseEngine {
                 }
             }
         }
+        return dir;
     }
 
     private SOSProviderOptions createJumpOptions(String dir) throws Exception {

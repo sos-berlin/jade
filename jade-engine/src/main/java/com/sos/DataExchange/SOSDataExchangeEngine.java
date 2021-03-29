@@ -472,34 +472,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 history.sendYadeEventOnEnd();
             }
 
-            setReturnValues(exception);
+            YadeTransferResultHelper.process(objOptions, startTime, endTime, exception, sourceFileList);
             printState();
             showResult();
             sendNotifications();
 
-        }
-    }
-
-    private void setReturnValues(Throwable exception) {
-        if (!SOSString.isEmpty(getOptions().return_values.getValue())) {
-            LOGGER.debug("[return-values]process " + getOptions().return_values.getValue());
-            // String file = System.getenv(getOptions().return_values.getValue());
-            String file = getOptions().return_values.getValue();
-            if (SOSString.isEmpty(file)) {
-                LOGGER.warn(String.format("[Transfer history won´t be processed]return-values is empty", getOptions().return_values.getValue()));
-                return;
-            }
-
-            try {
-                YadeTransferResultHelper helper = new YadeTransferResultHelper(objOptions, startTime, endTime, exception);
-                helper.setEntries(sourceFileList);
-                helper.serialize2File(file);
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace(String.format("[%s]%s", file, new String(Files.readAllBytes(Paths.get(file)), "UTF-8")));
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.toString(), e);
-            }
         }
     }
 
