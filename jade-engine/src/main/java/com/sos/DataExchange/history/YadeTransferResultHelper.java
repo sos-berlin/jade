@@ -85,7 +85,8 @@ public class YadeTransferResultHelper {
             YadeTransferResultEntry entry = new YadeTransferResultEntry();
             entry.setSource(sourceDir == null ? SOSCommonProvider.normalizePath(le.getSourceFilename()) : getSourcePath(sourceDir, jumpDir, le
                     .getSourceFilename()));
-            entry.setTarget(targetDir == null ? le.getTargetFileNameAndPath() : SOSCommonProvider.normalizePath(targetDir, le.getTargetFilename()));
+            entry.setTarget(targetDir == null ? getTargetPath(le.getTargetFileNameAndPath()) : SOSCommonProvider.normalizePath(targetDir, le
+                    .getTargetFilename()));
             entry.setSize(le.getFileSize());
             entry.setModificationDate(le.getSourceFileModificationDateTime());
             entry.setIntegrityHash(le.getMd5());
@@ -103,6 +104,10 @@ public class YadeTransferResultHelper {
         }
         String relative = SOSCommonProvider.normalizePath(sourceFileName).substring(jumpDir.length());
         return SOSCommonProvider.normalizePath(sourceDir, relative);
+    }
+
+    private String getTargetPath(String filePath) {
+        return SOSString.isEmpty(filePath) ? null : filePath;
     }
 
     private String getEntryStatus(String status) {
