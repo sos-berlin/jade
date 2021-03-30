@@ -12,32 +12,15 @@ public class YadeTransferResult implements Serializable {
     private YadeTransferResultProtocol target;
     private YadeTransferResultProtocol jump;
 
-    private String settings;
-    private String profile;
-    private String operation;
-
+    private List<YadeTransferResultEntry> entries;
     private Instant start;
     private Instant end;
 
+    private String mandator;
+    private String settings;
+    private String profile;
+    private String operation;
     private String errorMessage;
-
-    private List<YadeTransferResultEntry> entries;
-
-    public String getSettings() {
-        return settings;
-    }
-
-    public void setSettings(String val) {
-        settings = val;
-    }
-
-    public String getProfile() {
-        return profile;
-    }
-
-    public void setProfile(String val) {
-        profile = val;
-    }
 
     public YadeTransferResultProtocol getSource() {
         return source;
@@ -63,12 +46,12 @@ public class YadeTransferResult implements Serializable {
         jump = val;
     }
 
-    public String getOperation() {
-        return operation;
+    public List<YadeTransferResultEntry> getEntries() {
+        return entries;
     }
 
-    public void setOperation(String val) {
-        operation = val;
+    public void setEntries(List<YadeTransferResultEntry> val) {
+        entries = val;
     }
 
     public Instant getStart() {
@@ -87,20 +70,44 @@ public class YadeTransferResult implements Serializable {
         end = val;
     }
 
+    public String getMandator() {
+        return mandator;
+    }
+
+    public void setMandator(String val) {
+        mandator = val;
+    }
+
+    public String getSettings() {
+        return settings;
+    }
+
+    public void setSettings(String val) {
+        settings = val;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String val) {
+        profile = val;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String val) {
+        operation = val;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
 
     public void setErrorMessage(String val) {
         errorMessage = val;
-    }
-
-    public List<YadeTransferResultEntry> getEntries() {
-        return entries;
-    }
-
-    public void setEntries(List<YadeTransferResultEntry> val) {
-        entries = val;
     }
 
 }

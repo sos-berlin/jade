@@ -84,6 +84,7 @@ public class YadeTransferResultHelper {
         result.setTarget(getProtocol(options.getTarget()));
         result.setJump(getJumpProtocol(options));
 
+        result.setMandator(SOSString.isEmpty(options.mandator.getValue()) ? null : options.mandator.getValue());
         result.setSettings(SOSString.isEmpty(options.settings.getValue()) ? null : options.settings.getValue());
         result.setProfile(SOSString.isEmpty(options.profile.getValue()) ? null : options.profile.getValue());
         result.setOperation(options.operation.getValue());
