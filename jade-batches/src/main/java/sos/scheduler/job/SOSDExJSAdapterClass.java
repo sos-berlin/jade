@@ -19,20 +19,20 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.DataExchange.SOSDataExchangeEngine;
 import com.sos.DataExchange.history.YadeHistory;
+import com.sos.DataExchange.history.YadeTransferResultHelper;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
-import com.sos.vfs.common.SOSFileList;
-import com.sos.vfs.common.SOSFileListEntry;
-import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
-import sos.util.SOSString;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
@@ -171,7 +171,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));
 
-        setHistory(jadeEngine.getOptions());
+        setHistory(schedulerParams, jadeEngine.getOptions());
         if (history != null) {
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
@@ -182,13 +182,19 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
                 LOGGER.debug(ORDER_PARAMETER_FILE_PATH_RESTRICTION + " was set to: " + schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
             }
         }
+        Throwable exception = null;
         try {
             jadeEngine.execute();
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            exception = e;
             throw e;
         } finally {
             if (isOrderJob && orderParams != null && history != null && history.getTransferId() != null) {
                 orderParams.set_var(YADE_TRANSFER_ID, history.getTransferId().toString());
+            }
+            if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
+                YadeTransferResultHelper.process2historyField(spooler_task, jadeEngine.getOptions(), jadeEngine.getStartTime(), jadeEngine
+                        .getEndTime(), exception, jadeEngine.getFileList());
             }
         }
         SOSFileList transfFiles = jadeEngine.getFileList();
@@ -243,14 +249,15 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     }
 
-    private void setHistory(SOSBaseOptions options) {
+    private void setHistory(HashMap<String, String> schedulerParams, SOSBaseOptions options) {
         if (setHistoryProcessed) {
             return;
         }
 
         history = null;
-        if (!SOSString.isEmpty(options.return_values.getValue())) {
-            LOGGER.debug(String.format("[skip history]return_values=%s", options.return_values.getValue()));
+        options.return_values.setValue("");
+        if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
+            LOGGER.debug(String.format("[skip history][use set_history_field]return_values=%s", schedulerParams.get("return_values")));
             setHistoryProcessed = true;
             return;
         }
@@ -259,7 +266,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         try {
             hibernateFile = getHibernateConfigurationReporting();
         } catch (Throwable e) {
-            LOGGER.info("Transfer history won´t be processed: " + e.toString(), e);
+            LOGGER.info("no hibernate configuration found, file transfer history database will not be used");
+            LOGGER.trace(e.toString());
             setHistoryProcessed = true;
             return;
         }

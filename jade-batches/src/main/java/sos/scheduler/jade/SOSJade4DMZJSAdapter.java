@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.Jade4DMZ;
 import com.sos.DataExchange.history.YadeHistory;
+import com.sos.DataExchange.history.YadeTransferResultHelper;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
 import com.sos.i18n.annotation.I18NResourceBundle;
@@ -38,7 +39,6 @@ import com.sos.vfs.common.options.SOSBaseOptions;
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
 import sos.spooler.Variable_set;
-import sos.util.SOSString;
 
 @I18NResourceBundle(baseName = "com.sos.scheduler.messages", defaultLocale = "en")
 public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
@@ -163,7 +163,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             jade4DMZEngine.setJSJobUtilites(this);
             jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
 
-            setHistory(jade4DMZEngine.getOptions());
+            setHistory(schedulerParams, jade4DMZEngine.getOptions());
 
             jade4DMZEngine.setHistory(history);
             jade4DMZEngine.getOptions().setJobSchedulerId(spooler.id());
@@ -189,7 +189,19 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     history.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
                 }
             }
-            jade4DMZEngine.execute();
+            Throwable exception = null;
+            try {
+                jade4DMZEngine.execute();
+            } catch (Throwable e) {
+                exception = e;
+                throw e;
+            } finally {
+                if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
+                    YadeTransferResultHelper.process2historyField(spooler_task, jade4DMZEngine.getOptions(), jade4DMZEngine.getStartTime(),
+                            jade4DMZEngine.getEndTime(), exception, jade4DMZEngine.getFileList(), jade4DMZEngine.getOptions().sourceDir.getValue(),
+                            jade4DMZEngine.getOptions().targetDir.getValue(), jade4DMZEngine.getJumpDir());
+                }
+            }
             SOSFileList transfFiles = jade4DMZEngine.getFileList();
             int resultSetSize = 0;
             if (isNotNull(transfFiles)) {
@@ -248,14 +260,15 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         }
     }
 
-    private void setHistory(SOSBaseOptions options) {
+    private void setHistory(HashMap<String, String> schedulerParams, SOSBaseOptions options) {
         if (setHistoryProcessed) {
             return;
         }
 
         history = null;
-        if (!SOSString.isEmpty(options.return_values.getValue())) {
-            LOGGER.debug(String.format("[skip history]return_values=%s", options.return_values.getValue()));
+        options.return_values.setValue("");
+        if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
+            LOGGER.debug(String.format("[skip history][use set_history_field]return_values=%s", schedulerParams.get("return_values")));
             setHistoryProcessed = true;
             return;
         }
@@ -264,7 +277,8 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         try {
             hibernateFile = getHibernateConfigurationReporting();
         } catch (Throwable e) {
-            LOGGER.info("Transfer history won´t be processed: " + e.toString(), e);
+            LOGGER.info("no hibernate configuration found, file transfer history database will not be used");
+            LOGGER.trace(e.toString());
             setHistoryProcessed = true;
             return;
         }

@@ -472,7 +472,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 history.sendYadeEventOnEnd();
             }
 
-            YadeTransferResultHelper.process(objOptions, startTime, endTime, exception, sourceFileList);
+            YadeTransferResultHelper.process2file(objOptions, startTime, endTime, exception, sourceFileList);
             printState();
             showResult();
             sendNotifications();
@@ -1654,5 +1654,13 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
     public void setJobSchedulerEventHandler(IJobSchedulerEventHandler val) {
         historyHandler = val;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
+    }
+
+    public Instant getEndTime() {
+        return endTime;
     }
 }

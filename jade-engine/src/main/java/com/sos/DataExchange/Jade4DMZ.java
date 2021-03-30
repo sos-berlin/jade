@@ -32,6 +32,7 @@ public class Jade4DMZ extends JadeBaseEngine {
     private String historyFilename = null;
     private String initialTargetDir = null;
     private YadeHistory history = null;
+    private String jumpDir;
     private Instant startTime;
     private Instant endTime;
 
@@ -54,7 +55,6 @@ public class Jade4DMZ extends JadeBaseEngine {
 
         Throwable exception = null;
         Operation operation = null;
-        String jumpDir = null;
         try {
             if (objOptions.operation.isOperationCopyToInternet() || objOptions.operation.isOperationSendUsingDMZ()) {
                 operation = Operation.copyToInternet;
@@ -98,7 +98,7 @@ public class Jade4DMZ extends JadeBaseEngine {
             if (history != null) {
                 history.sendYadeEventOnEnd();
             }
-            YadeTransferResultHelper.process(objOptions, startTime, endTime, exception, fileList, getOptions().sourceDir.getValue(),
+            YadeTransferResultHelper.process2file(objOptions, startTime, endTime, exception, fileList, getOptions().sourceDir.getValue(),
                     getOptions().targetDir.getValue(), jumpDir);
         }
     }
@@ -619,5 +619,17 @@ public class Jade4DMZ extends JadeBaseEngine {
 
     public void setHistory(YadeHistory h) {
         history = h;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
+    }
+
+    public Instant getEndTime() {
+        return endTime;
+    }
+
+    public String getJumpDir() {
+        return jumpDir;
     }
 }

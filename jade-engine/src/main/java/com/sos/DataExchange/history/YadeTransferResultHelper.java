@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import com.sos.yade.commons.result.YadeTransferResultEntry;
 import com.sos.yade.commons.result.YadeTransferResultProtocol;
 import com.sos.yade.commons.result.YadeTransferResultSerializer;
 
+import sos.spooler.Task;
 import sos.util.SOSString;
 
 public class YadeTransferResultHelper {
@@ -32,12 +34,33 @@ public class YadeTransferResultHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(YadeTransferResultHelper.class);
     private final YadeTransferResult result;
 
-    public static void process(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries) {
-        process(options, startTime, endTime, exception, entries, null, null, null);
+    public static boolean useSetHistoryField(HashMap<String, String> schedulerParams) {
+        return schedulerParams != null && !SOSString.isEmpty(schedulerParams.get("return_values"));
     }
 
-    public static void process(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries, String sourceDir,
-            String targetDir, String jumpDir) {
+    public static void process2historyField(Task spoolerTask, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception,
+            SOSFileList entries) {
+        process2historyField(spoolerTask, options, startTime, endTime, exception, entries, null, null, null);
+    }
+
+    public static void process2historyField(Task spoolerTask, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception,
+            SOSFileList entries, String sourceDir, String targetDir, String jumpDir) {
+
+        try {
+            YadeTransferResultHelper helper = new YadeTransferResultHelper(options, startTime, endTime, exception);
+            helper.setEntries(entries, sourceDir, targetDir, jumpDir);
+            helper.serialize2historyField(spoolerTask);
+        } catch (Exception e) {
+            LOGGER.error(e.toString(), e);
+        }
+    }
+
+    public static void process2file(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries) {
+        process2file(options, startTime, endTime, exception, entries, null, null, null);
+    }
+
+    public static void process2file(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries,
+            String sourceDir, String targetDir, String jumpDir) {
         if (!SOSString.isEmpty(options.return_values.getValue())) {
             String file = options.return_values.getValue();
             LOGGER.debug("[return-values]process " + file);
@@ -226,4 +249,8 @@ public class YadeTransferResultHelper {
 
     }
 
+    public void serialize2historyField(Task spoolerTask) throws Exception {
+        YadeTransferResultSerializer<YadeTransferResult> serializer = new YadeTransferResultSerializer<YadeTransferResult>();
+        spoolerTask.set_history_field("TRANSFER_HISTORY", serializer.serialize(result));
+    }
 }
