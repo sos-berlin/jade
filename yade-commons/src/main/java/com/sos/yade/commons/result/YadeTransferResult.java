@@ -16,7 +16,6 @@ public class YadeTransferResult implements Serializable {
     private Instant start;
     private Instant end;
 
-    private String mandator;
     private String settings;
     private String profile;
     private String operation;
@@ -68,14 +67,6 @@ public class YadeTransferResult implements Serializable {
 
     public void setEnd(Instant val) {
         end = val;
-    }
-
-    public String getMandator() {
-        return mandator;
-    }
-
-    public void setMandator(String val) {
-        mandator = val;
     }
 
     public String getSettings() {

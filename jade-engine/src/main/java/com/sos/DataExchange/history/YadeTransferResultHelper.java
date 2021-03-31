@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
+import com.sos.jade.db.history.YadeEngineTransferResult;
 import com.sos.vfs.common.SOSCommonProvider;
 import com.sos.vfs.common.SOSFileList;
 import com.sos.vfs.common.SOSFileListEntry;
@@ -32,33 +33,60 @@ import sos.util.SOSString;
 public class YadeTransferResultHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YadeTransferResultHelper.class);
-    private final YadeTransferResult result;
+    private static final String JOBSCHEDULER_1X_JOB_PARAM_NAME = "return_values";
+    private static final String JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD = "TRANSFER_HISTORY";
 
+    /** JobScheduler 1.x */
     public static boolean useSetHistoryField(HashMap<String, String> schedulerParams) {
-        return schedulerParams != null && !SOSString.isEmpty(schedulerParams.get("return_values"));
+        if (schedulerParams == null) {
+            return false;
+        }
+        String val = schedulerParams.get(JOBSCHEDULER_1X_JOB_PARAM_NAME);
+        return val != null && (val.toLowerCase().equals("true") || val.equals("1"));
     }
 
+    /** JobScheduler 1.x */
     public static void process2historyField(Task spoolerTask, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception,
             SOSFileList entries) {
         process2historyField(spoolerTask, options, startTime, endTime, exception, entries, null, null, null);
     }
 
+    /** JobScheduler 1.x */
     public static void process2historyField(Task spoolerTask, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception,
             SOSFileList entries, String sourceDir, String targetDir, String jumpDir) {
 
         try {
-            YadeTransferResultHelper helper = new YadeTransferResultHelper(options, startTime, endTime, exception);
-            helper.setEntries(entries, sourceDir, targetDir, jumpDir);
-            helper.serialize2historyField(spoolerTask);
+            YadeEngineTransferResult bean = new YadeEngineTransferResult();
+            bean.setMandator(SOSString.isEmpty(options.mandator.getValue()) ? null : options.mandator.getValue());
+            bean.setJobschedulerId(options.getJobSchedulerId());
+            bean.setTaskId(Long.parseLong(options.getTaskId()));
+            if (!SOSString.isEmpty(options.getOrderId())) {
+                bean.setOrderId(options.getOrderId());
+                bean.setJobChain(options.getJobChain());
+                bean.setJobChainNode(options.getJobChainNodeName());
+            }
+
+            YadeTransferResultHelper helper = new YadeTransferResultHelper();
+            YadeEngineTransferResult result = (YadeEngineTransferResult) helper.create(bean, options, startTime, endTime, exception);
+            helper.setEntries(result, entries, sourceDir, targetDir, jumpDir);
+            helper.serialize2historyField(result, spoolerTask);
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
         }
     }
 
+    /** JobScheduler 1.x */
+    public void serialize2historyField(YadeEngineTransferResult result, Task spoolerTask) throws Exception {
+        YadeTransferResultSerializer<YadeEngineTransferResult> serializer = new YadeTransferResultSerializer<YadeEngineTransferResult>();
+        spoolerTask.set_history_field(JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD, serializer.serialize(result));
+    }
+
+    /** JobScheduler JS7 */
     public static void process2file(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries) {
         process2file(options, startTime, endTime, exception, entries, null, null, null);
     }
 
+    /** JobScheduler JS7 */
     public static void process2file(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries,
             String sourceDir, String targetDir, String jumpDir) {
         if (!SOSString.isEmpty(options.return_values.getValue())) {
@@ -66,9 +94,10 @@ public class YadeTransferResultHelper {
             LOGGER.debug("[return-values]process " + file);
 
             try {
-                YadeTransferResultHelper helper = new YadeTransferResultHelper(options, startTime, endTime, exception);
-                helper.setEntries(entries, sourceDir, targetDir, jumpDir);
-                helper.serialize2File(file);
+                YadeTransferResultHelper helper = new YadeTransferResultHelper();
+                YadeTransferResult result = helper.create(new YadeEngineTransferResult(), options, startTime, endTime, exception);
+                helper.setEntries(result, entries, sourceDir, targetDir, jumpDir);
+                helper.serialize2File(result, file);
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace(String.format("[%s]%s", file, new String(Files.readAllBytes(Paths.get(file)), "UTF-8")));
                 }
@@ -78,13 +107,21 @@ public class YadeTransferResultHelper {
         }
     }
 
-    public YadeTransferResultHelper(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception) throws Exception {
-        result = new YadeTransferResult();
+    /** JobScheduler JS7 */
+    public void serialize2File(YadeTransferResult result, String file) throws Exception {
+        YadeTransferResultSerializer<YadeTransferResult> serializer = new YadeTransferResultSerializer<YadeTransferResult>();
+
+        Files.write(Paths.get(file), new StringBuilder(Yade.JOB_ARGUMENT_NAME_RETURN_VALUES).append("=").append(serializer.serialize(result))
+                .toString().getBytes());
+
+    }
+
+    private YadeTransferResult create(YadeTransferResult result, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception)
+            throws Exception {
         result.setSource(getProtocol(options.getSource()));
         result.setTarget(getProtocol(options.getTarget()));
         result.setJump(getJumpProtocol(options));
 
-        result.setMandator(SOSString.isEmpty(options.mandator.getValue()) ? null : options.mandator.getValue());
         result.setSettings(SOSString.isEmpty(options.settings.getValue()) ? null : options.settings.getValue());
         result.setProfile(SOSString.isEmpty(options.profile.getValue()) ? null : options.profile.getValue());
         result.setOperation(options.operation.getValue());
@@ -98,9 +135,10 @@ public class YadeTransferResultHelper {
         if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
             result.setErrorMessage(JobSchedulerException.LastErrorMessage);
         }
+        return result;
     }
 
-    public void setEntries(SOSFileList list, String sourceDir, String targetDir, String jumpDir) {
+    public void setEntries(YadeTransferResult result, SOSFileList list, String sourceDir, String targetDir, String jumpDir) {
         if (list == null || list.getList() == null || list.getList().size() == 0) {
             return;
         }
@@ -228,7 +266,6 @@ public class YadeTransferResultHelper {
         default:
             break;
         }
-
     }
 
     private URL getURL(URL url, String host) {
@@ -240,18 +277,5 @@ public class YadeTransferResultHelper {
             }
         }
         return url;
-    }
-
-    public void serialize2File(String file) throws Exception {
-        YadeTransferResultSerializer<YadeTransferResult> serializer = new YadeTransferResultSerializer<YadeTransferResult>();
-
-        Files.write(Paths.get(file), new StringBuilder(Yade.JOB_ARGUMENT_NAME_RETURN_VALUES).append("=").append(serializer.serialize(result))
-                .toString().getBytes());
-
-    }
-
-    public void serialize2historyField(Task spoolerTask) throws Exception {
-        YadeTransferResultSerializer<YadeTransferResult> serializer = new YadeTransferResultSerializer<YadeTransferResult>();
-        spoolerTask.set_history_field("TRANSFER_HISTORY", serializer.serialize(result));
     }
 }
