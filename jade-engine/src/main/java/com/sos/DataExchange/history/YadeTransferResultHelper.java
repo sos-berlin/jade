@@ -95,7 +95,7 @@ public class YadeTransferResultHelper {
 
             try {
                 YadeTransferResultHelper helper = new YadeTransferResultHelper();
-                YadeTransferResult result = helper.create(new YadeEngineTransferResult(), options, startTime, endTime, exception);
+                YadeTransferResult result = helper.create(new YadeTransferResult(), options, startTime, endTime, exception);
                 helper.setEntries(result, entries, sourceDir, targetDir, jumpDir);
                 helper.serialize2File(result, file);
                 if (LOGGER.isTraceEnabled()) {
