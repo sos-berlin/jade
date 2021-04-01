@@ -33,7 +33,7 @@ import sos.util.SOSString;
 public class YadeTransferResultHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YadeTransferResultHelper.class);
-    private static final String JOBSCHEDULER_1X_JOB_PARAM_NAME = "return_values";
+    private static final String JOBSCHEDULER_1X_JOB_PARAM_NAME = "async_history";
     private static final String JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD = "TRANSFER_HISTORY";
 
     /** JobScheduler 1.x */
