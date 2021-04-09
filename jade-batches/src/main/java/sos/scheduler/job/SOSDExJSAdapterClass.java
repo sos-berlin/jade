@@ -164,12 +164,12 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         if (isOrderJob) {
             order = getSpoolerProcess().getOrder();
             orderParams = order.params();
-            jadeEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
             jadeEngine.getOptions().setJobChain(order.job_chain().path());
             jadeEngine.getOptions().setJobChainNodeName(currentNode);
             jadeEngine.getOptions().setOrderId(order.id());
         }
         jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));
+        jadeEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
 
         setHistory(schedulerParams, jadeEngine.getOptions());
         if (history != null) {
@@ -257,8 +257,10 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         history = null;
         options.return_values.setValue("");
         if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
-            LOGGER.debug(String.format("[skip history][use set_history_field]return_values=%s", schedulerParams.get("return_values")));
             setHistoryProcessed = true;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("[skip history]%s=true", YadeTransferResultHelper.JOBSCHEDULER_1X_JOB_PARAM_NAME));
+            }
             return;
         }
 

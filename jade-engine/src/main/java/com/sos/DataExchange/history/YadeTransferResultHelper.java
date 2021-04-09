@@ -33,7 +33,8 @@ import sos.util.SOSString;
 public class YadeTransferResultHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YadeTransferResultHelper.class);
-    private static final String JOBSCHEDULER_1X_JOB_PARAM_NAME = "async_history";
+
+    public static final String JOBSCHEDULER_1X_JOB_PARAM_NAME = "async_history";
     private static final String JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD = "TRANSFER_HISTORY";
 
     /** JobScheduler 1.x */
@@ -60,12 +61,12 @@ public class YadeTransferResultHelper {
             bean.setMandator(SOSString.isEmpty(options.mandator.getValue()) ? null : options.mandator.getValue());
             bean.setJobschedulerId(options.getJobSchedulerId());
             bean.setTaskId(Long.parseLong(options.getTaskId()));
+            bean.setJob(options.getJob());
             if (!SOSString.isEmpty(options.getOrderId())) {
                 bean.setOrderId(options.getOrderId());
                 bean.setJobChain(options.getJobChain());
                 bean.setJobChainNode(options.getJobChainNodeName());
             }
-
             YadeTransferResultHelper helper = new YadeTransferResultHelper();
             YadeEngineTransferResult result = (YadeEngineTransferResult) helper.create(bean, options, startTime, endTime, exception);
             helper.setEntries(result, entries, sourceDir, targetDir, jumpDir);

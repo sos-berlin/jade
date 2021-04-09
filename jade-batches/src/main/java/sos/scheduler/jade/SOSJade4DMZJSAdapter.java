@@ -174,12 +174,13 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             if (isOrderJob) {
                 order = getSpoolerProcess().getOrder();
                 orderParams = order.params();
-                jade4DMZEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
                 jade4DMZEngine.getOptions().setJobChain(order.job_chain().path());
                 jade4DMZEngine.getOptions().setJobChainNodeName(currentNode);
                 jade4DMZEngine.getOptions().setOrderId(order.id());
             }
             jade4DMZEngine.getOptions().setTaskId(String.valueOf(getJobId()));
+            jade4DMZEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
+
             if (history != null) {
                 if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                     history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
@@ -268,8 +269,10 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         history = null;
         options.return_values.setValue("");
         if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
-            LOGGER.debug(String.format("[skip history][use set_history_field]return_values=%s", schedulerParams.get("return_values")));
             setHistoryProcessed = true;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("[skip history]%s=true", YadeTransferResultHelper.JOBSCHEDULER_1X_JOB_PARAM_NAME));
+            }
             return;
         }
 
