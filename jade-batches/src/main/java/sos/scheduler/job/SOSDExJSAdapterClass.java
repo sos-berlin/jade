@@ -175,7 +175,8 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));
         jadeEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
 
-        setHistory(schedulerParams, jadeEngine);
+        setHistory(schedulerParams, jadeEngine.getOptions());
+        jadeEngine.setJobSchedulerEventHandler(history);
         if (history != null) {
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
@@ -253,13 +254,13 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     }
 
-    private void setHistory(HashMap<String, String> schedulerParams, SOSDataExchangeEngine jadeEngine) {
+    private void setHistory(HashMap<String, String> schedulerParams, SOSBaseOptions options) {
         if (setHistoryProcessed) {
             return;
         }
 
         history = null;
-        jadeEngine.getOptions().return_values.setValue("");
+        options.return_values.setValue("");
         if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
             setHistoryProcessed = true;
             if (LOGGER.isDebugEnabled()) {
@@ -282,7 +283,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         history = new YadeHistory(spooler);
         try {
             history.buildFactory(hibernateFile);
-            jadeEngine.setJobSchedulerEventHandler(history);
         } catch (Throwable e) {
             LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
             history = null;
