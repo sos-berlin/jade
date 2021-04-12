@@ -36,6 +36,11 @@ public class YadeTransferResultHelper {
 
     public static final String JOBSCHEDULER_1X_JOB_PARAM_NAME = "async_history";
     private static final String JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD = "TRANSFER_HISTORY";
+    private ArrayList<YadeEngineTransferResult> transfers = null;
+
+    public YadeTransferResultHelper() {
+        transfers = new ArrayList<>();
+    }
 
     /** JobScheduler 1.x */
     public static boolean useSetHistoryField(HashMap<String, String> schedulerParams) {
@@ -47,14 +52,13 @@ public class YadeTransferResultHelper {
     }
 
     /** JobScheduler 1.x */
-    public static void process2historyField(Task spoolerTask, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception,
-            SOSFileList entries) {
-        process2historyField(spoolerTask, options, startTime, endTime, exception, entries, null, null, null);
+    public void process4historyField(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries) {
+        process4historyField(options, startTime, endTime, exception, entries, null, null, null);
     }
 
     /** JobScheduler 1.x */
-    public static void process2historyField(Task spoolerTask, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception,
-            SOSFileList entries, String sourceDir, String targetDir, String jumpDir) {
+    public void process4historyField(SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception, SOSFileList entries,
+            String sourceDir, String targetDir, String jumpDir) {
 
         try {
             YadeEngineTransferResult bean = new YadeEngineTransferResult();
@@ -70,16 +74,20 @@ public class YadeTransferResultHelper {
             YadeTransferResultHelper helper = new YadeTransferResultHelper();
             YadeEngineTransferResult result = (YadeEngineTransferResult) helper.create(bean, options, startTime, endTime, exception);
             helper.setEntries(result, entries, sourceDir, targetDir, jumpDir);
-            helper.serialize2historyField(result, spoolerTask);
+            transfers.add(result);
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
         }
     }
 
     /** JobScheduler 1.x */
-    public void serialize2historyField(YadeEngineTransferResult result, Task spoolerTask) throws Exception {
-        YadeTransferResultSerializer<YadeEngineTransferResult> serializer = new YadeTransferResultSerializer<YadeEngineTransferResult>();
-        spoolerTask.set_history_field(JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD, serializer.serialize(result));
+    public void serialize2historyField(Task spoolerTask) throws Exception {
+        if (transfers == null || transfers.size() == 0) {
+            return;
+        }
+        YadeTransferResultSerializer<ArrayList<YadeEngineTransferResult>> serializer =
+                new YadeTransferResultSerializer<ArrayList<YadeEngineTransferResult>>();
+        spoolerTask.set_history_field(JOBSCHEDULER_1X_SCHEDULER_HISTORY_FIELD, serializer.serialize(transfers));
     }
 
     /** JobScheduler JS7 */

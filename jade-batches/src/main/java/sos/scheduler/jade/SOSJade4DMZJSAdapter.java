@@ -68,6 +68,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private YadeHistory history;
+    private YadeTransferResultHelper asyncHistory = null;
     private boolean setHistoryProcessed = false;
 
     public SOSJade4DMZJSAdapter() {
@@ -88,6 +89,14 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     @Override
     public void spooler_exit() {
         super.spooler_exit();
+
+        if (asyncHistory != null) {
+            try {
+                asyncHistory.serialize2historyField(spooler_task);
+            } catch (Exception e) {
+                LOGGER.error(String.format("[async_history]%s", e.toString()), e);
+            }
+        }
 
         if (history != null) {
             history.closeFactory();
@@ -197,10 +206,10 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 exception = e;
                 throw e;
             } finally {
-                if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
-                    YadeTransferResultHelper.process2historyField(spooler_task, jade4DMZEngine.getOptions(), jade4DMZEngine.getStartTime(),
-                            jade4DMZEngine.getEndTime(), exception, jade4DMZEngine.getFileList(), jade4DMZEngine.getOptions().sourceDir.getValue(),
-                            jade4DMZEngine.getOptions().targetDir.getValue(), jade4DMZEngine.getJumpDir());
+                if (asyncHistory != null) {
+                    asyncHistory.process4historyField(jade4DMZEngine.getOptions(), jade4DMZEngine.getStartTime(), jade4DMZEngine.getEndTime(),
+                            exception, jade4DMZEngine.getFileList(), jade4DMZEngine.getOptions().sourceDir.getValue(), jade4DMZEngine
+                                    .getOptions().targetDir.getValue(), jade4DMZEngine.getJumpDir());
                 }
             }
             SOSFileList transfFiles = jade4DMZEngine.getFileList();
@@ -273,6 +282,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("[skip history]%s=true", YadeTransferResultHelper.JOBSCHEDULER_1X_JOB_PARAM_NAME));
             }
+            asyncHistory = new YadeTransferResultHelper();
             return;
         }
 

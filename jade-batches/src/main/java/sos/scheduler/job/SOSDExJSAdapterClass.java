@@ -62,6 +62,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private YadeHistory history = null;
+    private YadeTransferResultHelper asyncHistory = null;
     private boolean setHistoryProcessed = false;
 
     public SOSDExJSAdapterClass() {
@@ -83,7 +84,13 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
     @Override
     public void spooler_exit() {
         super.spooler_exit();
-
+        if (asyncHistory != null) {
+            try {
+                asyncHistory.serialize2historyField(spooler_task);
+            } catch (Exception e) {
+                LOGGER.error(String.format("[async_history]%s", e.toString()), e);
+            }
+        }
         if (history != null) {
             history.closeFactory();
         }
@@ -153,9 +160,6 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         }
         jadeEngine.setJSJobUtilites(this);
         jadeEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
-
-        jadeEngine.setJobSchedulerEventHandler(history);
-
         jadeEngine.getOptions().setJobSchedulerId(spooler.id());
 
         Order order = null;
@@ -171,7 +175,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         jadeEngine.getOptions().setTaskId(String.valueOf(getJobId()));
         jadeEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
 
-        setHistory(schedulerParams, jadeEngine.getOptions());
+        setHistory(schedulerParams, jadeEngine);
         if (history != null) {
             if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
                 history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
@@ -192,9 +196,9 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
             if (isOrderJob && orderParams != null && history != null && history.getTransferId() != null) {
                 orderParams.set_var(YADE_TRANSFER_ID, history.getTransferId().toString());
             }
-            if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
-                YadeTransferResultHelper.process2historyField(spooler_task, jadeEngine.getOptions(), jadeEngine.getStartTime(), jadeEngine
-                        .getEndTime(), exception, jadeEngine.getFileList());
+            if (asyncHistory != null) {
+                asyncHistory.process4historyField(jadeEngine.getOptions(), jadeEngine.getStartTime(), jadeEngine.getEndTime(), exception, jadeEngine
+                        .getFileList());
             }
         }
         SOSFileList transfFiles = jadeEngine.getFileList();
@@ -249,18 +253,19 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
 
     }
 
-    private void setHistory(HashMap<String, String> schedulerParams, SOSBaseOptions options) {
+    private void setHistory(HashMap<String, String> schedulerParams, SOSDataExchangeEngine jadeEngine) {
         if (setHistoryProcessed) {
             return;
         }
 
         history = null;
-        options.return_values.setValue("");
+        jadeEngine.getOptions().return_values.setValue("");
         if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
             setHistoryProcessed = true;
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("[skip history]%s=true", YadeTransferResultHelper.JOBSCHEDULER_1X_JOB_PARAM_NAME));
             }
+            asyncHistory = new YadeTransferResultHelper();
             return;
         }
 
@@ -277,6 +282,7 @@ public class SOSDExJSAdapterClass extends JobSchedulerJobAdapter {
         history = new YadeHistory(spooler);
         try {
             history.buildFactory(hibernateFile);
+            jadeEngine.setJobSchedulerEventHandler(history);
         } catch (Throwable e) {
             LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
             history = null;
