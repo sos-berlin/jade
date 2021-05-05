@@ -3,18 +3,18 @@ package com.sos.DataExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilities {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSDataExchangeEngineMain.class);
-    protected JADEOptions jadeOptions = null;
+    protected SOSBaseOptions jadeOptions = null;
     @I18NMessages(value = { @I18NMessage("JADE client - Main routine started ..."),
             @I18NMessage(value = "JADE client - Main routine started ...", locale = "en_UK", explanation = "JADE client - Main"),
             @I18NMessage(value = "JADE Client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE Client - Main") }, msgnum = "SOSJADE_I_9999", msgurl = "")
@@ -46,7 +46,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
                 try {
                     if (main.getEngine() != null) {
                         LOGGER.info("shutdown engine");
-                        main.getEngine().logout();
+                        main.getEngine().disconnect();
                         main.getEngine().showSummary();
                     }
                 } catch (Throwable e) {
@@ -55,7 +55,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             }
         });
 
-        int exitCode = main.Execute(args);
+        int exitCode = main.execute(args);
         System.exit(exitCode);
     }
 
@@ -63,29 +63,22 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
         super("SOSDataExchange");
     }
 
-    private int Execute(final String[] args) {
-        final String method = "Execute";
+    private int execute(final String[] args) {
+        final String method = "execute";
         int exitCode = 0;
         try {
-            engine = new SOSDataExchangeEngine();
-            JADEOptions options = engine.getOptions();
+            SOSBaseOptions options = new SOSBaseOptions();
+            options.commandLineArgs(args);
+            engine = new SOSDataExchangeEngine(options);
             engine.setJSJobUtilites(this);
             options.sendTransferHistory.value(true);
-            options.commandLineArgs(args);
             LOGGER.info(getMsg(SOSDX_Intro));
             engine.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
         } catch (Exception e) {
             exitCode = 99;
-            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode));
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode), e);
         } finally {
-            try {
-                if (engine != null) {
-                    engine.logout();
-                }
-            } catch (Exception ex) {
-                LOGGER.warn(String.format("exception on logout: %s", ex.toString()));
-            }
             engine = null;
         }
         return exitCode;
@@ -106,13 +99,8 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
     }
 
     @Override
-    public void setJSParam(final String pstrKey, final StringBuffer pstrValue) {
+    public void setJSParam(final String pstrKey, final StringBuilder pstrValue) {
         //
-    }
-
-    @Override
-    public String getCurrentNodeName() {
-        return "";
     }
 
     @Override
@@ -126,7 +114,7 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
     }
 
     @Override
-    public void setCC(final int pintCC) {
+    public void setExitCode(final int pintCC) {
         //
     }
 

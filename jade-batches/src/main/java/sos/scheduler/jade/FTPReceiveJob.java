@@ -7,7 +7,7 @@ import com.sos.JSHelper.Basics.VersionInfo;
 import com.sos.JSHelper.Options.SOSOptionAuthenticationMethod.enuAuthenticationMethods;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
 import com.sos.JSHelper.Options.SOSOptionPortNumber;
-import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
+import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.i18n.annotation.I18NResourceBundle;
 
 /** \file FTPReceiveJob.java \class FTPReceiveJob
@@ -32,10 +32,10 @@ public class FTPReceiveJob extends Jade4JessyBaseClass {
 
     @Override
     protected void setSpecialOptions() {
-        objO.protocol.setValue(enuTransferTypes.ftp);
-        objO.port.value(SOSOptionPortNumber.getStandardFTPPort());
+        objO.protocol.setValue(TransferTypes.ftp);
+        //objO.port.value(SOSOptionPortNumber.getStandardFTPPort());
         objO.operation.setValue(SOSOptionJadeOperation.enuJadeOperations.receive);
-        objO.sshAuthMethod.setValue(enuAuthenticationMethods.password);
+        //objO.sshAuthMethod.setValue(enuAuthenticationMethods.password);
     }
 
     @Override

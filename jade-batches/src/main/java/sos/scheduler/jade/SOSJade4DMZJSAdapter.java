@@ -21,13 +21,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.DataExchange.Jade4DMZ;
-import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.DataExchange.history.YadeHistory;
+import com.sos.DataExchange.history.YadeTransferResultHelper;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.io.Files.JSTextFile;
-import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
 import com.sos.i18n.annotation.I18NResourceBundle;
 import com.sos.jitl.xmleditor.common.JobSchedulerXmlEditor;
 import com.sos.jobscheduler.model.event.YadeEvent;
@@ -35,6 +32,9 @@ import com.sos.jobscheduler.model.event.YadeVariables;
 import com.sos.scheduler.model.SchedulerObjectFactory;
 import com.sos.scheduler.model.commands.JSCmdAddOrder;
 import com.sos.scheduler.model.objects.Spooler;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 import sos.scheduler.job.JobSchedulerJobAdapter;
 import sos.spooler.Order;
@@ -45,6 +45,14 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSJade4DMZJSAdapter.class);
 
+    private static final String CLASSNAME = SOSJade4DMZJSAdapter.class.getSimpleName();
+
+    private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
+    private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
+    private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
+    private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
+    private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
+
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PATH = "scheduler_file_path";
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_PARENT = "scheduler_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_FILE_NAME = "scheduler_file_name";
@@ -53,26 +61,46 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_PARENT = "scheduler_source_file_parent";
     private static final String ORDER_PARAMETER_SCHEDULER_SOURCE_FILE_NAME = "scheduler_source_file_name";
     private static final String ORDER_PARAMETER_FILE_PATH_RESTRICTION = "yade_file_path_restriction";
-    private static final String CLASSNAME = "SOSJade4DMZJSAdapter";
-    private static final String VARNAME_FTP_RESULT_FILES = "ftp_result_files";
-    private static final String VARNAME_FTP_RESULT_ZERO_BYTE_FILES = "ftp_result_zero_byte_files";
-    private static final String VARNAME_FTP_RESULT_FILENAMES = "ftp_result_filenames";
-    private static final String VARNAME_FTP_RESULT_FILEPATHS = "ftp_result_filepaths";
-    private static final String VARNAME_FTP_RESULT_ERROR_MESSAGE = "ftp_result_error_message";
-    // private static final String SCHEDULER_JOB_PATH_PARAM = "SCHEDULER_JOB_PATH";
-    // private static final String SCHEDULER_NODE_NAME_PARAM = "SCHEDULER_NODE_NAME";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
+    private static final String ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
     private static final String YADE_TRANSFER_ID = "yade_transfer_id";
-    private SOSFileList transfFiles = null;
-    private SOSFTPOptions jadeOptions = null;
+
     private SchedulerObjectFactory jobSchedulerFactory = null;
     private YadeHistory history;
-    private Jade4DMZ jade4DMZEngine;
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET = "scheduler_SOSFileOperations_ResultSet";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE = "scheduler_SOSFileOperations_ResultSetSize";
-    public static final String conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT = "scheduler_SOSFileOperations_file_count";
+    private YadeTransferResultHelper asyncHistory = null;
+    private boolean setHistoryProcessed = false;
 
     public SOSJade4DMZJSAdapter() {
         super();
+    }
+
+    @Override
+    public boolean spooler_init() {
+        try {
+            super.spooler_init();
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
+            throw e;
+        }
+    }
+
+    @Override
+    public void spooler_exit() {
+        super.spooler_exit();
+
+        if (asyncHistory != null) {
+            try {
+                asyncHistory.serialize2historyField(spooler_task);
+            } catch (Exception e) {
+                LOGGER.error(String.format("[async_history]%s", e.toString()), e);
+            }
+        }
+
+        if (history != null) {
+            history.closeFactory();
+        }
     }
 
     @Override
@@ -80,21 +108,21 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         try {
             super.spooler_process();
             doProcessing();
+            return getSpoolerProcess().isOrderJob();
         } catch (Exception e) {
-            logger.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
+            LOGGER.error(String.format("%1$s ended with error: %2$s", CLASSNAME, e.toString()), e);
             throw e;
         }
-        return signalSuccess();
     }
 
     private void doProcessing() throws Exception {
         Path xml2iniFile = null;
         try {
-            jadeOptions = null;
-            jade4DMZEngine = new Jade4DMZ();
-            jadeOptions = jade4DMZEngine.getOptions();
-            jadeOptions.setCurrentNodeName(getCurrentNodeName());
-            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getJobOrOrderParameters());
+            String currentNode = getCurrentNodeName(getSpoolerProcess().getOrder(), true);
+            Jade4DMZ jade4DMZEngine = new Jade4DMZ();
+            SOSBaseOptions jadeOptions = jade4DMZEngine.getOptions();
+            jadeOptions.setCurrentNodeName(currentNode);
+            HashMap<String, String> schedulerParams = getSchedulerParameterAsProperties(getSpoolerProcess().getOrder());
             if (schedulerParams != null) {
                 if (schedulerParams.containsKey("settings")) {
                     String paramSettings = schedulerParams.get("settings");
@@ -109,11 +137,10 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     }
 
                     jadeOptions.setOriginalSettingsFile(settings);
-                    logger.debug(String.format("settings=%s", settings));
+                    LOGGER.debug(String.format("settings=%s", settings));
                     // check both (in case of symlink the orig file can have any extension...)
                     if (paramSettings.toLowerCase().endsWith(".xml") || settings.toLowerCase().endsWith(".xml")) {
-                        JADEOptions jo = new JADEOptions();
-                        xml2iniFile = jo.convertXml2Ini(settings);
+                        xml2iniFile = jade4DMZEngine.convertXml2Ini(settings);
                         schedulerParams.put("settings", xml2iniFile.toString());
                     }
                 } else {
@@ -130,7 +157,7 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                     }
                 }
             }
-            jadeOptions.setAllOptions2(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
+            jadeOptions.setAllOptionsOnJob(jadeOptions.deletePrefix(schedulerParams, "ftp_"));
             if (xml2iniFile != null) {// !!! setAllOptions2 override the jadeOptions.settings
                 jadeOptions.settings.setValue(xml2iniFile.toString());
             }
@@ -141,57 +168,69 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             if (jadeOptions.schedulerHost.isNotDirty()) {
                 jadeOptions.schedulerHost.setValue("");
             }
-            logger.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
+            LOGGER.info(String.format("%1$s with operation %2$s started.", "JADE4DMZ", jadeOptions.operation.getValue()));
             jade4DMZEngine.setJSJobUtilites(this);
             jade4DMZEngine.getOptions().setDeleteSettingsFileOnExit(xml2iniFile != null);
 
-            history = new YadeHistory(this);
-            Path hibernateConfigFile = null;
-            try {
-                hibernateConfigFile = getHibernateConfigurationReporting();
-            } catch (Throwable t) {
-                hibernateConfigFile = null;
-                logger.warn("No ./config/reporting.hibernate.cfg.xml found on file system! Transfer history won´t be processed.");
-            }
-            history.buildFactory(hibernateConfigFile);
-            jade4DMZEngine.setHistory(history);
+            setHistory(schedulerParams, jade4DMZEngine.getOptions());
 
+            jade4DMZEngine.setHistory(history);
             jade4DMZEngine.getOptions().setJobSchedulerId(spooler.id());
-            if (isOrderJob()) {
-                Order order = getOrder();
-                jade4DMZEngine.getOptions().setJob(this.getJobFolder() + "/" + this.getJobName());
+
+            Order order = null;
+            Variable_set orderParams = null;
+            boolean isOrderJob = getSpoolerProcess().isOrderJob();
+            if (isOrderJob) {
+                order = getSpoolerProcess().getOrder();
+                orderParams = order.params();
                 jade4DMZEngine.getOptions().setJobChain(order.job_chain().path());
-                jade4DMZEngine.getOptions().setJobChainNodeName(order.state());
+                jade4DMZEngine.getOptions().setJobChainNodeName(currentNode);
                 jade4DMZEngine.getOptions().setOrderId(order.id());
             }
-            jade4DMZEngine.getOptions().setTaskId("" + spooler_task.id());
-            if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
-                history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
+            jade4DMZEngine.getOptions().setTaskId(String.valueOf(getJobId()));
+            jade4DMZEngine.getOptions().setJob(getJobFolder() + "/" + getJobName());
+
+            if (history != null) {
+                if (schedulerParams.get(YADE_TRANSFER_ID) != null && !schedulerParams.get(YADE_TRANSFER_ID).isEmpty()) {
+                    history.setParentTransferId(Long.parseLong(schedulerParams.get(YADE_TRANSFER_ID)));
+                }
+                if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null && !schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION)
+                        .isEmpty()) {
+                    history.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
+                }
             }
-            if (schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION) != null && !schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION)
-                    .isEmpty()) {
-                history.setFilePathRestriction(schedulerParams.get(ORDER_PARAMETER_FILE_PATH_RESTRICTION));
+            Throwable exception = null;
+            try {
+                jade4DMZEngine.execute();
+            } catch (Throwable e) {
+                exception = e;
+                throw e;
+            } finally {
+                if (asyncHistory != null) {
+                    asyncHistory.process4historyField(jade4DMZEngine.getOptions(), jade4DMZEngine.getStartTime(), jade4DMZEngine.getEndTime(),
+                            exception, jade4DMZEngine.getFileList(), jade4DMZEngine.getOptions().sourceDir.getValue(), jade4DMZEngine
+                                    .getOptions().targetDir.getValue(), jade4DMZEngine.getJumpDir());
+                }
             }
-            jade4DMZEngine.Execute();
-            transfFiles = jade4DMZEngine.getFileList();
+            SOSFileList transfFiles = jade4DMZEngine.getFileList();
             int resultSetSize = 0;
             if (isNotNull(transfFiles)) {
                 resultSetSize = transfFiles.getList().size();
             }
-            if (resultSetSize <= 0 && isOrderJob()) {
+            if (resultSetSize <= 0 && isOrderJob && orderParams != null) {
                 String pollErrorState = jadeOptions.pollErrorState.getValue();
                 if (jadeOptions.pollErrorState.isDirty()) {
-                    logger.debug("set order-state to " + pollErrorState);
-                    setNextNodeState(pollErrorState);
-                    getOrderParams().set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
-                    getOrder().set_state_text("ended with no files found");
+                    LOGGER.debug("set order-state to " + pollErrorState);
+                    order.set_state(pollErrorState);
+                    orderParams.set_var(VARNAME_FTP_RESULT_ERROR_MESSAGE, "");
+                    order.set_state_text("ended with no files found");
                 }
             }
-            if (isJobchain()) {
+            if (isOrderJob) {
                 String onEmptyResultSetState = jadeOptions.onEmptyResultSet.getValue();
                 if (isNotEmpty(onEmptyResultSetState) && resultSetSize <= 0) {
                     JSJ_I_0090.toLog(onEmptyResultSetState);
-                    getOrder().set_state(onEmptyResultSetState);
+                    order.set_state(onEmptyResultSetState);
                 }
             }
             String raiseErrorIfResultSetIs = jadeOptions.raiseErrorIfResultSetIs.getValue();
@@ -199,38 +238,72 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
                 boolean flgR = jadeOptions.expectedSizeOfResultSet.compare(raiseErrorIfResultSetIs, resultSetSize);
                 if (flgR == true) {
                     String strM = JSJ_E_0040.get(resultSetSize, raiseErrorIfResultSetIs, jadeOptions.expectedSizeOfResultSet.value());
-                    logger.info(strM);
+                    LOGGER.info(strM);
                     throw new JobSchedulerException(strM);
                 }
             }
-            createOrderParameter(jade4DMZEngine);
+
+            createOrderParameter(jade4DMZEngine, transfFiles, isOrderJob, order, orderParams);
 
             if (resultSetSize > 0 && jadeOptions.createOrder.isTrue()) {
                 String jobChainName = jadeOptions.orderJobchainName.getValue();
                 if (jadeOptions.createOrdersForAllFiles.isTrue()) {
                     for (SOSFileListEntry listItem : transfFiles.getList()) {
-                        createOrder(listItem, jobChainName);
+                        createOrder(jadeOptions, listItem, jobChainName, orderParams);
                     }
                 } else {
                     if (jadeOptions.createOrdersForNewFiles.isTrue()) {
                         for (SOSFileListEntry listItem : transfFiles.getList()) {
-                            if (!listItem.isTargetFileExists()) {
-                                createOrder(listItem, jobChainName);
+                            if (!listItem.isTargetFileExistsBeforeTransfer()) {
+                                createOrder(jadeOptions, listItem, jobChainName, orderParams);
                             }
                         }
                     } else {
-                        createOrder(transfFiles.getList().get(0), jobChainName);
+                        createOrder(jadeOptions, transfFiles.getList().get(0), jobChainName, orderParams);
                     }
                 }
             }
 
-            logger.info(String.format("%1$s with operation %2$s ended.", "JADE4DMZ", jadeOptions.operation.getValue()));
+            LOGGER.info(String.format("%1$s with operation %2$s ended.", "JADE4DMZ", jadeOptions.operation.getValue()));
         } finally {
-            if (history != null) {
-                history.closeFactory();
-            }
             deleteXml2IniSettingsFile(xml2iniFile);
         }
+    }
+
+    private void setHistory(HashMap<String, String> schedulerParams, SOSBaseOptions options) {
+        if (setHistoryProcessed) {
+            return;
+        }
+
+        history = null;
+        options.return_values.setValue("");
+        if (YadeTransferResultHelper.useSetHistoryField(schedulerParams)) {
+            setHistoryProcessed = true;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("[skip history]%s=true", YadeTransferResultHelper.JOBSCHEDULER_1X_JOB_PARAM_NAME));
+            }
+            asyncHistory = new YadeTransferResultHelper();
+            return;
+        }
+
+        Path hibernateFile = null;
+        try {
+            hibernateFile = getHibernateConfigurationReporting();
+        } catch (Throwable e) {
+            LOGGER.info("no hibernate configuration found, file transfer history database will not be used");
+            LOGGER.trace(e.toString());
+            setHistoryProcessed = true;
+            return;
+        }
+
+        history = new YadeHistory(spooler);
+        try {
+            history.buildFactory(hibernateFile);
+        } catch (Throwable e) {
+            LOGGER.warn("Transfer history won´t be processed: " + e.toString(), e);
+            history = null;
+        }
+        setHistoryProcessed = true;
     }
 
     private void deleteXml2IniSettingsFile(Path xml2iniFile) {
@@ -238,25 +311,28 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             try {
                 // usually JadeEngine delete the ini settings file (created from xml) on logout
                 // execute delete settings file in job when JadeEngine can't be instantiated (wrong operation or profile for example)
-                logger.debug(String.format("[job]try do delete settings file %s", xml2iniFile.toString()));
+                if (!xml2iniFile.toString().toLowerCase().endsWith(".xml")) {
+                    LOGGER.debug(String.format("[job]try do delete settings file %s", xml2iniFile.toString()));
+                }
                 Files.deleteIfExists(xml2iniFile);
             } catch (Throwable e) {
-                logger.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile.toString(), e.toString()), e);
+                LOGGER.debug(String.format("[job]settings file can't be deleted[%s]exception %s", xml2iniFile.toString(), e.toString()), e);
             }
         }
     }
 
-    protected void createOrder(final SOSFileListEntry listItem, final String jobChainName) {
+    protected void createOrder(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName, Variable_set orderParams) {
         String feedback;
         if (jadeOptions.orderJobschedulerHost.isNotEmpty()) {
-            feedback = createOrderOnRemoteJobScheduler(listItem, jobChainName);
+            feedback = createOrderOnRemoteJobScheduler(jadeOptions, listItem, jobChainName, orderParams);
         } else {
-            feedback = createOrderOnLocalJobScheduler(listItem, jobChainName);
+            feedback = createOrderOnLocalJobScheduler(jadeOptions, listItem, jobChainName, orderParams);
         }
-        logger.info(feedback);
+        LOGGER.info(feedback);
     }
 
-    protected String createOrderOnRemoteJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
+    protected String createOrderOnRemoteJobScheduler(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName,
+            Variable_set orderParams) {
         if (jobSchedulerFactory == null) {
             jobSchedulerFactory = new SchedulerObjectFactory(jadeOptions.orderJobschedulerHost.getValue(), jadeOptions.orderJobschedulerPort.value());
             jobSchedulerFactory.initMarshaller(Spooler.class);
@@ -268,9 +344,9 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         String targetFilename = listItem.getTargetFileName().replace('\\', '/');
         order.setId(targetFilename);
         order.setJobChain(jobChainName);
-        order.setParams(jobSchedulerFactory.setParams(buildOrderParams(listItem)));
+        order.setParams(jobSchedulerFactory.setParams(buildOrderParams(jadeOptions, listItem, orderParams)));
         String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
-        if (changeOrderState()) {
+        if (changeOrderState(jadeOptions)) {
             String strNextState = jadeOptions.nextState.getValue();
             order.setState(strNextState);
             feedback += " " + JSJ_I_0019.get(strNextState);
@@ -279,26 +355,27 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         return feedback;
     }
 
-    protected String createOrderOnLocalJobScheduler(final SOSFileListEntry listItem, final String jobChainName) {
+    protected String createOrderOnLocalJobScheduler(SOSBaseOptions jadeOptions, final SOSFileListEntry listItem, final String jobChainName,
+            Variable_set orderParams) {
         Order order = spooler.create_order();
         String targetFilename = listItem.getTargetFileName().replace('\\', '/');
         order.set_id(targetFilename);
         String feedback = JSJ_I_0018.get(targetFilename, jobChainName);
-        if (changeOrderState()) {
+        if (changeOrderState(jadeOptions)) {
             String nextState = jadeOptions.nextState.getValue();
             order.set_state(nextState);
             feedback += " " + JSJ_I_0019.get(nextState);
         }
-        order.set_params(buildOrderParams(listItem));
-        order.set_title(JSJ_I_0017.get(spooler_task.job().name()));
+        order.set_params(buildOrderParams(jadeOptions, listItem, orderParams));
+        order.set_title(JSJ_I_0017.get(getTaskJobName()));
         spooler.job_chain(jobChainName).add_order(order);
         return feedback;
     }
 
-    private Variable_set buildOrderParams(SOSFileListEntry listItem) {
+    private Variable_set buildOrderParams(SOSBaseOptions jadeOptions, SOSFileListEntry listItem, Variable_set currentOrderParams) {
         Variable_set orderParams = spooler.create_variable_set();
         if (jadeOptions.mergeOrderParameter.isTrue()) {
-            orderParams.merge(getOrderParams());
+            orderParams.merge(currentOrderParams);
         }
         String[] targetFile = getFilenameParts(jadeOptions.targetDir.getValue(), listItem.getTargetFileName());
         if (jadeOptions.paramNameForPath.isDirty()) {
@@ -336,61 +413,59 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
         return file;
     }
 
-    private boolean changeOrderState() {
+    private boolean changeOrderState(SOSBaseOptions jadeOptions) {
         return isNotEmpty(jadeOptions.nextState.getValue());
     }
 
-    private void createOrderParameter(final Jade4DMZ objR) throws Exception {
+    private void createOrderParameter(final Jade4DMZ yadeEngine, SOSFileList transfFiles, boolean isOrderJob, Order order, Variable_set orderParams)
+            throws Exception {
         try {
-            String fileNames = "";
-            String filePaths = "";
-            Variable_set objParams = null;
-            if (spooler_job.order_queue() != null) {
-                if (getOrder() != null && getOrderParams() != null) {
-                    objParams = getOrderParams();
+            Variable_set params = null;
+            if (isOrderJob) {
+                if (order != null && orderParams != null) {
+                    params = orderParams;
                 }
             } else {
-                objParams = spooler_task.params();
+                params = spooler_task.params();
             }
-            if (objParams != null) {
-                long intNoOfHitsInResultSet = transfFiles.getList().size();
-                if (intNoOfHitsInResultSet > 0) {
-                    for (SOSFileListEntry objListItem : transfFiles.getList()) {
-                        filePaths += objListItem.getTargetFilename() + ";";
-                        fileNames += objListItem.getTargetFilename() + ";";
+            if (params != null) {
+                String filePaths = "";
+                long size = transfFiles.getList().size();
+                if (size > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (SOSFileListEntry entry : transfFiles.getList()) {
+                        sb.append(entry.getTargetFilename()).append(";");
                     }
+                    filePaths = sb.toString();
                     filePaths = filePaths.substring(0, filePaths.length() - 1);
-                    fileNames = fileNames.substring(0, fileNames.length() - 1);
                 }
-                setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT, String.valueOf(intNoOfHitsInResultSet));
-                Variable_set objP = null;
-                if (isNotNull(getOrder())) {
-                    objP = getOrderParams();
-                }
-                if (isNotNull(objP)) {
-                    String strResultList2File = objR.getOptions().resultListFile.getValue();
-                    if (isNotEmpty(strResultList2File) && isNotEmpty(fileNames)) {
-                        JSTextFile objResultListFile = new JSTextFile(strResultList2File);
+
+                if (orderParams != null) {
+                    orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_FILE_COUNT, String.valueOf(size));
+
+                    String resultListFile = yadeEngine.getOptions().resultListFile.getValue();
+                    if (isNotEmpty(resultListFile) && isNotEmpty(filePaths)) {
+                        JSTextFile file = new JSTextFile(resultListFile);
                         try {
-                            if (objResultListFile.canWrite()) {
-                                objResultListFile.write(fileNames);
-                                objResultListFile.close();
+                            if (file.canWrite()) {
+                                file.write(filePaths);
+                                file.close();
                             } else {
-                                JSJ_F_0090.toLog(objR.getOptions().resultListFile.getShortKey(), strResultList2File);
+                                JSJ_F_0090.toLog(yadeEngine.getOptions().resultListFile.getShortKey(), resultListFile);
                             }
                         } catch (Exception e) {
-                            String strM = JSJ_F_0080.get(strResultList2File, objR.getOptions().resultListFile.getShortKey());
-                            logger.error(strM);
-                            throw new JobSchedulerException(strM, e);
+                            String msg = JSJ_F_0080.get(resultListFile, yadeEngine.getOptions().resultListFile.getShortKey());
+                            LOGGER.error(msg, e);
+                            throw new JobSchedulerException(msg, e);
                         }
                     }
-                    setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, fileNames);
-                    setOrderParameter(conOrderParameterSCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(intNoOfHitsInResultSet));
+                    orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET, filePaths);
+                    orderParams.set_var(ORDER_PARAMETER_SCHEDULER_SOS_FILE_OPERATIONS_RESULT_SET_SIZE, String.valueOf(size));
                 }
-                objParams.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) intNoOfHitsInResultSet));
-                objParams.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
-                objParams.set_var(VARNAME_FTP_RESULT_FILENAMES, fileNames);
-                objParams.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
+                params.set_var(VARNAME_FTP_RESULT_FILES, Integer.toString((int) size));
+                params.set_var(VARNAME_FTP_RESULT_ZERO_BYTE_FILES, Long.toString(transfFiles.getCounterSkippedZeroByteFiles()));
+                params.set_var(VARNAME_FTP_RESULT_FILENAMES, filePaths);
+                params.set_var(VARNAME_FTP_RESULT_FILEPATHS, filePaths);
             }
         } catch (Exception e) {
             throw new JobSchedulerException("error occurred creating order Parameter: ", e);

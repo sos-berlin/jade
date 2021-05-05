@@ -10,21 +10,20 @@ import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.JSHelper.Options.SOSOptionJadeOperation;
-import com.sos.JSHelper.Options.SOSOptionTransferType;
-import com.sos.JSHelper.Options.SOSOptionTransferType.enuTransferTypes;
+import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
-import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
-import com.sos.VirtualFileSystem.Options.SOSConnection2OptionsAlternate;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateException;
 import com.sos.jade.db.DBItemYadeFiles;
 import com.sos.jade.db.DBItemYadeProtocols;
 import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.jade.db.YadeDBLayer;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
+import com.sos.vfs.common.options.SOSProviderOptions;
 
 public class YadeDBOperationHelper {
 
@@ -38,16 +37,28 @@ public class YadeDBOperationHelper {
     private DBItemYadeProtocols targetProtocolDBItem;
     private DBItemYadeProtocols jumpProtocolDBItem;
     private DBItemYadeTransfers transferDBItem;
-    private JADEOptions options;
+    private SOSBaseOptions options;
     private Long parentTransferId = null;
     private Long taskId = null;
     private Boolean hasErrors = null;
     private IJobSchedulerEventHandler eventHandler = null;
 
-    public YadeDBOperationHelper(JADEOptions opt, IJobSchedulerEventHandler eventHandler) {
+    public YadeDBOperationHelper(SOSBaseOptions opt, IJobSchedulerEventHandler eventHandler) {
         this.options = opt;
         this.eventHandler = eventHandler;
         addAdditionalJobInfosFromOptions();
+    }
+
+    private URL getURL(SOSProviderOptions options) {
+        URL url = options.url.getUrl();
+        if (url == null) {
+            try {
+                url = new URL(options.host.getValue());
+            } catch (Throwable e) {
+                LOGGER.error(e.toString(), e);
+            }
+        }
+        return url;
     }
 
     public Long storeYadeTransferInformationToDB(SOSFileList fileList, SOSHibernateSession dbSession, Long parentTransferId) throws Exception {
@@ -56,26 +67,34 @@ public class YadeDBOperationHelper {
         YadeDBLayer dbLayer = null;
         if (dbSession != null) {
             dbLayer = new YadeDBLayer(dbSession);
-            SOSConnection2OptionsAlternate sourceOptions = options.getSource();
-            SOSConnection2OptionsAlternate targetOptions = options.getTarget();
+            SOSProviderOptions sourceOptions = options.getSource();
+            SOSProviderOptions targetOptions = options.getTarget();
             if (sourceProtocolDBItem == null && options.sourceDir.isDirty()) {
+                TransferTypes transferType = sourceOptions.protocol.getEnum();
                 sourceProtocolDBItem = new DBItemYadeProtocols();
                 sourceProtocolDBItem.setHostname(sourceOptions.host.getValue());
                 sourceProtocolDBItem.setPort(sourceOptions.port.value());
-                Integer sourceProtocol = getProtocolFromTransferType(sourceOptions.protocol.getEnum());
-                if (sourceOptions.protocol.getEnum() == enuTransferTypes.local) {
+                sourceProtocolDBItem.setProtocol(transferType.numeric());
+
+                if (transferType.equals(TransferTypes.local)) {
                     sourceProtocolDBItem.setPort(0);
-                }
-                if (sourceOptions.protocol.getEnum() == enuTransferTypes.webdav) {
-                    URL url = sourceOptions.url.getUrl();
-                    if (url.getProtocol().toLowerCase().equals("webdavs")) {
-                        sourceProtocolDBItem.setProtocol(8);
-                    } else {
-                        sourceProtocolDBItem.setProtocol(sourceProtocol);
+                } else if (transferType.equals(TransferTypes.webdav)) {
+                    URL url = getURL(sourceOptions);
+                    if (url != null && url.getProtocol().toLowerCase().equals(TransferTypes.webdavs.name()) || url.getProtocol().toLowerCase().equals(
+                            TransferTypes.https.name())) {
+                        sourceProtocolDBItem.setProtocol(TransferTypes.webdavs.numeric());
                     }
-                } else {
-                    sourceProtocolDBItem.setProtocol(sourceProtocol);
+                } else if (transferType.equals(TransferTypes.http)) {
+                    URL url = getURL(sourceOptions);
+                    if (url != null && url.getProtocol().toLowerCase().equals(TransferTypes.https.name())) {
+                        sourceProtocolDBItem.setProtocol(TransferTypes.https.numeric());
+                    }
                 }
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace(String.format("[source][transferType %s=%s]sourceProtocol=%s", transferType.name(), transferType.numeric(),
+                            sourceProtocolDBItem.getProtocol()));
+                }
+
                 if (sourceOptions.user.isDirty() && sourceOptions.user.getValue() != null && sourceOptions.user.isNotEmpty()) {
                     sourceProtocolDBItem.setAccount(sourceOptions.user.getValue());
                 } else {
@@ -90,22 +109,29 @@ public class YadeDBOperationHelper {
                     dbSession.save(sourceProtocolDBItem);
                 }
                 if (targetProtocolDBItem == null && options.targetDir.isDirty()) {
+                    transferType = targetOptions.protocol.getEnum();
                     targetProtocolDBItem = new DBItemYadeProtocols();
                     targetProtocolDBItem.setHostname(targetOptions.host.getValue());
                     targetProtocolDBItem.setPort(targetOptions.port.value());
-                    Integer targetProtocol = getProtocolFromTransferType(targetOptions.protocol.getEnum());
-                    if (targetOptions.protocol.getEnum() == enuTransferTypes.local) {
+                    targetProtocolDBItem.setProtocol(transferType.numeric());
+
+                    if (transferType.equals(TransferTypes.local)) {
                         targetProtocolDBItem.setPort(0);
-                    }
-                    if (targetOptions.protocol.getEnum() == enuTransferTypes.webdav) {
-                        URL url = targetOptions.url.getUrl();
-                        if (url.getProtocol().toLowerCase().equals("webdavs")) {
-                            targetProtocolDBItem.setProtocol(8);
-                        } else {
-                            targetProtocolDBItem.setProtocol(targetProtocol);
+                    } else if (transferType.equals(TransferTypes.webdav)) {
+                        URL url = getURL(targetOptions);
+                        if (url != null && url.getProtocol().toLowerCase().equals(TransferTypes.webdavs.name()) || url.getProtocol().toLowerCase()
+                                .equals(TransferTypes.https.name())) {
+                            targetProtocolDBItem.setProtocol(TransferTypes.webdavs.numeric());
                         }
-                    } else {
-                        targetProtocolDBItem.setProtocol(targetProtocol);
+                    } else if (transferType.equals(TransferTypes.http)) {
+                        URL url = getURL(targetOptions);
+                        if (url != null && url.getProtocol().toLowerCase().equals(TransferTypes.https.name())) {
+                            targetProtocolDBItem.setProtocol(TransferTypes.https.numeric());
+                        }
+                    }
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace(String.format("[target][transferType %s=%s]targetProtocol=%s", transferType.name(), transferType.numeric(),
+                                targetProtocolDBItem.getProtocol()));
                     }
                     if (targetOptions.user.isDirty() && targetOptions.user.getValue() != null && targetOptions.user.isNotEmpty()) {
                         targetProtocolDBItem.setAccount(targetOptions.user.getValue());
@@ -123,10 +149,15 @@ public class YadeDBOperationHelper {
                 }
 
                 if (jumpProtocolDBItem == null && options.jumpHost.isDirty()) {
+                    transferType = TransferTypes.valueOf(options.jumpProtocol.getValue().toLowerCase());
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace(String.format("[jump]%s=%s", transferType.name(), transferType.numeric()));
+                    }
+
                     jumpProtocolDBItem = new DBItemYadeProtocols();
                     jumpProtocolDBItem.setHostname(options.jumpHost.getValue());
                     jumpProtocolDBItem.setPort(options.jumpPort.value());
-                    jumpProtocolDBItem.setProtocol(getProtocolFromString(options.jumpProtocol.getValue()));
+                    jumpProtocolDBItem.setProtocol(transferType.numeric());
                     if (options.jumpUser.isDirty() && options.jumpUser.getValue() != null && options.jumpUser.isNotEmpty()) {
                         jumpProtocolDBItem.setAccount(options.jumpUser.getValue());
                     } else {
@@ -203,7 +234,7 @@ public class YadeDBOperationHelper {
                     } else {
                         newTransfer.setNumOfFiles(0L);
                     }
-                    if (options.getProfile() != null) {
+                    if (options.profile != null) {
                         newTransfer.setProfileName(options.profile.getValue());
                     }
                     if (parentTransferId != null) {
@@ -277,6 +308,11 @@ public class YadeDBOperationHelper {
 
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry, boolean finalUpdate, String targetPath)
             throws Exception {
+
+        if (transferDBItem == null) {
+            return;
+        }
+
         YadeDBLayer dbLayer = null;
         if (dbSession != null) {
             dbLayer = new YadeDBLayer(dbSession);
@@ -477,54 +513,6 @@ public class YadeDBOperationHelper {
             return 6;
         default:
             return 0;
-        }
-    }
-
-    private Integer getProtocolFromTransferType(SOSOptionTransferType.enuTransferTypes transferType) {
-        switch (transferType) {
-        case local:
-            return 1;
-        case ftp:
-            return 2;
-        case ftps:
-            return 3;
-        case sftp:
-            return 4;
-        case http:
-            return 5;
-        case https:
-            return 6;
-        case webdav:
-            return 7;
-        case smb:
-            return 9;
-        default:
-            return null;
-        }
-    }
-
-    private Integer getProtocolFromString(String protocolName) {
-        switch (protocolName.toLowerCase()) {
-        case "local":
-            return 1;
-        case "ftp":
-            return 2;
-        case "ftps":
-            return 3;
-        case "sftp":
-            return 4;
-        case "http":
-            return 5;
-        case "https":
-            return 6;
-        case "webdav":
-            return 7;
-        case "webdavs":
-            return 8;
-        case "smb":
-            return 9;
-        default:
-            return null;
         }
     }
 

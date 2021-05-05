@@ -3,16 +3,12 @@ package com.sos.DataExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import org.apache.log4j.BasicConfigurator;
-//import org.apache.log4j.Logger;
-//import org.apache.log4j.PropertyConfigurator;
-
-import com.sos.DataExchange.Options.JADEOptions;
 import com.sos.JSHelper.Basics.JSJobUtilities;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
 import com.sos.i18n.annotation.I18NResourceBundle;
+import com.sos.vfs.common.options.SOSBaseOptions;
 
 @I18NResourceBundle(baseName = "SOSDataExchange", defaultLocale = "en")
 public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtilities {
@@ -22,8 +18,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             @I18NMessage(value = "JADE4DMZ client", locale = "en_UK", explanation = "JADE4DMZ client"),
             @I18NMessage(value = "JADE4DMZ client - Kommandozeilenprogram startet ...", locale = "de", explanation = "JADE4DMZ client") }, msgnum = "SOSJADE_I_9999", msgurl = "")
     public static final String SOSDX_Intro = "SOSDataExchangeEngineMain.SOSDX-Intro";
-    @I18NMessages(value = {
-            @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"),
+    @I18NMessages(value = { @I18NMessage("%1$s: Error occurred ...: %2$s, exit-code %3$s raised"),
             @I18NMessage(value = "%1$s: Error occurred ...: %2$s", locale = "en_UK", explanation = "%1$s: Error occurred ...: %2$s"),
             @I18NMessage(value = "%1$s: Fehler aufgetreten: %2$s, Programm wird mit Exit-Code %3$s beendet.", locale = "de", explanation = "%1$s: Error occurred ...: %2$s") }, msgnum = "SOSJADE_E_0001", msgurl = "")
     public static final String SOSDX_E_0001 = "SOSDataExchangeEngineMain.SOSDX_E_0001";
@@ -50,16 +45,16 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
         int exitCode = 0;
         Jade4DMZ jade4dmz = null;
         try {
-            jade4dmz = new Jade4DMZ();
-            JADEOptions options = jade4dmz.getOptions();
-            jade4dmz.setJSJobUtilites(this);
+            SOSBaseOptions options = new SOSBaseOptions();
             options.commandLineArgs(args);
+            jade4dmz = new Jade4DMZ(options);
+            jade4dmz.setJSJobUtilites(this);
             LOGGER.info(getMsg(SOSDX_Intro));
-            jade4dmz.Execute();
+            jade4dmz.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
         } catch (Exception e) {
             exitCode = 99;
-            LOGGER.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode));
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode), e);
         }
         System.exit(exitCode);
     }
@@ -74,12 +69,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
     }
 
     @Override
-    public void setJSParam(final String pstrKey, final StringBuffer pstrValue) {
-    }
-
-    @Override
-    public String getCurrentNodeName() {
-        return "";
+    public void setJSParam(final String pstrKey, final StringBuilder pstrValue) {
     }
 
     @Override
@@ -93,7 +83,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
     }
 
     @Override
-    public void setCC(final int pintCC) {
+    public void setExitCode(final int pintCC) {
 
     }
 

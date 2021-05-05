@@ -8,16 +8,16 @@ import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.JSToolBox;
 import com.sos.JSHelper.Exceptions.JobSchedulerException;
-import com.sos.VirtualFileSystem.Interfaces.IJadeTransferDetailHistoryData;
-import com.sos.VirtualFileSystem.Interfaces.IJadeTransferHistoryData;
-import com.sos.VirtualFileSystem.Interfaces.ISOSTransferHistory;
-import com.sos.VirtualFileSystem.Options.SOSFTPOptions;
+import com.sos.vfs.common.interfaces.IJadeTransferDetailHistoryData;
+import com.sos.vfs.common.interfaces.IJadeTransferHistoryData;
+import com.sos.vfs.common.interfaces.IJadeTransferHistoryImportOld;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.jade.db.JadeTransferDBItem;
 import com.sos.jade.db.JadeTransferDBLayer;
 import com.sos.jade.db.JadeTransferDetailDBItem;
 
 /** @author KB, Uwe Risse */
-public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
+public class SOSJadeImport extends JSToolBox implements IJadeTransferHistoryImportOld {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SOSJadeImport.class);
     private JadeTransferDBLayer jadeTransferDBLayer;
@@ -41,8 +41,10 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
         transferDetailItem.setCommand(jadeTransferDetailImportData.getCommand());
         transferDetailItem.setLastErrorMessage(jadeTransferDetailImportData.getLastErrorMessage());
         transferDetailItem.setFileSize(jadeTransferDetailImportData.getFileSize());
-        transferDetailItem.setStartTime(jadeTransferDetailImportData.getStartTime());
-        transferDetailItem.setEndTime(jadeTransferDetailImportData.getEndTime());
+        Date startTime = jadeTransferDetailImportData.getStartTime() == null ? null : Date.from(jadeTransferDetailImportData.getStartTime()); 
+        transferDetailItem.setStartTime(startTime);
+        Date endTime = jadeTransferDetailImportData.getEndTime() == null ? null : Date.from(jadeTransferDetailImportData.getEndTime()); 
+        transferDetailItem.setEndTime(endTime);
         transferDetailItem.setCreated(new Date());
         transferDetailItem.setCreatedBy(jadeTransferDetailImportData.getCreatedBy());
         transferDetailItem.setModified(new Date());
@@ -127,7 +129,7 @@ public class SOSJadeImport extends JSToolBox implements ISOSTransferHistory {
     }
 
     @Override
-    public void setData(final SOSFTPOptions pobjOptions) {
+    public void setData(final SOSBaseOptions pobjOptions) {
         return;
     }
 

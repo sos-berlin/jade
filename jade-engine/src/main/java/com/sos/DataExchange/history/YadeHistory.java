@@ -8,10 +8,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sos.DataExchange.Options.JADEOptions;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
-import com.sos.VirtualFileSystem.DataElements.SOSFileList;
-import com.sos.VirtualFileSystem.DataElements.SOSFileListEntry;
+import com.sos.vfs.common.SOSFileList;
+import com.sos.vfs.common.SOSFileListEntry;
+import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.hibernate.classes.SOSHibernateFactory;
 import com.sos.hibernate.classes.SOSHibernateSession;
 import com.sos.hibernate.exceptions.SOSHibernateException;
@@ -19,25 +21,28 @@ import com.sos.jade.db.DBItemYadeFiles;
 import com.sos.jade.db.DBItemYadeTransfers;
 import com.sos.jade.db.YadeDBLayer;
 import com.sos.jitl.reporting.db.DBLayer;
+import com.sos.jobscheduler.model.event.YadeEvent;
+import com.sos.jobscheduler.model.event.YadeVariables;
 
+import sos.spooler.Spooler;
 import sos.util.SOSString;
 
-public class YadeHistory {
+public class YadeHistory implements IJobSchedulerEventHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YadeHistory.class);
 
     private static final String IDENTIFIER = YadeHistory.class.getSimpleName();
     private SOSHibernateFactory dbFactory;
     private YadeDBOperationHelper dbHelper = null;
-    private IJobSchedulerEventHandler eventHandler;
     private Long transferId;
     private Long parentTransferId;
     private boolean hasException = false;
     private boolean isIntervention = false;
     private String filePathRestriction = null;
+    private Spooler spooler;
 
-    public YadeHistory(IJobSchedulerEventHandler handler) {
-        eventHandler = handler;
+    public YadeHistory(Spooler sp) {
+        spooler = sp;
     }
 
     public void buildFactory(Path hibernateFile) {
@@ -70,7 +75,7 @@ public class YadeHistory {
         }
     }
 
-    public void beforeTransfer(JADEOptions options, SOSFileList fileList) {
+    public void beforeTransfer(SOSBaseOptions options, SOSFileList fileList) {
         if (hasException) {
             return;
         }
@@ -81,17 +86,16 @@ public class YadeHistory {
 
         try {
             SOSHibernateSession dbSession = null;
-            dbHelper = new YadeDBOperationHelper(options, eventHandler);
+            dbHelper = new YadeDBOperationHelper(options, this);
             try {
                 dbSession = dbFactory.openStatelessSession(IDENTIFIER);
                 dbSession.beginTransaction();
                 if (parentTransferId != null) {
                     dbHelper.setParentTransferId(parentTransferId);
                     DBItemYadeTransfers existingTransfer = dbHelper.getTransfer(parentTransferId, dbSession);
-                    if (existingTransfer != null && (existingTransfer.getJobChainNode() != null 
-                            && existingTransfer.getJobChainNode().equals(options.getJobChainNodeName())) 
-                            && (existingTransfer.getOrderId() != null && existingTransfer.getOrderId().equals(options.getOrderId())) 
-                            && existingTransfer.getState() == 3) {
+                    if (existingTransfer != null && (existingTransfer.getJobChainNode() != null && existingTransfer.getJobChainNode().equals(options
+                            .getJobChainNodeName())) && (existingTransfer.getOrderId() != null && existingTransfer.getOrderId().equals(options
+                                    .getOrderId())) && existingTransfer.getState() == 3) {
                         existingTransfer.setHasIntervention(true);
                         try {
                             dbSession.update(existingTransfer);
@@ -408,7 +412,7 @@ public class YadeHistory {
         }
     }
 
-    public void setFileRestriction(JADEOptions options) {
+    public void setFileRestriction(SOSBaseOptions options) {
         if (hasException) {
             return;
         }
@@ -435,19 +439,19 @@ public class YadeHistory {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (eventHandler == null) {
-            LOGGER.error(String.format("[%s]eventHandler is null", IDENTIFIER));
+        if (spooler == null) {
+            LOGGER.error(String.format("[%s]spooler is null", IDENTIFIER));
             return;
         }
-        if(values == null || values.size() == 0){
+        if (values == null || values.size() == 0) {
             return;
         }
-        
+
         String filePath = values.get("sourcePath");
-        if(SOSString.isEmpty(filePath)){
+        if (SOSString.isEmpty(filePath)) {
             return;
         }
-                
+
         try {
             SOSHibernateSession dbSession = null;
             try {
@@ -492,7 +496,7 @@ public class YadeHistory {
                     dbSession.update(file);
                     Map<String, String> eventValues = new HashMap<String, String>();
                     eventValues.put("fileId", file.getId().toString());
-                    eventHandler.sendEvent("YADEFileStateChanged", eventValues);
+                    sendEvent("YADEFileStateChanged", eventValues);
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
@@ -522,15 +526,15 @@ public class YadeHistory {
             LOGGER.error(String.format("[%s]dbFactory is null", IDENTIFIER));
             return;
         }
-        if (eventHandler == null) {
-            LOGGER.error(String.format("[%s]eventHandler is null", IDENTIFIER));
+        if (spooler == null) {
+            LOGGER.error(String.format("[%s]spooler is null", IDENTIFIER));
             return;
         }
         if (transferId != null) {
             try {
                 Map<String, String> values = new HashMap<String, String>();
                 values.put("transferId", transferId.toString());
-                eventHandler.sendEvent(message, values);
+                sendEvent(message, values);
             } catch (Throwable ex) {
                 LOGGER.error(String.format("[%s]%s", IDENTIFIER, ex.toString()), ex);
                 hasException = true;
@@ -576,6 +580,39 @@ public class YadeHistory {
 
     public void sendYadeEventOnStart() {
         sendYadeEvent("YADETransferStarted");
+    }
+
+    @Override
+    public void sendEvent(String key, Map<String, String> values) {
+        if (spooler == null) {
+            return;
+        }
+        YadeEvent event = new YadeEvent();
+        event.setKey(key);
+        YadeVariables variables = new YadeVariables();
+        if (values != null && values.containsKey("transferId")) {
+            variables.setTransferId(values.get("transferId"));
+        } else {
+            variables.setTransferId(getTransferId().toString());
+        }
+        if (values != null && values.get("fileId") != null && !values.get("fileId").isEmpty()) {
+            variables.setFileId(values.get("fileId"));
+        }
+        event.setVariables(variables);
+        try {
+            String value = new ObjectMapper().writeValueAsString(event);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("[sendEvent][%s]%s", key, value));
+            }
+            spooler.execute_xml(String.format("<publish_event>%1$s</publish_event>", value));
+        } catch (JsonProcessingException e) {
+            LOGGER.error("unable to send event due to: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void updateDb(Long id, String type, Map<String, String> values) {
+        updateFileInDB(values);
     }
 
 }

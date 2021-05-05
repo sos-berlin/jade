@@ -3,12 +3,12 @@
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS}[%5p][%t](%F:%L) - %m%n" />
+				pattern="%d{HH:mm:ss.SSS} (%F:%L) [%5p][%t] - [%M] %m%n" /><!-- F:L with spaces to make clickable -->
 		</Console>
 
 		<RollingFile name="JadeReportLogAppender"
-			fileName="${java.io.tmpdir}/Jade-client.log"
-			filePattern="${java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.log">
+			fileName="${sys:java.io.tmpdir}/Jade-client.log"
+			filePattern="${sys:java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.log">
 			<PatternLayout
 				pattern="%d{yyyy-MM-dd HH:mm:ss,SSSZ}[%c][%-5p]-%m%n"
 				charset="UTF-8" />
@@ -18,8 +18,8 @@
 		</RollingFile>
 
 		<RollingFile name="JadeReportLogHTMLAppender"
-			fileName="${java.io.tmpdir}/Jade-client.html"
-			filePattern="${java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.html"
+			fileName="${sys:java.io.tmpdir}/Jade-client.html"
+			filePattern="${sys:java.io.tmpdir}/Jade-client-%d{yyyy-MM-dd}.html"
 			append="false"><!-- only current transfer -->
 			<HTMLLayout charset="UTF-8" title="YADE"
 				locationInfo="false" fontSize="XXSMALL" />
@@ -35,8 +35,9 @@
 		</Root>
 		<Logger name="org.hibernate" level="fatal" />
 		<Logger name="com.mchange.v2" level="fatal" />
-		<Logger name="com.sos" level="debug" />
-		<Logger name="JadeReportLog" level="debug" additivity="false">
+		<Logger name="com.sos" level="trace" />
+		<Logger name="sos" level="trace" />
+		<Logger name="JadeReportLog" level="info" additivity="false">
 			<AppenderRef ref="JadeReportLogAppender" />
 			<AppenderRef ref="JadeReportLogHTMLAppender" />
 		</Logger>
