@@ -37,9 +37,13 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         super(opt);
         if (objOptions.settings.isDirty()) {
             String filePath = objOptions.filePath.isDirty() ? objOptions.filePath.getValue() : null;
+            String sshProvider = objOptions.ssh_provider.isDirty() ? objOptions.ssh_provider.getValue() : null;
             objOptions.setOptions(setOptionsFromFile());
             if (filePath != null) {
                 objOptions.filePath.setValue(filePath);
+            }
+            if (sshProvider != null) {
+                objOptions.ssh_provider.setValue(sshProvider);
             }
             objOptions.settings.setNotDirty();
         } else {

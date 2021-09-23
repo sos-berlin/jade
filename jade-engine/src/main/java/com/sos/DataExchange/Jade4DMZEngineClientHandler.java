@@ -16,6 +16,7 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Jade4DMZEngineClientHandler.class);
 
+    private static final String COMMAND_DELIMITER = ";";
     private Operation operation;
     private boolean copyFromInternetWithFileList = false;
     private String clientFileListName = null;
@@ -50,13 +51,13 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
             String command = getRemoveDirCommand(engine.getOptions(), jumpWorkingDir);
             if (operation.equals(Operation.copyToInternet)) {
                 if (engine.getTargetProvider() != null) {
-                    engine.executeTransferCommands("target remove dir", engine.getTargetProvider(), command, null);
+                    engine.executeTransferCommands("target remove dir", engine.getTargetProvider(), command, COMMAND_DELIMITER);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]targetClient or targetClient.Handler is null", command));
                 }
             } else {
                 if (engine.getSourceProvider() != null) {
-                    engine.executeTransferCommands("source remove temp files", engine.getSourceProvider(), command, null);
+                    engine.executeTransferCommands("source remove temp files", engine.getSourceProvider(), command, COMMAND_DELIMITER);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
                 }
@@ -68,8 +69,12 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
 
     private String getRemoveDirCommand(SOSBaseOptions options, String dir) {
         if (options.jump_platform.isWindows()) {
+            boolean openssh = SOSSFTP.hasWindowsOpenSSHDriverLetterSpecifier(dir);
+            if (openssh) {
+                dir = dir.substring(1);
+            }
             dir = dir.replace('/', '\\');
-            return "rmdir \"" + dir + "\" /s /q;del /F /Q " + dir + "* 2>nul";
+            return "rmdir \"" + dir + "\" /s /q" + COMMAND_DELIMITER + "del /F /Q " + dir + "* 2>nul";
         } else {
             return "rm -f -R " + dir + "*";
         }
