@@ -4213,7 +4213,8 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
 	  </xs:element>
-	  <xs:element name="MoveSourceFragmentRef" type="WriteableFragmentRefType">
+    <!-- ap 2021-07-03 YADE-576 -->
+	  <xs:element name="MoveSourceFragmentRef" type="ReadableFragmentRefType">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+MoveSourceFragmentRef">
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -4227,7 +4228,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                </ul>
                <strong>Notes</strong>
                <p>
-			This element references a writeable fragment that is used to move files in a
+			This element references a readable fragment that is used to move files in a
 			<a target="_blank"
                      href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Move"
                      shape="rect">Move</a> operation.

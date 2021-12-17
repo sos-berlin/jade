@@ -429,6 +429,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.zeroByteTransfer = objOptions.zeroByteTransfer;
         options.checkIntegrityHash = objOptions.checkIntegrityHash;
         options.integrityHashType = objOptions.integrityHashType;
+        options.ssh_provider = objOptions.ssh_provider;
         return options;
     }
 
@@ -503,6 +504,7 @@ public class Jade4DMZ extends JadeBaseEngine {
             options.createIntegrityHashFile = objOptions.createIntegrityHashFile;
             options.integrityHashType = objOptions.integrityHashType;
         }
+        options.ssh_provider = objOptions.ssh_provider;
         return options;
     }
 
@@ -534,6 +536,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.log4jPropertyFileName = objOptions.log4jPropertyFileName;
         options.resultSetFileName = objOptions.resultSetFileName;
         options.system_property_files = objOptions.system_property_files;
+        options.ssh_provider = objOptions.ssh_provider;
         return options;
     }
 
@@ -562,6 +565,7 @@ public class Jade4DMZ extends JadeBaseEngine {
         opts.verbose = objOptions.verbose;
         opts.fileListName.setValue(getSourceListFilename());
         opts.forceFiles.value(false);
+        opts.ssh_provider.setValue(objOptions.ssh_provider.getValue());
         objOptions.getSource().user.setDefaultValue("");
         objOptions.getSource().directory.setNotDirty();
         objOptions.getSource().postCommand.setNotDirty();

@@ -3,7 +3,8 @@
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS} (%F:%L) [%5p][%t] - [%M] %m%n" /><!-- F:L with spaces to make clickable -->
+				pattern="%d{HH:mm:ss.SSS} (%F:%L) [%5p][%t] - [%M] %m%n" /><!-- F:L 
+				with spaces to make clickable -->
 		</Console>
 
 		<RollingFile name="JadeReportLogAppender"
@@ -35,6 +36,19 @@
 		</Root>
 		<Logger name="org.hibernate" level="fatal" />
 		<Logger name="com.mchange.v2" level="fatal" />
+
+		<Logger name="net.schmizz.sshj.transport.random" level="fatal" />
+		<Logger name="net.schmizz.concurrent" level="fatal" />
+		<Logger name="net.schmizz.sshj.connection.channel"
+			level="fatal" />
+		<Logger name="net.schmizz.sshj.sftp.PacketReader" level="fatal" />
+		<Logger name="net.schmizz.sshj.common.KeyType" level="fatal" />
+		<Logger name="net.schmizz.sshj.transport.Encoder" level="fatal" />
+		<Logger name="net.schmizz.sshj.transport.Decoder" level="fatal" />
+		<Logger name="net.schmizz.sshj.transport.TransportImpl"
+			level="info" />
+
+
 		<Logger name="com.sos" level="trace" />
 		<Logger name="sos" level="trace" />
 		<Logger name="JadeReportLog" level="info" additivity="false">
