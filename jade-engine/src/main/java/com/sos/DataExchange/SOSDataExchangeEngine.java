@@ -1246,7 +1246,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 sourceFileList.setSourceProvider(sourceProvider);
                 String sourceDir = objOptions.sourceDir.getValue();
                 String targetDir = objOptions.targetDir.getValue();
-
+                
                 if (engineClientHandler != null) {
                     engineClientHandler.onBeforeOperation(this);
                 }

@@ -8,11 +8,12 @@ import com.sos.vfs.common.options.SOSBaseOptions;
 import com.sos.vfs.common.options.SOSProviderOptions;
 import com.sos.vfs.sftp.SOSSFTP;
 import com.sos.vfs.sftp.SOSSFTP.SSHProvider;
+import com.sos.vfs.webdav.SOSWebDAV.WebDAVProvider;
 
 public class JadeEngineTest {
 
-    private static final String SETTINGS_FILE = "D:/Temp/sftp.xml";
-    private static final String PROFILE = "copy_sftp_galadriel_2_local";
+    private static final String SETTINGS_FILE = "D://Temp/settings.xml";
+    private static final String PROFILE = "copy";
     private SOSBaseOptions options;
 
     public JadeEngineTest() {
@@ -27,7 +28,23 @@ public class JadeEngineTest {
     @Ignore
     @Test
     public void test() throws Exception {
-        options.ssh_provider.setValue(SSHProvider.SSHJ.name());
+        // options.ssh_provider.setValue(SSHProvider.SSHJ.name());
+        options.profile.setValue(PROFILE);
+        this.execute(options);
+    }
+
+    @Ignore
+    @Test
+    public void testWebDavJackrabbit() throws Exception {
+        options.webdav_provider.setValue(WebDAVProvider.JACKRABBIT.name());
+        options.profile.setValue(PROFILE);
+        this.execute(options);
+    }
+
+    @Ignore
+    @Test
+    public void testWebDavWebdavclient4j() throws Exception {
+        options.webdav_provider.setValue(WebDAVProvider.WEBDAVCLIENT4J.name());
         options.profile.setValue(PROFILE);
         this.execute(options);
     }
