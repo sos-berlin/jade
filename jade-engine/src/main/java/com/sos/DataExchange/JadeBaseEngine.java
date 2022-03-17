@@ -37,19 +37,12 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         super(opt);
         setSSHProvider();
         if (objOptions.settings.isDirty()) {
-            String filePath = objOptions.filePath.isDirty() ? objOptions.filePath.getValue() : null;
-            String sshProvider = objOptions.ssh_provider.isDirty() ? objOptions.ssh_provider.getValue() : null;
-            String webDAVProvider = objOptions.webdav_provider.isDirty() ? objOptions.webdav_provider.getValue() : null;
+            CLIArgCache cache = new CLIArgCache();
+
             objOptions.setOptions(setOptionsFromFile());
-            if (filePath != null) {
-                objOptions.filePath.setValue(filePath);
-            }
-            if (sshProvider != null) {
-                objOptions.ssh_provider.setValue(sshProvider);
-            }
-            if (webDAVProvider != null) {
-                objOptions.webdav_provider.setValue(webDAVProvider);
-            }
+
+            cache.restoreOptions();
+
             objOptions.settings.setNotDirty();
         } else {
             if (objOptions.operation.isDirty()) {
@@ -206,6 +199,64 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         } catch (Exception ex) {
         }
         return cl.getResourceAsStream(SCHEMA_RESSOURCE_NAME);
+    }
+
+    private class CLIArgCache {
+
+        private final String filePath;
+        private final String fileSpec;
+        private final String fileListName;
+        private final String sourceDir;
+        private final String targetDir;
+        private final String sshProvider;
+        private final String webDAVProvider;
+
+        private CLIArgCache() {
+            filePath = objOptions.filePath.isDirty() ? objOptions.filePath.getValue() : null;
+            fileSpec = objOptions.fileSpec.isDirty() ? objOptions.fileSpec.getValue() : null;
+            fileListName = objOptions.fileListName.isDirty() ? objOptions.fileListName.getValue() : null;
+            sourceDir = objOptions.sourceDir.isDirty() ? objOptions.sourceDir.getValue() : null;
+            targetDir = objOptions.targetDir.isDirty() ? objOptions.targetDir.getValue() : null;
+            sshProvider = objOptions.ssh_provider.isDirty() ? objOptions.ssh_provider.getValue() : null;
+            webDAVProvider = objOptions.webdav_provider.isDirty() ? objOptions.webdav_provider.getValue() : null;
+        }
+
+        private void restoreOptions() {
+            if (filePath != null) {
+                objOptions.filePath.setValue(filePath);
+            }
+            if (fileSpec != null) {
+                objOptions.fileSpec.setValue(fileSpec);
+            }
+            if (fileListName != null) {
+                objOptions.fileListName.setValue(fileListName);
+            }
+            if (sourceDir != null) {
+                objOptions.sourceDir.setValue(sourceDir);
+                try {
+                    if (objOptions.getSource() != null) {
+                        objOptions.getSource().directory.setValue(sourceDir);
+                    }
+                } catch (Throwable e) {
+                }
+            }
+
+            if (targetDir != null) {
+                objOptions.targetDir.setValue(targetDir);
+                try {
+                    if (objOptions.getTarget() != null) {
+                        objOptions.getTarget().directory.setValue(targetDir);
+                    }
+                } catch (Throwable e) {
+                }
+            }
+            if (sshProvider != null) {
+                objOptions.ssh_provider.setValue(sshProvider);
+            }
+            if (webDAVProvider != null) {
+                objOptions.webdav_provider.setValue(webDAVProvider);
+            }
+        }
     }
 
 }
