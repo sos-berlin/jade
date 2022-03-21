@@ -57,7 +57,8 @@
       </xs:annotation>
 		    <xs:complexType>
 			      <xs:sequence>
-				        <xs:element ref="Fragments"/>
+				        <xs:element ref="JobResource" minOccurs="0"/>
+                <xs:element ref="Fragments"/>
 				        <xs:element ref="Profiles"/>
 				        <xs:element ref="General" minOccurs="0"/>
 			      </xs:sequence>
@@ -1398,6 +1399,58 @@ SSH, etc.) server to which a connection has to be made.</p>
          </xs:documentation>
       </xs:annotation>
 	  </xs:element>
+    <xs:element name="JobResource">
+		    <xs:annotation>
+         <xs:documentation source="https://kb.sos-berlin.com/x/kYGyAw">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_JobResource.html">JobResource</a>, <a xmlns="" target="_blank" href="https://kb.sos-berlin.com/x/kYGyAw">JobResource</a>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+                  <br/>JobScheduler releases starting from <b>JS7 2.2.2</b>
+               </p>
+               <p>
+        This element specifies a <a href="  https://kb.sos-berlin.com/x/kYGyAw"
+                     target="_blank"
+                     shape="rect">JS7 Job Resource</a>.
+        </p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:complexType>
+			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
+            <xs:annotation>
+               <xs:documentation>
+                  <div xmlns="http://www.w3.org/1999/xhtml">
+                     <p>This element specifies the name of a JS7 Job Resource.</p>
+                  </div>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+            <xs:attribute name="environment_variable" type="xs:NMTOKEN" use="required">
+            <xs:annotation>
+               <xs:documentation>
+                  <div xmlns="http://www.w3.org/1999/xhtml">
+                     <p>This element specifies the environment variable name of a JS7 Job Resource.</p>
+                  </div>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+            <xs:attribute name="variable" type="xs:NMTOKEN" use="required">
+            <xs:annotation>
+               <xs:documentation>
+                  <div xmlns="http://www.w3.org/1999/xhtml">
+                     <p>This element specifies the variable name of a JS7 Job Resource.</p>
+                  </div>
+               </xs:documentation>
+            </xs:annotation>
+         </xs:attribute>
+		    </xs:complexType>
+	  </xs:element>
 	  <xs:element name="Fragments">
 		    <xs:annotation>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+Fragments">
@@ -1842,7 +1895,8 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="CredentialStoreFragmentRef" minOccurs="0"/>
 				        <xs:element ref="JumpFragmentRef" minOccurs="0"/>
 				        <xs:element ref="ProxyForWebDAV" minOccurs="0"/>
-        	</xs:sequence>
+                <xs:element ref="KeyStore" minOccurs="0"/>
+         	</xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
                <xs:documentation>
@@ -9153,6 +9207,43 @@ A fragment is referenced via this attribute value by a transfer profile.
 				        <xs:element ref="ZlibCompressionLevel" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
+	  </xs:element>
+    <xs:complexType name="KeyStoreComplexType">
+		    <xs:sequence>
+			      <xs:element ref="KeyStoreType" minOccurs="0"/>
+			      <xs:element ref="KeyStoreFile" minOccurs="1"/>
+			      <xs:element ref="KeyStorePassword" minOccurs="0"/>
+		    </xs:sequence>
+	  </xs:complexType>
+    <xs:element name="KeyStore" type="KeyStoreComplexType">
+		    <xs:annotation>
+         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+KeyStore">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_KeyStore.html">KeyStore</a>, <a xmlns=""
+                        target="_blank"
+                        href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+KeyStore">KeyStore</a>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+		This parameter specifies the storage facility for cryptographic keys and certificates.
+		</p>
+               <p/>
+               <p>
+                  <strong>Notes</strong>
+               </p>
+               <p/>
+               <ul>
+                  <li>WebDAV - Availability starting with <a target="_blank"
+                        href="https://change.sos-berlin.com/browse/YADE-582"
+                        shape="rect">YADE-582</a>.</li>
+               </ul>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
 	  </xs:element>
 	  <xs:element name="KeyStoreType" default="JKS">
 		    <xs:annotation>
