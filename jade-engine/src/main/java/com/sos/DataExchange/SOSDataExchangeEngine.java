@@ -216,7 +216,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             ISOSProviderFile sourceFile = null;
             long pollTimeout = getPollTimeout();
             long currentFilesCount = sourceFileList.size();
-            boolean isSourceDirFounded = false;
+            boolean oneOrMoreSingleFilesSpecified = objOptions.oneOrMoreSingleFilesSpecified();
+            // not check the source directory when file_path or file_list specified
+            boolean isSourceDirFounded = oneOrMoreSingleFilesSpecified;
             long filesCount = 0;
             long currentPollingTime = 0;
 
@@ -267,15 +269,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 }
                 if (isSourceDirFounded) {
                     try {
-                        if (objOptions.oneOrMoreSingleFilesSpecified()) {
-                            currentFilesCount = 0;
-                            objOptions.pollMinfiles.value(sourceFileList.count());
-                            for (SOSFileListEntry entry : sourceFileList.getList()) {
-                                if (entry.isSourceFileExists()) {
-                                    currentFilesCount++;
-                                    entry.setParent(sourceFileList);
-                                }
-                            }
+                        if (oneOrMoreSingleFilesSpecified) {
+                            oneOrMoreSingleFilesSpecified(true);
+                            currentFilesCount = sourceFileList.count();
                         } else {
                             String integrityHashFileExtention = objOptions.checkIntegrityHash.isTrue() ? "." + objOptions.integrityHashType.getValue()
                                     : null;
@@ -704,13 +700,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         return objOptions.pollTimeout.isDirty() ? objOptions.pollTimeout.getValue() : objOptions.pollingDuration.getValue();
     }
 
-    private List<SOSFileEntry> getSingleFileNames() {
+    private List<SOSFileEntry> getSingleFileNames(boolean isFilePollingEnabled) {
+        boolean isDebugEnabled = LOGGER.isDebugEnabled();
         List<SOSFileEntry> entries = new ArrayList<>();
         String localDir = objOptions.sourceDir.getValueWithFileSeparator();
 
         if (objOptions.filePath.isNotEmpty()) {
             String filePath = objOptions.filePath.getValue();
-            if (LOGGER.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 LOGGER.debug(String.format("single file(s) specified : '%1$s'", filePath));
             }
             try {
@@ -721,11 +718,25 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         if (!localDir.trim().isEmpty() && !isAPathName(filename)) {
                             filename = localDir + filename;
                         }
-                        SOSFileEntry entry = sourceProvider.getFileEntry(filename);
-                        if (entry == null) {
-                            LOGGER.info(String.format("[%s]not found", filename));
+
+                        SOSFileEntry entry = null;
+                        if (isFilePollingEnabled) {
+                            if (sourceProvider.fileExists(filename)) {
+                                entry = sourceProvider.getFileEntry(filename);
+                            }
                         } else {
-                            if (LOGGER.isDebugEnabled()) {
+                            entry = sourceProvider.getFileEntry(filename);
+                        }
+                        if (entry == null) {
+                            if (isFilePollingEnabled) {
+                                if (isDebugEnabled) {
+                                    LOGGER.debug(String.format("[%s]not found", filename));
+                                }
+                            } else {
+                                LOGGER.info(String.format("[%s]not found", filename));
+                            }
+                        } else {
+                            if (isDebugEnabled) {
                                 LOGGER.debug(String.format("[%s]found", filename));
                             }
                             entries.add(entry);
@@ -751,11 +762,25 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                             if (!localDir.trim().isEmpty() && !isAPathName(filename)) {
                                 filename = localDir + filename;
                             }
-                            SOSFileEntry entry = sourceProvider.getFileEntry(filename);
-                            if (entry == null) {
-                                LOGGER.info(String.format("[%s]not found", filename));
+
+                            SOSFileEntry entry = null;
+                            if (isFilePollingEnabled) {
+                                if (sourceProvider.fileExists(filename)) {
+                                    entry = sourceProvider.getFileEntry(filename);
+                                }
                             } else {
-                                if (LOGGER.isDebugEnabled()) {
+                                entry = sourceProvider.getFileEntry(filename);
+                            }
+                            if (entry == null) {
+                                if (isFilePollingEnabled) {
+                                    if (isDebugEnabled) {
+                                        LOGGER.debug(String.format("[%s]not found", filename));
+                                    }
+                                } else {
+                                    LOGGER.info(String.format("[%s]not found", filename));
+                                }
+                            } else {
+                                if (isDebugEnabled) {
                                     LOGGER.debug(String.format("[%s]found", filename));
                                 }
                                 entries.add(entry);
@@ -858,47 +883,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         return cd;
     }
 
-    private long oneOrMoreSingleFilesSpecified(final String sourceDir) {
-        long founded = 0;
-        sourceFileList.create(getSingleFileNames(), -1);
-        long currentFounded = sourceFileList.size();
-        if (objOptions.isFilePollingEnabled()) {
-            long currentPollingTime = 0;
-            long pollInterval = objOptions.pollInterval.getTimeAsSeconds();
-            long pollTimeout = getPollTimeout();
-            while (true) {
-                founded = 0;
-                if (currentPollingTime > pollTimeout) {
-                    LOGGER.info(String.format("polling: time '%1$s' is over. polling terminated", getPollTimeoutText()));
-                    break;
-                }
-                for (SOSFileListEntry entry : sourceFileList.getList()) {
-                    if (entry.isSourceFileExists()) {
-                        founded++;
-                        entry.setParent(sourceFileList);
-                    }
-                }
-                if (founded == currentFounded) {
-                    break;
-                }
-                if (objOptions.pollMinfiles.value() > 0 && founded >= objOptions.pollMinfiles.value()) {
-                    break;
-                }
-                String msg = String.format("file-polling: going to sleep for %1$d seconds. '%2$d' files found, waiting for '%3$d' files",
-                        pollInterval, founded, currentFounded);
-                LOGGER.info(msg);
-                objJSJobUtilities.setStateText(msg);
+    private void oneOrMoreSingleFilesSpecified(boolean isFilePollingEnabled) {
+        sourceFileList.create(getSingleFileNames(isFilePollingEnabled), -1);
 
-                doSleep(pollInterval);
-                currentPollingTime += pollInterval;
-            }
+        String msg = String.format("[source]%s files found.", sourceFileList.size());
+        if (isFilePollingEnabled) {
+            LOGGER.debug(msg);
         } else {
-            founded = currentFounded;
+            LOGGER.info(msg);
         }
-        String msg = String.format("%1$d files found.", sourceFileList.size());
-        LOGGER.info(msg);
         objJSJobUtilities.setStateText(msg);
-        return founded;
     }
 
     @Override
@@ -1246,7 +1240,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 sourceFileList.setSourceProvider(sourceProvider);
                 String sourceDir = objOptions.sourceDir.getValue();
                 String targetDir = objOptions.targetDir.getValue();
-                
+
                 if (engineClientHandler != null) {
                     engineClientHandler.onBeforeOperation(this);
                 }
@@ -1284,7 +1278,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         }
                     } else {
                         if (objOptions.oneOrMoreSingleFilesSpecified()) {
-                            oneOrMoreSingleFilesSpecified(sourceDir);
+                            oneOrMoreSingleFilesSpecified(isFilePollingEnabled);
                         } else {
                             ISOSProviderFile fileHandle = sourceProvider.getFile(sourceDir);
                             if (LOGGER.isDebugEnabled()) {
