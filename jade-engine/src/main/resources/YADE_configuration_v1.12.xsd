@@ -9647,8 +9647,8 @@ A fragment is referenced via this attribute value by a transfer profile.
 	  <xs:element name="MaxFiles" default="-1">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="Max_Files"/>
-				        <FlatParameter name="MaxFiles"/>
+				        <FlatParameter name="Max_Files" suppress_prefix="true"/>
+				        <FlatParameter name="MaxFiles" suppress_prefix="true"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">

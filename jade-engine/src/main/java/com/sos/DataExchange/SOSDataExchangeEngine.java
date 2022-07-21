@@ -562,6 +562,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (getOptions().fileSpec.isDirty()) {
                 sb.append(String.format(pattern4String, "FileSpec", getOptions().fileSpec.getValue()));
             }
+            if (getOptions().maxFiles.isDirty()) {
+                sb.append(String.format(pattern4String, "MaxFiles", getOptions().maxFiles.getValue()));
+            }
             sb.append(String.format(pattern4Bool, "ErrorWhenNoFilesFound", getOptions().forceFiles.value()));
             sb.append(String.format(pattern4Bool, "Recursive", getOptions().recursive.value()));
             if (getOptions().skipTransfer.isFalse()) {
@@ -884,9 +887,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     }
 
     private void oneOrMoreSingleFilesSpecified(boolean isFilePollingEnabled) {
-        sourceFileList.create(getSingleFileNames(isFilePollingEnabled), -1);
+        int maxFiles = -1;
+        if (objOptions.maxFiles.isDirty()) {
+            maxFiles = objOptions.maxFiles.value();
+        }
 
-        String msg = String.format("[source]%s files found.", sourceFileList.size());
+        List<SOSFileEntry> l = getSingleFileNames(isFilePollingEnabled);
+        sourceFileList.create(l, maxFiles);
+
+        String msg = String.format("[source]%s%s files found.", getMaxFilesMsg(l.size(), maxFiles), sourceFileList.size());
         if (isFilePollingEnabled) {
             LOGGER.debug(msg);
         } else {
@@ -1639,13 +1648,14 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
 
             int maxFiles = -1;
             if (objOptions.maxFiles.isDirty()) {
-                objOptions.maxFiles.value();
+                maxFiles = objOptions.maxFiles.value();
             }
-            sourceFileList.create(sourceProvider.getFilelist(sourceFile.getName(), regExp.getValue(), 0, recursive.value(), false,
-                    integrityHashFileExtention), maxFiles);
+            List<SOSFileEntry> l = sourceProvider.getFilelist(sourceFile.getName(), regExp.getValue(), 0, recursive.value(), false,
+                    integrityHashFileExtention);
+            sourceFileList.create(l, maxFiles);
 
-            String msg = String.format("[source][%s][recursive=%s][%s]%s files found", sourceDir.getValue(), recursive.value(), regExp.getValue(),
-                    sourceFileList.size());
+            String msg = String.format("[source][%s]%s[recursive=%s][%s]%s files found", sourceDir.getValue(), getMaxFilesMsg(l.size(), maxFiles),
+                    recursive.value(), regExp.getValue(), sourceFileList.size());
             if (isFilePollingEnabled) {
                 LOGGER.debug(msg);
             } else {
@@ -1657,6 +1667,18 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             LOGGER.info(String.format("[source][%s]directory not found", sourceDir.getValue()));
             return false;
         }
+    }
+
+    private String getMaxFilesMsg(int originalSize, int maxFiles) {
+        StringBuilder sb = new StringBuilder();
+        if (maxFiles > -1) {
+            sb.append("[maxFiles=").append(maxFiles);
+            if (originalSize > maxFiles) {
+                sb.append(",originalSize=").append(originalSize);
+            }
+            sb.append("]");
+        }
+        return sb.toString();
     }
 
     public void setJobSchedulerEventHandler(IJobSchedulerEventHandler val) {
