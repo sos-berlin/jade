@@ -49,7 +49,7 @@
 			level="info" />
 
 
-		<Logger name="com.sos" level="trace" />
+		<Logger name="com.sos" level="debug" />
 		<Logger name="sos" level="trace" />
 		<Logger name="JadeReportLog" level="info" additivity="false">
 			<AppenderRef ref="JadeReportLogAppender" />

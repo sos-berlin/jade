@@ -51,13 +51,13 @@ public class Jade4DMZEngineClientHandler implements IJadeEngineClientHandler {
             String command = getRemoveDirCommand(engine.getOptions(), jumpWorkingDir);
             if (operation.equals(Operation.copyToInternet)) {
                 if (engine.getTargetProvider() != null) {
-                    engine.executeTransferCommands("target remove dir", engine.getTargetProvider(), command, COMMAND_DELIMITER);
+                    engine.executeTransferCommands("target remove dir", engine.getTargetProvider(), false, command, COMMAND_DELIMITER);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]targetClient or targetClient.Handler is null", command));
                 }
             } else {
                 if (engine.getSourceProvider() != null) {
-                    engine.executeTransferCommands("source remove temp files", engine.getSourceProvider(), command, COMMAND_DELIMITER);
+                    engine.executeTransferCommands("source remove temp files", engine.getSourceProvider(), true, command, COMMAND_DELIMITER);
                 } else {
                     LOGGER.warn(String.format("[skip][%s]sourceClient or sourceClient.Handler is null", command));
                 }

@@ -123,7 +123,7 @@ public class Jade4DMZ extends JadeBaseEngine {
 
             if (operation.equals(Operation.copyFromInternet) && objOptions.removeFiles.value()) {
                 try {
-                    jade.executeTransferCommands("source remove files", jade.getSourceProvider(), getJadeOnDMZCommand4RemoveSource(), null);
+                    jade.executeTransferCommands("source remove files", jade.getSourceProvider(), true, getJadeOnDMZCommand4RemoveSource(), null);
                 } catch (Exception ex) {
                     if (fileList.count() > 0L) { // JADE-375
                         throw ex;

@@ -85,6 +85,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     private static final String KEYWORD_FAILED_TRANSFERS = "failed_transfers";
     private static final String KEYWORD_SKIPPED_TRANSFERS = "skipped_transfers";
     private static final String KEYWORD_STATUS = "status";
+    private static final String POST_TRANSFER_BUILTIN_FUNCTION_REMOVE_DIRECTORY = "REMOVE_DIRECTORY()";
 
     private SOSVFSFactory factory = null;
     private IJobSchedulerEventHandler historyHandler = null;
@@ -1348,7 +1349,16 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                                         history.afterFileTransfer(sourceFileList);
                                     }
                                     sourceFileList.renameTargetAndSourceFiles();
-                                    executePostTransferCommands();
+                                    try {
+                                        executePostTransferCommands();
+                                    } catch (Throwable e) {
+                                        if (isFilePollingEnabled) {
+                                            LOGGER.error(String.format("[%s]%s", pollingMethod.name(), e.toString()));
+                                            executeOperation = false;
+                                        } else {
+                                            throw e;
+                                        }
+                                    }
                                     sourceFileList.deleteSourceFiles();
                                 }
                             }
@@ -1478,11 +1488,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         SOSProviderOptions target = objOptions.getTarget();
         if (target.alternateOptionsUsed.isTrue()) {
             target = target.getAlternative();
-            executeTransferCommands("alternative_target_pre_transfer_commands", targetProvider, target.preTransferCommands.getValue(),
+            executeTransferCommands("alternative_target_pre_transfer_commands", targetProvider, false, target.preTransferCommands.getValue(),
                     target.commandDelimiter.getValue());
         } else {
-            executeTransferCommands("target_pre_transfer_commands", targetProvider, target.preTransferCommands.getValue(), target.commandDelimiter
-                    .getValue());
+            executeTransferCommands("target_pre_transfer_commands", targetProvider, false, target.preTransferCommands.getValue(),
+                    target.commandDelimiter.getValue());
         }
         SOSProviderOptions source = objOptions.getSource();
         String caller = "source_pre_transfer_commands";
@@ -1490,7 +1500,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             source = source.getAlternative();
             caller = "alternative_" + caller;
         }
-        executeTransferCommands(caller, sourceProvider, source.preTransferCommands.getValue(), source.commandDelimiter.getValue());
+        executeTransferCommands(caller, sourceProvider, true, source.preTransferCommands.getValue(), source.commandDelimiter.getValue());
         if (objOptions.isNeedTargetClient()) {
             targetProvider.reconnect();
         }
@@ -1500,11 +1510,11 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         SOSProviderOptions target = objOptions.getTarget();
         if (target.alternateOptionsUsed.isTrue()) {
             target = target.getAlternative();
-            executeTransferCommands("alternative_target_post_transfer_commands", targetProvider, target.postTransferCommands.getValue(),
+            executeTransferCommands("alternative_target_post_transfer_commands", targetProvider, false, target.postTransferCommands.getValue(),
                     target.commandDelimiter.getValue());
         } else {
-            executeTransferCommands("target_post_transfer_commands", targetProvider, target.postTransferCommands.getValue(), target.commandDelimiter
-                    .getValue());
+            executeTransferCommands("target_post_transfer_commands", targetProvider, false, target.postTransferCommands.getValue(),
+                    target.commandDelimiter.getValue());
         }
         SOSProviderOptions source = objOptions.getSource();
         String caller = "source_post_transfer_commands";
@@ -1517,7 +1527,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 throw new Exception("sourceClient is NULL");
             }
             sourceProvider.reconnect();
-            executeTransferCommands(caller, sourceProvider, source.postTransferCommands.getValue(), source.commandDelimiter.getValue());
+            executeTransferCommands(caller, sourceProvider, true, source.postTransferCommands.getValue(), source.commandDelimiter.getValue());
         }
     }
 
@@ -1532,7 +1542,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 caller = "alternative_" + caller;
             }
             try {
-                executeTransferCommands(caller, targetProvider, target.postTransferCommandsOnError.getValue(), target.commandDelimiter.getValue());
+                executeTransferCommands(caller, targetProvider, false, target.postTransferCommandsOnError.getValue(), target.commandDelimiter
+                        .getValue());
             } catch (Exception ex) {
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
             }
@@ -1554,7 +1565,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         throw new Exception("sourceClient is NULL");
                     }
                     sourceProvider.reconnect();
-                    executeTransferCommands(caller, sourceProvider, source.postTransferCommandsOnError.getValue(), source.commandDelimiter
+                    executeTransferCommands(caller, sourceProvider, true, source.postTransferCommandsOnError.getValue(), source.commandDelimiter
                             .getValue());
                 } catch (Exception ex) {
                     if (exception.length() > 0) {
@@ -1580,7 +1591,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 caller = "alternative_" + caller;
             }
             try {
-                executeTransferCommands(caller, targetProvider, target.postTransferCommandsFinal.getValue(), target.commandDelimiter.getValue());
+                executeTransferCommands(caller, targetProvider, false, target.postTransferCommandsFinal.getValue(), target.commandDelimiter
+                        .getValue());
             } catch (Exception ex) {
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
             }
@@ -1603,7 +1615,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         throw new Exception("objDataSourceClient is NULL");
                     }
                     sourceProvider.reconnect();
-                    executeTransferCommands(caller, sourceProvider, source.postTransferCommandsFinal.getValue(), source.commandDelimiter.getValue());
+                    executeTransferCommands(caller, sourceProvider, true, source.postTransferCommandsFinal.getValue(), source.commandDelimiter
+                            .getValue());
                 } catch (Exception ex) {
                     if (exception.length() > 0) {
                         exception.append(", ");
@@ -1617,12 +1630,45 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
     }
 
-    protected void executeTransferCommands(String commandOptionName, final ISOSProvider fileTransfer, final String commands, final String delimiter)
-            throws Exception {
+    private boolean isBuiltInFunction(String command) {
+        return command.equalsIgnoreCase(POST_TRANSFER_BUILTIN_FUNCTION_REMOVE_DIRECTORY);
+    }
+
+    private String getBuiltInFunctionDirectory(boolean isSourceProvider, String command) {
+        switch (command.toUpperCase()) {
+        case POST_TRANSFER_BUILTIN_FUNCTION_REMOVE_DIRECTORY:
+            return isSourceProvider ? objOptions.sourceDir.getValue() : objOptions.targetDir.getValue();
+        default:
+            return null;
+        }
+    }
+
+    protected void executeTransferCommands(String commandOptionName, final ISOSProvider fileTransfer, final boolean isSourceProvider,
+            final String commands, final String delimiter) throws Exception {
         if (commands != null && commands.trim().length() > 0) {
+            boolean isPostTransferCommand = commandOptionName.contains("post_transfer");
             if (SOSString.isEmpty(delimiter)) {
-                LOGGER.info(String.format("[%s]%s", commandOptionName, commands.trim()));
-                fileTransfer.executeCommand(commands);
+                if (isBuiltInFunction(commands)) {
+                    if (isPostTransferCommand) {
+                        String dir = getBuiltInFunctionDirectory(isSourceProvider, commands);
+                        LOGGER.info(String.format("[%s][%s]%s", commandOptionName, commands.trim(), (dir == null ? "" : dir)));
+                        if (!SOSString.isEmpty(dir)) {
+                            if (fileTransfer.directoryExists(dir)) {
+                                fileTransfer.rmdir(dir);
+                            } else {
+                                LOGGER.info(String.format("[%s][%s][skip][%s]because the Directory does not exist", commandOptionName, commands
+                                        .trim(), dir));
+                            }
+                        } else {
+                            LOGGER.info(String.format("[%s][%s][skip]because the Directory is not set", commandOptionName, commands.trim()));
+                        }
+                    } else {
+                        LOGGER.info(String.format("[%s][%s][skip]because not a post transfer command", commandOptionName, commands.trim()));
+                    }
+                } else {
+                    LOGGER.info(String.format("[%s]%s", commandOptionName, commands.trim()));
+                    fileTransfer.executeCommand(commands);
+                }
             } else {
                 String[] values = commands.split(delimiter);
                 if (values.length > 1) {
@@ -1630,8 +1676,27 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 }
                 for (String command : values) {
                     if (!SOSString.isEmpty(command.trim())) {
-                        LOGGER.info(String.format("[%s]%s", commandOptionName, command.trim()));
-                        fileTransfer.executeCommand(command);
+                        if (isBuiltInFunction(command)) {
+                            if (isPostTransferCommand) {
+                                String dir = getBuiltInFunctionDirectory(isSourceProvider, command);
+                                LOGGER.info(String.format("[%s][%s]%s", commandOptionName, command.trim(), (dir == null ? "" : dir)));
+                                if (!SOSString.isEmpty(dir)) {
+                                    if (fileTransfer.directoryExists(dir)) {
+                                        fileTransfer.rmdir(dir);
+                                    } else {
+                                        LOGGER.info(String.format("[%s][%s][skip][%s]because the Directory does not exist", commandOptionName, command
+                                                .trim(), dir));
+                                    }
+                                } else {
+                                    LOGGER.info(String.format("[%s][%s][skip]because the Directory is not set", commandOptionName, command.trim()));
+                                }
+                            } else {
+                                LOGGER.info(String.format("[%s][%s][skip]because not a post transfer command", commandOptionName, command.trim()));
+                            }
+                        } else {
+                            LOGGER.info(String.format("[%s]%s", commandOptionName, command.trim()));
+                            fileTransfer.executeCommand(command);
+                        }
                     }
                 }
             }
