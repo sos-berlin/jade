@@ -4950,7 +4950,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                               <a href="https://change.sos-berlin.com/browse/YADE-590"
                                  target="_blank"
                                  shape="rect">YADE-590</a> Availability starting with 1.13.14</li>
-                           <li>Removes the directory defined with the corresponding <i>Directory</i> element together with all files and sub-directories.</li>
+                           <li>Removes the directory defined with the corresponding <i>Directory</i> element, including all files and subdirectories.</li>
                         </ul>
                      </li>
                   </ul>
@@ -5006,7 +5006,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                               <a href="https://change.sos-berlin.com/browse/YADE-590"
                                  target="_blank"
                                  shape="rect">YADE-590</a> Availability starting with 1.13.14</li>
-                           <li>Removes the directory defined with the corresponding <i>Directory</i> element together with all files and sub-directories.</li>
+                           <li>Removes the directory defined with the corresponding <i>Directory</i> element, including all files and subdirectories.</li>
                         </ul>
                      </li>
                   </ul>
@@ -5062,7 +5062,7 @@ SSH, etc.) server to which a connection has to be made.</p>
                               <a href="https://change.sos-berlin.com/browse/YADE-590"
                                  target="_blank"
                                  shape="rect">YADE-590</a> Availability starting with 1.13.14</li>
-                           <li>Removes the directory defined with the corresponding <i>Directory</i> element together with all files and sub-directories.</li>
+                           <li>Removes the directory defined with the corresponding <i>Directory</i> element, including all files and subdirectories.</li>
                         </ul>
                      </li>
                   </ul>
