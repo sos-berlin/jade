@@ -13112,7 +13112,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 		    <xs:annotation>
          <xs:appinfo>
 				        <FlatParameter name="http_headers"/>
-				        <Release starting="1.13.16" issue="YADE-592"/>
+				        <Release starting="1.13.16" issue="YADE-594"/>
         	</xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -13132,7 +13132,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Release:
             <ul>
                         <li>
-                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-592">YADE-592</a> Availability starting with 1.13.16.</li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-594">YADE-594</a> Availability starting with 1.13.16.</li>
                      </ul>
                   </li>
                </ul>
@@ -13153,7 +13153,7 @@ A fragment is referenced via this attribute value by a transfer profile.
     <xs:element name="HTTPHeader">
 		    <xs:annotation>
          <xs:appinfo>
-				        <Release starting="1.13.16" issue="YADE-592"/>
+				        <Release starting="1.13.16" issue="YADE-594"/>
         	</xs:appinfo>
          <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+HTTPHeader">
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -13167,7 +13167,7 @@ A fragment is referenced via this attribute value by a transfer profile.
                   <li>Release:
             <ul>
                         <li>
-                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-592">YADE-592</a> Availability starting with 1.13.16.</li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-594">YADE-594</a> Availability starting with 1.13.16.</li>
                      </ul>
                   </li>
                </ul>
