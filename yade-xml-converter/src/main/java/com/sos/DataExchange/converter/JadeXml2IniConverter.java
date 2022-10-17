@@ -324,6 +324,10 @@ public class JadeXml2IniConverter {
     }
 
     private String getMergedChildsEntry(Node parent, String defaultParamName) {
+        return getMergedChildsEntry(parent, defaultParamName, null);
+    }
+
+    private String getMergedChildsEntry(Node parent, String defaultParamName, String paramNamePrefix) {
         String method = "getMergedChildsEntry";
         LOGGER.debug(method);
 
@@ -356,7 +360,8 @@ public class JadeXml2IniConverter {
                 LOGGER.warn(String.format("error on parse flat parameter for \"%s\": %s", parent.getNodeName(), ex.toString()));
             }
         }
-        return sb.length() == 0 ? null : formatParameter(paramName, sb.toString());
+        String formatParamName = paramNamePrefix == null ? paramName : paramNamePrefix + paramName;
+        return sb.length() == 0 ? null : formatParameter(formatParamName, sb.toString());
     }
 
     private void handleProtocolFragments() throws Exception {
@@ -908,6 +913,12 @@ public class JadeXml2IniConverter {
                             writeLine(val);
                         }
                         continue;
+                    } else if ("HTTPHeaders".equals(child.getNodeName())) {
+                        String val = getMergedChildsEntry(child, "http_headers");
+                        if (!SOSString.isEmpty(val)) {
+                            writeLine(val);
+                        }
+                        continue;
                     }
                     if (child.getAttributes().getNamedItem("ref") != null) {
                         if ("JumpFragmentRef".equals(child.getNodeName())) {
@@ -963,6 +974,11 @@ public class JadeXml2IniConverter {
                 Node child = childs.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     if (child.getNodeName().startsWith("Alternative")) {
+                        continue;
+                    } else if (child.getNodeName().equalsIgnoreCase("HTTPHeaders")) {
+                        if (!SOSString.isEmpty(childPrefix)) {
+                            writeLine(getMergedChildsEntry(child, "http_headers", childPrefix));
+                        }
                         continue;
                     }
                     if (level <= prefixLevel) {
