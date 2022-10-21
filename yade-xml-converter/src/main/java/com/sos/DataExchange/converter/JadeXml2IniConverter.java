@@ -36,6 +36,9 @@ public class JadeXml2IniConverter {
     public static final String NEW_LINE = "\r\n";
     public static final String ELEMENT_NAME_ROOT = "Configurations";
 
+    private final static String DELIMITER_MERGED_CHILDS_DEFAULT = ";";
+    private final static String DELIMITER_MERGED_CHILDS_HEADERS = "|";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JadeXml2IniConverter.class);
     private static final String CHARSET = "UTF-8";
     private static final String CLASSNAME = JadeXml2IniConverter.class.getSimpleName();
@@ -310,7 +313,7 @@ public class JadeXml2IniConverter {
                     }
                 }
                 if ("SystemPropertyFiles".equals(child.getNodeName())) {
-                    String val = getMergedChildsEntry(child, "system_property_files");
+                    String val = getMergedChildsEntry(DELIMITER_MERGED_CHILDS_DEFAULT, child, "system_property_files");
                     if (!SOSString.isEmpty(val)) {
                         writeLine(val);
                         writeNewLine();
@@ -323,11 +326,11 @@ public class JadeXml2IniConverter {
         }
     }
 
-    private String getMergedChildsEntry(Node parent, String defaultParamName) {
-        return getMergedChildsEntry(parent, defaultParamName, null);
+    private String getMergedChildsEntry(String delimiter, Node parent, String defaultParamName) {
+        return getMergedChildsEntry(delimiter, parent, defaultParamName, null);
     }
 
-    private String getMergedChildsEntry(Node parent, String defaultParamName, String paramNamePrefix) {
+    private String getMergedChildsEntry(String delimiter, Node parent, String defaultParamName, String paramNamePrefix) {
         String method = "getMergedChildsEntry";
         LOGGER.debug(method);
 
@@ -339,7 +342,7 @@ public class JadeXml2IniConverter {
                 String val = child.getFirstChild() == null ? child.getNodeValue() : getCdata(child);
                 if (!SOSString.isEmpty(val)) {
                     if (sb.length() > 0) {
-                        sb.append(";");
+                        sb.append(delimiter);
                     }
                     sb.append(val.trim());
                 }
@@ -664,7 +667,7 @@ public class JadeXml2IniConverter {
                         handleProfileNotification(child.getNodeName(), child, 0);
                     } else if ("systempropertyfiles".equalsIgnoreCase(child.getNodeName())) {
                         writeNewLine();
-                        String val = getMergedChildsEntry(child, "system_property_files");
+                        String val = getMergedChildsEntry(DELIMITER_MERGED_CHILDS_DEFAULT, child, "system_property_files");
                         if (!SOSString.isEmpty(val)) {
                             writeLine(val);
                         }
@@ -908,13 +911,13 @@ public class JadeXml2IniConverter {
                 Node child = childs.item(i);
                 if (child.getNodeType() == Node.ELEMENT_NODE) {
                     if ("ConfigurationFiles".equals(child.getNodeName())) {
-                        String val = getMergedChildsEntry(child, "configuration_files");
+                        String val = getMergedChildsEntry(DELIMITER_MERGED_CHILDS_DEFAULT, child, "configuration_files");
                         if (!SOSString.isEmpty(val)) {
                             writeLine(val);
                         }
                         continue;
                     } else if ("HTTPHeaders".equals(child.getNodeName())) {
-                        String val = getMergedChildsEntry(child, "http_headers");
+                        String val = getMergedChildsEntry(DELIMITER_MERGED_CHILDS_HEADERS, child, "http_headers");
                         if (!SOSString.isEmpty(val)) {
                             writeLine(val);
                         }
@@ -977,7 +980,7 @@ public class JadeXml2IniConverter {
                         continue;
                     } else if (child.getNodeName().equalsIgnoreCase("HTTPHeaders")) {
                         if (!SOSString.isEmpty(childPrefix)) {
-                            writeLine(getMergedChildsEntry(child, "http_headers", childPrefix));
+                            writeLine(getMergedChildsEntry(DELIMITER_MERGED_CHILDS_HEADERS, child, "http_headers", childPrefix));
                         }
                         continue;
                     }
