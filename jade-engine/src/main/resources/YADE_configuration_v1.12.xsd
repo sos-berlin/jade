@@ -13174,10 +13174,16 @@ A fragment is referenced via this attribute value by a transfer profile.
                <strong>Notes</strong>
                <p>
 			This parameter specifies a HTTP header, which is used for a HTTP(S) file transfer.<br/>
-            Name and value are separated by a colon, e.g.:
+            Name and value are separated by the first space, e.g.:
             <ul>
                      <li>
-                        <em>Accept: text/html</em>
+                        <em>Accept text/html</em>
+                     </li>
+                     <li>
+                        <em>Content-Type application/json; charset=utf-8</em>
+                     </li>
+                     <li>
+                        <em>Keep-Alive timeout=5, max=1000</em>
                      </li>
                   </ul>
 		             </p>
