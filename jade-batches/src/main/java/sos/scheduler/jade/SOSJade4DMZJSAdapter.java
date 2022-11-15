@@ -161,6 +161,9 @@ public class SOSJade4DMZJSAdapter extends JobSchedulerJobAdapter {
             if (xml2iniFile != null) {// !!! setAllOptions2 override the jadeOptions.settings
                 jadeOptions.settings.setValue(xml2iniFile.toString());
             }
+            if (jadeOptions.settings.isDirty()) {
+                jadeOptions.settings.setNotDirty();
+            }
             int intLogLevel = -1 * spooler_log.level();
             if (intLogLevel > jadeOptions.verbose.value()) {
                 jadeOptions.verbose.value(intLogLevel);
