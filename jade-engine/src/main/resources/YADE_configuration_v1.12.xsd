@@ -6908,7 +6908,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 	  <xs:element name="AppendFiles" type="xs:boolean" default="false">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="append_files"/>
+				        <FlatParameter name="append_files" suppress_prefix="true"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
@@ -8706,7 +8706,7 @@ log4j.rootLogger=info, stdout
 	  <xs:element name="KeepModificationDate" type="xs:boolean" default="false">
 		    <xs:annotation>
          <xs:appinfo>
-				        <FlatParameter name="keep_modification_date"/>
+				        <FlatParameter name="keep_modification_date" suppress_prefix="true"/>
 			      </xs:appinfo>
          <xs:documentation>
             <div xmlns="http://www.w3.org/1999/xhtml">
