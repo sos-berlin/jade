@@ -430,6 +430,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.checkIntegrityHash = objOptions.checkIntegrityHash;
         options.integrityHashType = objOptions.integrityHashType;
         options.ssh_provider = objOptions.ssh_provider;
+        options.webdav_provider = objOptions.webdav_provider;
+        options.smb_provider = objOptions.smb_provider;
         return options;
     }
 
@@ -505,6 +507,8 @@ public class Jade4DMZ extends JadeBaseEngine {
             options.integrityHashType = objOptions.integrityHashType;
         }
         options.ssh_provider = objOptions.ssh_provider;
+        options.webdav_provider = objOptions.webdav_provider;
+        options.smb_provider = objOptions.smb_provider;
         return options;
     }
 
@@ -537,6 +541,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.resultSetFileName = objOptions.resultSetFileName;
         options.system_property_files = objOptions.system_property_files;
         options.ssh_provider = objOptions.ssh_provider;
+        options.webdav_provider = objOptions.webdav_provider;
+        options.smb_provider = objOptions.smb_provider;
         return options;
     }
 

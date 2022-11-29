@@ -5,16 +5,25 @@ import org.junit.Test;
 
 public class SOSDataExchangeEngineMainTest {
 
-    private static final String SETTINGS_FILE = "R:/backup/sos/java/development/SOSDataExchange/examples/jade_sftp_settings.xml";
-    private static final String PROFILE = "local_2_sftp";
+    private static final String SETTINGS_FILE = "/tmp/settings.xml";
+    private static final String PROFILE = "profile";
+
+    @Ignore
+    @Test
+    public void testYadeWithProvider() throws Exception {
+        String[] args = new String[3];
+        args[0] = "-settings=\"" + SETTINGS_FILE + "\"";
+        args[1] = "-profile=" + PROFILE;
+        args[2] = "-smb_provider=jcifs";
+        SOSDataExchangeEngineMain.main(args);
+    }
 
     @Ignore
     @Test
     public void testYade() throws Exception {
-        String[] args = new String[3];
+        String[] args = new String[2];
         args[0] = "-settings=\"" + SETTINGS_FILE + "\"";
         args[1] = "-profile=" + PROFILE;
-        args[2] = "-ssh_provider=sshj";
         SOSDataExchangeEngineMain.main(args);
     }
 

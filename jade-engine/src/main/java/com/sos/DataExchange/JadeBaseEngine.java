@@ -35,7 +35,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
 
     public JadeBaseEngine(final SOSBaseOptions opt) {
         super(opt);
-        setSSHProvider();
+        setProvidersFromEnv();
         if (objOptions.settings.isDirty()) {
             CLIArgCache cache = new CLIArgCache();
 
@@ -51,7 +51,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         }
     }
 
-    private void setSSHProvider() {
+    private void setProvidersFromEnv() {
         if (!objOptions.ssh_provider.isDirty()) {
             String val = SOSBaseOptions.getSSHProviderFromEnv();
             if (val != null) {
@@ -59,6 +59,24 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
                     LOGGER.debug(String.format("set ssh_provider=%s from environment", val));
                 }
                 objOptions.ssh_provider.setValue(val);
+            }
+        }
+        if (!objOptions.webdav_provider.isDirty()) {
+            String val = SOSBaseOptions.getWEBDAVProviderFromEnv();
+            if (val != null) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(String.format("set webdav_provider=%s from environment", val));
+                }
+                objOptions.webdav_provider.setValue(val);
+            }
+        }
+        if (!objOptions.smb_provider.isDirty()) {
+            String val = SOSBaseOptions.getSMBProviderFromEnv();
+            if (val != null) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(String.format("set smb_provider=%s from environment", val));
+                }
+                objOptions.smb_provider.setValue(val);
             }
         }
     }
@@ -210,6 +228,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         private final String targetDir;
         private final String sshProvider;
         private final String webDAVProvider;
+        private final String smbProvider;
 
         private CLIArgCache() {
             filePath = objOptions.filePath.isDirty() ? objOptions.filePath.getValue() : null;
@@ -219,6 +238,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             targetDir = objOptions.targetDir.isDirty() ? objOptions.targetDir.getValue() : null;
             sshProvider = objOptions.ssh_provider.isDirty() ? objOptions.ssh_provider.getValue() : null;
             webDAVProvider = objOptions.webdav_provider.isDirty() ? objOptions.webdav_provider.getValue() : null;
+            smbProvider = objOptions.smb_provider.isDirty() ? objOptions.smb_provider.getValue() : null;
         }
 
         private void restoreOptions() {
@@ -255,6 +275,9 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             }
             if (webDAVProvider != null) {
                 objOptions.webdav_provider.setValue(webDAVProvider);
+            }
+            if (smbProvider != null) {
+                objOptions.smb_provider.setValue(smbProvider);
             }
         }
     }
