@@ -2053,6 +2053,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 				        <xs:element ref="JumpFragmentRef" minOccurs="0"/>
 				        <xs:element ref="ProxyForHTTP" minOccurs="0"/>
                 <xs:element ref="HTTPHeaders" minOccurs="0"/>
+                <xs:element ref="KeyStore" minOccurs="0"/>
             </xs:sequence>
 			      <xs:attribute name="name" type="xs:NMTOKEN" use="required">
             <xs:annotation>
