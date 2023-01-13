@@ -1006,6 +1006,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     for (SOSFileListEntry entry : sourceFileList.getList()) {
                         Long fileSize = entry.getFileSize();
                         String fileName = entry.getSourceFilename();
+                        //fileName = entry.getTargetFileNameAndPath();
                         TransferStatus transferStatus = entry.getTransferStatus();
                         if (isOnEmptyFiles) {
                             add = false;
@@ -1049,6 +1050,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 mailOptions.subject.setValue(mailSubject);
                 mailOptions.body.setValue(mailBody);
                 mailOptions.attachment.setValue(mailAttachments);
+            }
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("[processSendMail][%s][skip]to is dirty=%s", notificationType, mailOptions.FileNotificationTo.isDirty()));
             }
         }
     }

@@ -516,6 +516,8 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.mailOnSuccess = objOptions.mailOnSuccess;
         options.mailOnError = objOptions.mailOnError;
         options.mailOnEmptyFiles = objOptions.mailOnEmptyFiles;
+        options.setMailOptions(objOptions.getMailOptions());
+
         options.sendTransferHistory = objOptions.sendTransferHistory;
         options.backgroundServiceHost = objOptions.backgroundServiceHost;
         options.backgroundServiceJobChainName = objOptions.backgroundServiceJobChainName;
