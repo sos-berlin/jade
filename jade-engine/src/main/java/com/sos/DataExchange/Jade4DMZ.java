@@ -125,7 +125,7 @@ public class Jade4DMZ extends JadeBaseEngine {
                 try {
                     jade.executeTransferCommands("source remove files", jade.getSourceProvider(), true, getJadeOnDMZCommand4RemoveSource(), null);
                 } catch (Exception ex) {
-                    if (fileList.count() > 0L) { // JADE-375
+                    if (fileList != null && fileList.count() > 0L) { // JADE-375
                         throw ex;
                     } else {
                         LOGGER.info(ex.toString());

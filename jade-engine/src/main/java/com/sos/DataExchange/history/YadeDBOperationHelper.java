@@ -299,7 +299,9 @@ public class YadeDBOperationHelper {
                 }
             }
         }
-        files.setSumFileSizes(fileSizeSum);
+        if (files != null) {
+            files.setSumFileSizes(fileSizeSum);
+        }
     }
 
     public void updateFileInformationToDB(SOSHibernateSession dbSession, SOSFileListEntry fileEntry) throws Exception {

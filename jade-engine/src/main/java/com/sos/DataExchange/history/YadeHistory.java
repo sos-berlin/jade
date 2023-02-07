@@ -268,9 +268,13 @@ public class YadeHistory implements IJobSchedulerEventHandler {
                 dbSession = dbFactory.openStatelessSession(IDENTIFIER);
                 dbSession.beginTransaction();
                 dbHelper.storeInitialFilesInformationToDB(transferId, dbSession, fileList);
-                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
+                if (fileList == null) {
+                    dbHelper.updateTransfersNumOfFiles(dbSession, 0L);
+                } else {
+                    dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                    for (SOSFileListEntry entry : fileList.getList()) {
+                        dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
+                    }
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
@@ -389,9 +393,13 @@ public class YadeHistory implements IJobSchedulerEventHandler {
             try {
                 dbSession = dbFactory.openStatelessSession(IDENTIFIER);
                 dbSession.beginTransaction();
-                dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
-                for (SOSFileListEntry entry : fileList.getList()) {
-                    dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
+                if (fileList == null) {
+                    dbHelper.updateTransfersNumOfFiles(dbSession, 0L);
+                } else {
+                    dbHelper.updateTransfersNumOfFiles(dbSession, fileList.count());
+                    for (SOSFileListEntry entry : fileList.getList()) {
+                        dbHelper.updateFileInformationToDB(dbSession, entry, true, targetDir);
+                    }
                 }
                 dbSession.commit();
             } catch (SOSHibernateException e) {
