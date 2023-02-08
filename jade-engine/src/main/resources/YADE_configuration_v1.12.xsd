@@ -5979,6 +5979,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="FileList"/>
 				        <xs:element ref="Directory" minOccurs="0"/>
+                <xs:element ref="Recursive" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
