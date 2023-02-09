@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -43,6 +44,7 @@ import com.sos.JSHelper.Options.JSOptionsClass;
 import com.sos.JSHelper.Options.SOSOptionBoolean;
 import com.sos.JSHelper.Options.SOSOptionFolderName;
 import com.sos.JSHelper.Options.SOSOptionRegExp;
+import com.sos.JSHelper.Options.SOSOptionString;
 import com.sos.JSHelper.Options.SOSOptionTime;
 import com.sos.JSHelper.Options.SOSOptionTransferType.TransferTypes;
 import com.sos.JSHelper.interfaces.IJobSchedulerEventHandler;
@@ -277,7 +279,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                             String integrityHashFileExtention = objOptions.checkIntegrityHash.isTrue() ? "." + objOptions.integrityHashType.getValue()
                                     : null;
                             selectFilesOnSource(true, sourceFile, objOptions.sourceDir, objOptions.fileSpec, objOptions.recursive,
-                                    integrityHashFileExtention);
+                                    objOptions.sourceExcludedDirectories, integrityHashFileExtention);
                             currentFilesCount = sourceFileList.count();
                         }
                     } catch (Exception e) {
@@ -553,6 +555,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         if (options.isSource()) {
             if (options.directory.isDirty()) {
                 sb.append(String.format(pattern4String, "Directory", options.directory.getValue()));
+            }
+            if (getOptions().sourceExcludedDirectories.isDirty()) {
+                sb.append(String.format(pattern4String, "ExcludedDirectories", getOptions().sourceExcludedDirectories.getValue()));
             }
             if (getOptions().filePath.isNotEmpty()) {
                 sb.append(String.format(pattern4String, "FilePath", getOptions().filePath.getValue()));
@@ -1006,7 +1011,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     for (SOSFileListEntry entry : sourceFileList.getList()) {
                         Long fileSize = entry.getFileSize();
                         String fileName = entry.getSourceFilename();
-                        //fileName = entry.getTargetFileNameAndPath();
+                        // fileName = entry.getTargetFileNameAndPath();
                         TransferStatus transferStatus = entry.getTransferStatus();
                         if (isOnEmptyFiles) {
                             add = false;
@@ -1309,7 +1314,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                             String integrityHashFileExtention = objOptions.checkIntegrityHash.isTrue() ? "." + objOptions.integrityHashType.getValue()
                                     : null;
                             selectFilesOnSource(isFilePollingEnabled, fileHandle, objOptions.sourceDir, objOptions.fileSpec, objOptions.recursive,
-                                    integrityHashFileExtention);
+                                    objOptions.sourceExcludedDirectories, integrityHashFileExtention);
                         }
                     }
                     if (!checkSourceFilesSteady()) {
@@ -1709,7 +1714,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
     }
 
     private boolean selectFilesOnSource(boolean isFilePollingEnabled, final ISOSProviderFile sourceFile, final SOSOptionFolderName sourceDir,
-            final SOSOptionRegExp regExp, final SOSOptionBoolean recursive, final String integrityHashFileExtention) throws Exception {
+            final SOSOptionRegExp fileNameRegExp, final SOSOptionBoolean recursive, final SOSOptionString excludedDirectoriesRegExp,
+            final String integrityHashFileExtention) throws Exception {
         if (sourceProvider instanceof SOSHTTP) {
             throw new JobSchedulerException("a file spec selection is not supported with http(s) protocol");
         }
@@ -1720,12 +1726,19 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (objOptions.maxFiles.isDirty()) {
                 maxFiles = objOptions.maxFiles.value();
             }
-            List<SOSFileEntry> l = sourceProvider.getFilelist(sourceFile.getName(), regExp.getValue(), 0, recursive.value(), false,
-                    integrityHashFileExtention);
+
+            // case sensitive
+            Pattern fileNamePattern = Pattern.compile(fileNameRegExp.getValue(), 0);
+            Pattern excludedDirectoriesPattern = SOSString.isEmpty(excludedDirectoriesRegExp.getValue()) ? null : Pattern.compile(
+                    excludedDirectoriesRegExp.getValue(), 0);
+
+            List<SOSFileEntry> l = sourceProvider.getFileList(sourceFile.getName(), maxFiles, recursive.value(), fileNamePattern,
+                    excludedDirectoriesPattern, false, integrityHashFileExtention, 0);
             sourceFileList.create(l, maxFiles);
 
-            String msg = String.format("[source][%s]%s[recursive=%s][%s]%s files found", sourceDir.getValue(), getMaxFilesMsg(l.size(), maxFiles),
-                    recursive.value(), regExp.getValue(), sourceFileList.size());
+            String exdMes = excludedDirectoriesPattern == null ? "" : "[excludedDirectories=" + excludedDirectoriesRegExp.getValue() + "]";
+            String msg = String.format("[source][%s]%s[recursive=%s][fileSpec=%s]%s%s files found", sourceDir.getValue(), getMaxFilesMsg(l.size(),
+                    maxFiles), recursive.value(), fileNameRegExp.getValue(), exdMes, sourceFileList.size());
             if (isFilePollingEnabled) {
                 LOGGER.debug(msg);
             } else {

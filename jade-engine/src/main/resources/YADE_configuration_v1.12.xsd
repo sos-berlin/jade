@@ -5664,6 +5664,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="FilePath"/>
 				        <xs:element ref="Directory" minOccurs="0"/>
+                <xs:element ref="Recursive" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
 	  </xs:element>
@@ -5774,6 +5775,7 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      <xs:sequence>
 				        <xs:element ref="FileSpec"/>
 				        <xs:element ref="Directory" minOccurs="0"/>
+                <xs:element ref="ExcludedDirectories" minOccurs="0"/>
 				        <xs:element ref="Recursive" minOccurs="0"/>
 			      </xs:sequence>
 		    </xs:complexType>
@@ -5896,6 +5898,47 @@ SSH, etc.) server to which a connection has to be made.</p>
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
+    <xs:element name="ExcludedDirectories">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="excluded_directories"/>
+                <Release starting="1.13.18" issue="YADE-601"/>
+			      </xs:appinfo>
+         <xs:documentation source="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ExcludedDirectories">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_ExcludedDirectories.html">ExcludedDirectories</a>, <a xmlns=""
+                        target="_blank"
+                        href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ExcludedDirectories">ExcludedDirectories</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">excluded_directories</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/YADE-601">YADE-601</a> Availability starting with 1.13.18.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>This parameter specifies a regular expression that matches the path to directories to be excluded when recursively traversing a Source directory.</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
 	  <xs:element name="Recursive" type="xs:boolean" default="false">
 		    <xs:annotation>
          <xs:appinfo>
@@ -5936,11 +5979,29 @@ SSH, etc.) server to which a connection has to be made.</p>
                <p>
 			This parameter specifies wether files from subdirectories should be included recursively.
 			Recursion is effective exclusively if files are found in a directory.
-			Regular expression matches apply to files from subdirectories as specified by the
-			<a target="_blank"
-                     href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FileSpec"
-                     shape="rect">FileSpec</a> parameter.
-		</p>
+            <ul>
+                     <li>
+                        <i>FileSpecSelection</i>
+                        <ul>
+                           <li>Regular expression matches apply to files from subdirectories as specified by the <a target="_blank"
+                                 href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+FileSpec"
+                                 shape="rect">FileSpec</a> and <a target="_blank"
+                                 href="https://kb.sos-berlin.com/display/PKB/YADE+Parameter+Reference+-+ExcludedDirectories"
+                                 shape="rect">ExcludedDirectories</a> parameters.</li>
+                        </ul>
+                     </li>
+                     <li>
+                        <i>FilePathSelection/FileListSelection</i>
+                        <ul>
+                           <li>
+                              <a target="_blank"
+                                 href="https://change.sos-berlin.com/browse/YADE-600"
+                                 shape="rect">YADE-600</a>. Availability starting with 1.13.18</li>
+                           <li>Specifies how the files should be transferred: flat in one Target folder or by creating the same sub-directories in the target system as from the source system.</li>
+                        </ul>
+                     </li>
+                  </ul>		
+		             </p>
             </div>
          </xs:documentation>
       </xs:annotation>

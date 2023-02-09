@@ -225,6 +225,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
         private final String fileSpec;
         private final String fileListName;
         private final String sourceDir;
+        private final String sourceExcludedDirectories;
         private final String targetDir;
         private final String sshProvider;
         private final String webDAVProvider;
@@ -235,6 +236,7 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
             fileSpec = objOptions.fileSpec.isDirty() ? objOptions.fileSpec.getValue() : null;
             fileListName = objOptions.fileListName.isDirty() ? objOptions.fileListName.getValue() : null;
             sourceDir = objOptions.sourceDir.isDirty() ? objOptions.sourceDir.getValue() : null;
+            sourceExcludedDirectories = objOptions.sourceExcludedDirectories.isDirty() ? objOptions.sourceExcludedDirectories.getValue() : null;
             targetDir = objOptions.targetDir.isDirty() ? objOptions.targetDir.getValue() : null;
             sshProvider = objOptions.ssh_provider.isDirty() ? objOptions.ssh_provider.getValue() : null;
             webDAVProvider = objOptions.webdav_provider.isDirty() ? objOptions.webdav_provider.getValue() : null;
@@ -256,6 +258,16 @@ public class JadeBaseEngine extends JSJobUtilitiesClass<SOSBaseOptions> {
                 try {
                     if (objOptions.getSource() != null) {
                         objOptions.getSource().directory.setValue(sourceDir);
+                    }
+                } catch (Throwable e) {
+                }
+            }
+
+            if (sourceExcludedDirectories != null) {
+                objOptions.sourceExcludedDirectories.setValue(sourceExcludedDirectories);
+                try {
+                    if (objOptions.getSource() != null) {
+                        objOptions.getSource().excluded_directories.setValue(sourceExcludedDirectories);
                     }
                 } catch (Throwable e) {
                 }
