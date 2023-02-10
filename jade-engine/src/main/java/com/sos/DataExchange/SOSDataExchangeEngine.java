@@ -66,6 +66,7 @@ import com.sos.vfs.http.SOSHTTP;
 import sos.net.SOSMail;
 import sos.net.mail.options.SOSSmtpMailOptions;
 import sos.net.mail.options.SOSSmtpMailOptions.enuMailClasses;
+import sos.util.SOSDate;
 import sos.util.SOSString;
 
 public class SOSDataExchangeEngine extends JadeBaseEngine {
@@ -1732,13 +1733,15 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             Pattern excludedDirectoriesPattern = SOSString.isEmpty(excludedDirectoriesRegExp.getValue()) ? null : Pattern.compile(
                     excludedDirectoriesRegExp.getValue(), 0);
 
+            Instant start = Instant.now();
             List<SOSFileEntry> l = sourceProvider.getFileList(sourceFile.getName(), maxFiles, recursive.value(), fileNamePattern,
                     excludedDirectoriesPattern, false, integrityHashFileExtention, 0);
+            String endMes = SOSDate.getDuration(start, Instant.now());
             sourceFileList.create(l, maxFiles);
 
             String exdMes = excludedDirectoriesPattern == null ? "" : "[excludedDirectories=" + excludedDirectoriesRegExp.getValue() + "]";
-            String msg = String.format("[source][%s]%s[recursive=%s][fileSpec=%s]%s%s files found", sourceDir.getValue(), getMaxFilesMsg(l.size(),
-                    maxFiles), recursive.value(), fileNameRegExp.getValue(), exdMes, sourceFileList.size());
+            String msg = String.format("[source][%s]%s[recursive=%s][fileSpec=%s]%s[%s]%s files found", sourceDir.getValue(), getMaxFilesMsg(l.size(),
+                    maxFiles), recursive.value(), fileNameRegExp.getValue(), exdMes, endMes, sourceFileList.size());
             if (isFilePollingEnabled) {
                 LOGGER.debug(msg);
             } else {
