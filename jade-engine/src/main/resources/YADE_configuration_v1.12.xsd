@@ -10801,6 +10801,65 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      </xs:restriction>
 		    </xs:simpleType>
 	  </xs:element>
+    <xs:element name="CSKeePass">
+      <xs:annotation>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <p>
+			Specifies the configuration settings for KeePass.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		
+		    <xs:complexType>
+			      <xs:sequence>
+				        <xs:element ref="CSKeePassModule" minOccurs="1" maxOccurs="1"/>
+			      </xs:sequence>
+		    </xs:complexType>
+	  </xs:element>
+    <xs:element name="CSKeePassModule" default="JAXB">
+		    <xs:annotation>
+         <xs:appinfo>
+				        <FlatParameter name="CredentialStore_KeePass_Module"/>
+        		  <Release starting="1.13.9" issue="JITL-714"/>
+			      </xs:appinfo>
+         <xs:documentation>
+            <div xmlns="http://www.w3.org/1999/xhtml">
+               <strong>References</strong>
+               <ul>
+                  <li>Schema: <a target="_blank"
+                        href="https://www.sos-berlin.com/schema/yade/YADE_configuration_v1.12/YADE_configuration_v1_12_xsd_Element_CSKeePassModule.html">CSKeePassModule</a>
+                  </li>
+                  <li>Mapping:
+            <ul>
+                        <li>
+                           <a target="_blank"
+                              href="https://kb.sos-berlin.com/display/PKB/YADE+-+Reference+Documentation+-+Parameter+Mapping#YADE-ReferenceDocumentation-ParameterMapping-MappingTables">CredentialStore_KeePass_Module</a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>Release:
+            <ul>
+                        <li>
+                           <a target="_blank" href="https://change.sos-berlin.com/browse/JITL-714">JITL-714</a> Availability starting with 1.13.9.</li>
+                     </ul>
+                  </li>
+               </ul>
+               <strong>Notes</strong>
+               <p>
+			Specifies the desired approach (DOM or JAXB) to handle KDBX using the underlying KeePassJava2 interface.
+		</p>
+            </div>
+         </xs:documentation>
+      </xs:annotation>
+		    <xs:simpleType>
+            <!-- not as xs:enumeration (DOM,JAXB) to enable the usage of an environment variable instead of a fixed value -->
+			      <xs:restriction base="xs:string">
+				        <xs:minLength value="1"/>
+			      </xs:restriction>
+		    </xs:simpleType>
+	  </xs:element>
 	  <!-- ap 2015-08-28: development status: not implemented -->
 	  <xs:element name="CSPermissionsForExportedFile" default="600">
       <xs:annotation>
@@ -11059,6 +11118,7 @@ A fragment is referenced via this attribute value by a transfer profile.
 			      <xs:element ref="CSEntryPath" minOccurs="0"/>
 			      <xs:element ref="CSExportAttachment" minOccurs="0"/>
 			      <xs:element ref="CSStoreType" minOccurs="0"/>
+            <xs:element ref="CSKeePass" minOccurs="0"/>
 		    </xs:sequence>
 	  </xs:complexType>
 	  <xs:element name="Notifications" type="NotificationType">
