@@ -188,7 +188,7 @@ public class Jade4DMZ extends JadeBaseEngine {
             csOptions.credentialStoreKeyFileName.setValue(objOptions.jump_CredentialStore_KeyFileName.getValue());
             csOptions.credentialStorePassword.setValue(objOptions.jump_CredentialStore_Password.getValue());
             csOptions.credentialStoreKeyPath.setValue(objOptions.jump_CredentialStore_KeyPath.getValue());
-            csOptions.credentialStoreModule.setValue(objOptions.jump_CredentialStore_Module.getValue());
+            csOptions.credentialStoreKeePassModule.setValue(objOptions.jump_CredentialStore_KeePass_Module.getValue());
             options.setCredentialStore(csOptions);
 
             Path jumpKpdPath = Paths.get(csOptions.credentialStoreFileName.getValue());
