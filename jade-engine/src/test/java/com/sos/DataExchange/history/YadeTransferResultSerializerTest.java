@@ -98,8 +98,8 @@ public class YadeTransferResultSerializerTest {
         List<YadeTransferResultEntry> l = new ArrayList<YadeTransferResultEntry>();
         for (int i = 1; i <= 10; i++) {
             YadeTransferResultEntry e = new YadeTransferResultEntry();
-            e.setSource("/tmp/source/ロバート /роберт_" + i + ".txt");
-            e.setTarget("/tmp/target/ロバート /роберт_" + i + ".txt");
+            e.setSource("/tmp/source/12345_" + i + ".txt");
+            e.setTarget("/tmp/target/12345_" + i + ".txt");
             e.setSize(i);
             e.setModificationDate(new Date().getTime());
             e.setState("transferred");

@@ -188,18 +188,19 @@ public class Jade4DMZ extends JadeBaseEngine {
             csOptions.credentialStoreKeyFileName.setValue(objOptions.jump_CredentialStore_KeyFileName.getValue());
             csOptions.credentialStorePassword.setValue(objOptions.jump_CredentialStore_Password.getValue());
             csOptions.credentialStoreKeyPath.setValue(objOptions.jump_CredentialStore_KeyPath.getValue());
+            csOptions.credentialStoreModule.setValue(objOptions.jump_CredentialStore_Module.getValue());
             options.setCredentialStore(csOptions);
 
             Path jumpKpdPath = Paths.get(csOptions.credentialStoreFileName.getValue());
             Object jumpKpd = null;
             Object kpd = objOptions.getSource().keepass_database.value();
-            if (kpd != null && ((SOSKeePassDatabase) kpd).getFile().equals(jumpKpdPath)) {
+            if (kpd != null && ((SOSKeePassDatabase) kpd).getHandler().getKeePassFile().equals(jumpKpdPath)) {
                 LOGGER.debug("set jump settings from source KeePass");
                 jumpKpd = kpd;
             }
             if (jumpKpd == null) {
                 kpd = objOptions.getTarget().keepass_database.value();
-                if (kpd != null && ((SOSKeePassDatabase) kpd).getFile().equals(jumpKpdPath)) {
+                if (kpd != null && ((SOSKeePassDatabase) kpd).getHandler().getKeePassFile().equals(jumpKpdPath)) {
                     LOGGER.debug("set jump settings from target KeePass");
                     jumpKpd = kpd;
                 }
