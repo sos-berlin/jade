@@ -1,8 +1,11 @@
 package com.sos.DataExchange.history;
 
+import java.io.BufferedWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,9 +123,12 @@ public class YadeTransferResultHelper {
     public void serialize2File(YadeTransferResult result, String file) throws Exception {
         YadeTransferResultSerializer<YadeTransferResult> serializer = new YadeTransferResultSerializer<YadeTransferResult>();
 
-        Files.write(Paths.get(file), new StringBuilder(Yade.JOB_ARGUMENT_NAME_RETURN_VALUES).append("=").append(serializer.serialize(result))
-                .toString().getBytes());
-
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(file), StandardCharsets.UTF_8, StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND)) {
+            writer.write(new StringBuilder(Yade.JOB_ARGUMENT_NAME_RETURN_VALUES).append("=").append(serializer.serialize(result)).append(System
+                    .lineSeparator()).toString());
+            writer.flush();
+        }
     }
 
     private YadeTransferResult create(YadeTransferResult result, SOSBaseOptions options, Instant startTime, Instant endTime, Throwable exception)
