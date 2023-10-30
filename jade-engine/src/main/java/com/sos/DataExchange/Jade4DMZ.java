@@ -35,6 +35,7 @@ public class Jade4DMZ extends JadeBaseEngine {
     private String jumpDir;
     private Instant startTime;
     private Instant endTime;
+    private Boolean transactional;
 
     protected enum Operation {
         copyToInternet, copyFromInternet, remove, getlist
@@ -398,8 +399,9 @@ public class Jade4DMZ extends JadeBaseEngine {
             options.operation.setValue("getlist");
         } else {
             options.operation.setValue("copy");
-            options.transactional.value(true);
+            // options.transactional.value(true);
         }
+        options.transactional.value(getTransactional());
         options.atomicPrefix = objOptions.atomicPrefix;
         options.atomicSuffix = objOptions.atomicSuffix;
         options.bufferSize = objOptions.bufferSize;
@@ -462,7 +464,8 @@ public class Jade4DMZ extends JadeBaseEngine {
             options.integrityHashType = objOptions.integrityHashType;
         } else if (operation.equals(Operation.getlist)) {
             options.operation.setValue("getlist");
-            options.transactional.value(true);
+            // options.transactional.value(true);
+            options.transactional.value(getTransactional());
             options.fileSpec.setValue(".*");
             options.atomicPrefix = objOptions.atomicPrefix;
             options.atomicSuffix = objOptions.atomicSuffix;
@@ -485,7 +488,8 @@ public class Jade4DMZ extends JadeBaseEngine {
             options.integrityHashType = objOptions.integrityHashType;
         } else {
             options.operation.setValue("copy");
-            options.transactional.value(true);
+            // options.transactional.value(true);
+            options.transactional.value(getTransactional());
             options.fileSpec.setValue(".*");
             options.atomicPrefix = objOptions.atomicPrefix;
             options.atomicSuffix = objOptions.atomicSuffix;
@@ -560,6 +564,16 @@ public class Jade4DMZ extends JadeBaseEngine {
         options.getTarget().keepass_attachment_property_name.setValue("");
         StringBuilder command = new StringBuilder(objOptions.jumpCommand.getValue() + " ");
         command.append("-SendTransferHistory=false ");
+
+        String c = command.toString().toLowerCase();
+        if (c.contains(" -transactional=false") || c.contains(" -transactional=\"false\"")) {
+            options.transactional.setValue("");
+            options.atomicSuffix.setValue("");
+            options.atomicPrefix.setValue("");
+        } else if (c.contains(" -transactional=true") || c.contains(" -transactional=\"true\"")) {
+            options.transactional.setValue("true");
+        }
+
         command.append(options.getOptionsAsQuotedCommandLine());
         command.append(options.getSource().getOptionsAsQuotedCommandLine());
         if (!operation.equals(Operation.remove)) {
@@ -628,6 +642,17 @@ public class Jade4DMZ extends JadeBaseEngine {
             historyFilename = normalizeDirectoryPath(objOptions.jumpDir.getValue()) + "jade-dmz-" + getUUID() + ".history.csv";
         }
         return historyFilename;
+    }
+
+    private Boolean getTransactional() {
+        if (transactional == null) {
+            if (objOptions.transactional.isDirty()) {
+                transactional = objOptions.transactional.value();
+            } else {
+                transactional = true;
+            }
+        }
+        return transactional;
     }
 
     public void setHistory(YadeHistory h) {
