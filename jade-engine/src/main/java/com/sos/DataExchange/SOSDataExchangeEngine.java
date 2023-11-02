@@ -1070,10 +1070,17 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             LOGGER.debug(String.format("files to transfer %s", size));
         }
         long count = 0;
+        boolean transactional = objOptions.transactional.value();
         for (SOSFileListEntry entry : fileList.getList()) {
             count++;
             entry.setTransferNumber(count);
-            entry.run();
+            try {
+                entry.run();
+            } catch (Throwable e) {
+                if (transactional) {
+                    throw e;
+                }
+            }
         }
     }
 
@@ -1224,7 +1231,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
      * @return boolean
      * @throws Exception */
     public void transfer() throws Exception {
-        Exception exception = null;
+        Throwable exception = null;
         boolean isFilePollingEnabled = objOptions.isFilePollingEnabled();
         YadeHistory history = null;
         if (historyHandler != null) {
@@ -1422,7 +1429,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 if (pollingMethod != null) {
                     LOGGER.info(String.format("[%s]end polling", pollingMethod.name()));
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (history != null) {
                     history.onFileTransferException(sourceFileList);
                 }
@@ -1430,7 +1437,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             } finally {
                 setTextProperties();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             setTextProperties();
             objOptions.getTextProperties().put(KEYWORD_STATUS, SOSJADE_T_0013.get());
             JADE_REPORT_LOGGER.info(SOSJADE_E_0101.params(e.toString()), e);
@@ -1542,7 +1549,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
     }
 
-    private void executePostTransferCommandsOnError(Exception e) throws Exception {
+    private void executePostTransferCommandsOnError(Throwable e) throws Exception {
         StringBuilder exception = new StringBuilder();
         String caller = "";
         if (!(e instanceof SOSYadeTargetConnectionException)) {
@@ -1555,7 +1562,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             try {
                 executeTransferCommands(caller, targetProvider, false, target.postTransferCommandsOnError.getValue(), target.commandDelimiter
                         .getValue());
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
             }
         }
@@ -1578,7 +1585,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     sourceProvider.reconnect();
                     executeTransferCommands(caller, sourceProvider, true, source.postTransferCommandsOnError.getValue(), source.commandDelimiter
                             .getValue());
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     if (exception.length() > 0) {
                         exception.append(", ");
                     }
@@ -1591,7 +1598,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
     }
 
-    private void executePostTransferCommandsFinal(Exception e) throws Exception {
+    private void executePostTransferCommandsFinal(Throwable e) throws Exception {
         StringBuilder exception = new StringBuilder();
         String caller = "";
         if (e == null || !(e instanceof SOSYadeTargetConnectionException)) {
@@ -1604,7 +1611,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             try {
                 executeTransferCommands(caller, targetProvider, false, target.postTransferCommandsFinal.getValue(), target.commandDelimiter
                         .getValue());
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 exception.append(String.format("[%s]:%s", caller, ex.toString()));
             }
         }
@@ -1628,7 +1635,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                     sourceProvider.reconnect();
                     executeTransferCommands(caller, sourceProvider, true, source.postTransferCommandsFinal.getValue(), source.commandDelimiter
                             .getValue());
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     if (exception.length() > 0) {
                         exception.append(", ");
                     }
