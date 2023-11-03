@@ -52,7 +52,7 @@ public class SOSDataExchangeEngine4DMZMain extends I18NBase implements JSJobUtil
             LOGGER.info(getMsg(SOSDX_Intro));
             jade4dmz.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), conMethodName));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exitCode = 99;
             LOGGER.error(String.format(getMsg(SOSDX_E_0001), conMethodName, e.getMessage(), exitCode), e);
         }

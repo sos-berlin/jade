@@ -433,7 +433,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (history != null) {
                 history.afterTransfer();
             }
+
             if (!JobSchedulerException.LastErrorMessage.isEmpty()) {
+                JobSchedulerException.LastErrorMessage = JobSchedulerException.LastErrorMessage.trim();
                 throw new JobSchedulerException(JobSchedulerException.LastErrorMessage);
             }
             endTime = Instant.now();
@@ -448,8 +450,12 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 history.onException(e);
             }
             exception = e;
+            if (e.getCause() == null) {// if is set above - it contains duplicate message (if toString used)
+                JobSchedulerException.LastErrorMessage = e.getMessage();
+            }
+
             throw e;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (history != null) {
                 history.onException(e);
             }
@@ -1200,7 +1206,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
         if (sourceFileList != null && SOSString.isEmpty(JobSchedulerException.LastErrorMessage) && !SOSString.isEmpty(sourceFileList
                 .getLastErrorMessage())) {
-            objOptions.getTextProperties().put(KEYWORD_LAST_ERROR, sourceFileList.getLastErrorMessage());
+            objOptions.getTextProperties().put(KEYWORD_LAST_ERROR, sourceFileList.getLastErrorMessage().trim());
         } else {
             objOptions.getTextProperties().put(KEYWORD_LAST_ERROR, JobSchedulerException.LastErrorMessage);
         }

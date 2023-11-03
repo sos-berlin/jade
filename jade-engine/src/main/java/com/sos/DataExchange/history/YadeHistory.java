@@ -295,7 +295,7 @@ public class YadeHistory implements IJobSchedulerEventHandler {
         }
     }
 
-    public void onException(Exception e) {
+    public void onException(Throwable e) {
         if (hasException) {
             return;
         }

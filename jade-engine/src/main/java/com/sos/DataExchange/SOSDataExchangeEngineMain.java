@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sos.JSHelper.Basics.JSJobUtilities;
+import com.sos.JSHelper.Exceptions.JobSchedulerException;
 import com.sos.i18n.I18NBase;
 import com.sos.i18n.annotation.I18NMessage;
 import com.sos.i18n.annotation.I18NMessages;
@@ -75,9 +76,14 @@ public class SOSDataExchangeEngineMain extends I18NBase implements JSJobUtilitie
             LOGGER.info(getMsg(SOSDX_Intro));
             engine.execute();
             LOGGER.info(String.format(getMsg(SOS_EXIT_WO_ERRORS), method));
-        } catch (Exception e) {
+        } catch (JobSchedulerException e) {
             exitCode = 99;
-            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode), e);
+            // without e because it is always the same StackTrace created by engine.execute() (JobSchedulerException.LastErrorMessage)
+            // e.getMessage() used because e.toString() gets duplicate message
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.getMessage(), exitCode));
+        } catch (Throwable e) {
+            exitCode = 99;
+            LOGGER.error(String.format(getMsg(SOSDX_E_0001), method, e.toString(), exitCode), e);
         } finally {
             engine = null;
         }
