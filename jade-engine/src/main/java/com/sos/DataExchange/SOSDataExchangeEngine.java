@@ -893,7 +893,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("[target][%s]isDirectory=%s", path, cd));
             }
-        } catch (Exception e) {
+        } catch (JobSchedulerException e) {
+            throw e;
+        } catch (Throwable e) {
             throw new JobSchedulerException(String.format("[target][makeDirs][%s][failed]%s", path, e.toString()), e);
         }
         return cd;
