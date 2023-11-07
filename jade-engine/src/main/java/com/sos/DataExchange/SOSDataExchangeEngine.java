@@ -631,6 +631,9 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                 sb.append(String.format(pattern4IntegrityHash, "CreateIntegrityFile", getOptions().createIntegrityHashFile.value(),
                         getOptions().integrityHashType.getValue()));
             }
+            if (getOptions().keepModificationDate.isDirty()) {
+                sb.append(String.format(pattern4String, "KeepModificationDate", getOptions().keepModificationDate.getValue()));
+            }
         }
         if (options.replacement.isDirty() && options.replacing.isNotEmpty()) {
             sb.append(String.format(pattern4Rename, "Rename", options.replacing.getValue(), options.replacement.getValue()));
