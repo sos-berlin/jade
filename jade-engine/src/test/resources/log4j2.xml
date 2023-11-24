@@ -6,7 +6,7 @@
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS}[%5p][%t](%F:%L) - %m%n" />
+				pattern="%d{HH:mm:ss.SSS}[%5p][%t] (%F:%L) - %m%n" />
 		</Console>
 		<RollingFile name="fileLogger"
 			fileName="${basePath}/test.log"
@@ -24,7 +24,7 @@
 			<!-- AppenderRef ref="fileLogger" /-->
 		</Root>
 		<Logger name="org.hibernate" level="fatal" />
-		<Logger name="net.schmizz" level="debug" />
-		<Logger name="com.sos" level="debug" />
+		<Logger name="net.schmizz" level="info" />
+		<Logger name="com.sos" level="info" />
 	</Loggers>
 </Configuration>
