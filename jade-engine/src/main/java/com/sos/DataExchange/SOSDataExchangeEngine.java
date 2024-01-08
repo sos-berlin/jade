@@ -739,11 +739,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                         }
 
                         SOSFileEntry entry = null;
-                        if (isFilePollingEnabled) {
-                            if (sourceProvider.fileExists(filename)) {
-                                entry = sourceProvider.getFileEntry(filename);
-                            }
-                        } else {
+                        if (sourceProvider.fileExists(filename)) {
                             entry = sourceProvider.getFileEntry(filename);
                         }
                         if (entry == null) {
@@ -783,11 +779,7 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                             }
 
                             SOSFileEntry entry = null;
-                            if (isFilePollingEnabled) {
-                                if (sourceProvider.fileExists(filename)) {
-                                    entry = sourceProvider.getFileEntry(filename);
-                                }
-                            } else {
+                            if (sourceProvider.fileExists(filename)) {
                                 entry = sourceProvider.getFileEntry(filename);
                             }
                             if (entry == null) {
