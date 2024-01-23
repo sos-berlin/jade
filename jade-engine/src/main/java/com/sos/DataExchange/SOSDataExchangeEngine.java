@@ -28,9 +28,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -946,6 +946,19 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
         }
     }
 
+    // In this case, a JobSchedulerException will not be thrown (because files may be removed from the source when JobSchedulerException is used..)
+    private void checkResultSetOnSource() throws Exception {
+        String re = objOptions.raiseErrorIfResultSetIs.getValue();
+        if (SOSString.isEmpty(re)) {
+            return;
+        }
+        Long transferred = sourceFileList == null ? Long.valueOf(0) : sourceFileList.count();
+        if (objOptions.expectedSizeOfResultSet.compare(re, transferred.intValue())) {
+            throw new Exception(String.format("[source][files found=%s][RaiseErrorIfResultSetIs]%s %s", transferred, re,
+                    objOptions.expectedSizeOfResultSet.value()));
+        }
+    }
+
     private void printState() {
 
         SOSTransferStateCounts counter = getTransferCounter();
@@ -1355,6 +1368,8 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
                                 sourceFileList.logGetListOperation();
                                 sourceFileList.createResultSetFile();
                             } else {
+                                checkResultSetOnSource();
+
                                 sourceFileList.createResultSetFile();
                                 if (!sourceFileList.isEmpty() && objOptions.skipTransfer.isFalse()) {
                                     if (objOptions.lazyConnectionMode.isTrue()) {

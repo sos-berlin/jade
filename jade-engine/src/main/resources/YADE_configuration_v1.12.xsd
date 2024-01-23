@@ -8520,9 +8520,6 @@ log4j.rootLogger=info, stdout
                </ul>
                <strong>Notes</strong>
                <p>
-			This parameter has only an effect if the YADE Client is operated with JobScheduler.
-		</p>
-               <p>
 			This parameter specified a comparison operator.
 			With this parameter YADE can be caused to raise an error if the number of files that are subject to
 			a file transfer operation does not correspond to the expected number of files.
