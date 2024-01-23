@@ -575,6 +575,10 @@ public class SOSDataExchangeEngine extends JadeBaseEngine {
             if (getOptions().fileSpec.isDirty()) {
                 sb.append(String.format(pattern4String, "FileSpec", getOptions().fileSpec.getValue()));
             }
+            if (getOptions().raiseErrorIfResultSetIs.isDirty()) {
+                sb.append(String.format(pattern4String, "RaiseErrorIfResultSetIs", getOptions().raiseErrorIfResultSetIs.getValue() + " "
+                        + getOptions().expectedSizeOfResultSet.getValue()));
+            }
             if (getOptions().maxFiles.isDirty()) {
                 sb.append(String.format(pattern4String, "MaxFiles", getOptions().maxFiles.getValue()));
             }
